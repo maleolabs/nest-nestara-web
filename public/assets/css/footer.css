@@ -1,0 +1,30 @@
+footer {
+    height: 300px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+}
+
+@media (max-width: 575px) {
+    footer {
+        width: 100%;
+        padding: 15px;
+    }
+
+    footer span {
+        display: block;
+    }
+
+    footer p {
+        width: 100%;
+    }
+}
+
+footer.bg-img {
+    background-image: linear-gradient(rgba(1, 89, 89,0.5), rgba(1, 89, 89,0.5)), url("../../storage/web/pkm.jpg");
+    background-size: cover;
+    color: var(--color-white);
+}

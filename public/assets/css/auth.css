@@ -1,0 +1,192 @@
+:root {
+    --color-bg-card : #D3E4DD;
+}
+
+.form-card {
+  width: 100%;
+  border-radius: 8px;
+  background: var(--color-white);
+  box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.12);
+}
+
+.form-card .form-card-header {
+  height: 200px;
+  width: 100%;
+  border-radius: 8px 8px 0 0;
+  background-image: linear-gradient(rgba(4,9,30,0.5), rgba(4,9,30,0.5)), url("https://source.unsplash.com/1000x200?doctor");
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.form-card-header > a {
+  font-family: "GroupeMedium";
+  font-size: 1.8rem;
+  color: var(--color-white);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.form-card .form-group {
+  padding-bottom: 8px;
+}
+
+.form-card .validate {
+  display: none;
+  color: red;
+  margin: 0 0 15px 0;
+  font-weight: 400;
+  font-size: 13px;
+}
+
+.form-card .error-message {
+  display: none;
+  color: #fff;
+  background: #ed3c0d;
+  text-align: left;
+  padding: 15px;
+  font-weight: 600;
+}
+
+.form-card .error-message br+br {
+  margin-top: 25px;
+}
+
+.form-card .sent-message {
+  display: none;
+  color: #fff;
+  background: #18d26e;
+  text-align: center;
+  padding: 15px;
+  font-weight: 600;
+}
+
+.form-card .loading {
+  display: none;
+  background: #fff;
+  text-align: center;
+  padding: 15px;
+}
+
+.form-card .loading:before {
+  content: "";
+  display: inline-block;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  margin: 0 10px -6px 0;
+  border: 3px solid #18d26e;
+  border-top-color: #eee;
+  -webkit-animation: animate-loading 1s linear infinite;
+  animation: animate-loading 1s linear infinite;
+}
+
+.form-card .form-group {
+  margin-bottom: 20px;
+}
+
+.form-card button[type=submit] {
+  background: var(--color-primary);
+  border: 0;
+  padding: 8px 34px;
+  color: #fff;
+  transition: 0.4s;
+  border-radius: 50px;
+}
+
+.form-card button[type=submit]:hover {
+  background: var(--color-primary-dark);
+}
+
+.form-card button[type=button] {
+  background: transparent;
+  border: 0;
+  padding: 6px 32px;
+  color: var(--color-primary);
+  transition: 0.4s;
+  border: 2px solid var(--color-primary);
+  border-radius: 50px;
+}
+
+.form-card button[type=button]:hover {
+  color: var(--color-white);
+  background: var(--color-primary);
+}
+
+.form-card label {
+    color: var(--color-primary-dark);
+}
+
+.form-card-scrolled {
+  max-height: 80vh;
+  overflow-y: auto;
+  scrollbar-color: var(--color-primary-light);
+}
+
+.form-card-scrolled::-webkit-scrollbar {
+  width: 3px;
+  margin-right: 10px;
+  background-color: var(--color-primary-light);
+}
+
+.form-card-scrolled::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary);
+}
+
+@media (max-width: 991px) {
+    .form-card-scrolled {
+      max-height: fit-content;
+    }
+}
+
+.form-card-list {
+  list-style: none;
+  color: var(--color-primary-dark);
+  padding: 0;
+}
+
+.form-card-list li {
+  padding: 8px;
+  cursor: pointer;
+  margin-bottom: 4px;
+}
+
+.form-card-list .menu-item {
+  position: relative;
+}
+
+.form-card-list .menu-item.active, 
+.form-card-list .menu-item:hover {
+  background-color: var(--color-primary-light);
+  border-radius: 8px;
+}
+
+.form-card-list .menu-item h6 {
+  margin: 0;
+}
+
+.form-card-list .menu-item.active h6 {
+  font-weight: 700;
+}
+
+.form-card-list .menu-item::before {
+  content: '';
+  width: 4px;
+  border-radius: 2px;
+  background-color: var(--color-primary);
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  display: none;
+}
+
+.form-card-list .menu-item.active::before {
+  display: block;
+}
+
+.form-card small {
+  color: var(--color-primary-dark-high);
+}

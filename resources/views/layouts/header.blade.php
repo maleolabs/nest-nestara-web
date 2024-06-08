@@ -8,6 +8,8 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <link rel="shortcut icon" href="{{ asset('storage/web/favicon.ico') }}" type="image/x-icon">
+
     <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/dashboard.css') }}">
 </head>

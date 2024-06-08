@@ -188,6 +188,7 @@
     color: var(--color-primary); 
     margin: 0;
     padding: 8px 0;
+    font-family: 'Kollektif-Bold';
 }
 
 @media (max-width: 575px) {
@@ -204,10 +205,17 @@
     height: 80px;
     background: var(--color-white);
 }
+.welcome-nav.header-scrolled,
+.welcome-nav.header-inner-pages {
+    box-shadow: 0px 0px 30px rgba(127, 137, 161, 0.25);
+}
 .welcome-nav-logo {
     height: 80px;
     width: 80px;
     background: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .fs-xs {

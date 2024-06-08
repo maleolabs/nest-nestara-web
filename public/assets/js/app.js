@@ -1,7 +1,7 @@
 (function() {
   "use strict";
 
-  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+  // const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   const select = (el, all = false) => {
     el = el.trim()
@@ -102,86 +102,6 @@
       }
     })
   }
-  Livewire.on('dashboard-component-loaded', function() {
-    const sideLeftContainer = select('.side-sm-fixed-container')
-    const sideLeft = select('.side-sm-fixed')
-    const sideLeftShow = select('.btn-left-side')
-    const sideLeftClose = select('.btn-close-left-side')
-    const cardActionPopup = select('.card-action-popup', true)
-    if (sideLeftShow) {
-      sideLeftShow.addEventListener('click', function() {
-        if (sideLeftContainer) {
-          sideLeftContainer.classList.remove('d-none')
-        }
-      })
-    }
-    if (sideLeftClose) {
-      sideLeftClose.addEventListener('click', function() {
-        if (sideLeftContainer) {
-          sideLeftContainer.classList.add('d-none')
-        }
-      })
-    }
-    document.addEventListener('click', function(event) {
-      if (sideLeft && !sideLeft.contains(event.target) && sideLeftShow && !sideLeftShow.contains(event.target)) {
-        if (sideLeftContainer) {
-          sideLeftContainer.classList.add('d-none')
-        }
-      }
-      if (cardActionPopup) {
-        cardActionPopup.forEach(actionPopup => {
-          if (!actionPopup.contains(event.target) && actionPopup.classList.contains('show')) {
-            actionPopup.classList.remove('show')
-          }
-        })
-      }
-    })
-
-    function getRandomBg() {
-        const classes = [
-            "card-mono-secondary", 
-            "card-mono-tertiary", 
-            "card-mono-primary"
-        ]
-        const randomIndex = Math.floor(Math.random() * classes.length)
-        const classSelected = classes[randomIndex]
-        return classSelected
-    }
-    const cards = document.querySelectorAll('.card-random-bg')
-    cards.forEach(card => {
-        const randomBg = getRandomBg()
-        card.classList.add(randomBg)
-    })
-  })
-
-  Livewire.on('form-select-loaded', function() {
-    const radioService = select('.form-check-input-service', true)
-    radioService.forEach(radio => {
-      radio.addEventListener('change', function() {
-        const group = radio.parentNode.parentNode
-        if (group) {
-          if (this.checked) {
-            group.classList.add('active')
-            radioService.forEach(elseRadio => {
-              if (elseRadio != radio) {
-                const elseGroup = elseRadio.parentNode.parentNode
-                elseGroup.classList.remove('active')
-              }
-            })
-          } else {
-            group.classList.remove('active')
-          }
-        }
-      })
-    })
-    const radioGroup = select('.form-check-group', true)
-    radioGroup.forEach(group => {
-      group.addEventListener('click', function() {
-        const radioEl = this.querySelector("input[type='radio']")
-        radioEl.click()
-      })
-    })
-  })
 
   const scrollto = (el) => {
     let header = select('#header')
@@ -194,13 +114,13 @@
     })
   }
 
-  let selectHeader = select('#header')
-  if (selectHeader) {
+  let selectWelcomeNav = select('.welcome-nav')
+  if (selectWelcomeNav) {
     const headerScrolled = () => {
       if (window.scrollY > 10) {
-        selectHeader.classList.add('header-scrolled')
+        selectWelcomeNav.classList.add('header-scrolled')
       } else {
-        selectHeader.classList.remove('header-scrolled')
+        selectWelcomeNav.classList.remove('header-scrolled')
       }
     }
     window.addEventListener('load', headerScrolled)
@@ -263,33 +183,5 @@
       }
     }
   });
-
-  Livewire.on('reset-scroll', function() {
-    window.scrollTo(0,0)
-  })
-
-  Livewire.on('update-url', function(param) {
-    history.pushState(null, '', param)
-  })
-
-  // window.addEventListener('focus', function() {
-  //   fetch('/user/management/update-status/on', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'X-CSRF-TOKEN': csrfToken
-  //     }
-  //   })
-  // });
-
-  // window.addEventListener('blur', function() {
-  //   fetch('/user/management/update-status/off', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'X-CSRF-TOKEN': csrfToken
-  //     }
-  //   })
-  // });
 
 })()

@@ -1,22 +1,5 @@
-@extends('layouts.app')
+@extends('layouts.user-app')
 @section('main')
-    <nav class="welcome-nav">
-        <div class="container">
-            <div class="d-flex justify-content-between">
-                <div class="welcome-nav-logo">
-                    <img src="{{ asset('storage/web/favicon.ico') }}" alt="icon">
-                </div>
-                <div class="d-flex align-items-center justify-content-end gap-3">
-                    <a href="{{ route('login') }}" class="nav-link btn-edit">Login</a>
-                    <a href="{{ route('register') }}" class="nav-link">
-                        <button class="btn btn-app-primary rounded-pill">
-                            Register
-                        </button>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </nav>
     <section class="mt-nav container">
         <div class="row pt-5 align-items-center">
             <div class="col-md-5 col-sm-8">

@@ -7,8 +7,8 @@
                     <img src="{{ asset('storage/web/favicon.ico') }}" alt="icon">
                 </div>
                 <div class="d-flex align-items-center justify-content-end gap-3">
-                    <a href="#" class="nav-link">Login</a>
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('login') }}" class="nav-link btn-edit">Login</a>
+                    <a href="{{ route('register') }}" class="nav-link">
                         <button class="btn btn-app-primary rounded-pill">
                             Register
                         </button>

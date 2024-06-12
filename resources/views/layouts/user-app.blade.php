@@ -1,10 +1,12 @@
 @include('layouts.header')
-@include('layouts.welcome-nav')
 @auth
 @include('layouts.right-sidebar')
 @endauth
 <body>
-    @yield('main')
+    @include('layouts.welcome-nav')
+    <main class="mt-welcome-nav">
+        @yield('main')
+    </main>
 </body>
 
 @include('layouts.footer')

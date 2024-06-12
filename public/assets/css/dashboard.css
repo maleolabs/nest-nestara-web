@@ -221,9 +221,9 @@
     align-items: center;
     justify-content: center;
 }
-.welcome-nav a,
-.welcome-nav .nav-link
-.welcome-nav .nav-link:focus {
+
+.welcome-nav .welcome-nav-link,
+.welcome-nav .welcome-nav-link:focus {
     font-family: 'Kollektif-Bold' !important;
     white-space: nowrap !important;
     transition: 0.1s !important;
@@ -231,13 +231,13 @@
     opacity: .6 !important;
     text-decoration: none !important;
 }
-.welcome-nav a:last-child,
-.welcome-nav .nav-link:last-child
-.welcome-nav .nav-link:focus:last-child {
+
+.welcome-nav .welcome-nav-link:last-child
+.welcome-nav .welcome-nav-link:focus:last-child {
     opacity: 1 !important;
 }
-.welcome-nav .nav-link:hover,
-.welcome-nav .nav-link.active {
+.welcome-nav .welcome-nav-link:hover,
+.welcome-nav .welcome-nav-link.active {
     border-bottom: solid 2px var(--color-primary) !important;
     opacity: 1 !important;
 }

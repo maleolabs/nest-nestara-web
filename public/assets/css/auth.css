@@ -1,19 +1,21 @@
-:root {
-    --color-bg-card : #D3E4DD;
-}
-
 .form-card {
   width: 100%;
   border-radius: 8px;
   background: var(--color-white);
-  box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.12);
+  border-top: solid 2px var(--color-primary);
+  border-bottom: solid 2px var(--color-primary);
+  transition: transform .3s ease;
+  cursor: pointer;
+}
+
+.form-card:hover {
+  transform: translateX(10px);
 }
 
 .form-card .form-card-header {
   height: 200px;
   width: 100%;
   border-radius: 8px 8px 0 0;
-  background-image: linear-gradient(rgba(4,9,30,0.5), rgba(4,9,30,0.5)), url("https://source.unsplash.com/1000x200?doctor");
   margin-bottom: 25px;
   display: flex;
   align-items: center;

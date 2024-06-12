@@ -2336,6 +2336,10 @@ button.btn-app-tertiary-light:active {
   margin-top: 80px;
 }
 
+.mt-welcome-nav {
+  margin-top: 100px;
+}
+
 .mt-nav-fix {
   margin-top: 55px;
 }

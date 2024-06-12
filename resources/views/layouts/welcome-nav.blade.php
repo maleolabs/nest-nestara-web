@@ -1,15 +1,20 @@
 <nav class="welcome-nav">
     <div class="container">
         <div class="d-flex justify-content-between">
-            <div class="welcome-nav-logo">
-                <img src="{{ asset('storage/web/favicon.ico') }}" alt="icon">
+            <div class="d-flex align-items-center gap-3">
+                <a href="{{ route('welcome') }}" class="text-decoration-none welcome-nav-logo">
+                    <img src="{{ asset('storage/web/favicon.ico') }}" alt="icon">
+                </a>
+                <div class="d-sm-block d-none">
+                    @yield('navbar-content')
+                </div>
             </div>
             <div class="d-flex align-items-center justify-content-end gap-3">
                 @auth
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('jenis-perizinan') }}" class="welcome-nav-link {{ Route::currentRouteName() == 'jenis-perizinan' ? 'active' : '' }}">
                         Jenis Perizinan
                     </a>
-                    <a href="#" class="nav-link">
+                    <a href="#" class="welcome-nav-link">
                         Izin saya
                     </a>
                     <a href="#" class="ms-3 sidebar-btn-show position-relative">

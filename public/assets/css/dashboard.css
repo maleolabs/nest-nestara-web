@@ -477,6 +477,123 @@
     color: var(--color-primary);
 }
 
+@media (max-width:575px) {
+    .side-sm-fixed-container {
+        position: fixed;
+        z-index: 9998;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.3);
+    }
+    .side-sm-fixed {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        height: 100%;
+        background: var(--color-white);
+        width: 250px;
+        padding: 18px;
+        border-radius: 0 10px 10px 0;
+    }
+}
+
+.sidebar-nav-grid {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+}
+
+.sidebar-nav-grid h6 {
+  font-size: 12px;
+  margin-left: 14px;
+  margin-bottom: 18px;
+}
+.sidebar-nav-grid h6:nth-child(n+2) {
+  margin-top: 18px;
+}
+
+.sidebar-nav-grid li {
+  margin: 0;
+  list-style: none;
+}
+.sidebar-nav-grid .nav-item-grid {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+.sidebar-nav-grid .nav-item-grid.row-auto {
+  grid-column: 1;
+  grid-row: auto;
+}
+.sidebar-nav-grid .nav-heading-grid {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #899bbd;
+  font-weight: 600;
+  margin: 10px 0 5px 15px;
+}
+.sidebar-nav-grid .nav-link-grid {
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-dark);
+  transition: 0.3;
+  border-radius: 4px;
+  text-decoration: none;
+}
+.sidebar-nav-grid .nav-link-grid i {
+  font-size: 20px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: var(--color-primary-dark-high);
+  background: var(--color-light);
+  opacity: .7;
+}
+.sidebar-nav-grid .nav-link-grid.active i {
+  background: var(--color-primary);
+  color: var(--color-white);
+  box-shadow: 0 6px 6px rgba(0, 205, 184,0.3);
+  opacity: 1;
+}
+.sidebar-nav-grid .nav-link-grid:hover i {
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  opacity: 1;
+}
+.sidebar-nav-grid .nav-link-grid:hover i {
+  color: var(--color-primary);
+  opacity: 1;
+}
+
+.sidebar-nav-grid .nav-link-grid span {
+  display: block;
+  text-align: center;
+}
+
+.sidebar-nav-grid .nav-link-grid.active span {
+  color: var(--color-primary);
+}
+
+.sidebar-close {
+  justify-content: end;
+}
+
+.sidebar-close i {
+  font-size: 25px;
+  cursor: pointer;
+}
+
 .main-content {
     background: var(--color-white);
     position: relative;

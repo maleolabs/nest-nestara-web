@@ -1,7 +1,6 @@
 @include('layouts.header')
 <body>
 @include('dashboard.layouts.sidebar-grid')
-    <md-circular-progress value="0.75"></md-circular-progress>
     <main id="main" class="main">
         <div class="container-fluid mt-3">
             <div class="d-flex align-items-center mb-2">

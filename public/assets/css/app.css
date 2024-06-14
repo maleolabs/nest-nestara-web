@@ -14,7 +14,7 @@
     --color-primary : #00CDB8;
     --color-primary-semi-light : #9accb7;
     --color-primary-light : #D3E4DD;
-    --color-primary-extra-light : #edf4f1;
+    --color-primary-extra-light : #F8FCFB;
     --color-primary-semi-dark : #034242;
     --color-primary-dark : #033232;
     --color-primary-dark-high : #011919;
@@ -43,6 +43,7 @@
 
     /* progress circle */
     --current-progress: 50deg;
+    --md-sys-color-primary: #006A6A;
 }
 
 * {
@@ -2487,8 +2488,10 @@ button.btn-app-tertiary-light:active {
 /* dashboard menu */
 .dash-menu {
 	display: flex;
+  gap: 12px;
   overflow-x: scroll;
 	background-color: var(--color-white);
+  border-bottom: solid 1px var(--color-light);
 }
 
 .sticky-top-nav {
@@ -2535,7 +2538,7 @@ button.btn-app-tertiary-light:active {
 }
 
 .dash-menu-item {
-	padding: 8px 4px;
+	padding: 8px 0;
 	cursor: pointer;
 	position: relative;
   width: max-content;
@@ -3121,4 +3124,8 @@ del::before {
   .w-sm-70 {
     width: 100%;
   }
+}
+
+.badge {
+  font-family: 'Kollektif-Bold';
 }

@@ -2,12 +2,10 @@
     <li class="breadcrumb-item active">
         Pendaftaran
     </li>
-    <li class="breadcrumb-item active">
-        {{-- {{ $menu }} --}}
-    </li>
 @endpush
 <div>
-    <div class="dash-menu sticky-top-0 mb-3">
+    <md-linear-progress wire:loading wire:target='selectMenu' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
+    <div class="dash-menu sticky-top-0">
         <div class="dash-menu-item {{ $menu == self::DATA_PEMOHON ? 'active' : '' }}" wire:click="selectMenu('{{ self::DATA_PEMOHON }}')">
             <span class="dash-menu-item-content">
                 <i class="fa-solid fa-users me-2"></i>
@@ -38,8 +36,3 @@
         <h1>{{ $menu }}</h1>
     </div>
 </div>
-@push('scripts')
-    <script>
-        console.log("jkhsjk");
-    </script>
-@endpush

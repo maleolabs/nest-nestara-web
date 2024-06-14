@@ -5,7 +5,10 @@
             <i class="app-text-primary bi bi-x-lg"></i>
         </button>
 
-        <h5 class="dashboard-title fw-bold mb-5 ms-3">{{ env('APP_NAME') }}</h5>
+        <div class="d-flex gap-2 align-items-center mb-5">
+            <img src="{{ asset('storage/web/favicon.ico') }}" alt="{{ env('APP_NAME') }}">
+            <h5 class="dashboard-title fw-bold">{{ env('APP_NAME') }}</h5>
+        </div>
 
         <ul class="sidebar-nav-grid" id="sidebar-nav-grid">
             <h6 class="fw-bold">Menu</h6>
@@ -41,7 +44,7 @@
             </li>
             <li class="nav-item-grid">
                 <a class="nav-link-grid {{ Route::currentRouteName() == 'reporting.index' ? 'active' : '' }}" href="{{ route('reporting.index') }}">
-                    <i class="fa-solid fa-box-archive"></i>
+                    <i class="fa-solid fa-file-lines"></i>
                     <span>Reporting</span>
                 </a>
             </li>

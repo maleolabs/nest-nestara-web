@@ -1,4 +1,4 @@
 @extends('dashboard.layouts.dashboard-app')
 @section('main')
-    <h1>Pendaftaran</h1>
+    @livewire('dashboard.pendaftaran.pendaftaran-index')
 @endsection

@@ -631,3 +631,10 @@
     width: 100%;
     background: linear-gradient(rgba(0, 205, 184, 0.2), rgba(0, 205, 184, 0.2));
 }
+
+.content-wrap {
+    background: var(--color-white-light);
+    padding: 12px;
+    border-radius: 8px;
+    min-height: 70vh;
+}

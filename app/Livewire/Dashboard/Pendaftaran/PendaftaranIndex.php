@@ -26,6 +26,7 @@ class PendaftaranIndex extends Component
     public function selectMenu($select_menu)
     {
         $this->menu = $select_menu;
+        $this->dispatch('menu-selected', ['menu' => $select_menu]);
     }
 
 }

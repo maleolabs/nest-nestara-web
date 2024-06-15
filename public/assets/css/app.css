@@ -603,8 +603,8 @@ textarea::-webkit-scrollbar {
   transition: all 0.3s;
   padding: 20px;
   overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--color-primary) transparent;
+  scrollbar-width: none;
+  scrollbar-color: transparent !important;
   background-color: var(--color-white);
 }
 

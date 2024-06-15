@@ -275,6 +275,9 @@ textarea::-webkit-scrollbar {
   color: var(--color-primary);
 }
 
+.page-header {
+  background-image: url("../../storage/web//gedung-mpp.png");
+}
 /*--------------------------------------------------------------
 # Navigation Menu
 --------------------------------------------------------------*/
@@ -2110,6 +2113,11 @@ textarea::-webkit-scrollbar {
 .position-sticky-nav {
 	top: 90px;
 	position: sticky;
+}
+
+.btn {
+  margin-bottom: 0 !important;
+  padding-left: auto;
 }
 
 .btn-app-primary {

@@ -14,10 +14,10 @@
                     Jenis Perizinan
                 </a>
                 @auth
-                    <a href="#" class="welcome-nav-link">
+                    <a href="javascript:;" class="welcome-nav-link">
                         Izin saya
                     </a>
-                    <a href="#" class="ms-3 sidebar-btn-show position-relative">
+                    <a href="javascript:;" class="ms-3 sidebar-btn-show position-relative">
                         <img src="{{ asset('storage/web/favicon.ico') }}" alt="" class="profile-img">
                     </a>
                 @else

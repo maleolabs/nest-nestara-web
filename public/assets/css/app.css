@@ -275,8 +275,13 @@ textarea::-webkit-scrollbar {
   color: var(--color-primary);
 }
 
-.page-header {
+.page-header:not(.page-register) {
   background-image: url("../../storage/web//gedung-mpp.png");
+}
+
+.page-img {
+  background-image: url("../../storage/web//gedung-mpp.png");
+  background-size: cover;
 }
 /*--------------------------------------------------------------
 # Navigation Menu

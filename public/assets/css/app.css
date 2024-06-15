@@ -289,6 +289,9 @@ textarea::-webkit-scrollbar {
 /**
 * Desktop Navigation 
 */
+nav {
+  height: fit-content !important;
+}
 .navbar {
   padding: 0;
 }
@@ -604,7 +607,7 @@ textarea::-webkit-scrollbar {
   padding: 20px;
   overflow-y: auto;
   scrollbar-width: none;
-  scrollbar-color: transparent !important;
+  scrollbar-color: var(--color-primary-light) transparent !important;
   background-color: var(--color-white);
 }
 
@@ -806,7 +809,7 @@ textarea::-webkit-scrollbar {
 # main
 ---------------------------------------------------------------*/
 #main {
-  padding: 20px 25px;
+  padding: 20px 50px;
   transition: all 0.3s;
 }
 .welcome {
@@ -822,7 +825,7 @@ textarea::-webkit-scrollbar {
 }
 @media (min-width: 1200px) {
   #main, #footer {
-    margin-left: 300px;
+    margin-left: 250px;
   }
 
   #main.widen {

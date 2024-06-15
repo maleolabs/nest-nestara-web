@@ -557,8 +557,8 @@
   padding: 10px 14px;
   border-radius: 8px;
   color: var(--color-primary-dark-high);
-  background: var(--color-light);
-  opacity: .7;
+  background: var(--color-primary-light);
+  opacity: .6;
 }
 .sidebar-nav-grid .nav-link-grid.active i {
   background: var(--color-primary);
@@ -633,7 +633,7 @@
 }
 
 .content-wrap {
-    background: var(--color-primary-extra-light);
+    background: var(--color-white-light);
     padding: 12px;
     min-height: 70vh;
 }

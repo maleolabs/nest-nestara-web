@@ -2,10 +2,14 @@
 
 namespace App\Livewire\Dashboard\Pendaftaran;
 
+use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class PendaftaranIndex extends Component
 {
+    #[Url()]
+    public $layout;
     public $menu;
 
     private const DATA_PEMOHON = 'Data Pemohon';
@@ -27,6 +31,12 @@ class PendaftaranIndex extends Component
     {
         $this->menu = $select_menu;
         $this->dispatch('menu-selected', ['menu' => $select_menu]);
+    }
+
+    #[On('change-layout')]
+    public function changeLayout($value)
+    {
+        $this->layout = $value;
     }
 
 }

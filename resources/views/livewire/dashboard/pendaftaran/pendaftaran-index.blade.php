@@ -27,7 +27,18 @@
             </span>
         </div>
     </div>
-    <div class="content-wrap">
-        <h1>{{ $menu }}</h1>
+    <div class="content-wrap py-3">
+        <form action="javascript:;">
+            @csrf
+            <div class="input-group input-group-outline my-3">
+                <label class="form-label">Cari Data Pemohon...</label>
+                <input type="text" class="form-control">
+            </div>
+        </form>
+        @if ($layout == 'grid')
+            @include('livewire.dashboard.pendaftaran.partials.grid')
+        @else
+            @include('livewire.dashboard.pendaftaran.partials.table')
+        @endif
     </div>
 </div>

@@ -26,32 +26,41 @@ class EmsifaAPIService implements RegionAPIService
 
     public function getRegenciesByProvince(int $province_id): array
     {
-        return [];
+        $url = 'regencies/' . $province_id . '.json';
+        return $this->fetchData(self::GET_METHOD, $url);
     }
 
     public function getRegency(int $regency_id): string
     {
-        return '';
+        $url = 'regency/' . $regency_id . '.json';
+        $province_data = $this->fetchData(self::GET_METHOD, $url);
+        return $province_data['name'];
     }
 
-    public function getDistricsByRegency(int $regency_id): array
+    public function getDistrictsByRegency(int $regency_id): array
     {
-        return [];
+        $url = 'districts/' . $regency_id . '.json';
+        return $this->fetchData(self::GET_METHOD, $url);
     }
 
-    public function getDistrict(int $discrict_id): string
+    public function getDistrict(int $district_id): string
     {
-        return '';
+        $url = 'district/' . $district_id . '.json';
+        $province_data = $this->fetchData(self::GET_METHOD, $url);
+        return $province_data['name'];
     }
 
-    public function getVillagesByDistrict(int $discrict_id): array
+    public function getVillagesByDistrict(int $district_id): array
     {
-        return [];
+        $url = 'villages/' . $district_id . '.json';
+        return $this->fetchData(self::GET_METHOD, $url);
     }
 
     public function getVillage(int $village_id): string
     {
-        return '';
+        $url = 'village/' . $village_id . '.json';
+        $province_data = $this->fetchData(self::GET_METHOD, $url);
+        return $province_data['name'];
     }
 
     private function fetchData(string $method, string $param): array

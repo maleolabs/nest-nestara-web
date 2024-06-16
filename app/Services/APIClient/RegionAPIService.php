@@ -13,11 +13,11 @@ interface RegionAPIService
 
     function getRegency(int $regency_id): string;
 
-    function getDistricsByRegency(int $regency_id): array;
+    function getDistrictsByRegency(int $regency_id): array;
 
-    function getDistrict(int $discrict_id): string;
+    function getDistrict(int $district_id): string;
 
-    function getVillagesByDistrict(int $discrict_id): array;
+    function getVillagesByDistrict(int $district_id): array;
 
     function getVillage(int $village_id): string;
 

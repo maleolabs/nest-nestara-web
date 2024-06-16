@@ -19,7 +19,7 @@
                 </a>
             </li>
             <li class="nav-item-grid">
-                <a class="nav-link-grid {{ Route::currentRouteName() == 'pendaftaran.index' ? 'active' : '' }}" href="{{ route('pendaftaran.index') }}">
+                <a class="nav-link-grid {{ Str::contains(Route::currentRouteName(), 'pendaftaran') ? 'active' : '' }}" href="{{ route('pendaftaran.index') }}">
                     <i class="fa-solid fa-clipboard"></i>
                     <span>Pendaftaran</span>
                 </a>

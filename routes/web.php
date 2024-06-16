@@ -24,6 +24,7 @@ Route::prefix('dashboard')->group(function () {
     
     Route::prefix('/pendaftaran')->group(function() {
         Route::get('/', [PendaftaranController::class, 'index'])->name('pendaftaran.index');
+        Route::get('/create', [PendaftaranController::class, 'create'])->name('pendaftaran.create');
     });
 
     Route::prefix('/back-office')->group(function() {

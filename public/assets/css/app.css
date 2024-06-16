@@ -79,7 +79,6 @@ body {
   background-color: var(--color-primary);
 }
 
-textarea:focus,
 select:not(.filter-select):focus,
 .form-select:focus,
 input[type="text"]:focus,
@@ -97,14 +96,10 @@ input[type="search"]:not(.search-input):focus,
 input[type="tel"]:focus,
 input[type="color"]:focus,
 .uneditable-input:focus,
-.form-control:focus,
 .is-invalid:focus {
   background: var(--color-body);
   box-shadow: none;
-  border-top: 1px solid var(--color-line);
-  border-left: 1px solid var(--color-line);
-  border-right: 1px solid var(--color-line);
-  border-bottom: 2px solid var(--color-primary);
+  border: 2px solid var(--color-primary);
 }
 
 input[type="radio"]:checked, .form-check-input:checked {
@@ -122,11 +117,19 @@ label {
 }
 
 .form-control, .form-select {
-  background: var(--color-body);
+  background: transparent;
   outline: 0 none;
   box-shadow: none;
   font-weight: 600;
-  border-radius: 6px 6px 0 0;
+  border-radius: 6px;
+}
+
+.form-select {
+  font-size-adjust: 0.7rem;
+}
+
+option {
+  height: 25px !important;
 }
 
 .form-control:disabled, .form-select:disabled {
@@ -809,7 +812,7 @@ nav {
 # main
 ---------------------------------------------------------------*/
 #main {
-  padding: 20px 50px;
+  padding: 20px 0 20px 50px;
   transition: all 0.3s;
 }
 .welcome {

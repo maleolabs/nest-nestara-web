@@ -15,13 +15,13 @@
         </a>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
             <li>
-                <a class="dropdown-item" href="javascrpt:;">
+                <a class="dropdown-item" href="{{ route('pendaftaran.create', ['type' => 'data-pemohon']) }}">
                     <i class="fa-solid fa-users me-2"></i>
                     Data Pemohon
                 </a>
             </li>
             <li>
-                <a class="dropdown-item" href="javascrpt:;">
+                <a class="dropdown-item" href="{{ route('pendaftaran.create', ['type' => 'izin-baru']) }}">
                     <i class="fa-solid fa-file-circle-plus me-2"></i>
                     Izin Baru
                 </a>

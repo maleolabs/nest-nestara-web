@@ -41,26 +41,34 @@
                     <div class="text-bold text-sm mb-2">Alamat</div>
                     <label for="provinsi" class="mb-0">Provinsi</label>
                     <div class="input-group input-group-static mb-3">
-                        <select class="form-select px-3 @error('provinsi') is_invalid @elseif(old('provinsi')) is-valid @enderror" name="provinsi" id="provinsi" value="{{ old('provinsi') }}">
-                            <option value="gorontalo">Gorontalo</option>
+                        <select class="form-select px-3 @error('provinsi') is_invalid @elseif(old('provinsi')) is-valid @enderror" name="provinsi" id="provinsi" wire:model='provinsi' value="{{ old('provinsi') }}">
+                            @foreach ($allProvinsi as $prov)
+                                <option value="{{ $prov['id'] }}">{{ $prov['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <label for="kabupaten" class="mb-0">Kabupaten</label>
                     <div class="input-group input-group-static mb-3">
-                        <select class="form-select px-3 @error('kabupaten') is_invalid @elseif(old('kabupaten')) is-valid @enderror" name="kabupaten" id="kabupaten" value="{{ old('kabupaten') }}">
-                            <option value="gorontalo">Gorontalo</option>
+                        <select class="form-select px-3 @error('kabupaten') is_invalid @elseif(old('kabupaten')) is-valid @enderror" name="kabupaten" id="kabupaten" wire:model='kabupaten' value="{{ old('kabupaten') }}">
+                            @foreach ($allKabupaten as $kab)
+                                <option value="{{ $kab['id'] }}">{{ $kab['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <label for="kecamatan" class="mb-0">kecamatan</label>
                     <div class="input-group input-group-static mb-3">
-                        <select class="form-select px-3 @error('kecamatan') is_invalid @elseif(old('kecamatan')) is-valid @enderror" name="kecamatan" id="kecamatan" value="{{ old('kecamatan') }}">
-                            <option value="gorontalo">Gorontalo</option>
+                        <select class="form-select px-3 @error('kecamatan') is_invalid @elseif(old('kecamatan')) is-valid @enderror" name="kecamatan" id="kecamatan" wire:model='kecamatan' value="{{ old('kecamatan') }}">
+                            @foreach ($allKecamatan as $kec)
+                                <option value="{{ $kec['id'] }}">{{ $kec['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <label for="kelurahan" class="mb-0">kelurahan</label>
                     <div class="input-group input-group-static mb-3">
-                        <select class="form-select px-3 @error('kelurahan') is_invalid @elseif(old('kelurahan')) is-valid @enderror" name="kelurahan" id="kelurahan" value="{{ old('kelurahan') }}">
-                            <option value="gorontalo">Gorontalo</option>
+                        <select class="form-select px-3 @error('kelurahan') is_invalid @elseif(old('kelurahan')) is-valid @enderror" name="kelurahan" id="kelurahan" wire:model='kelurahan' value="{{ old('kelurahan') }}">
+                            @foreach ($allKelurahan as $kel)
+                                <option value="{{ $kel['id'] }}">{{ $kel['name'] }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <label for="detail_alamat" class="mb-0">Detail Alamat</label>

@@ -123,7 +123,7 @@
             Untuk mengelola data pemohon, Anda bisa menambah data baru, mengedit data yang sudah ada, atau menghapus data yang dipilih. Gunakan tombol di bawah ini sesuai kebutuhan Anda.
         </p>
         <div class="d-flex align-items-center justify-content-between gap-2">
-            <button class="btn bg-gradient-primary w-100" title="Tambah data pemohon baru">
+            <button class="btn bg-gradient-primary w-100" title="Tambah data pemohon baru" wire:click='addNew'>
                 <i class="fa-solid fa-square-plus text-md"></i>
                 <span class="ms-1 d-sm-inline d-none">Tambah data baru</span>
             </button>
@@ -131,11 +131,11 @@
                 <i class="fa-solid fa-eye text-md"></i>
                 <span class="ms-1 d-sm-inline d-none">Lihat semua data</span>
             </a>
-            <button class="btn bg-gradient-light w-100" title="Ubah data pemohon">
+            <button class="btn bg-gradient-light w-100" title="Ubah data pemohon" wire:click='editData'>
                 <i class="fa-solid fa-square-pen text-secondary text-md"></i>
                 <span class="ms-1 d-sm-inline d-none">Ubah data pemohon</span>
             </button>
-            <button class="btn bg-gradient-danger w-100" title="Hapus data pemohon">
+            <button class="btn bg-gradient-danger w-100" title="Hapus data pemohon" wire:click='deleteData'>
                 <i class="fa-solid fa-trash text-md"></i>
                 <span class="ms-1 d-sm-inline d-none">Hapus data pemohon</span>
             </button>

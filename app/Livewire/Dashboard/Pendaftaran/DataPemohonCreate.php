@@ -63,6 +63,7 @@ class DataPemohonCreate extends Component
     public function resetData()
     {
         $this->form_data_pemohon->clearValidation();
+        $this->clearAllData();
     }
 
     public function save()
@@ -71,18 +72,57 @@ class DataPemohonCreate extends Component
         $this->saved = true;
     }
 
+    public function editData()
+    {
+        $this->saved = false;
+    }
+
+    public function addNew()
+    {
+        $this->saved = false;
+        $this->clearAllData();
+    }
+
+    private function clearAllData()
+    {
+        $this->allKabupaten = [];
+        $this->allKecamatan = [];
+        $this->allKelurahan = [];
+        $this->form_data_pemohon->sumber_identitas = null;
+        $this->form_data_pemohon->nomor_id = null;
+        $this->form_data_pemohon->nama_pemohon = null;
+        $this->form_data_pemohon->no_telepon = null;
+        $this->form_data_pemohon->provinsi = null;
+        $this->form_data_pemohon->kabupaten = null;
+        $this->form_data_pemohon->kecamatan = null;
+        $this->form_data_pemohon->kelurahan = null;
+        $this->form_data_pemohon->detail_alamat = null;
+        $this->form_data_pemohon->alamat_luar_negeri = null;
+    }
+
+    public function deleteData()
+    {
+        
+    }
+
     private function getRegionValue($type, $id): string
     {
         $value = '';
         try {
-            if ($type == 'provinsi')
-                $value = $this->getRegionService()->getProvince($id);
-            else if ($type == 'kabupaten')
-                $value = $this->getRegionService()->getRegency($id);
-            else if ($type == 'kecamatan')
-                $value = $this->getRegionService()->getDistrict($id);
-            else if ($type == 'kelurahan')
-                $value = $this->getRegionService()->getVillage($id);
+            switch ($type) {
+                case 'provinsi':
+                    $value = $this->getRegionService()->getProvince($id);
+                    break;
+                case 'kabupaten':
+                    $value = $this->getRegionService()->getRegency($id);
+                    break;
+                case 'kecamatan':
+                    $value = $this->getRegionService()->getDistrict($id);
+                    break;
+                case 'kelurahan':
+                    $value = $this->getRegionService()->getVillage($id);
+                    break;
+            }
         } catch(ConnectException $e) {
             $value = 'Jaringan eror';
         }

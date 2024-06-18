@@ -4,6 +4,7 @@ namespace App\Livewire\Dashboard\Pendaftaran;
 
 use App\Livewire\Forms\DataPemohonForm;
 use App\Services\APIClient\RegionAPIService;
+use App\utils\Helper\Modal;
 use GuzzleHttp\Exception\ConnectException;
 use Livewire\Component;
 
@@ -18,6 +19,8 @@ class DataPemohonCreate extends Component
         $allKelurahan = [];
 
     public $saved = false;
+
+    private $modal;
 
     public function mount()
     {
@@ -46,7 +49,9 @@ class DataPemohonCreate extends Component
     public function render()
     {
         $this->setRegionData();
-        return view('livewire.dashboard.pendaftaran.data-pemohon-create');
+        return view('livewire.dashboard.pendaftaran.data-pemohon-create', [
+            'modal' => $this->modal
+        ]);
     }
 
     private function setRegionData()
@@ -102,7 +107,31 @@ class DataPemohonCreate extends Component
 
     public function deleteData()
     {
-        
+        $this->modal = new Modal(false, true);
+        $this->modal->setTitle('Hapus Data Pemohon');
+        $this->modal->addConfirm('decision', 'Anda yakin ingin menghapus data pemohon ini?');
+        $this->modal->setCancelButton('Tidak');
+        $this->modal->setCancelFunction('dismissModal');
+        $this->modal->setApplyButton('Ya, Hapus');
+        $this->modal->setApplyButtonBgColor('bg-gradient-danger');
+        $this->modal->setSubmitFunction('confirmDeleteData');
+        $this->modal->show();
+    }
+
+    public function dismissModal()
+    {
+        $this->modal = null;
+    }
+
+    public function confirmDeleteData()
+    {
+        $this->modal = new Modal(false, true);
+        $this->modal->setTitle('Sukses!');
+        $this->modal->setMessage('Berhasil menghapus data pemohon!');
+        $this->modal->setStatus(true);
+        $this->modal->setCancelButton('Tutup');
+        $this->modal->setCancelFunction('dismissModal');
+        $this->modal->show();
     }
 
     private function getRegionValue($type, $id): string

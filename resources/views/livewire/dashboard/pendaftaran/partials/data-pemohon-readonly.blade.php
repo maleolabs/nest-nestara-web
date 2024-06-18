@@ -124,7 +124,12 @@
         </p>
         <div class="d-flex align-items-center justify-content-between gap-2">
             <button class="btn bg-gradient-primary w-100" title="Tambah data pemohon baru" wire:click='addNew'>
-                <i class="fa-solid fa-square-plus text-md"></i>
+                <i class="fa-solid fa-square-plus text-md" wire:loading.remove wire:target='addNew'></i>
+                <span wire:loading wire:target='addNew'>
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </span>
                 <span class="ms-1 d-sm-inline d-none">Tambah data baru</span>
             </button>
             <a href="{{ route('pendaftaran.index') }}" class="btn bg-gradient-info w-100" title="Lihat semua data pemohon">
@@ -132,14 +137,25 @@
                 <span class="ms-1 d-sm-inline d-none">Lihat semua data</span>
             </a>
             <button class="btn bg-gradient-light w-100" title="Ubah data pemohon" wire:click='editData'>
-                <i class="fa-solid fa-square-pen text-secondary text-md"></i>
+                <i class="fa-solid fa-square-pen text-secondary text-md" wire:loading.remove wire:target='editData'></i>
+                <span wire:loading wire:target='editData'>
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </span>
                 <span class="ms-1 d-sm-inline d-none">Ubah data pemohon</span>
             </button>
             <button class="btn bg-gradient-danger w-100" title="Hapus data pemohon" wire:click='deleteData'>
-                <i class="fa-solid fa-trash text-md"></i>
+                <i class="fa-solid fa-trash text-md" wire:loading.remove wire:target='deleteData'></i>
+                <span wire:loading wire:target='deleteData'>
+                    <div class="spinner-border spinner-border-sm" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </span>
                 <span class="ms-1 d-sm-inline d-none">Hapus data pemohon</span>
             </button>
         </div>
         <hr>
     </div>
+    @include('helper.modal')
 </div>

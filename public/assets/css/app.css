@@ -96,6 +96,7 @@ input[type="search"]:not(.search-input):focus,
 input[type="tel"]:focus,
 input[type="color"]:focus,
 .uneditable-input:focus,
+.select2-hidden-accessible:focus,
 .is-invalid:focus {
   background: var(--color-body);
   box-shadow: none;

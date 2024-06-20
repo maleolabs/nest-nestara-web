@@ -536,7 +536,8 @@ function getEventTarget(e) {
 
 // End tabs navigation
 
-window.onload = function() {
+window.onload = inputsHandle();
+function inputsHandle() {
   // Material Design Input function
   var inputs = document.querySelectorAll('input');
 

@@ -3,7 +3,10 @@
 namespace App\Services\APIClient\Impl;
 
 use App\Services\APIClient\RegionAPIService;
+use App\Services\AppService\FileService;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
 
 class EmsifaAPIService implements RegionAPIService
 {
@@ -11,6 +14,13 @@ class EmsifaAPIService implements RegionAPIService
     private const BASE_URL = 'https://emsifa.github.io/api-wilayah-indonesia/api/';
 
     private const GET_METHOD = 'GET';
+
+    private const LOCAL_REGION_PATH = 'region';
+
+    private function fileService(): FileService
+    {
+        return app(FileService::class);
+    }
     
     public function getProvinces(): array
     {
@@ -66,15 +76,26 @@ class EmsifaAPIService implements RegionAPIService
     private function fetchData(string $method, string $param): array
     {
         $client = new Client();
-        $response = $client->request($method, self::BASE_URL . $param);
-        if ($response->getStatusCode() == 200) {
-            $data = json_decode($response->getBody(), true);
+        $path = self::LOCAL_REGION_PATH . '/' . $param;
+
+        $data = [];
+
+        try {
+            $response = $client->request($method, self::BASE_URL . $param);
+            if ($response->getStatusCode() == 200) {
+                $data = json_decode($response->getBody(), true);
+                $this->fileService()->save($path, $response->getBody());
+                return $data;
+            }
+        } catch (ConnectException $ce) {
+            $data = $this->fileService()->getData($path);
             return $data;
-        }
-        return response()->json(
-            ['error' => 'failed to fetch data'],
-            $response->getStatusCode()
-        );
+        } catch (RequestException $re) {
+            $data = $this->fileService()->getData($path);
+            return $data;
+        } 
+        
+        return $data;
     }
 
 }

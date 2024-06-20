@@ -12,7 +12,9 @@
         });
         Livewire.hook('morph.updated', ({ el, component }) => {
             select2Init()
-            inputsHandle()
+            @if(count($errors) <= 0)
+                inputsHandle()
+            @endif
         })
         function select2Init() {
             $('#jenisPerizinanSelect').select2({

@@ -4,8 +4,8 @@ namespace App\Livewire\Dashboard\Pendaftaran;
 
 use App\Livewire\Forms\DataPemohonForm;
 use App\Services\APIClient\RegionAPIService;
+use App\Services\DomainServices\PemohonService;
 use App\utils\Helper\Modal;
-use GuzzleHttp\Exception\ConnectException;
 use Livewire\Component;
 
 class DataPemohonCreate extends Component
@@ -24,11 +24,7 @@ class DataPemohonCreate extends Component
 
     public function mount()
     {
-        try {
-            $this->allProvinsi = $this->getRegionService()->getProvinces();
-        } catch (ConnectException $e) {
-
-        }
+        $this->allProvinsi = $this->getRegionService()->getProvinces();
         $this->form_data_pemohon->provinsi = 75; // default for gorontalo province
     }
 
@@ -56,13 +52,9 @@ class DataPemohonCreate extends Component
 
     private function setRegionData()
     {
-        try {
-            $this->allKabupaten = is_value_exists($this->form_data_pemohon->provinsi) ? $this->getRegionService()->getRegenciesByProvince($this->form_data_pemohon->provinsi) : [];
-            $this->allKecamatan = is_value_exists($this->form_data_pemohon->kabupaten) ? $this->getRegionService()->getDistrictsByRegency($this->form_data_pemohon->kabupaten) : [];
-            $this->allKelurahan = is_value_exists($this->form_data_pemohon->kecamatan) ? $this->getRegionService()->getVillagesByDistrict($this->form_data_pemohon->kecamatan) : [];
-        } catch (ConnectException $e) {
-
-        }
+        $this->allKabupaten = is_value_exists($this->form_data_pemohon->provinsi) ? $this->getRegionService()->getRegenciesByProvince($this->form_data_pemohon->provinsi) : [];
+        $this->allKecamatan = is_value_exists($this->form_data_pemohon->kabupaten) ? $this->getRegionService()->getDistrictsByRegency($this->form_data_pemohon->kabupaten) : [];
+        $this->allKelurahan = is_value_exists($this->form_data_pemohon->kecamatan) ? $this->getRegionService()->getVillagesByDistrict($this->form_data_pemohon->kecamatan) : [];
     }
 
     public function resetData()
@@ -74,6 +66,7 @@ class DataPemohonCreate extends Component
     public function save()
     {
         $this->validate();
+        $this->getPemohonService()->save($this->form_data_pemohon->all());
         $this->saved = true;
     }
 
@@ -137,30 +130,31 @@ class DataPemohonCreate extends Component
     private function getRegionValue($type, $id): string
     {
         $value = '';
-        try {
-            switch ($type) {
-                case 'provinsi':
-                    $value = $this->getRegionService()->getProvince($id);
-                    break;
-                case 'kabupaten':
-                    $value = $this->getRegionService()->getRegency($id);
-                    break;
-                case 'kecamatan':
-                    $value = $this->getRegionService()->getDistrict($id);
-                    break;
-                case 'kelurahan':
-                    $value = $this->getRegionService()->getVillage($id);
-                    break;
-            }
-        } catch(ConnectException $e) {
-            $value = 'Jaringan eror';
+        switch ($type) {
+            case 'provinsi':
+                $value = $this->getRegionService()->getProvince($id);
+                break;
+            case 'kabupaten':
+                $value = $this->getRegionService()->getRegency($id);
+                break;
+            case 'kecamatan':
+                $value = $this->getRegionService()->getDistrict($id);
+                break;
+            case 'kelurahan':
+                $value = $this->getRegionService()->getVillage($id);
+                break;
         }
         return $value;
-    } 
+    }
 
     private function getRegionService(): RegionAPIService
     {
         return app(RegionAPIService::class);
+    }
+
+    private function getPemohonService(): PemohonService
+    {
+        return app(PemohonService::class);
     }
     
 }

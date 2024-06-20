@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Services\APIClient\Impl\EmsifaAPIService;
 use App\Services\APIClient\RegionAPIService;
+use App\Services\AppService\FileService;
+use App\Services\AppService\Impl\FileServiceImpl;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\Impl\PemohonServiceImpl;
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -16,7 +18,8 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
     {
         return [
             RegionAPIService::class,
-            PemohonService::class
+            PemohonService::class,
+            FileService::class,
         ];
     }
 
@@ -25,6 +28,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     public function register(): void
     {
+        $this->app->singleton(FileService::class, FileServiceImpl::class);
         $this->app->singleton(RegionAPIService::class, EmsifaAPIService::class);
         $this->app->singleton(PemohonService::class, PemohonServiceImpl::class);
     }

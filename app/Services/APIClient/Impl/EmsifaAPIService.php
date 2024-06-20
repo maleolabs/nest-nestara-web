@@ -43,8 +43,8 @@ class EmsifaAPIService implements RegionAPIService
     public function getRegency(int $regency_id): string
     {
         $url = 'regency/' . $regency_id . '.json';
-        $province_data = $this->fetchData(self::GET_METHOD, $url);
-        return $province_data['name'];
+        $regency_data = $this->fetchData(self::GET_METHOD, $url);
+        return $regency_data['name'];
     }
 
     public function getDistrictsByRegency(int $regency_id): array
@@ -56,8 +56,8 @@ class EmsifaAPIService implements RegionAPIService
     public function getDistrict(int $district_id): string
     {
         $url = 'district/' . $district_id . '.json';
-        $province_data = $this->fetchData(self::GET_METHOD, $url);
-        return $province_data['name'];
+        $district_data = $this->fetchData(self::GET_METHOD, $url);
+        return $district_data['name'];
     }
 
     public function getVillagesByDistrict(int $district_id): array
@@ -69,15 +69,15 @@ class EmsifaAPIService implements RegionAPIService
     public function getVillage(int $village_id): string
     {
         $url = 'village/' . $village_id . '.json';
-        $province_data = $this->fetchData(self::GET_METHOD, $url);
-        return $province_data['name'];
+        $village_data = $this->fetchData(self::GET_METHOD, $url);
+        return $village_data['name'];
     }
 
     private function fetchData(string $method, string $param): array
     {
         $client = new Client();
         $path = self::LOCAL_REGION_PATH . '/' . $param;
-
+        
         $data = [];
 
         try {

@@ -6,6 +6,8 @@ use App\Livewire\Forms\DataPemohonForm;
 use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\PemohonService;
 use App\utils\Helper\Modal;
+use Illuminate\Database\QueryException;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class DataPemohonCreate extends Component
@@ -16,7 +18,8 @@ class DataPemohonCreate extends Component
     public $allProvinsi = [],
         $allKabupaten = [],
         $allKecamatan = [],
-        $allKelurahan = [];
+        $allKelurahan = [],
+        $pemohon_id;
 
     public $saved = false;
 
@@ -66,7 +69,19 @@ class DataPemohonCreate extends Component
     public function save()
     {
         $this->validate();
-        $this->getPemohonService()->save($this->form_data_pemohon->all());
+        $saved_pemohon = null;
+        if ($this->pemohon_id == null)
+            try {
+                $saved_pemohon = $this->getPemohonService()->save($this->form_data_pemohon->all());
+            } catch (QueryException $e) {
+                if ($e->getCode() == 23000)
+                    throw ValidationException::withMessages([
+                        'form_data_pemohon.nomor_id' => 'nomor id sudah terdaftar!'
+                    ]);
+            }
+        else
+            $saved_pemohon = $this->getPemohonService()->update($this->pemohon_id, $this->form_data_pemohon->all());
+        $this->pemohon_id = $saved_pemohon->id;
         $this->saved = true;
     }
 

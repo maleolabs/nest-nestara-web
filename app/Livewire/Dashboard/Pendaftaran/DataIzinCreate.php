@@ -15,6 +15,8 @@ class DataIzinCreate extends Component
     public DataIzinForm $data_izin_form;
     public DataPemohonForm $form_data_pemohon;
 
+    private const GORONTALO_ID = 75;
+
     public $allProvinsi = [],
         $allKabupaten = [],
         $allKecamatan = [],
@@ -32,7 +34,7 @@ class DataIzinCreate extends Component
         } catch (ConnectException $e) {
 
         }
-        $this->form_data_pemohon->provinsi = 75; // default for gorontalo province
+        $this->form_data_pemohon->provinsi = self::GORONTALO_ID;
     }
 
     public function updated($field)

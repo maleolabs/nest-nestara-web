@@ -29,7 +29,7 @@ class CreateDomain extends Command
         $name = $this->argument('name');
         $with_service_function = $this->option('wsf');
 
-        $this->createServiceContact($name, $with_service_function);
+        $this->createServiceContract($name, $with_service_function);
         $this->createServiceImplementation($name, $with_service_function);
         if ($with_service_function)
             $this->call('make:model', [
@@ -38,10 +38,10 @@ class CreateDomain extends Command
             ]);
     }
 
-    protected function createServiceContact($name, $wsf)
+    protected function createServiceContract($name, $wsf)
     {
         $contract_name = $name . 'Service';
-        $directory = app_path('Services\\DomainServices');
+        $directory = app_path("Services\\DomainServices");
         $path = $directory . '\\' . $contract_name . '.php';
         $namespace = 'App\\Services\\DomainServices';
         if (file_exists($path)) {
@@ -81,7 +81,7 @@ class CreateDomain extends Command
     protected function createServiceImplementation($name, $wsf)
     {
         $impl_name = $name . 'ServiceImpl';
-        $directory = app_path('Services\\DomainServices\\Impl');
+        $directory = app_path("Services\\DomainServices\\Impl");
         $path = $directory . '\\' . $impl_name . '.php';
         $namespace = 'App\\Services\\DomainServices\\Impl';
         if (file_exists($path)) {

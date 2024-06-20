@@ -12,7 +12,7 @@ class CreateDomain extends Command
      *
      * @var string
      */
-    protected $signature = 'app:create-domain {name} {--wsf}';
+    protected $signature = 'app:create-domain {name} {--sf=} {--wsf}';
 
     /**
      * The console command description.
@@ -28,9 +28,10 @@ class CreateDomain extends Command
     {
         $name = $this->argument('name');
         $with_service_function = $this->option('wsf');
+        $service_folder = $this->option('sf');
 
-        $this->createServiceContract($name, $with_service_function);
-        $this->createServiceImplementation($name, $with_service_function);
+        $this->createServiceContract($name, $service_folder, $with_service_function);
+        $this->createServiceImplementation($name, $service_folder, $with_service_function);
         if ($with_service_function)
             $this->call('make:model', [
                 'name' => $name,
@@ -38,12 +39,13 @@ class CreateDomain extends Command
             ]);
     }
 
-    protected function createServiceContract($name, $wsf)
+    protected function createServiceContract($name, $sf, $wsf)
     {
         $contract_name = $name . 'Service';
-        $directory = app_path("Services\\DomainServices");
+        $service_folder = ($sf ? $sf : 'DomainServices');
+        $directory = app_path("Services\\{$service_folder}");
         $path = $directory . '\\' . $contract_name . '.php';
-        $namespace = 'App\\Services\\DomainServices';
+        $namespace = 'App\\Services\\'.($sf ? $sf : 'DomainServices');
         if (file_exists($path)) {
             $this->error($contract_name . ' already exists!');
             return;
@@ -78,19 +80,19 @@ class CreateDomain extends Command
         $this->info("\n  <fg=white;bg=blue> INFO </> Service Contract [{$path}] created successfully\n");
     }
 
-    protected function createServiceImplementation($name, $wsf)
+    protected function createServiceImplementation($name, $sf, $wsf)
     {
         $impl_name = $name . 'ServiceImpl';
-        $directory = app_path("Services\\DomainServices\\Impl");
+        $directory = app_path("Services\\" . ($sf ? $sf : 'DomainServices') . "\\Impl");
         $path = $directory . '\\' . $impl_name . '.php';
-        $namespace = 'App\\Services\\DomainServices\\Impl';
+        $namespace = 'App\\Services\\'.($sf ? $sf : 'DomainServices').'\\Impl';
         if (file_exists($path)) {
             $this->error($impl_name . ' already exists!');
             return;
         }
         $methods = [];
         $uses = [
-            'use App\\Services\\DomainServices\\' . $name . 'Service;'
+            'use App\\Services\\'.($sf ? $sf : 'DomainServices').'\\' . $name . 'Service;'
         ];
         if ($wsf) {
             $methods = [

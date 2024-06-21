@@ -23,6 +23,7 @@ return new class extends Migration
             $table->bigInteger('kelurahan');
             $table->string('detail_alamat', 255);
             $table->string('alamat_luar_negeri', 255)->nullable(true);
+            $table->softDeletes();
 
             $table->unique('nomor_id', 'nomor_id_unique');
             $table->timestamps();

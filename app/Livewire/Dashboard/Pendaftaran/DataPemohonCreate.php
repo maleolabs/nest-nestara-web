@@ -134,6 +134,17 @@ class DataPemohonCreate extends Component
     public function confirmDeleteData()
     {
         $this->modal = new Modal(false, true);
+        try {
+            $this->getPemohonService()->delete($this->pemohon_id);
+        } catch (QueryException $e) {
+            $this->modal->setTitle('Terjadi kesalahan!');
+            $this->modal->setMessage($e->getMessage());
+            $this->modal->setStatus(false);
+            $this->modal->setCancelButton('Tutup');
+            $this->modal->setCancelFunction('dismissModal');
+            $this->modal->show();
+            return;
+        }
         $this->modal->setTitle('Sukses!');
         $this->modal->setMessage('Berhasil menghapus data pemohon!');
         $this->modal->setStatus(true);

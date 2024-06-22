@@ -1,0 +1,129 @@
+.form-progress-container {
+    display: flex;
+    justify-content: center;
+}
+
+.form-progress-container .form-step {
+    position: relative;
+    text-align: center;
+    width: 100%;
+}
+
+.form-progress-container .form-step::before,
+.form-progress-container .form-step::after {
+    position: absolute;
+    content: '';
+    bottom: 25px;
+    right: -40%;
+    height: 3px;
+    width: 80%;
+    background: var(--color-grey);
+}
+
+.form-progress-container .form-step:last-child:before,
+.form-progress-container .form-step:last-child:after {
+    display: none;
+}
+
+.form-progress-container .form-step.fill::after {
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: animate-progress-check .3s linear forwards;
+}
+
+@keyframes animate-progress-check {
+    100%{
+        transform: scaleX(1);
+    }
+}
+
+.form-progress-container .form-step p {
+    opacity: .8;
+    color: var(--color-dark);
+}
+
+.form-progress-container .form-step.fill p,
+.form-progress-container .form-step.active p {
+    opacity: 1;
+}
+
+.form-progress-container .form-step .step-bullet {
+    position: relative;
+    height: 40px;
+    width: 40px;
+    border: 3px solid var(--color-grey);
+    border-radius: 50%;
+    display: inline-block;
+    font-weight: 500;
+    font-size: 1.2rem;
+    line-height: 40px;
+}
+
+.form-progress-container .form-step.fill .step-bullet {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.form-progress-container .form-step .step-bullet span {
+    position: absolute;
+    content: '';
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    height: 20px;
+    width: 20px;
+    background: var(--color-grey);
+    border-radius: 50%;
+}
+
+.form-progress-container .form-step.active .step-bullet {
+    border-color: var(--color-primary);
+}
+
+.form-progress-container .form-step.active .step-bullet span {
+    background: var(--color-primary);
+}
+
+.form-progress-container .form-step.fill .step-bullet span {
+    display: none;
+}
+
+.form-progress-container .form-step .step-check {
+    position: absolute;
+    top: 63%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+}
+
+.form-progress-container .form-step.fill .step-check {
+    display: inline;
+    color: var(--color-white);
+}
+
+@media(max-width: 575px) {
+    .form-progress-container .form-step::before,
+    .form-progress-container .form-step::after {
+        right: -30%;
+        width: 60%;
+    }
+
+    .form-progress-container .form-step p {
+        font-size: .7rem;
+    }
+
+    .form-progress-container .form-step .step-bullet {
+        height: 30px;
+        width: 30px;
+    }
+
+    .form-progress-container .form-step .step-bullet span {
+        height: 15px;
+        width: 15px;
+    }
+
+    .form-progress-container .form-step .step-check {
+        top: 60%;
+    }
+}

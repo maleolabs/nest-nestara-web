@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('pemohon', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
             $table->string('sumber_identitas', 10);
             $table->string('nomor_id', 15);
             $table->string('nama_pemohon', 100);
@@ -25,6 +26,7 @@ return new class extends Migration
             $table->string('alamat_luar_negeri', 255)->nullable(true);
             $table->softDeletes();
 
+            $table->foreign('user_id')->references('id')->on('users');
             $table->unique('nomor_id', 'nomor_id_unique');
             $table->timestamps();
         });

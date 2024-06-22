@@ -21,29 +21,14 @@
                     <div class="text-sm text-danger mt-1">{{ $message }}</div>
                 @enderror
             </div>
-            <h6>Pemohon Izin</h6>
-             <ul class="nav nav-tabs nav-tabs-bordered">
-                <li class="nav-item">
-                  <button class="nav-link active" type="button" data-bs-toggle="tab" data-bs-target="#existing-data">Ambil data pemohon izin</button>
-                </li>
-                <li class="nav-item">
-                  <button class="nav-link" type="button" data-bs-toggle="tab" data-bs-target="#new-data">Buat data pemohon izin baru</button>
-                </li>
-              </ul>
-            <div class="tab-content">
-                <div class="tab-pane fade show active" id="existing-data">
-                    <div class="border-bottom border-start border-end rounded p-3">
-                        <div class="input-group input-group-outline">
-                            <label for="cari_pemohon" class="form-label">Cari nama atau id pemohon</label>
-                            <input type="text" class="form-control" id="cari_pemohon" wire:model.live='cari_pemohon'>
-                            <div class="position-absolute end-2 top-50 translate-middle" wire:loading wire:target='cari_pemohon'>
-                                <i class="fa-solid fa-spinner fa-spin"></i>
-                            </div>
-                        </div>
+            <div class="border rounded p-3">
+                <h6 class="text-bold text-sm mb-3">Pemohon Izin</h6>
+                <div class="input-group input-group-outline">
+                    <label for="cari_pemohon" class="form-label">Cari nama atau id pemohon</label>
+                    <input type="text" class="form-control" id="cari_pemohon" wire:model.live='cari_pemohon'>
+                    <div class="position-absolute end-2 top-50 translate-middle" wire:loading wire:target='cari_pemohon'>
+                        <i class="fa-solid fa-spinner fa-spin"></i>
                     </div>
-                </div>
-                <div class="tab-pane fade" id="new-data">
-                    @include('livewire.dashboard.pendaftaran.partials.data-pemohon-form-field')
                 </div>
             </div>
         </div>

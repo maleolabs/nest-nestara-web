@@ -145,17 +145,36 @@
                 </span>
                 <span class="ms-1 d-sm-inline d-none">Ubah data pemohon</span>
             </button>
-            <button class="btn bg-gradient-danger w-100" title="Hapus data pemohon" wire:click='deleteData'>
-                <i class="fa-solid fa-trash text-md" wire:loading.remove wire:target='deleteData'></i>
-                <span wire:loading wire:target='deleteData'>
-                    <div class="spinner-border spinner-border-sm" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                </span>
+            <button class="btn bg-gradient-danger w-100" title="Hapus data pemohon" data-bg-toggle="modal" data-bs-target="#modal-delete-data-pemohon">
+                <i class="fa-solid fa-trash text-md"></i>
                 <span class="ms-1 d-sm-inline d-none">Hapus data pemohon</span>
             </button>
+            <div class="modal fade" id="modal-delete-data-pemohon" tabindex="-1" role="dialog" aria-labelledby="modal-delete-data-pemohon" aria-hidden="true">
+                <div class="modal-dialog modal-danger modal-dialog-centered modal-" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h6 class="modal-title font-weight-normal" id="modal-title-notification">Your attention is required</h6>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="py-3 text-center">
+                            <i class="material-icons h1 text-secondary">
+                                notifications_active
+                            </i>
+                            <h4 class="text-gradient text-danger mt-4">You should read this!</h4>
+                            <p>A small river named Duden flows by their place and supplies it with the necessary regelialia.</p>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-white">Ok, Got it</button>
+                            <button type="button" class="btn btn-link text-white ml-auto" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <hr>
     </div>
-    @include('helper.modal')
 </div>

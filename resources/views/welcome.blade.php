@@ -5,9 +5,9 @@
             <div class="col-md-5 col-sm-8">
                 <h2 class="page-title text-uppercase">{{ env('APP_NAME') }}</h2>
                 <p class="text-muted">Selamat datang di Aplikasi Perizinan Online Dinas Penanaman Modal dan PTSP Kabupaten Bone Bolango! Kami hadir untuk mempermudah proses perizinan Anda dengan layanan yang cepat dan mudah.</p>
-                <button class="btn btn-app-primary px-4 rounded-pill">Daftar Izin Baru</button>
+                <a href="{{ route('create-izin') }}" class="btn btn-app-primary px-4 rounded-pill">Daftar Izin Baru</a>
             </div>
-            <div class="col-md-7 col-sm-4 text-end">
+            <div class="col-md-7 col-sm-4 text-end d-sm-block d-none">
                 <img src="{{ asset('storage/web/img-front2.png') }}" alt="front-img" class="img-fluid" height="600" width="600">
             </div>
         </div>

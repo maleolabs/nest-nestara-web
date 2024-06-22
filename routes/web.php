@@ -18,6 +18,7 @@ Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/jenis-perizinan', [PerizinanController::class, 'jenisPerizinan'])->name('jenis-perizinan');
+Route::get('/buat-izin-baru', [PerizinanController::class, 'create'])->name('create-izin');
 
 Route::prefix('dashboard')->group(function () {
     Route::get('/', [DashController::class, 'index'])->name('dashboard');

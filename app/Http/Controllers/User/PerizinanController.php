@@ -16,4 +16,9 @@ class PerizinanController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        return response()->view('user.create-izin');
+    }
+
 }

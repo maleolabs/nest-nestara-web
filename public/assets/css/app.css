@@ -2533,7 +2533,7 @@ button.btn-app-tertiary-light:active {
     overflow-x: hidden;
     display: grid;
     grid-gap: 5px;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     justify-items: center;
   }
   .dash-menu.nav-bottom-sm .dash-menu-item {

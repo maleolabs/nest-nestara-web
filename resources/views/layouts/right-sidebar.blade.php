@@ -7,7 +7,7 @@
                     {{ Str::limit(auth()->user()->email, 20) }}
                 </h6>
             </div>
-            <button class="btn btn-light rounded-3 sidebar-btn-close mb-0">
+            <button class="btn btn-light rounded-3 sidebar-btn-close mb-0 ms-2 ps-3">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>

@@ -208,6 +208,7 @@
     right: 0;
     height: 80px;
     background: var(--color-white);
+    z-index: 9998;
 }
 .welcome-nav.header-scrolled,
 .welcome-nav.header-inner-pages {
@@ -230,6 +231,12 @@
     color: var(--color-primary) !important;
     opacity: .6 !important;
     text-decoration: none !important;
+}
+
+@media (max-width: 575px) {
+    .welcome-nav .welcome-nav-link {
+        display: none;
+    }
 }
 
 .welcome-nav .welcome-nav-link:last-child

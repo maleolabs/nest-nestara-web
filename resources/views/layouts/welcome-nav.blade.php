@@ -32,3 +32,32 @@
         </div>
     </div>
 </nav>
+
+@auth
+    <div class="dash-menu shadow-sm-none shadow-grey-top-sm nav-bottom-sm px-3" style="z-index: 9998">
+        <a href="{{ route('welcome') }}" class="dash-menu-item {{ Route::currentRouteName() == 'welcome' ? 'active' : '' }}">
+            <div class="dash-menu-item-content">
+                <i class="fa-solid fa-house"></i>
+                <span>Beranda</span>
+            </div>
+        </a>
+        <div class="dash-menu-item {{ Route::currentRouteName() == 'create-izin' ? 'active' : '' }}">
+            <a href="{{ route('create-izin') }}" class="dash-menu-item-content">
+                <i class="fa-solid fa-file-circle-plus"></i>
+                <span>Buat Izin</span>
+            </a>
+        </div>
+        <div class="dash-menu-item {{ Route::currentRouteName() == 'jenis-perizinan' ? 'active' : '' }}">
+            <a href="{{ route('jenis-perizinan') }}" class="dash-menu-item-content">
+                <i class="fa-solid fa-file-circle-question"></i>
+                <span>Jenis Perizinan</span>
+            </a>
+        </div>
+        <div class="dash-menu-item">
+            <a href="javascript:;" class="dash-menu-item-content">
+                <i class="fa-solid fa-file-signature"></i>
+                <span>Izin Saya</span>
+            </a>
+        </div>
+    </div>
+@endauth

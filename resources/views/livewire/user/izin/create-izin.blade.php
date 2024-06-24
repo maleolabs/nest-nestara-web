@@ -1,5 +1,5 @@
 <div class="container mb-5">
-    <md-linear-progress wire:loading wire:target='save, nextStep, prevStep' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
+    <md-linear-progress wire:loading wire:target='save, nextStep, prevStep, editExistingDataPemohon, saveChangeDataPemohon' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
     <h5 class="text-bold mb-0 text-center">
         <i class="fa-solid fa-file-circle-plus me-1"></i>
         Formulir Pengisian Data Izin Baru
@@ -32,9 +32,39 @@
         @csrf
         <div class="row">
             <div class="col-sm-8 mb-sm-0 mb-4">
-                <div class="card p-4 mb-0">
+                @if ($user_already_has_data_pemohon && $form_step == self::FIRST_STEP && !$edit_existing_data_pemohon)
+                    <div class="card bg-quaternary p-4 position-relative overflow-hidden">
+                        <div class="position-absolute top-100 start-100 translate-middle rounded-circle bg-tertiary shadow-lg box-200" style="z-index: 0;"></div>
+                        <div style="z-index: 1">
+                            <h4 class="text-bold text-capitalize">{{ $form_data_pemohon->nama_pemohon }}</h4>
+                            <p class="mb-0 text-sm text-bold">
+                                <i class="fa-regular fa-id-card me-1"></i>
+                                {{ $form_data_pemohon->nomor_id }}
+                                <span class="text-uppercase">{{ "({$form_data_pemohon->sumber_identitas})" }}</span>
+                            </p> 
+                            <p class="mb-0 text-sm text-bold">
+                                <i class="fa-solid fa-phone me-1"></i>
+                                {{ $form_data_pemohon->no_telepon }}
+                            </p> 
+                            <p class="mb-3 text-xs text-bold text-uppercase">
+                                <i class="fa-solid fa-location-dot me-2"></i>
+                                {{ $this->getAlamat() }}
+                            </p>
+                            <button wire:click='editExistingDataPemohon' class="btn btn-outline-primary border-2 text-capitalize" type="button">
+                                ubah
+                            </button>
+                        </div>
+                    </div>
+                @endif
+                <div class="card p-4 mb-0 {{ $user_already_has_data_pemohon && $form_step == self::FIRST_STEP && !$edit_existing_data_pemohon ? 'd-none' : '' }}">
                     @if ($form_step == self::FIRST_STEP)
-                        @include('livewire.dashboard.pendaftaran.partials.data-pemohon-form-field')
+                        @if (!$user_already_has_data_pemohon || $edit_existing_data_pemohon)
+                            @include('livewire.dashboard.pendaftaran.partials.data-pemohon-form-field')
+                            <div class="d-flex align-items-center justify-content-sm-start justify-content-around gap-sm-2">
+                                <button class="btn btn-outline-secondary text-capitalize" type="button" wire:click='editExistingDataPemohon'>batal</button>
+                                <button class="btn bg-gradient-primary text-capitalize" type="button" wire:click='saveChangeDataPemohon'>simpan perubahan</button>
+                            </div>
+                        @endif
                     @elseif ($form_step == self::SECOND_STEP)
                         <div class="border rounded p-3">
                             <h6 class="text-bold text-sm mb-3">Data Permohonan</h6>

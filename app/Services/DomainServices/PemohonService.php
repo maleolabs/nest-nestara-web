@@ -7,7 +7,7 @@ use App\Models\Pemohon;
 interface PemohonService
 {
     
-    function save(array $data_pemohon): ?Pemohon;
+    function save(array $data_pemohon, int $user_id = null): ?Pemohon;
 
     function update(int $id, array $data_pemohon): ?Pemohon;
 

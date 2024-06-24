@@ -79,6 +79,10 @@ body {
   background-color: var(--color-primary);
 }
 
+.overflow-hidden {
+  overflow: hidden;
+}
+
 select:not(.filter-select):focus,
 .form-select:focus,
 input[type="text"]:focus,
@@ -1024,6 +1028,25 @@ nav {
 .bg-dark-light {
   background-color: #d3d3d4;
   border-color: #d3d3d4;
+}
+
+.bg-quaternary {
+  background-color: var(--color-card-quaternary) !important;
+  color: var(--color-primary-disable) !important;
+}
+
+.bg-quaternary h1,
+.bg-quaternary h2,
+.bg-quaternary h3,
+.bg-quaternary h4,
+.bg-quaternary h5,
+.bg-quaternary h6 {
+  color: var(--color-primary-disable) !important;
+}
+
+
+.bg-tertiary {
+  background-color: var(--color-card-tertiary) !important;
 }
 
 .title {
@@ -3148,4 +3171,16 @@ del::before {
 
 .badge {
   font-family: 'Kollektif-Bold';
+}
+
+.box-200 {
+  height: 200px;
+  width: 200px;
+}
+
+@media (max-width: 575px) {
+  .box-200 {
+    height: 150px;
+    width: 150px;
+  }
 }

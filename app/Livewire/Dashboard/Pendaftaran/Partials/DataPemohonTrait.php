@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard\Pendaftaran\Partials;
 
 use App\Livewire\Forms\DataPemohonForm;
+use App\Models\Pemohon;
 use Illuminate\Database\QueryException;
 use Illuminate\Validation\ValidationException;
 
@@ -54,13 +55,13 @@ trait DataPemohonTrait
         $this->form_data_pemohon->alamat_luar_negeri = null;
     }
 
-    public function save()
+    public function saveDataPemohon($user_id = null)
     {
         $this->validate();
         $saved_pemohon = null;
         if ($this->pemohon_id == null)
             try {
-                $saved_pemohon = $this->getPemohonService()->save($this->form_data_pemohon->all());
+                $saved_pemohon = $this->getPemohonService()->save($this->form_data_pemohon->all(), $user_id);
             } catch (QueryException $e) {
                 if ($e->getCode() == 23000)
                     throw ValidationException::withMessages([
@@ -71,6 +72,20 @@ trait DataPemohonTrait
             $saved_pemohon = $this->getPemohonService()->update($this->pemohon_id, $this->form_data_pemohon->all());
         $this->pemohon_id = $saved_pemohon->id;
         $this->saved = true;
+    }
+
+    protected function setDataPemohon(Pemohon $pemohon)
+    {
+        $this->form_data_pemohon->sumber_identitas = $pemohon->sumber_identitas;
+        $this->form_data_pemohon->nomor_id = $pemohon->nomor_id;
+        $this->form_data_pemohon->nama_pemohon = $pemohon->nama_pemohon;
+        $this->form_data_pemohon->no_telepon = $pemohon->no_telepon;
+        $this->form_data_pemohon->provinsi = $pemohon->provinsi;
+        $this->form_data_pemohon->kabupaten = $pemohon->kabupaten;
+        $this->form_data_pemohon->kecamatan = $pemohon->kecamatan;
+        $this->form_data_pemohon->kelurahan = $pemohon->kelurahan;
+        $this->form_data_pemohon->detail_alamat = $pemohon->detail_alamat;
+        $this->form_data_pemohon->alamat_luar_negeri = $pemohon->alamat_luar_negeri;
     }
 
     protected function getRegionValue($type, $id): string

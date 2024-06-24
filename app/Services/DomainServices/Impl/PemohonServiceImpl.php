@@ -8,8 +8,10 @@ use App\Services\DomainServices\PemohonService;
 class PemohonServiceImpl implements PemohonService
 {
 
-    public function save(array $data_pemohon): ?Pemohon
+    public function save(array $data_pemohon, int $user_id = null): ?Pemohon
     {
+        if ($user_id != null)
+            $data_pemohon['user_id'] = $user_id;
         return Pemohon::create($data_pemohon);
     }
 

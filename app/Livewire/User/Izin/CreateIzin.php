@@ -18,7 +18,9 @@ class CreateIzin extends Component
 
     public $pemohon_id;
 
-    public $form_step = 1;
+    public $form_step = 1,
+        $user_already_has_data_pemohon = false,
+        $edit_existing_data_pemohon = false;
 
     private const FIRST_STEP = 1;
     private const SECOND_STEP = 2;
@@ -40,8 +42,41 @@ class CreateIzin extends Component
     public function render()
     {
         $this->allPerizinan = JenisPerizinan::all();
+        $this->setDataPemohonIfUserAlreadyHas();
         $this->setRegionData();
         return view('livewire.user.izin.create-izin');
+    }
+
+    public function save()
+    {
+        $this->saveDataPemohon(auth()->user()->id);
+    }
+
+    public function editExistingDataPemohon()
+    {
+        $this->edit_existing_data_pemohon = !$this->edit_existing_data_pemohon;
+    }
+
+    public function saveChangeDataPemohon()
+    {
+        $this->form_data_pemohon->validate();
+        $this->saveDataPemohon(auth()->user()->id);
+        $this->edit_existing_data_pemohon = false;
+    }
+
+    private function setDataPemohonIfUserAlreadyHas()
+    {
+        $pemohon = auth()->user()->pemohon;
+        if ($pemohon != null) {
+            $this->setDataPemohon($pemohon);
+            $this->pemohon_id = $pemohon->id;
+            $this->user_already_has_data_pemohon = true;
+        }
+    }
+
+    protected function getAlamat()
+    {
+        return "{$this->form_data_pemohon->detail_alamat}, " . $this->getRegionValue('kelurahan', $this->form_data_pemohon->kelurahan) . ', ' . $this->getRegionValue('kecamatan', $this->form_data_pemohon->kecamatan) . ', ' . $this->getRegionValue('kabupaten', $this->form_data_pemohon->kabupaten) . ', ' . $this->getRegionValue('provinsi', $this->form_data_pemohon->provinsi);
     }
 
     public function nextStep()

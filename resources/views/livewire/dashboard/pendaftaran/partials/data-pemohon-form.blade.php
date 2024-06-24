@@ -1,6 +1,6 @@
 <h5 class="text-bold mb-0">Formulir Pengisian Data Pemohon Baru</h5>
 <p class="text-muted text-sm">mohon untuk mengisi semua data berikut!</p>
-<form wire:submit.prevent='save'>
+<form wire:submit.prevent='saveDataPemohon'>
     @csrf
     <div class="row">
         <div class="col-sm-8 mb-sm-0 mb-3">

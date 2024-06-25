@@ -71,11 +71,17 @@
                             <label for="id" class="form-label">Jenis Izin</label>
                             <div class="input-group input-group-outline">
                                 <select class="form-select" id="jenisPerizinanSelect" wire:model='data_izin_form.jenis_izin'>
+                                    <option selected>Pilih jenis perizinan</option>
                                     @foreach ($allPerizinan as $perizinan)
                                         <option value="{{ $perizinan->jenis }}">{{ $perizinan->jenis }}</option>
                                     @endforeach
                                 </select>
                             </div>
+                            @forelse ($ as $item)
+                                
+                            @empty
+                                
+                            @endforelse
                             @error('data_izin_form.jenis_izin')
                                 <div class="text-sm text-danger mt-1">{{ $message }}</div>
                             @enderror

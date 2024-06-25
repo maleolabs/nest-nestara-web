@@ -4,7 +4,8 @@ namespace App\Services\DomainServices;
 
 use App\Models\SyaratIzin;
 
-interface SyaratIzinService {
+interface SyaratIzinService 
+{
 
     function save(array $data_syaratizin): ?SyaratIzin;
 
@@ -14,5 +15,6 @@ interface SyaratIzinService {
 
 	function delete(int $id): bool;
 
+	function assignSyaratToJenisByName(string $nama_syarat, string $nama_jenis): void;
 	
 }

@@ -26,7 +26,8 @@ class CreateIzin extends Component
     private const SECOND_STEP = 2;
     private const LAST_STEP = 3;
 
-    public $allPerizinan = [];
+    public $allPerizinan = [],
+        $selectedPerizinan;
 
     public function mount()
     {
@@ -37,6 +38,8 @@ class CreateIzin extends Component
     public function updated($field)
     {
         $this->setUpdatedData($field);
+        if ($field == 'data_izin_form.jenis_perizinan')
+            $this->selectedPerizinan;
     }
 
     public function render()

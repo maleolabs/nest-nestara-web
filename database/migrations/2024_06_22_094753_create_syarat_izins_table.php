@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('syarat_izin', function (Blueprint $table) {
             $table->id();
-            $table->string('nama', 100)->nullable(false);
+            $table->text('nama')->nullable(false);
             $table->timestamps();
         });
     }

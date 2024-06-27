@@ -21,4 +21,9 @@ class PerizinanController extends Controller
         return response()->view('user.create-izin');
     }
 
+    public function semuaIzin()
+    {
+        return response()->view('user.izin-saya');
+    }
+
 }

@@ -22,6 +22,7 @@ Route::get('/jenis-perizinan', [PerizinanController::class, 'jenisPerizinan'])->
 
 Route::middleware('auth')->group(function() {
     Route::get('/buat-izin-baru', [PerizinanController::class, 'create'])->name('create-izin');
+    Route::get('/izin-saya', [PerizinanController::class, 'semuaIzin'])->name('user.izin');
     
     Route::prefix('dashboard')->group(function () {
         Route::get('/', [DashController::class, 'index'])->name('dashboard');

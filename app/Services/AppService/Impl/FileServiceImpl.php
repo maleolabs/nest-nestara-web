@@ -6,7 +6,6 @@ use App\Services\AppService\FileService;
 use Carbon\Carbon;
 use Dotenv\Exception\InvalidFileException;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class FileServiceImpl implements FileService {
@@ -33,6 +32,14 @@ class FileServiceImpl implements FileService {
             $this->storeFile($files, $file_name);
         else
             throw new InvalidFileException();
+        $this->cleanLivewireTmp();
+    }
+
+    private function cleanLivewireTmp()
+    {
+        $livewire_tmp = 'livewire-tmp';
+        Storage::deleteDirectory($livewire_tmp);
+        Storage::makeDirectory($livewire_tmp);
     }
 
     private function storeFile($file, $file_name)

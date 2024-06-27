@@ -60,6 +60,7 @@ class CreateIzin extends Component
     {
         $this->saveDataPemohon(auth()->user()->id);
         $this->getFileService()->savePrivately($this->persyaratan);
+        return redirect()->route('user.izin');
     }
 
     public function editExistingDataPemohon()

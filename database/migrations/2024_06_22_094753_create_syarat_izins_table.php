@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('syarat_izin', function (Blueprint $table) {
             $table->id();
             $table->text('nama')->nullable(false);
+            $table->string('tipe', 50)->default('pdf');
+            $table->boolean('online')->default(true);
             $table->timestamps();
         });
     }

@@ -17,7 +17,7 @@ class SyaratIzinServiceImpl implements SyaratIzinService
 
 	public function find(int $id): ?SyaratIzin
 	{
-		return null;
+		return SyaratIzin::find($id);
 	}
 
 	public function update(int $id, array $data_syaratizin): ?SyaratIzin

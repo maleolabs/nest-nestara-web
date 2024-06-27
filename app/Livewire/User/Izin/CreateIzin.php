@@ -6,13 +6,16 @@ use App\Livewire\Dashboard\Pendaftaran\Partials\DataPemohonTrait;
 use App\Livewire\Forms\DataIzinForm;
 use App\Models\JenisPerizinan;
 use App\Services\APIClient\RegionAPIService;
+use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PemohonService;
+use App\Services\DomainServices\SyaratIzinService;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 
 class CreateIzin extends Component
 {
 
-    use DataPemohonTrait;
+    use DataPemohonTrait, WithFileUploads;
 
     public DataIzinForm $data_izin_form;
 
@@ -27,7 +30,8 @@ class CreateIzin extends Component
     private const LAST_STEP = 3;
 
     public $allPerizinan = [],
-        $selectedPerizinan;
+        $selectedPerizinan,
+        $persyaratan = [];
 
     public function mount()
     {
@@ -38,8 +42,10 @@ class CreateIzin extends Component
     public function updated($field)
     {
         $this->setUpdatedData($field);
-        if ($field == 'data_izin_form.jenis_perizinan')
-            $this->selectedPerizinan;
+        if ($field == 'data_izin_form.jenis_izin') {
+            $this->selectedPerizinan = $this->getJenisPerizinanService()->findByName($this->data_izin_form->jenis_izin);
+            // $this->persyaratan = [];
+        }
     }
 
     public function render()
@@ -86,6 +92,8 @@ class CreateIzin extends Component
     {
         if ($this->form_step == self::FIRST_STEP)
             $this->form_data_pemohon->validate();
+        elseif ($this->form_step == self::SECOND_STEP)
+            $this->data_izin_form->validate();
         $this->form_step++;
     }
 
@@ -102,6 +110,16 @@ class CreateIzin extends Component
     private function getPemohonService(): PemohonService
     {
         return app(PemohonService::class);
+    }
+
+    private function getJenisPerizinanService(): JenisPerizinanService
+    {
+        return app(JenisPerizinanService::class);
+    }
+
+    private function getSyaratIzinService(): SyaratIzinService
+    {
+        return app(SyaratIzinService::class);
     }
     
 }

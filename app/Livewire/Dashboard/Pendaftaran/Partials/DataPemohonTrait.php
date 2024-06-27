@@ -57,7 +57,7 @@ trait DataPemohonTrait
 
     public function saveDataPemohon($user_id = null)
     {
-        $this->validate();
+        $this->form_data_pemohon->validate();
         $saved_pemohon = null;
         if ($this->pemohon_id == null)
             try {
@@ -105,7 +105,7 @@ trait DataPemohonTrait
                 $value = $this->getRegionService()->getVillage($id);
                 break;
         }
-        return $value;
+        return str_capitalize($value, true);
     }
 
 }

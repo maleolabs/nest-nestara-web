@@ -22,6 +22,7 @@ class PersyaratanIzinSeeder extends Seeder
         DB::statement("SET foreign_key_checks=0");
         SyaratIzin::truncate();
         JenisPerizinan::truncate();
+        DB::table('jenis_perizinan_syarat_izin')->delete();
         DB::statement("SET foreign_key_checks=1");
 
         $syarat_import_file_path = 'C:\Dev\Personal-Project\Web Scraping\python\distinct_data_output.xlsx';
@@ -30,7 +31,7 @@ class PersyaratanIzinSeeder extends Seeder
         $jenis_import_file_path = 'C:\users\marij_mokoginta\Downloads\jenis-perizinan-2.xlsx';
         Excel::import(new JenisIzinImport, $jenis_import_file_path);
 
-        $jenis_syarat_file_path = 'C:\Dev\Personal-Project\Web Scraping\python\detail_data_output.xlsx';
+        $jenis_syarat_file_path = 'C:\Dev\Personal-Project\Web Scraping\python\detail_data_output2.xlsx';
         Excel::import(new JenisPerizinanSyaratIzinImport, $jenis_syarat_file_path);
     }
 }

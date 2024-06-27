@@ -10,8 +10,10 @@ class SyaratIzinImport implements ToModel
 
     public function model(array $row)
     {
+        $tipe = $row[1] ?? 'pdf';
         return new SyaratIzin([
-            'nama' => $row[0]
+            'nama' => $row[0],
+            'tipe' => $tipe
         ]);
     }
     

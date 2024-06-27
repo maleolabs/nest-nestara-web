@@ -7,5 +7,8 @@ use Livewire\Form;
 
 class DataIzinForm extends Form
 {
-    //
+    
+    #[Validate('required')]
+    public $jenis_izin;
+    
 }

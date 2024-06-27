@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class JenisPerizinan extends Model
 {
@@ -14,8 +14,8 @@ class JenisPerizinan extends Model
 
     protected $table = 'jenis_perizinan';
 
-    public function syarat_izin(): HasMany
+    public function syarat_izin(): BelongsToMany
     {
-        return $this->hasMany(SyaratIzin::class, 'jenis_perizinan_syarat_izin', 'id', 'jenis_perizinan_id');
+        return $this->belongsToMany(SyaratIzin::class, 'jenis_perizinan_syarat_izin')->withTimestamps();
     }
 }

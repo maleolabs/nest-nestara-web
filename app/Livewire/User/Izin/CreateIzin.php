@@ -6,6 +6,7 @@ use App\Livewire\Dashboard\Pendaftaran\Partials\DataPemohonTrait;
 use App\Livewire\Forms\DataIzinForm;
 use App\Models\JenisPerizinan;
 use App\Services\APIClient\RegionAPIService;
+use App\Services\AppService\FileService;
 use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\SyaratIzinService;
@@ -44,7 +45,6 @@ class CreateIzin extends Component
         $this->setUpdatedData($field);
         if ($field == 'data_izin_form.jenis_izin') {
             $this->selectedPerizinan = $this->getJenisPerizinanService()->findByName($this->data_izin_form->jenis_izin);
-            // $this->persyaratan = [];
         }
     }
 
@@ -59,6 +59,7 @@ class CreateIzin extends Component
     public function save()
     {
         $this->saveDataPemohon(auth()->user()->id);
+        $this->getFileService()->savePrivately($this->persyaratan);
     }
 
     public function editExistingDataPemohon()
@@ -120,6 +121,11 @@ class CreateIzin extends Component
     private function getSyaratIzinService(): SyaratIzinService
     {
         return app(SyaratIzinService::class);
+    }
+
+    private function getFileService(): FileService
+    {
+        return app(FileService::class);
     }
     
 }

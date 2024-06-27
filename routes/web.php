@@ -6,6 +6,7 @@ use App\Http\Controllers\Dashboard\PemantauanController;
 use App\Http\Controllers\Dashboard\PendaftaranController;
 use App\Http\Controllers\Dashboard\PenyerahanController;
 use App\Http\Controllers\Dashboard\ReportingController;
+use App\Http\Controllers\Helper\FileController;
 use App\Http\Controllers\User\PerizinanController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,4 +47,7 @@ Route::middleware('auth')->group(function() {
             Route::get('/', [ReportingController::class, 'index'])->name('reporting.index');
         });
     });
+
+    Route::get('/files/download/{file_name}', [FileController::class, 'download'])->name('download-file');
+    Route::get('/files/{file_name}', [FileController::class, 'render'])->name('render-file');
 });

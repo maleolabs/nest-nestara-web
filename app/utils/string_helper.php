@@ -1,13 +1,19 @@
 <?php 
 
 if (!function_exists('str_capitalize')) {
-    function str_capitalize($string): string
+    function str_capitalize($string, $ls_remaining_char = false): string
     {
         if (is_string($string)) {
             $words = explode(" ", $string);
             $camelCase = '';
             foreach ($words as $word) {
-                $camelCase .= ucfirst($word) . ' ';
+                if ($ls_remaining_char) {
+                    $first_char = strtoupper($word[0]);
+                    $remaining_char = strtolower(substr($string, 1));
+                    $proper_case_string = $first_char . $remaining_char;
+                    $camelCase .= $proper_case_string . ' ';
+                } else
+                    $camelCase .= ucfirst($word) . ' ';
             }
             $camelCase = rtrim($camelCase);
             return $camelCase;

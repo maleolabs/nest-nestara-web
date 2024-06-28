@@ -6,6 +6,8 @@ use App\Services\APIClient\Impl\EmsifaAPIService;
 use App\Services\APIClient\RegionAPIService;
 use App\Services\AppService\FileService;
 use App\Services\AppService\Impl\FileServiceImpl;
+use App\Services\DomainServices\DokumenPemohonService;
+use App\Services\DomainServices\Impl\DokumenPemohonServiceImpl;
 use App\Services\DomainServices\Impl\JenisPerizinanServiceImpl;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\Impl\PemohonServiceImpl;
@@ -26,6 +28,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
             FileService::class,
             SyaratIzinService::class,
             JenisPerizinanService::class,
+            DokumenPemohonService::class,
         ];
     }
 
@@ -39,6 +42,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(PemohonService::class, PemohonServiceImpl::class);
         $this->app->singleton(SyaratIzinService::class, SyaratIzinServiceImpl::class);
         $this->app->singleton(JenisPerizinanService::class, JenisPerizinanServiceImpl::class);
+        $this->app->singleton(DokumenPemohonService::class, DokumenPemohonServiceImpl::class);
     }
 
     /**

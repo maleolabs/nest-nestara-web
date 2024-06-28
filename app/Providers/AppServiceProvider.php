@@ -11,8 +11,10 @@ use App\Services\DomainServices\Impl\DokumenPemohonServiceImpl;
 use App\Services\DomainServices\Impl\JenisPerizinanServiceImpl;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\Impl\PemohonServiceImpl;
+use App\Services\DomainServices\Impl\PerizinanServiceImpl;
 use App\Services\DomainServices\Impl\SyaratIzinServiceImpl;
 use App\Services\DomainServices\JenisPerizinanService;
+use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Pagination\Paginator;
@@ -29,6 +31,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
             SyaratIzinService::class,
             JenisPerizinanService::class,
             DokumenPemohonService::class,
+            PerizinanService::class,
         ];
     }
 
@@ -43,6 +46,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(SyaratIzinService::class, SyaratIzinServiceImpl::class);
         $this->app->singleton(JenisPerizinanService::class, JenisPerizinanServiceImpl::class);
         $this->app->singleton(DokumenPemohonService::class, DokumenPemohonServiceImpl::class);
+        $this->app->singleton(PerizinanService::class, PerizinanServiceImpl::class);
     }
 
     /**

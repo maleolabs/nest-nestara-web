@@ -10,6 +10,7 @@ use App\Services\AppService\FileService;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PemohonService;
+use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
@@ -61,13 +62,14 @@ class CreateIzin extends Component
     {
         $this->saveDataPemohon(auth()->user()->id);
         $this->saveDataIzin();
+        $this->getPerizinanService()->save($this->selectedPerizinan->id, $this->pemohon_id);
         return redirect()->route('user.izin');
     }
 
     private function saveDataIzin()
     {
         $data_persyaratan = $this->getFileService()->savePrivately($this->persyaratan);
-        $this->getDokumenPemohonService()->saveAll($this->pemohon_id, $this->selectedPerizinan->id, $data_persyaratan);
+        $this->getDokumenPemohonService()->saveAll($this->pemohon_id, $data_persyaratan);
     }
 
     public function editExistingDataPemohon()
@@ -139,6 +141,11 @@ class CreateIzin extends Component
     private function getDokumenPemohonService(): DokumenPemohonService
     {
         return app(DokumenPemohonService::class);
+    }
+
+    private function getPerizinanService(): PerizinanService
+    {
+        return app(PerizinanService::class);
     }
     
 }

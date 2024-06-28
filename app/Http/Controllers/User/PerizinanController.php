@@ -23,7 +23,9 @@ class PerizinanController extends Controller
 
     public function semuaIzin()
     {
-        return response()->view('user.izin-saya');
+        return response()->view('user.izin-saya', [
+            'semua_izin' => auth()->user()->pemohon
+        ]);
     }
 
 }

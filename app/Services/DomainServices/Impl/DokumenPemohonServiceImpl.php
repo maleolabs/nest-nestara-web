@@ -12,12 +12,11 @@ class DokumenPemohonServiceImpl implements DokumenPemohonService {
 		return DokumenPemohon::create($data_dokumenpemohon);
 	}
 
-	public function saveAll(int $pemohon_id, int $jenis_izin_id, array $data_persyaratan): void
+	public function saveAll(int $pemohon_id, array $data_persyaratan): void
 	{
 		foreach ($data_persyaratan as $syarat_id => $nama_file) {
 			DokumenPemohon::create([
 				'pemohon_id' => $pemohon_id,
-				'jenis_perizinan_id' => $jenis_izin_id,
 				'syarat_izin_id' => $syarat_id,
 				'nama_file' => $nama_file
 			]);

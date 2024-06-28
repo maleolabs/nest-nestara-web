@@ -14,12 +14,10 @@ return new class extends Migration
         Schema::create('dokumen_pemohon', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('pemohon_id');
-            $table->unsignedBigInteger('jenis_perizinan_id');
             $table->unsignedBigInteger('syarat_izin_id');
             $table->string('nama_file');
 
             $table->foreign('pemohon_id')->references('id')->on('pemohon');
-            $table->foreign('jenis_perizinan_id')->references('id')->on('jenis_perizinan');
             $table->foreign('syarat_izin_id')->references('id')->on('syarat_izin');
             $table->timestamps();
         });

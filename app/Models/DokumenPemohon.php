@@ -19,11 +19,6 @@ class DokumenPemohon extends Model
         return $this->belongsTo(Pemohon::class);
     }
 
-    public function jenis_perizinan(): BelongsTo
-    {
-        return $this->belongsTo(JenisPerizinan::class);
-    }
-
     public function syarat_izin(): BelongsTo
     {
         return $this->belongsTo(SyaratIzin::class);

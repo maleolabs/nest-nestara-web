@@ -63,6 +63,11 @@ class CreateIzin extends Component
         return redirect()->route('user.izin');
     }
 
+    private function saveDataIzin()
+    {
+
+    }
+
     public function editExistingDataPemohon()
     {
         $this->edit_existing_data_pemohon = !$this->edit_existing_data_pemohon;

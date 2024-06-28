@@ -4,6 +4,7 @@ namespace App\Services\APIClient\Impl;
 
 use App\Services\APIClient\RegionAPIService;
 use App\Services\AppService\FileService;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
@@ -79,6 +80,12 @@ class EmsifaAPIService implements RegionAPIService
         $path = self::LOCAL_REGION_PATH . '/' . $param;
         
         $data = [];
+
+        try {
+            $data = $this->fileService()->getData($path);
+            if (count($data) > 0)
+                return $data;
+        } catch (Exception $e) {}
 
         try {
             $response = $client->request($method, self::BASE_URL . $param);

@@ -15,5 +15,10 @@ class PerizinanServiceImpl implements PerizinanService
             'pemohon_id' => $pemohon_id
         ]);
     }
+
+    public function find(int $id): ?Izin
+    {
+        return Izin::find($id);
+    }
     
 }

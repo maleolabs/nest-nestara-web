@@ -16,5 +16,7 @@ interface SyaratIzinService
 	function delete(int $id): bool;
 
 	function assignSyaratToJenisByName(string $nama_syarat, string $nama_jenis): void;
+
+	function getByJenisAndPemohon(int $jenis_izin_id, int $pemohon_id): array;
 	
 }

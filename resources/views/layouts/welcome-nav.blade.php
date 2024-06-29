@@ -14,7 +14,7 @@
                     Jenis Perizinan
                 </a>
                 @auth
-                    <a href="javascript:;" class="welcome-nav-link">
+                    <a href="{{ route('user.izin') }}" class="welcome-nav-link {{ Route::currentRouteName() == 'user.izin' ? 'active' : '' }}">
                         Izin saya
                     </a>
                     <a href="javascript:;" class="ms-3 sidebar-btn-show position-relative">
@@ -54,7 +54,7 @@
             </a>
         </div>
         <div class="dash-menu-item">
-            <a href="javascript:;" class="dash-menu-item-content">
+            <a href="{{ route('user.izin') }}" class="dash-menu-item-content">
                 <i class="fa-solid fa-file-signature"></i>
                 <span>Izin Saya</span>
             </a>

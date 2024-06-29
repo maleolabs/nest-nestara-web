@@ -3855,6 +3855,22 @@ textarea.form-control-lg {
 .card-group > .card {
   margin-bottom: 0.75rem; }
 
+.card-icon {
+  height: 40px !important;
+  width: 40px !important;
+  line-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.bg-gradient-primary .card-icon {
+  background: transparent;
+  color: white;
+}
+
 @media (min-width: 576px) {
   .card-group {
     display: flex;
@@ -7179,7 +7195,7 @@ textarea.form-control-lg {
   --bs-text-opacity: 1; }
 
 .bg-primary {
-  background-color: #00CDB8 !important; }
+  background-color: var(--bs-blue) !important; }
 
 .bg-secondary {
   background-color: #7b809a !important; }

@@ -103,6 +103,40 @@
     })
   }
 
+
+  const modalRight = select('.modal-right')
+  const modalRightContent = select('.modal-right-content')
+  const modalRightShowBtn = select('#modalRightShowBtn')
+  document.addEventListener('click', function(event) {
+    if (modalRightContent && !modalRightContent.contains(event.target) && modalRightShowBtn && !modalRightShowBtn.contains(event.target)) {
+      if (modalRight && modalRightContent) {
+        modalRight.classList.add('d-none')
+        modalRightContent.style.right = '-700px'
+      }
+    }
+  })
+  const modalRightCloseBtn = select('#modalRightCloseBtn')
+  if (modalRightCloseBtn) {
+    modalRightCloseBtn.addEventListener('click', function() {
+      if (modalRight && modalRightContent) {
+        modalRight.classList.add('d-none')
+        modalRightContent.style.right = '-700px'
+      }
+    })
+  }
+  if (modalRightShowBtn) {
+    modalRightShowBtn.addEventListener('click', function() {
+      if (modalRight && modalRightContent) {
+        showRightModal()
+      }
+    })
+  }
+
+  function showRightModal() {
+    modalRight.classList.remove('d-none')
+    modalRightContent.style.right = '0'
+  }
+
   const scrollto = (el) => {
     let header = select('#header')
     let offset = header.offsetHeight

@@ -5,7 +5,6 @@ namespace App\Services\DomainServices\Impl;
 use App\Models\JenisPerizinan;
 use App\Services\DomainServices\SyaratIzinService;
 use App\Models\SyaratIzin;
-use Illuminate\Support\ItemNotFoundException;
 
 class SyaratIzinServiceImpl implements SyaratIzinService
 {
@@ -41,6 +40,19 @@ class SyaratIzinServiceImpl implements SyaratIzinService
 			// throw new ItemNotFoundException('jenis perizinan tidak ditemukan: ' . $nama_jenis);
 			return; // skip if data not found
 		$syarat_izin->jenis_perizinan()->attach($jenis_izin);
+	}
+
+	public function getByJenisAndPemohon(int $jenis_izin_id, int $pemohon_id): array
+	{
+		$persyaratan = SyaratIzin::join('jenis_perizinan_syarat_izin', 'syarat_izin.id', '=', 'jenis_perizinan_syarat_izin.syarat_izin_id')
+		->where('jenis_perizinan_syarat_izin.jenis_perizinan_id', $jenis_izin_id)
+		->select('syarat_izin.*')
+		->with(['dokumen_pemohon' => function($dokumen_pemohon) use ($pemohon_id) {
+			$dokumen_pemohon->where('pemohon_id', $pemohon_id);
+		}])
+		->get()
+		->toArray();
+		return $persyaratan;
 	}
 	
 }

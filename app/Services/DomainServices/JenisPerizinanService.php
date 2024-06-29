@@ -10,4 +10,6 @@ interface JenisPerizinanService {
 
     function findByName(string $name): ?JenisPerizinan;
 
+    function getPersyaratanByJenisAndPemohon(int $jenis_id, int $pemohon_id): array;
+
 }

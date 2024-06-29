@@ -12,6 +12,7 @@ use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
+use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 
@@ -63,6 +64,7 @@ class CreateIzin extends Component
         $this->saveDataPemohon(auth()->user()->id);
         $this->saveDataIzin();
         $this->getPerizinanService()->save($this->selectedPerizinan->id, $this->pemohon_id);
+        Session::push('data-izin-saved', 'Anda telah berhasil mendaftar ' . $this->selectedPerizinan->nama);
         return redirect()->route('user.izin');
     }
 

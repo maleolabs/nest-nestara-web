@@ -31,6 +31,14 @@ class PemohonServiceImpl implements PemohonService
         return Pemohon::where('nomor_id', $cari)->orWhere('nama_pemohon', $cari)->first();
     }
 
+    public function getAll($search = ''): array
+    {
+        $semua_pemohon = Pemohon::where('nomor_id', 'LIKE', '%' . $search . '%')
+        ->orWhere('nama_pemohon', 'LIKE', '%' . $search . '%')
+        ->get();
+        return $semua_pemohon->all();
+    }
+
     public function getByNomorIdOrNamaPemohon(string $cari): array
     {
         return Pemohon::where('nomor_id', 'LIKE', '%' . $cari . '%')->orWhere('nama_pemohon', 'LIKE', '%' . $cari . '%')->get()->toArray();

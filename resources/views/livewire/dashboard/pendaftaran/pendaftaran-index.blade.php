@@ -5,7 +5,9 @@
             <span class="dash-menu-item-content">
                 <i class="fa-solid fa-users me-2"></i>
                 <span>{{ self::DATA_PEMOHON }}</span>
-                <span class="ms-2 badge rounded-pill bg-app-primary-light">12</span>
+                @if (count($semua_pemohon))
+                    <span class="ms-2 badge rounded-pill bg-app-primary-light">{{ count($semua_pemohon) }}</span>
+                @endif
             </span>
         </div>
         <div class="dash-menu-item {{ $menu == self::DATA_IZIN_BARU ? 'active' : '' }}" wire:click="selectMenu('{{ self::DATA_IZIN_BARU }}')">
@@ -31,8 +33,8 @@
         <form action="javascript:;">
             @csrf
             <div class="input-group input-group-outline my-3">
-                <label class="form-label">Cari Data Pemohon...</label>
-                <input type="text" class="form-control">
+                <label class="form-label">Cari Data {{ $menu == self::DATA_PEMOHON ? 'Pemohon...' : 'Izin...' }}</label>
+                <input type="text" class="form-control" wire:model.live='search'>
             </div>
         </form>
         @if ($layout == 'grid')

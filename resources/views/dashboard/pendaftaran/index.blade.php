@@ -68,7 +68,7 @@
             }
             Livewire.dispatch('change-layout', {value: value})
             let url = new URL(window.location)
-            url.searchParam.set('layout', value)
+            url.searchParams.set('layout', value)
             window.history.pushState({}, '', url)
         }
     </script>

@@ -2,6 +2,9 @@
 
 namespace App\Livewire\Dashboard\Pendaftaran;
 
+use App\Services\APIClient\RegionAPIService;
+use App\Services\DomainServices\PemohonService;
+use App\Services\DomainServices\PerizinanService;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -17,6 +20,12 @@ class PendaftaranIndex extends Component
     private const DATA_PERPANJANGAN_IZIN = 'Perpanjangan Izin';
     private const DATA_PERUBAHAN_IZIN = 'Perubahan Izin';
 
+    public $semua_pemohon = [],
+        $semua_izin = [],
+        $semua_perpanjangan = [],
+        $semua_perubahan = [];
+    public $search = '';
+
     public function mount()
     {
         $this->selectMenu(self::DATA_PEMOHON);
@@ -24,6 +33,7 @@ class PendaftaranIndex extends Component
 
     public function render()
     {
+        $this->setDataList();
         return view('livewire.dashboard.pendaftaran.pendaftaran-index');
     }
 
@@ -31,12 +41,59 @@ class PendaftaranIndex extends Component
     {
         $this->menu = $select_menu;
         $this->dispatch('menu-selected', ['menu' => $select_menu]);
+        $this->search = '';
+    }
+
+    private function setDataList()
+    {
+        $this->semua_pemohon = $this->getPemohonService()->getAll($this->search);
     }
 
     #[On('change-layout')]
     public function changeLayout($value)
     {
         $this->layout = $value;
+    }
+
+    private function getAlamat($pemohon_id)
+    {
+        $pemohon = $this->getPemohonService()->find($pemohon_id);
+        return "{$pemohon->detail_alamat}, " . $this->getRegionValue('kelurahan', $pemohon->kelurahan) . ', ' . $this->getRegionValue('kecamatan', $pemohon->kecamatan) . ', ' . $this->getRegionValue('kabupaten', $pemohon->kabupaten) . ', ' . $this->getRegionValue('provinsi', $pemohon->provinsi);
+    }
+
+    private function getRegionValue($type, $id): string
+    {
+        $value = '';
+        switch ($type) {
+            case 'provinsi':
+                $value = $this->getRegionService()->getProvince($id);
+                break;
+            case 'kabupaten':
+                $value = $this->getRegionService()->getRegency($id);
+                break;
+            case 'kecamatan':
+                $value = $this->getRegionService()->getDistrict($id);
+                break;
+            case 'kelurahan':
+                $value = $this->getRegionService()->getVillage($id);
+                break;
+        }
+        return str_capitalize($value, true);
+    }
+
+    private function getPemohonService(): PemohonService
+    {
+        return app(PemohonService::class);
+    }
+
+    private function getPerizinanService(): PerizinanService
+    {
+        return app(PerizinanService::class);
+    }
+
+    private function getRegionService(): RegionAPIService
+    {
+        return app(RegionAPIService::class);
     }
 
 }

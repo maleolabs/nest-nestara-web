@@ -79,9 +79,14 @@
                                     @endforeach
                                 </select>
                             </div>
+                            @error('data_izin_form.jenis_izin')
+                                <div class="text-sm text-danger mt-1 mb-3">{{ $message }}</div>
+                            @enderror
                             <ul class="border rounded p-3 position-relative">
                                 <h6 class="text-bold mb-0">Persyaratan Izin</h6>
-                                <p class="text-sm">Lengkapi persyaratan berikut ini.</p>
+                                @if ($selectedPerizinan && count($selectedPerizinan->syarat_izin) > 0)
+                                    <p class="text-sm">Lengkapi persyaratan berikut ini.</p>
+                                @endif
                                 @if ($selectedPerizinan)
                                     @forelse ($selectedPerizinan->syarat_izin as $syarat)
                                         <label for="syarat{{ $syarat->id }}" class="form-label text-lowercase">{{ $syarat->nama . " ({$syarat->tipe})" }}</label>
@@ -105,8 +110,11 @@
                                                 <img src="{{ $persyaratan[$syarat->id]->temporaryUrl() }}" alt="" class="img-fluid">
                                             </div>
                                         @endif
+                                        @error("persyaratan.{$syarat->id}")
+                                            <div class="text-sm text-danger mt-1 mb-3">{{ str_capitalize($message, true) }}</div>
+                                        @enderror
                                     @empty
-                                        <p class="text-sm text-center">Tidak ada persyaratan</p>
+                                        <p class="text-sm text-center">Tidak ada persyaratan. Silahkan melanjutkan proses pendaftaran.</p>
                                     @endforelse
                                 @else
                                     <p class="text-sm text-center">Silahkan pilih jenis izin</p>    
@@ -118,9 +126,6 @@
                                     </div>
                                 </div>
                             </ul>
-                            @error('data_izin_form.jenis_izin')
-                                <div class="text-sm text-danger mt-1">{{ $message }}</div>
-                            @enderror
                         </div>
                     @elseif($form_step == self::LAST_STEP)
                         <h5 class="mb-0">Data Pemohon</h5>
@@ -173,10 +178,10 @@
                     @elseif ($form_step == self::LAST_STEP)
                         <h6 class="text-md">Info</h6>
                         <p class="text-xs text-secondary">
-                            Pastikan semua data yang Anda masukkan sudah benar sebelum menekan tombol "Simpan". Setelah menekan tombol "Simpan", data akan diproses dan disimpan dalam sistem. Anda masih dapat mengedit informasi yang sudah disimpan dengan mengakses halaman edit jika diperlukan. 
+                            Pastikan semua data yang Anda masukkan sudah benar sebelum menekan tombol "Daftar". Setelah menekan tombol "Daftar", data akan diproses dan disimpan dalam sistem.  
                         </p>
                         <hr class="mb-2 mt-0">
-                        <button class="btn bg-gradient-primary w-100 mt-3" type="submit">simpan</button>
+                        <button class="btn bg-gradient-primary w-100 mt-3" type="submit">Daftar</button>
                         <button class="btn btn-outline-secondary w-100 mt-3" type="button" wire:click='prevStep'>sebelumnya</button>
                     @endif
                 </div>

@@ -13,6 +13,7 @@ use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
 
@@ -48,6 +49,7 @@ class CreateIzin extends Component
         $this->setUpdatedData($field);
         if ($field == 'data_izin_form.jenis_izin') {
             $this->selectedPerizinan = $this->getJenisPerizinanService()->findByName($this->data_izin_form->jenis_izin);
+            $this->persyaratan = [];
         }
     }
 
@@ -105,8 +107,19 @@ class CreateIzin extends Component
     {
         if ($this->form_step == self::FIRST_STEP)
             $this->form_data_pemohon->validate();
-        elseif ($this->form_step == self::SECOND_STEP)
+        elseif ($this->form_step == self::SECOND_STEP) {
             $this->data_izin_form->validate();
+            $syarat_izin_ids = $this->selectedPerizinan->syarat_izin->pluck('id')->all();
+            $missing_syarat_ids = array_diff($syarat_izin_ids, array_keys($this->persyaratan));
+            if (!empty($missing_syarat_ids)) {
+                $missing_messages = [];
+                foreach ($missing_syarat_ids as $missing_id) {
+                    $syarat = $this->selectedPerizinan->syarat_izin->firstWhere('id', $missing_id);
+                    $missing_messages["persyaratan.{$syarat->id}"] = "{$syarat->nama} diperlukan.";
+                }
+                throw ValidationException::withMessages($missing_messages);
+            }
+        }
         $this->form_step++;
     }
 

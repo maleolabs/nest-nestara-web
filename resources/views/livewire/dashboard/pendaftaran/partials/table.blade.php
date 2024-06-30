@@ -1,5 +1,5 @@
-<div class="table-responsive">
-    <table class="table align-items-center mb-0">
+<div class="table-responsive position-relative">
+    <table class="table table-hover table-striped align-items-center mb-0" style="--bs-table-striped-bg: var(--color-primary-extra-light);">
         <thead>
         <tr>
             @if ($menu == self::DATA_PEMOHON)
@@ -8,6 +8,13 @@
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Alamat</th>
                 <th class="text-secondary opacity-7"></th>
+            @elseif ($menu == self::DATA_IZIN_BARU)
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No Pendaftraran</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID Pemohon</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pemohon</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis Izin</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status Izin</th>
             @endif
         </tr>
         </thead>
@@ -43,7 +50,42 @@
                         </td>
                     </tr>
                 @endforelse
+            @elseif ($menu == self::DATA_IZIN_BARU)
+                @forelse ($semua_izin as $izin)
+                    <tr class="cursor-pointer" wire:click='previewDataIzin({{ $izin->id }})'>
+                        <td class="align-middle text-center text-sm">{{ $loop->iteration }}</td>
+                        <td class="text-sm">
+                            <p class="text-xs font-weight-bold mb-0">0000000000000000</p>
+                        </td>
+                        <td class="text-sm">
+                            <p class="text-xs font-weight-bold mb-0">{{ $izin->pemohon->nomor_id }}</p>
+                        </td>
+                        <td>
+                            <h6 class="mb-0 text-sm">
+                                {{ str_capitalize($izin->pemohon->nama_pemohon, true) }}
+                            </h6>
+                        </td>
+                        <td>
+                            <p class="text-sm text-secondary mb-0">
+                                {{ str_capitalize($izin->jenis_perizinan->nama, true) }}
+                            </p>
+                        </td>
+                        <td>
+                            <span class="badge badge-dot me-4">
+                                <i class="bg-info"></i>
+                                <span class="text-dark text-sm">Diproses</span>
+                            </span>
+                        </td>
+                    </tr>
+                @empty
+                    
+                @endforelse
             @endif
         </tbody>
     </table>
+    <div wire:loading wire:target='previewDataIzin'>
+        <div class="position-absolute top-0 start-0 h-100 w-100 d-flex align-items-center justify-content-center bg-white opacity-75">
+            <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
+        </div>
+    </div>
 </div>

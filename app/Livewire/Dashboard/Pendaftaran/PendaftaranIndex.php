@@ -14,6 +14,7 @@ class PendaftaranIndex extends Component
     #[Url()]
     public $layout;
     public $menu;
+    public $preview_data_izin = false;
 
     private const DATA_PEMOHON = 'Data Pemohon';
     private const DATA_IZIN_BARU = 'Permohonan Izin Baru';
@@ -25,6 +26,7 @@ class PendaftaranIndex extends Component
         $semua_perpanjangan = [],
         $semua_perubahan = [];
     public $search = '';
+    public $preview_izin_id;
 
     public function mount()
     {
@@ -42,17 +44,25 @@ class PendaftaranIndex extends Component
         $this->menu = $select_menu;
         $this->dispatch('menu-selected', ['menu' => $select_menu]);
         $this->search = '';
+        $this->preview_data_izin = false;
     }
 
     private function setDataList()
     {
         $this->semua_pemohon = $this->getPemohonService()->getAll($this->search);
+        $this->semua_izin = $this->getPerizinanService()->getAll($this->search);
     }
 
     #[On('change-layout')]
     public function changeLayout($value)
     {
         $this->layout = $value;
+    }
+
+    #[On('show-semua-izin')]
+    public function showSemuaIzin()
+    {
+        $this->selectMenu(self::DATA_IZIN_BARU);
     }
 
     private function getAlamat($pemohon_id)
@@ -79,6 +89,12 @@ class PendaftaranIndex extends Component
                 break;
         }
         return str_capitalize($value, true);
+    }
+
+    public function previewDataIzin($id)
+    {
+        $this->preview_data_izin = true;
+        $this->preview_izin_id = $id;
     }
 
     private function getPemohonService(): PemohonService

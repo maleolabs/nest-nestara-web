@@ -20,5 +20,18 @@ class PerizinanServiceImpl implements PerizinanService
     {
         return Izin::find($id);
     }
+
+    public function getAll($search = ''): array
+    {
+        $semua_izin = Izin::where(function ($query) use ($search) {
+            $query->whereHas('jenis_perizinan', function($jenis_perizinan) use ($search) {
+                $jenis_perizinan->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($search) . '%']);
+            })->orWhereHas('pemohon', function ($pemohon) use ($search) {
+                $pemohon->whereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%'])
+                    ->orWhere('nomor_id', 'LIKE', '%' . $search . '%');
+            });
+        })->get();
+        return $semua_izin->all();
+    }
     
 }

@@ -10,5 +10,7 @@ interface PerizinanService
     function save(int $jenis_izin_id, int $pemohon_id): ?Izin;
 
     function find(int $id): ?Izin;
+
+    function getAll($search = ''): array;
     
 }

@@ -1,4 +1,4 @@
-<div>
+<div class="p-4">
     <md-linear-progress wire:loading wire:target='selectMenu' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
     <div class="dash-menu sticky-top-0">
         <div class="dash-menu-item {{ $menu == self::DATA_PEMOHON ? 'active' : '' }}" wire:click="selectMenu('{{ self::DATA_PEMOHON }}')">
@@ -14,6 +14,9 @@
             <span class="dash-menu-item-content">
                 <i class="fa-solid fa-file-circle-plus me-2"></i>
                 <span>{{ self::DATA_IZIN_BARU }}</span>
+                @if (count($semua_izin))
+                    <span class="ms-2 badge rounded-pill bg-app-primary-light">{{ count($semua_izin) }}</span>
+                @endif
             </span>
         </div>
         <div class="dash-menu-item {{ $menu == self::DATA_PERPANJANGAN_IZIN ? 'active' : '' }}" wire:click="selectMenu('{{ self::DATA_PERPANJANGAN_IZIN }}')">
@@ -29,18 +32,31 @@
             </span>
         </div>
     </div>
-    <div class="content-wrap py-3">
-        <form action="javascript:;">
-            @csrf
+    <div class="content-wrap py-3 px-4">
+        @if ($preview_data_izin)
+            @livewire('dashboard.pendaftaran.preview-data-izin', ['preview_izin_id' => $preview_izin_id])
+        @else
             <div class="input-group input-group-outline my-3">
-                <label class="form-label">Cari Data {{ $menu == self::DATA_PEMOHON ? 'Pemohon...' : 'Izin...' }}</label>
+                <label class="form-label">Cari {{ $menu == self::DATA_PEMOHON ? 'ID atau nama pemohon...' : 'jenis izin, ID, atau nama pemohon...' }}</label>
                 <input type="text" class="form-control" wire:model.live='search'>
             </div>
-        </form>
-        @if ($layout == 'grid')
-            @include('livewire.dashboard.pendaftaran.partials.grid')
-        @else
-            @include('livewire.dashboard.pendaftaran.partials.table')
+            @if ($layout == 'grid')
+                @include('livewire.dashboard.pendaftaran.partials.grid')
+            @else
+                @include('livewire.dashboard.pendaftaran.partials.table')
+            @endif
         @endif
     </div>
 </div>
+@push('scripts')
+    <script>
+        Livewire.on('set-preview-img-modal', () => {
+            let btnShowModal = document.getElementById('btnShowPreviewModal')
+            if (btnShowModal) {
+                setTimeout(() => {
+                    btnShowModal.click()
+                }, 100);
+            }
+        })
+    </script>
+@endpush

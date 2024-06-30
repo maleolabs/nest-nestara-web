@@ -34,7 +34,7 @@ class PemohonServiceImpl implements PemohonService
     public function getAll($search = ''): array
     {
         $semua_pemohon = Pemohon::where('nomor_id', 'LIKE', '%' . $search . '%')
-        ->orWhere('nama_pemohon', 'LIKE', '%' . $search . '%')
+        ->orWhereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%'])
         ->get();
         return $semua_pemohon->all();
     }

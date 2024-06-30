@@ -18,5 +18,10 @@ class Izin extends Model
     {
         return $this->belongsTo(JenisPerizinan::class);
     }
+
+    public function pemohon(): BelongsTo
+    {
+        return $this->belongsTo(Pemohon::class);
+    }
     
 }

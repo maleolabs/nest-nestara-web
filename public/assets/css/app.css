@@ -2361,6 +2361,7 @@ button.btn-app-tertiary-light:active {
 .sticky-top-0 {
 	position: sticky;
 	top: 0;
+  z-index: 9;
 }
 
 .sticky-top-90 {

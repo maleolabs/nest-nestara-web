@@ -662,9 +662,21 @@
     right: -700px;
     width: 700px;
     height: 100%;
-    border-radius: 10px 0 0 10px;
     background: var(--color-white);
     transition: right ease-in-out 0.5s;
     padding: 28px;
     overflow-y: scroll;
+}
+
+/* spacing */
+.spacing-md {
+    letter-spacing: 1px !important;
+}
+
+.spacing-lg {
+    letter-spacing: 2px !important;
+}
+
+.spacing-xl {
+    letter-spacing: 3px !important;
 }

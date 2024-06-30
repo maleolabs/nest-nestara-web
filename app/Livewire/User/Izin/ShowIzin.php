@@ -16,15 +16,20 @@ class ShowIzin extends Component
     public function render()
     {
         return view('livewire.user.izin.show-izin', [
-            'semua_izin' => auth()->user()->pemohon->izin
+            'semua_izin' => auth()->user()->pemohon->izin()->paginate(10)
         ]);
     }
 
     public function preview(int $id)
     {
         $this->selectedPreview = $this->getPerizinanService()->find($id);
-        $this->selectedPreviewSyaratIzin = $this->getSyaratIzinService()->getByJenisAndPemohon($id, auth()->user()->pemohon->id);
-        dd($this->getPerizinanService()->find($id));
+        $this->selectedPreviewSyaratIzin = $this->getSyaratIzinService()->getByJenisAndPemohon($this->selectedPreview->jenis_perizinan_id, auth()->user()->pemohon->id);
+    }
+
+    public function closePreview()
+    {
+        $this->selectedPreview = null;
+        $this->selectedPreviewSyaratIzin = [];
     }
 
     public function getPerizinanService(): PerizinanService

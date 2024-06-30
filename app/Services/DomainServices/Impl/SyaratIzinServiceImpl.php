@@ -50,9 +50,8 @@ class SyaratIzinServiceImpl implements SyaratIzinService
 		->with(['dokumen_pemohon' => function($dokumen_pemohon) use ($pemohon_id) {
 			$dokumen_pemohon->where('pemohon_id', $pemohon_id);
 		}])
-		->get()
-		->toArray();
-		return $persyaratan;
+		->get();
+		return $persyaratan->all();
 	}
 	
 }

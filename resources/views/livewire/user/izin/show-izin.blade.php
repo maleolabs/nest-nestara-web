@@ -6,7 +6,7 @@
             <div class="col-12 mb-3">
                 <div class="card flex-row align-items-top p-4 mb-0{{ $loop->index == 0 ? ' bg-gradient-primary' : '' }}">
                     <div>
-                        <a href="javascript:;" id="modalRightShowBtn" wire:click='preview({{ $izin->jenis_perizinan->id }})'>
+                        <a href="javascript:;" id="modalRightShowBtn" wire:click='preview({{ $izin->id }})'>
                             <h6 class="border-bottom border-2 d-inline border-dark">{{ $izin->jenis_perizinan->nama }}</h6>
                             @if ($loop->index == 0)
                                 <span class="badge bg-gradient-info text-xs px-2 py-1 text-white text-capitalize">baru</span>
@@ -28,12 +28,8 @@
                             <ul class="dropdown-menu" aria-labelledby="dataIzinAction">
                                 <li>
                                     <a class="dropdown-item" href="#">
-                                        Edit
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        Hapus
+                                        <i class="fa-solid fa-circle-minus me-1"></i>
+                                        Batalkan
                                     </a>
                                 </li>
                             </ul>
@@ -42,13 +38,14 @@
                 </div>
             </div>
         @endforeach
+        {{ $semua_izin->links() }}
     </div>
     @include('livewire.helper.modal-right')
 </div>
 @push('scripts')
     <script>
         Livewire.hook('morph.updated', ({el, component}) => {
-            if ('selectedPreview' in component.snapshot.data) {
+            if ('selectedPreview' in component.snapshot.data && component.snapshot.data['selectedPreview'] !== null) {
                 document.querySelector('.modal-right').classList.remove('d-none')
                 document.querySelector('.modal-right-content').style.right = '0'
             }

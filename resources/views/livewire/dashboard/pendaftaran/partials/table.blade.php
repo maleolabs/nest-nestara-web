@@ -70,11 +70,11 @@
                                 {{ str_capitalize($izin->jenis_perizinan->nama, true) }}
                             </p>
                         </td>
-                        <td>
+                        <td class="d-flex flex-column align-items-center">
                             @php
                                 $status = $izin->status_izin->last()
                             @endphp
-                            <span class="badge badge-dot me-4">
+                            <span class="badge badge-dot">
                                 @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
                                     <i class="bg-success"></i>
                                 @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
@@ -101,6 +101,7 @@
                                     {{ $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN ? "{$status->nama} ({$status->progres})" : $status->nama }}
                                 </span>
                             </span>
+                            <p class="text-xs text-muted mb-0">{{ $status->updated_at->diffForHumans() }}</p>
                         </td>
                     </tr>
                 @empty

@@ -11,6 +11,6 @@ interface PerizinanService
 
     function find(int $id): ?Izin;
 
-    function getAll($search = ''): array;
+    function getAll($search = '', $sort = 'DESC'): array;
     
 }

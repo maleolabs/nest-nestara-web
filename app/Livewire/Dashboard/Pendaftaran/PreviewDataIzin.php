@@ -6,6 +6,7 @@ use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class PreviewDataIzin extends Component
@@ -19,13 +20,9 @@ class PreviewDataIzin extends Component
         $modalImgSource,
         $modalPdfSource;
 
-    public function mount()
-    {
-        $this->setDataPreview();
-    }
-
     public function render()
     {
+        $this->setDataPreview();
         return view('livewire.dashboard.pendaftaran.preview-data-izin');
     }
 
@@ -71,11 +68,23 @@ class PreviewDataIzin extends Component
     public function showImgModal($title, $path, $tipe)
     {
         $this->modalImgTitle = $title;
-        if ($tipe == 'img')
+        if ($tipe == 'img') {
             $this->modalImgSource = $path;
-        else if ($tipe == 'pdf')
+            $this->modalPdfSource = null;
+        } else if ($tipe == 'pdf') {
             $this->modalPdfSource = $path;
-        $this->dispatch('set-preview-img-modal');
+            $this->modalImgSource = null;
+        }
+        $this->dispatch('set-preview-img-modal', [
+            'path' => $path,
+            'type' => $tipe
+        ]);
+    }
+
+    #[On('refresh-component')]
+    public function refreshComponentApp()
+    {
+        $this->setDataPreview();
     }
 
     private function getPerizinanService(): PerizinanService

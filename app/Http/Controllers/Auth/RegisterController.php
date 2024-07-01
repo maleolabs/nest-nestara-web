@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\utils\libs\ImageGenerator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Hash;
@@ -61,10 +62,13 @@ class RegisterController extends Controller implements HasMiddleware
      */
     protected function create(array $data)
     {
+        $letter = strtoupper(substr($data['name'], 0, 1));
+        $user_image = ImageGenerator::letterImage($letter, 'public/users');
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
+            'foto' => $user_image,
         ]);
     }
 }

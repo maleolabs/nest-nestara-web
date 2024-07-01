@@ -12,11 +12,36 @@
                                 <span class="badge bg-gradient-info text-xs px-2 py-1 text-white text-capitalize">baru</span>
                             @endif
                         </a>
-                        <div class="d-flex align-items-top gap-2">
-                            <i class="fa-regular fa-circle-check mt-1 text-success"></i>
+                        @php
+                            $status = $izin->status_izin->last()
+                        @endphp
+                        <div class="d-flex align-items-top gap-2 my-3">
+                            @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
+                                <i class="fa-regular fa-circle-check mt-1 text-success"></i>
+                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
+                                <i class="fa-solid fa-circle-minus mt-1 text-muted"></i>
+                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
+                                <i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>
+                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
+                                <i class="fa-solid fa-circle-xmark mt-1 text-danger"></i>
+                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
+                                <i class="fa-solid fa-triangle-exclamation mt-1 text-warning"></i>
+                            @endif
                             <div>
-                                <p class="mb-0 text-success">Telah didaftarkan</p>
-                                <p class="mb-0">{{ $izin->created_at->translatedFormat('d F Y') }}</p>
+                                <p class="mb-0 @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
+                                        text-success
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
+                                        text-muted
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
+                                        text-dark
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
+                                        text-danger
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
+                                        text-warning
+                                    @endif">
+                                    {{ $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN ? "{$status->nama} ({$status->progres})" : $status->nama }}
+                                </p>
+                                <p class="mb-0">{{ $status->created_at->translatedFormat('l, d F Y H:i') . ' WITA' }}</p>
                             </div>
                         </div>
                     </div>

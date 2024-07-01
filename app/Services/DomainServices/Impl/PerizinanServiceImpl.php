@@ -4,16 +4,20 @@ namespace App\Services\DomainServices\Impl;
 
 use App\Models\Izin;
 use App\Services\DomainServices\PerizinanService;
+use App\Services\DomainServices\StatusIzinService;
+use App\utils\enums\StatusIzinEnum;
 
 class PerizinanServiceImpl implements PerizinanService
 {
     
     public function save(int $jenis_izin_id, int $pemohon_id): ?Izin
     {
-        return Izin::create([
+        $izin = Izin::create([
             'jenis_perizinan_id' => $jenis_izin_id,
             'pemohon_id' => $pemohon_id
         ]);
+        $this->statusIzinService()->save($izin->id, StatusIzinEnum::DIDAFTARKAN);
+        return $izin;
     }
 
     public function find(int $id): ?Izin
@@ -32,6 +36,11 @@ class PerizinanServiceImpl implements PerizinanService
             });
         })->get();
         return $semua_izin->all();
+    }
+
+    private function statusIzinService(): StatusIzinService
+    {
+        return app(StatusIzinService::class);
     }
     
 }

@@ -71,9 +71,35 @@
                             </p>
                         </td>
                         <td>
+                            @php
+                                $status = $izin->status_izin->last()
+                            @endphp
                             <span class="badge badge-dot me-4">
-                                <i class="bg-info"></i>
-                                <span class="text-dark text-sm">Diproses</span>
+                                @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
+                                    <i class="bg-success"></i>
+                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
+                                    <i class="bg-dark"></i>
+                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
+                                    <i class="bg-info"></i>
+                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
+                                    <i class="bg-danger"></i>
+                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
+                                    <i class="bg-warning"></i>
+                                @endif
+                                <span class="text-sm 
+                                    @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
+                                        text-success
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
+                                        text-muted
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
+                                        text-dark
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
+                                        text-danger
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
+                                        text-warning
+                                    @endif">
+                                    {{ $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN ? "{$status->nama} ({$status->progres})" : $status->nama }}
+                                </span>
                             </span>
                         </td>
                     </tr>

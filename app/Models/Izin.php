@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Izin extends Model
 {
@@ -22,6 +23,11 @@ class Izin extends Model
     public function pemohon(): BelongsTo
     {
         return $this->belongsTo(Pemohon::class);
+    }
+
+    public function status_izin(): HasMany
+    {
+        return $this->hasMany(StatusIzin::class);
     }
     
 }

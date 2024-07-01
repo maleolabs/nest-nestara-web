@@ -1,7 +1,7 @@
 <div class="sidebar-container d-none" id="sidebarContainer">
     <aside class="sidebar-right p-3" id="sidebarRight">
         <div class="d-flex align-items-center justify-content-between">
-            <img src="{{ asset('storage/web/favicon.ico') }}" alt="none" class="img-circle img-circle-sm">
+            <img src="{{ asset('storage/users/' . auth()->user()->foto) }}" alt="none" class="img-circle img-circle-sm">
             <div class="ms-2 me-auto">
                 <h6 class="fw-bold m-0">
                     {{ Str::limit(auth()->user()->email, 20) }}

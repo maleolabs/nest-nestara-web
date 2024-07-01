@@ -20,7 +20,7 @@
                     <i class="fa-regular fa-circle-check mt-1 text-success"></i>
                     <div>
                         <p class="mb-0 text-success">Telah didaftarkan</p>
-                        <p class="mb-0">{{ $selectedPreview->created_at->translatedFormat('d F Y') }}</p>
+                        <p class="mb-0">{{ $selectedPreview->created_at->translatedFormat('l, d F Y H:i') . ' WITA' }}</p>
                     </div>
                 </div>
                 <div class="rounded-3 bg-app-primary-light p-3 mt-3">

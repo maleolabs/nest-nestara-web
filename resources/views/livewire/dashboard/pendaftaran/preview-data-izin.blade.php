@@ -8,7 +8,7 @@
 
     @if ($preview_izin)
         <div class="my-4 d-flex gap-3">
-            <img src="{{ asset('storage/users/profile.png') }}" class="img-fluid img-rounded">
+            <img src="{{ asset('storage/users/' . $preview_izin->pemohon->user->foto) }}" class="img-fluid img-rounded">
             <div>
                 <h6 class="mb-0">{{ str_capitalize($preview_izin->pemohon->nama_pemohon, true) }}</h6>
                 <p class="mb-0 text-sm">
@@ -46,30 +46,37 @@
                 <p class="mb-0">{{ $preview_izin->created_at->translatedFormat('d F Y') }}</p>
             </div>
         </div>
-        <p class="mt-3 mb-0 text-muted">Persyaratan</p>
-        <div class="rounded-3 border border-danger bg-danger-light p-3 my-3 text-danger">
-            <strong>Penting:</strong>
-            <p class="mb-0">
-                Dokumen ini bersifat sangat sensitif dan rahasia. Pastikan untuk tidak menyimpan atau mengunduhnya di tempat yang tidak aman atau diakses oleh pihak yang tidak berwenang.
-            </p>
-        </div>
-        @foreach ($preview_izin_syarat_izin as $syarat)
-            <h6 @if(!isset($syarat->dokumen_pemohon[0]))class="text-muted text-decoration-line-through"@endif>
-                @if (isset($syarat->dokumen_pemohon[0]))
-                    <a href="{{ route('download-file', ['file_name' => $syarat->dokumen_pemohon[0]->nama_file]) }}" class="text-decoration-none d-inline">
+        @if (count($preview_izin_syarat_izin) > 0)
+            <p class="mt-3 mb-0 text-muted">Persyaratan</p>
+            <div class="rounded-3 border border-danger bg-danger-light p-3 my-3 text-danger">
+                <strong>Penting:</strong>
+                <p class="mb-0">
+                    Dokumen ini bersifat sangat sensitif dan rahasia. Pastikan untuk tidak menyimpan atau mengunduhnya di tempat yang tidak aman atau diakses oleh pihak yang tidak berwenang.
+                </p>
+            </div>
+            @foreach ($preview_izin_syarat_izin as $syarat)
+                <h6 @if(!isset($syarat->dokumen_pemohon[0]))class="text-muted text-decoration-line-through"@endif>
+                    @if (isset($syarat->dokumen_pemohon[0]))
+                        <a href="{{ route('download-file', ['file_name' => $syarat->dokumen_pemohon[0]->nama_file]) }}" class="text-decoration-none d-inline">
+                            <i class="fa-solid fa-download me-1"></i>
+                        </a>
+                        <a href="javascript:;" class="text-decoration-none d-inline" wire:click="showImgModal('{{ $syarat->nama }}', '{{ $syarat->dokumen_pemohon[0]->nama_file }}')">
+                            <i class="fa-solid fa-eye me-1"></i>
+                        </a>
+                        <button type="button" id="btnShowPreviewModal" data-bs-toggle="modal" data-bs-target="#showDocumentImgModal" class="opacity-0"></button>
+                    @else
                         <i class="fa-solid fa-download me-1"></i>
-                    </a>
-                    <a href="javascript:;" class="text-decoration-none d-inline" wire:click="showImgModal('{{ $syarat->nama }}', '{{ $syarat->dokumen_pemohon[0]->nama_file }}')">
                         <i class="fa-solid fa-eye me-1"></i>
-                    </a>
-                    <button type="button" id="btnShowPreviewModal" data-bs-toggle="modal" data-bs-target="#showDocumentImgModal" class="opacity-0"></button>
-                @else
-                    <i class="fa-solid fa-download me-1"></i>
-                     <i class="fa-solid fa-eye me-1"></i>
-                @endif
-                {{ $syarat->nama }}
-            </h6>
-        @endforeach
+                    @endif
+                    {{ $syarat->nama }}
+                </h6>
+            @endforeach
+        @else
+            <p class="mt-3 text-muted">
+                <i class="fa-solid fa-circle-info me-1"></i>
+                Tidak ada persyaratan untuk perizinan ini!
+            </p>
+        @endif
         <div class="modal fade" id="showDocumentImgModal" tabindex="-1" aria-labelledby="showDocumentImgModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-fullscreen">
                 <div class="modal-content">

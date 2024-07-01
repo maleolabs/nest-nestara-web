@@ -15,7 +15,7 @@ class ImageGenerator
 
         $image = imagecreatetruecolor($width, $height);
 
-        $randomBgColor = imagecolorallocate($image, rand(0, 255), rand(0, 255), rand(0, 255));
+        $randomBgColor = imagecolorallocate($image, rand(200, 255), rand(200, 255), rand(200, 255));
 
         imagefill($image, 0, 0, $randomBgColor);
 

@@ -12,7 +12,7 @@ use Livewire\Component;
 class PendaftaranIndex extends Component
 {
     #[Url()]
-    public $layout;
+    public $layout, $tab;
     public $menu;
     public $preview_data_izin = false;
 
@@ -30,7 +30,13 @@ class PendaftaranIndex extends Component
 
     public function mount()
     {
-        $this->selectMenu(self::DATA_PEMOHON);
+        $tabs = [
+            self::DATA_PEMOHON,
+            self::DATA_IZIN_BARU,
+            self::DATA_PERPANJANGAN_IZIN,
+            self::DATA_PERUBAHAN_IZIN
+        ];
+        $this->tab != null ? (in_array($this->tab, $tabs) ? $this->selectMenu($this->tab) : $this->selectMenu(self::DATA_PEMOHON)) : $this->selectMenu(self::DATA_PEMOHON);
     }
 
     public function render()

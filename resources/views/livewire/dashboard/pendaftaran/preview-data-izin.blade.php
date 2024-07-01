@@ -60,7 +60,7 @@
                         <a href="{{ route('download-file', ['file_name' => $syarat->dokumen_pemohon[0]->nama_file]) }}" class="text-decoration-none d-inline">
                             <i class="fa-solid fa-download me-1"></i>
                         </a>
-                        <a href="javascript:;" class="text-decoration-none d-inline" wire:click="showImgModal('{{ $syarat->nama }}', '{{ $syarat->dokumen_pemohon[0]->nama_file }}')">
+                        <a href="{{ $syarat->tipe == 'img' ? 'javascript:;' : route('render-file', ['file_name' => $syarat->dokumen_pemohon[0]->nama_file]) }}" class="text-decoration-none d-inline" @if($syarat->tipe == 'img')wire:click="showImgModal('{{ $syarat->nama }}', '{{ $syarat->dokumen_pemohon[0]->nama_file }}')"@else target="blank"@endif>
                             <i class="fa-solid fa-eye me-1"></i>
                         </a>
                         <button type="button" id="btnShowPreviewModal" data-bs-toggle="modal" data-bs-target="#showDocumentImgModal" class="opacity-0"></button>

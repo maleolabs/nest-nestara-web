@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Dotenv\Exception\InvalidFileException;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\ItemNotFoundException;
 
 class FileServiceImpl implements FileService {
 
@@ -62,7 +63,9 @@ class FileServiceImpl implements FileService {
     public function getPrivateFile($file_name): string
     {
         $path = self::PRIVATE_FOLDER_PATH . $file_name;
-        return Crypt::decrypt(Storage::get($path));
+        if (Storage::exists($path))
+            return Crypt::decrypt(Storage::get($path));
+        throw new ItemNotFoundException('file tidak ditemukan');
     }
 
     public function getData(string $path): array

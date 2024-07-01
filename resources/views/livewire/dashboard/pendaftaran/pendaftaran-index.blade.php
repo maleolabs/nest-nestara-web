@@ -49,10 +49,6 @@
     </div>
 </div>
 @push('scripts')
-    {{-- <script type="module">
-        import pdfjsDist from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.3.136/+esm'
-        import pdfWorker from 'https://cdn.jsdelivr.net/npm/pdf.worker@1.0.0/+esm'
-    </script> --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js" integrity="sha512-Z8CqofpIcnJN80feS2uccz+pXWgZzeKxDsDNMD/dJ6997/LSRY+W4NmEt9acwR+Gt9OHN0kkI1CTianCwoqcjQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js" integrity="sha512-lHibs5XrZL9hXP3Dhr/d2xJgPy91f2mhVAasrSbMkbmoTSm2Kz8DuSWszBLUg31v+BM6tSiHSqT72xwjaNvl0g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
@@ -63,7 +59,6 @@
                     btnShowModal.click()
 
                     const res = data[0]
-                    console.log(res);
                     let type = res.type
                     if (type == 'pdf') {
                         let fileName = res.path

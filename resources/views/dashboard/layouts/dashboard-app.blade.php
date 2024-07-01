@@ -26,7 +26,7 @@
                 </nav>
                 <div class="d-flex align-items-center flex-wrap gap-3">
                     @stack('nav-dashboard-content')
-                    <img src="{{ asset('storage/users/profile.png') }}" alt="" class="img-circle img-circle-sm">
+                    <img src="{{ asset('storage/users/' . auth()->user()->foto) }}" alt="" class="img-circle img-circle-sm">
                 </div>
             </div>
             @yield('main')

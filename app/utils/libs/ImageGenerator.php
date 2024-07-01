@@ -20,7 +20,7 @@ class ImageGenerator
         imagefill($image, 0, 0, $randomBgColor);
 
         $fontPath = public_path('assets/fonts/Poppins-Bold.otf');
-        $fontSize = 25;
+        $fontSize = 20;
         $textColor = imagecolorallocate($image, 0, 0, 0);
 
         $bbox = imagettfbbox($fontSize, 0, $fontPath, $letter);

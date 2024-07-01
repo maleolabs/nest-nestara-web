@@ -18,7 +18,7 @@
                         Izin saya
                     </a>
                     <a href="javascript:;" class="ms-3 sidebar-btn-show position-relative">
-                        <img src="{{ asset('storage/web/favicon.ico') }}" alt="" class="profile-img">
+                        <img src="{{ asset('storage/users/' . auth()->user()->foto) }}" alt="" class="profile-img">
                     </a>
                 @else
                     <a href="{{ route('login') }}" class="ms-3 welcome-nav-link">Login</a>

@@ -16,7 +16,8 @@ class PreviewDataIzin extends Component
         $preview_izin_syarat_izin = [];
 
     public $modalImgTitle,
-        $modalImgSource;
+        $modalImgSource,
+        $modalPdfSource;
 
     public function mount()
     {
@@ -67,10 +68,13 @@ class PreviewDataIzin extends Component
         return str_capitalize($value, true);
     }
 
-    public function showImgModal($title, $img_source)
+    public function showImgModal($title, $path, $tipe)
     {
         $this->modalImgTitle = $title;
-        $this->modalImgSource = $img_source;
+        if ($tipe == 'img')
+            $this->modalImgSource = $path;
+        else if ($tipe == 'pdf')
+            $this->modalPdfSource = $path;
         $this->dispatch('set-preview-img-modal');
     }
 

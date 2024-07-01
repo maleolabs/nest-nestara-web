@@ -35,7 +35,9 @@ class FileController extends Controller
         }
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $type = $finfo->buffer($file);
-        return response($file, 200)->header('Content-Type', $type);
+        return response($file, 200)
+            ->header('Content-Type', $type)
+            ->header('Content-Disposition', 'inline; filename="'.$file_name.'"');
     }
 
 }

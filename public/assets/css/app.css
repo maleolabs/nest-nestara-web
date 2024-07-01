@@ -3189,3 +3189,9 @@ del::before {
     width: 150px;
   }
 }
+
+iframe {
+  width: 100%;
+  height: 600px;
+  border: none;
+}

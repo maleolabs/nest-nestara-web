@@ -55,7 +55,7 @@
                     <tr class="cursor-pointer" wire:click='previewDataIzin({{ $izin->id }})'>
                         <td class="align-middle text-center text-sm">{{ $loop->iteration }}</td>
                         <td class="text-sm">
-                            <p class="text-xs font-weight-bold mb-0">0000000000000000</p>
+                            <p class="text-xs font-weight-bold mb-0">{{ $izin->no_pendaftaran }}</p>
                         </td>
                         <td class="text-sm">
                             <p class="text-xs font-weight-bold mb-0">{{ $izin->pemohon->nomor_id }}</p>

@@ -50,7 +50,7 @@
                 <div class="rounded-3 bg-app-primary-light p-3 mt-3">
                     <strong>Informasi:</strong>
                     <p class="mb-0">
-                        Dokumen Anda akan divalidasi menggunakan OCR, kemudian akan diproses oleh petugas, dan izin Anda akan diterbitkan setelah semua tahap selesai.
+                        Dokumen Anda akan divalidasi terlebih dahulu, kemudian akan diproses oleh petugas, dan izin Anda akan diterbitkan setelah semua tahap selesai.
                     </p>
                 </div>  
                 <p class="mt-3 mb-0 text-muted">Persyaratan</p>

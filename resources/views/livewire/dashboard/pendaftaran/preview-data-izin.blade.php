@@ -117,7 +117,7 @@
                 @endif
             </div>
             <div class="tab-pane fade @if($active_tab == self::TINDAKAN)show active @endif" id="tindakan-tab">
-                @if ($preview_izin->status_izin->last() == App\utils\enums\StatusIzinEnum::DIDAFTARKAN)
+                @if ($preview_izin->status_izin->last()->nama == App\utils\enums\StatusIzinEnum::DIDAFTARKAN)
                     <form wire:submit.prevent='saveAction'>
                         <label for="tanggal_peninjauan" class="form-label">Tanggal Peninjauan</label>
                         <div class="input-group input-group-outline mb-3">

@@ -45,7 +45,9 @@ class Izin extends Model
 
         static::creating(function ($model) {
             $latest_today = self::whereDate('created_at', Carbon::today()->toDateTimeString())->orderBy('no_pendaftaran', 'DESC')->first();
-            $model->no_pendaftaran = $latest_today ? $latest_today->no_pendaftaran + 1 : 1;
+            $latest_no_pendaftaran = explode('-', $latest_today->no_pendaftaran);
+            $no_pendaftaran = intval($latest_no_pendaftaran[1]);
+            $model->no_pendaftaran = $latest_today ? $no_pendaftaran + 1 : 1;
         });
     }
     

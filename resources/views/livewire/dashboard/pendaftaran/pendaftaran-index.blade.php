@@ -36,9 +36,20 @@
         @if ($preview_data_izin)
             @livewire('dashboard.pendaftaran.preview-data-izin', ['preview_izin_id' => $preview_izin_id])
         @else
-            <div class="input-group input-group-outline my-3">
-                <label class="form-label">Cari {{ $menu == self::DATA_PEMOHON ? 'ID atau nama pemohon...' : 'jenis izin, ID, atau nama pemohon...' }}</label>
-                <input type="text" class="form-control" wire:model.live='search'>
+            <div class="d-flex gap-3 align-items-center">
+                <div class="input-group input-group-outline my-3">
+                    <label class="form-label">Cari {{ $menu == self::DATA_PEMOHON ? 'ID atau nama pemohon...' : 'jenis izin, ID, atau nama pemohon...' }}</label>
+                    <input type="text" class="form-control" wire:model.live='search'>
+                </div>
+                @if ($menu == self::DATA_IZIN_BARU)
+                    <div class="input-group input-group-outline" style="width: fit-content">
+                        <select name="filter_status" id="filter-status" class="form-select px-2" wire:model.live='filter_status'>
+                            <option value="{{ App\utils\enums\StatusIzinEnum::DIDAFTARKAN }}" class="text-capitalize">{{ App\utils\enums\StatusIzinEnum::DIDAFTARKAN }}</option>
+                            <option value="{{ App\utils\enums\StatusIzinEnum::PROSES }}" class="text-capitalize">{{ App\utils\enums\StatusIzinEnum::PROSES }}</option>
+                            <option value="{{ App\utils\enums\StatusIzinEnum::BATAL }}" class="text-capitalize">{{ App\utils\enums\StatusIzinEnum::BATAL }}</option>
+                        </select>
+                    </div>
+                @endif
             </div>
             @if ($layout == 'grid')
                 @include('livewire.dashboard.pendaftaran.partials.grid')

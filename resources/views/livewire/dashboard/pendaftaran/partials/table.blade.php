@@ -105,7 +105,9 @@
                         </td>
                     </tr>
                 @empty
-                    
+                    <tr>
+                        <td class="text-center text-sm text-muted py-3" colspan="6">tidak ada data</td>
+                    </tr>
                 @endforelse
             @endif
         </tbody>

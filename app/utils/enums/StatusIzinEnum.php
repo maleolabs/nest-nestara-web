@@ -11,6 +11,7 @@ class StatusIzinEnum
     public const PROSES = 'diproses';
     public const PENERBITAN = 'penerbitan izin';
     public const PENYERAHAN = 'penyerahan izin';
+    public const BATAL = 'dibatalkan';
 
     public static function all(): array
     {
@@ -21,6 +22,7 @@ class StatusIzinEnum
             self::PROSES,
             self::PENERBITAN,
             self::PENYERAHAN,
+            self::BATAL,
         ];
     }
 

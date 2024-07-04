@@ -11,7 +11,7 @@ interface PerizinanService
 
     function find(int $id): ?Izin;
 
-    function getAll($search = '', $sort = 'DESC'): array;
+    function getAll($search = '', $filter_status, $sort = 'DESC'): array;
 
     function saveRegistrationAction(int $izin_id, string $tanggal_peninjauan, string $lokasi_izin, bool $selesai = false): bool;
     

@@ -5,6 +5,7 @@ namespace App\Livewire\Dashboard\Pendaftaran;
 use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
+use App\utils\enums\StatusIzinEnum;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -25,7 +26,8 @@ class PendaftaranIndex extends Component
         $semua_izin = [],
         $semua_perpanjangan = [],
         $semua_perubahan = [];
-    public $search = '';
+    public $search = '',
+        $filter_status;
     public $preview_izin_id;
 
     public function mount()
@@ -37,6 +39,7 @@ class PendaftaranIndex extends Component
             self::DATA_PERUBAHAN_IZIN
         ];
         $this->tab != null ? (in_array($this->tab, $tabs) ? $this->selectMenu($this->tab) : $this->selectMenu(self::DATA_PEMOHON)) : $this->selectMenu(self::DATA_PEMOHON);
+        $this->filter_status = StatusIzinEnum::DIDAFTARKAN;
     }
 
     public function render()
@@ -55,8 +58,8 @@ class PendaftaranIndex extends Component
 
     private function setDataList()
     {
-        $this->semua_pemohon = $this->getPemohonService()->getAll($this->search);
-        $this->semua_izin = $this->getPerizinanService()->getAll($this->search);
+        $this->semua_pemohon = $this->getPemohonService()->getAll($this->search, $this->filter_status);
+        $this->semua_izin = $this->getPerizinanService()->getAll($this->search, $this->filter_status);
     }
 
     #[On('change-layout')]

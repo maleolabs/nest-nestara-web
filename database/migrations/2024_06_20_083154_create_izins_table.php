@@ -18,7 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('pemohon_id');
             $table->integer('no_pendaftaran');
             $table->enum('jenis_permohonan', JenisPermohonanEnum::all())->default(JenisPermohonanEnum::BARU);
-            $table->date('tanggal_peninjauan')->nullable();
+            $table->dateTime('tanggal_peninjauan')->nullable();
             $table->string('lokasi_izin')->nullable();
             $table->softDeletes();
             $table->timestamps();

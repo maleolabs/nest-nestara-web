@@ -6,6 +6,9 @@ use App\Models\Izin;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\StatusIzinService;
 use App\utils\enums\StatusIzinEnum;
+use App\utils\enums\StatusIzinProgressEnum;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class PerizinanServiceImpl implements PerizinanService
 {
@@ -36,6 +39,24 @@ class PerizinanServiceImpl implements PerizinanService
             });
         })->orderBy('created_at', $sort)->get();
         return $semua_izin->all();
+    }
+
+    public function saveRegistrationAction(int $izin_id, string $tanggal_peninjauan, string $lokasi_izin, bool $selesai = false): bool
+    {
+        DB::beginTransaction();
+        $izin = Izin::find($izin_id);
+        if (!$izin) {
+            DB::rollBack();
+            return false;
+        }
+        $tanggal_peninjauan = Carbon::parse($tanggal_peninjauan)->toDateTimeString();
+        $izin->tanggal_peninjauan = $tanggal_peninjauan;
+        $izin->lokasi_izin = $lokasi_izin;
+        $izin->save();
+
+        $this->statusIzinService()->updateStatusIzin($izin_id, StatusIzinEnum::PROSES, StatusIzinProgressEnum::PROCESSING);
+        DB::commit();
+        return true;
     }
 
     private function statusIzinService(): StatusIzinService

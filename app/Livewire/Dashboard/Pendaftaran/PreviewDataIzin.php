@@ -6,6 +6,8 @@ use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
+use Carbon\Carbon;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
 
@@ -20,10 +22,38 @@ class PreviewDataIzin extends Component
         $modalImgSource,
         $modalPdfSource;
 
+    public $tanggal_peninjauan,
+        $lokasi_izin,
+        $pendaftaran_selesai;
+
+    public $active_tab;
+    private const TINDAKAN = 'tindakan';
+    private const PERSYARATAN = 'persyaratan';
+    
+    public function mount()
+    {
+        $this->pendaftaran_selesai = true;
+    }
+
     public function render()
     {
+        $this->tanggal_peninjauan = Carbon::now()->format('Y-m-d H:i');
         $this->setDataPreview();
         return view('livewire.dashboard.pendaftaran.preview-data-izin');
+    }
+
+    public function saveAction()
+    {
+        $this->active_tab = self::TINDAKAN;
+        $this->validate([
+            'tanggal_peninjauan' => ['required'],
+            'lokasi_izin' => ['required', 'max:255'],
+        ]);
+        if (!is_bool($this->pendaftaran_selesai))
+            throw ValidationException::withMessages([
+                'pendaftaran_selesai' => 'kesalahan'
+            ]);
+        $saved = $this->getPerizinanService()->saveRegistrationAction($this->preview_izin_id, $this->tanggal_peninjauan, $this->lokasi_izin, $this->pendaftaran_selesai);
     }
 
     public function back()

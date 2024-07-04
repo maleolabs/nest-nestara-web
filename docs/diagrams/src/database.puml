@@ -1,0 +1,196 @@
+@startuml pmptsp
+
+entity User {
+    * id: bigint
+    --
+    * nama: varchar(100)
+    * email: varchar(100)
+    * password: varchar(255)
+      foto: varchar(100)
+    --
+      deleted_at: datetime
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+entity Roles {
+    * id: bigint
+    --
+    * nama: varchar(100)
+    * guarded: varchar(10)
+    --
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+entity Pegawai {
+    * id: bigint
+    --
+    * nama: varchar(100)
+    * jabatan: varchar(100)
+    --
+      deleted_at: datetime
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+entity PenandaTangan {
+    * id: bigint
+    --
+    * pegawai_id: unsignedBigInt <<FK>>
+    --
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+entity TimTeknis {
+    * id: bigint
+    --
+    * pegawai_id: unsignedBigInt <<FK>>
+    --
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+entity Pemohon {
+    * id: bigint
+    --
+    * user_id: unsignedBigInt <<FK>>
+    * sumber_identitas: varchar(5)
+    * nomor_id: varchar(15)
+    * nama_pemohon: varchar(100)
+    * no_telepon: varchar(15)
+    * provinsi: int
+    * kabupaten: int
+    * kecamatan: int
+    * kelurahan: int
+    * detail_alamat: varchar(255)
+      alamat_luar_negeri: varchar(255)
+    --
+      deleted_at: datetime
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+entity JenisPerizinan {
+    * id: bigint
+    --
+    * nama: varchar(255)
+    --
+      deleted_at: datetime
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+entity EntriData {
+    * id: bigint
+    --
+    * jenis_perizinan_id: unsignedBigInt <<FK>>
+    * nama: varchar (100)
+    --
+      deleted_at: datetime
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+entity SyaratIzin {
+    * id: bigint
+    --
+    * nama: varchar(255)
+    * tipe: varchar(10)
+    * online: boolean
+    --
+      deleted_at: datetime
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+entity DokumenPemohon {
+    * id: bigint
+    --
+    * pemohon_id: unsignedBigInt <<FK>>
+    * syarat_izin_id: unsignedBigInt <<FK>>
+      izin_id: unsignedBigInt <<FK>>
+    * nama_file: varchar(255)
+    --
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+entity Izin {
+    * id: bigint
+    --
+    * pemohon_id: unsignedBigInt <<FK>>
+    * jenis_perizinan_id: unsignedBigInt <<FK>>
+    * no_pendaftaran: int
+    * jenis_permohonan: enum('baru', 'perubahan', 'perpanjangan')
+      tanggal_peninjauan: datetime
+      lokasi_izin: varchar(255)
+    * pengelola_layanan_id: unsignedBigInt <<FK>> ref id on Pegawai
+    --
+      deleted_at: datetime
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+entity StatusIzin {
+    * id: bigint
+    --
+    * izin_id: unsignedBigInt <<FK>>
+    * nama: enum
+    * keterangan: varchar(255)
+    * progres: enum
+    --
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+enum NamaStatusIzin {
+    didaftarkan
+    diproses
+    dibatalkan
+}
+
+enum ProgresStatus {
+    sedang di proses
+}
+
+entity EntriDataIzin {
+    * id: bigint
+    --
+    * entri_data_id: unsignedBigInt <<FK>>
+    * izin_id: unsignedBigInt <<FK>>
+    * value: text
+    --
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+entity Pengaturan {
+    * id: bigint
+    --
+    * nama: varchar(255)
+    * value: text
+    --
+    * created_at: datetime
+    * updated_at: datetime
+}
+
+User }o--|{ Roles
+User ||--o| Pemohon
+User ||--o| Pegawai
+Pegawai ||--o{ PenandaTangan
+Pegawai ||--o{ TimTeknis
+JenisPerizinan }|--o{ SyaratIzin
+JenisPerizinan ||--o{ EntriData
+EntriDataIzin }o--|| EntriData
+DokumenPemohon }o--|| Pemohon
+DokumenPemohon }o--|| SyaratIzin
+Pemohon ||--o{ Izin
+Izin |o--|{ DokumenPemohon
+Izin ||--|{ StatusIzin
+Izin }|--|| Pegawai
+Izin }|--|{ EntriDataIzin
+
+
+@enduml

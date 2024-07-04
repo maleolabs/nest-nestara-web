@@ -8,6 +8,7 @@ class StatusIzinEnum
     public const DIDAFTARKAN = 'didaftarkan';
     public const PERUBAHAN = 'perubahan';
     public const PERPANJANGAN = 'perpanjangan';
+    public const DITINJAU = 'ditinjau oleh petugas';
     public const PROSES = 'diproses';
     public const PENERBITAN = 'penerbitan izin';
     public const PENYERAHAN = 'penyerahan izin';

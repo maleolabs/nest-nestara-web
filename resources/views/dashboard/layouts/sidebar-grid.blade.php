@@ -21,9 +21,7 @@
             <li class="nav-item-grid">
                 <a class="nav-link-grid {{ Str::contains(Route::currentRouteName(), 'pendaftaran') ? 'active' : '' }}" href="{{ route('pendaftaran.index') }}">
                     <i class="fa-solid fa-clipboard position-relative">
-                        <span class="position-absolute top-0 start-100 translate-middle badge bg-gradient-danger text-white rounded-pill px-2 py-1 text-xs">
-                            9+
-                        </span>
+                        <span class="position-absolute top-0 start-100 translate-middle badge bg-gradient-danger text-white rounded-circle p-2 text-xs opacity-100"></span>
                     </i>
                     <span>Pendaftaran</span>
                 </a>

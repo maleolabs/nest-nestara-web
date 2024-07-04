@@ -9,7 +9,7 @@
                 </div>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item">
+                        <li class="breadcrumb-item text-capitalize">
                             <a href="javascript:;">
                                 @auth
                                     {{ auth()->user()->name }}

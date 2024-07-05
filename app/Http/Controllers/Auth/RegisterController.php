@@ -30,7 +30,7 @@ class RegisterController extends Controller implements HasMiddleware
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/';
 
     public static function middleware()
     {
@@ -62,7 +62,7 @@ class RegisterController extends Controller implements HasMiddleware
      */
     protected function create(array $data)
     {
-        $letter = strtoupper(substr($data['name'], 0, 1));
+        $letter = substr($data['name'], 0, 1);
         $user_image = ImageGenerator::letterImage($letter, 'public/users');
         return User::create([
             'name' => $data['name'],

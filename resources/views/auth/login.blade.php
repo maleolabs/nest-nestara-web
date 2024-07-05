@@ -35,6 +35,7 @@
                                     class="text-primary text-gradient font-weight-bold">Daftar</a>
                             </p>
                         </form>
+                        {{-- <p class="text-xs text-bold fst-italic text-center">{!! $quote !!}</p> --}}
                     </div>
                 </div>
             </div>

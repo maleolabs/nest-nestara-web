@@ -12,6 +12,13 @@ use Illuminate\Support\Facades\DB;
 
 class PerizinanServiceImpl implements PerizinanService
 {
+
+    protected StatusIzinService $statusIzinService;
+
+    public function __construct(StatusIzinService $statusIzinService)
+    {
+        $this->statusIzinService = $statusIzinService;
+    }
     
     public function save(int $jenis_izin_id, int $pemohon_id): ?Izin
     {
@@ -19,7 +26,7 @@ class PerizinanServiceImpl implements PerizinanService
             'jenis_perizinan_id' => $jenis_izin_id,
             'pemohon_id' => $pemohon_id
         ]);
-        $this->statusIzinService()->save($izin->id, StatusIzinEnum::DIDAFTARKAN);
+        $this->statusIzinService->save($izin->id, StatusIzinEnum::DIDAFTARKAN);
         return $izin;
     }
 
@@ -57,14 +64,9 @@ class PerizinanServiceImpl implements PerizinanService
         $izin->lokasi_izin = $lokasi_izin;
         $izin->save();
 
-        $this->statusIzinService()->updateStatusIzin($izin_id, StatusIzinEnum::PROSES, StatusIzinProgressEnum::PROCESSING);
+        $this->statusIzinService->updateStatusIzin($izin_id, StatusIzinEnum::PROSES, StatusIzinProgressEnum::PROCESSING);
         DB::commit();
         return true;
-    }
-
-    private function statusIzinService(): StatusIzinService
-    {
-        return app(StatusIzinService::class);
     }
     
 }

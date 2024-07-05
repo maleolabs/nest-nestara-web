@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\Pendaftaran;
+namespace App\Livewire\Dashboard\Pendaftaran;
 
 use App\Livewire\Forms\DataIzinForm;
 use App\Livewire\Forms\DataPemohonForm;
@@ -55,7 +55,7 @@ class DataIzinCreate extends Component
     {
         $this->allPerizinan = JenisPerizinan::all();
         $this->setRegionData();
-        return view('livewire.admin.pendaftaran.data-izin-create');
+        return view('livewire.dashboard.pendaftaran.data-izin-create');
     }
 
     public function save(){

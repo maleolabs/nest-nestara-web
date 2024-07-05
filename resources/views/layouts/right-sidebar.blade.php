@@ -1,19 +1,25 @@
 <div class="sidebar-container d-none" id="sidebarContainer">
     <aside class="sidebar-right p-3" id="sidebarRight">
-        <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-top justify-content-between mb-4">
             <img src="{{ asset('storage/users/' . auth()->user()->foto) }}" alt="none" class="img-circle img-circle-sm">
             <div class="ms-2 me-auto">
-                <h6 class="fw-bold m-0">
+                <h6 class="text-sm spacing-normal mb-0">{{ Str::limit(auth()->user()->name, 20) }}</h6>
+                <p class="text-muted m-0 text-sm">
                     {{ Str::limit(auth()->user()->email, 20) }}
-                </h6>
+                </p>
             </div>
-            <button class="btn btn-light rounded-3 sidebar-btn-close mb-0 ms-2 ps-3">
+            <button class="btn btn-transparent rounded-3 sidebar-btn-close px-3 py-1">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-        <hr>
         <ul class="sidebar-nav">
             <li class="nav-item">
+                @unlessrole('pemohon')
+                    <a href="{{ route('dashboard') }}" class="nav-link">
+                        <i class="fa-solid fa-table-columns"></i>
+                        <span>Dashboard</span>
+                    </a>
+                @endrole
                 <a href="#" class="nav-link">
                     <i class="fa-solid fa-user"></i>
                     <span>Profil</span>

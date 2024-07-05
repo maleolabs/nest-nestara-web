@@ -24,7 +24,7 @@
     --color-white : #ffffff;
     --color-white-light : #fdfdfd;
     --color-white-disable : #E9ECEF;
-    --color-light : #eeeeee;
+    --color-light : #F0F2F5;
     --color-disable : #f6e2e2;
     --color-grey : #5C636A;
     --color-body : #F8F8F8;
@@ -57,7 +57,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  letter-spacing: 1px !important;
+  letter-spacing: 1px;
 }
 
 .ff-groupe {
@@ -646,10 +646,27 @@ nav {
   margin: 0;
   list-style: none;
 }
+.sidebar-nav .nav-devider {
+  position: relative;
+  font-size: .7rem;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+}
+.sidebar-nav .nav-devider::after {
+  content: '';
+  flex-grow: 1;
+  height: 1px;
+  margin-left: 5px;
+  background: var(--color-light);
+
+}
 .sidebar-nav .nav-item {
   margin-bottom: 15px;
 }
-.sidebar-right .sidebar-nav .nav-item {
+.sidebar-right .sidebar-nav .nav-item,
+.side-menu-left .sidebar-nav .nav-item {
   margin-bottom: 5px;
 }
 .sidebar-nav .nav-heading {
@@ -682,7 +699,8 @@ nav {
   bottom: 0;
   display: none;
 }
-.sidebar-right .sidebar-nav .nav-link {
+.sidebar-right .sidebar-nav .nav-link,
+.side-menu-left .sidebar-nav .nav-link {
   padding: 6px 15px;
   font-size: 13px;
   font-weight: 500;
@@ -1056,6 +1074,14 @@ nav {
 .title {
     color: white;
     font-size: 50px;
+}
+
+.btn-transparent {
+  background: transparent !important;
+}
+
+.btn-transparent:hover {
+  background: var(--color-light) !important;
 }
 
 .hero-btn {
@@ -2484,6 +2510,10 @@ button.btn-app-tertiary-light:active {
   .sm-border-top {
     border-top: 1px solid var(--color-line);
   }
+}
+
+.z-nav {
+  z-index: 999 !important;
 }
 
 /* ====================================================

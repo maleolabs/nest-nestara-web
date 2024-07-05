@@ -3,11 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\utils\libs\ImageGenerator;
+use App\Services\DomainServices\UserService;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Routing\Controllers\HasMiddleware;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller implements HasMiddleware
@@ -31,6 +29,17 @@ class RegisterController extends Controller implements HasMiddleware
      * @var string
      */
     protected $redirectTo = '/';
+
+    /**
+     * service for manipulate user data
+     * @var \App\Services\DomainServices\UserService
+     */
+    protected UserService $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
 
     public static function middleware()
     {
@@ -62,13 +71,6 @@ class RegisterController extends Controller implements HasMiddleware
      */
     protected function create(array $data)
     {
-        $letter = substr($data['name'], 0, 1);
-        $user_image = ImageGenerator::letterImage($letter, 'public/users');
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'foto' => $user_image,
-        ]);
+        return $this->userService->save(null, $data, 'pemohon');
     }
 }

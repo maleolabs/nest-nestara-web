@@ -49,7 +49,7 @@
     </div>
 @endpush
 @section('main')
-    @livewire('admin.pendaftaran.pendaftaran-index')
+    @livewire('dashboard.pendaftaran.pendaftaran-index')
 @endsection
 @push('scripts')
     <script>

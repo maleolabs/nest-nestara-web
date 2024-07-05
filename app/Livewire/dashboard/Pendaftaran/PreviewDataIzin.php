@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\Pendaftaran;
+namespace App\Livewire\Dashboard\Pendaftaran;
 
 use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\PemohonService;
@@ -39,7 +39,7 @@ class PreviewDataIzin extends Component
     {
         $this->tanggal_peninjauan = Carbon::now()->format('Y-m-d H:i');
         $this->setDataPreview();
-        return view('livewire.admin.pendaftaran.preview-data-izin');
+        return view('livewire.dashboard.pendaftaran.preview-data-izin');
     }
 
     public function saveAction()

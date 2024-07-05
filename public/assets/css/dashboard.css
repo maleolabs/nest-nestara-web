@@ -392,6 +392,17 @@
     transition: right ease-in-out 0.5s;
 }
 
+.side-menu-left {
+    position: absolute;
+    top: 0;
+    left: -300px;
+    width: 300px;
+    height: 100%;
+    border-radius: 0 10px 10px 0;
+    background: var(--color-white);
+    transition: left ease-in-out 0.5s;
+}
+
 .sidebar-left {
     position: fixed;
     z-index: 998;
@@ -640,9 +651,9 @@
 }
 
 .content-wrap {
-    background: var(--color-white-light);
+    background: var(--color-light);
     padding: 12px;
-    min-height: 70vh;
+    min-height: 80vh;
 }
 
 .modal-right {
@@ -669,6 +680,10 @@
 }
 
 /* spacing */
+.spacing-normal {
+    letter-spacing: normal;
+}
+
 .spacing-md {
     letter-spacing: 1px !important;
 }

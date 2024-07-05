@@ -32,5 +32,5 @@
     </div>
 @endpush
 @section('main')
-    @livewire('admin.pendaftaran.pendaftaran-create')
+    @livewire('dashboard.pendaftaran.pendaftaran-create')
 @endsection

@@ -4,7 +4,7 @@
     @csrf
     <div class="row">
         <div class="col-sm-8 mb-sm-0 mb-3">
-            @include('livewire.admin.pendaftaran.partials.data-pemohon-form-field')
+            @include('livewire.dashboard.pendaftaran.partials.data-pemohon-form-field')
         </div>
         <div class="col-sm-4">
             <h6 class="text-md">Info</h6>

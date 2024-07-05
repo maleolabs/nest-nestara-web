@@ -1,9 +1,11 @@
-<div class="content-wrap border-top border-1 p-sm-4">
-    @if ($type == 'data-pemohon')
-        @livewire('admin.pendaftaran.data-pemohon-create')
-    @elseif($type == 'izin-baru')
-        @livewire('admin.pendaftaran.data-izin-create')
-    @endif
+<div class="content-wrap p-sm-4">
+    <div class="container">
+        @if ($type == 'data-pemohon')
+            @livewire('dashboard.pendaftaran.data-pemohon-create')
+        @elseif($type == 'izin-baru')
+            @livewire('dashboard.pendaftaran.data-izin-create')
+        @endif
+    </div>
 </div>
 @push('scripts')
     <script>

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Livewire\Admin\Pendaftaran;
+namespace App\Livewire\Dashboard\Pendaftaran;
 
-use App\Livewire\Admin\Pendaftaran\Partials\DataPemohonTrait;
+use App\Livewire\Dashboard\Pendaftaran\Partials\DataPemohonTrait;
 use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\PemohonService;
 use Illuminate\Database\QueryException;
@@ -31,7 +31,7 @@ class DataPemohonCreate extends Component
     public function render()
     {
         $this->setRegionData();
-        return view('livewire.admin.pendaftaran.data-pemohon-create');
+        return view('livewire.dashboard.pendaftaran.data-pemohon-create');
     }
 
     public function resetData()

@@ -6,7 +6,9 @@ use App\Http\Controllers\Admin\PemantauanController;
 use App\Http\Controllers\Admin\PendaftaranController;
 use App\Http\Controllers\Admin\PenyerahanController;
 use App\Http\Controllers\Admin\ReportingController;
+use App\Http\Controllers\BackOffice\DashboardController as BackOfficeDashboardController;
 use App\Http\Controllers\Helper\FileController;
+use App\Http\Controllers\Layanan\DashboardController;
 use App\Http\Controllers\User\PerizinanController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -55,12 +57,24 @@ Route::middleware('auth')->group(function() {
     });
 
     Route::middleware(['role:pengelola_layanan'])->group(function() {
+        Route::prefix('layanan')->group(function() {
+            Route::get('/dashboard', [DashboardController::class, 'index'])->name('layanan.dashboard');
+            Route::get('/pendaftaran', [DashboardController::class, 'pendaftaran'])->name('layanan.pendaftaran');
+            Route::get('/pendaftaran/create', [DashboardController::class, 'pendaftaranCreate'])->name('layanan.pendaftaran.create');
+            Route::get('/penyerahan', [DashboardController::class, 'penyerahan'])->name('layanan.penyerahan');
+        });
     });
 
     Route::middleware(['role:pegawai'])->group(function() {
         Route::prefix('/back-office')->group(function() {
-            Route::get('/', [BackOfficeController::class, 'dashboard'])->name('pegawai.dashboard');
+            Route::get('/dashboard', [BackOfficeDashboardController::class, 'index'])->name('pegawai.dashboard');
         });
+    });
+
+    Route::middleware(['dashboard'])->group(function() {
+        Route::get('/dashboard', function() {
+            return 'dashboard';
+        })->name('dashboard');
     });
     
 

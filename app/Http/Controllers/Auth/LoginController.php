@@ -52,19 +52,14 @@ class LoginController extends Controller implements HasMiddleware
         switch ($role) {
             case 'admin':
                 return redirect()->route('admin.dashboard');
-                break;
             case 'pengelola_layanan':
                 return redirect()->route('layanan.dashboard');
-                break;
             case 'pegawai':
                 return redirect()->route('pegawai.dashboard');
-                break;
             case 'pemohon':
                 return redirect()->route('welcome');
-                break;
             default:
                 return redirect()->route('welcome');
-                break;
         }
     }
     

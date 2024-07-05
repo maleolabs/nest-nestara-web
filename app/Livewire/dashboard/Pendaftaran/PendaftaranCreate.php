@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\Pendaftaran;
+namespace App\Livewire\Dashboard\Pendaftaran;
 
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -13,7 +13,7 @@ class PendaftaranCreate extends Component
 
     public function render()
     {
-        return view('livewire.admin.pendaftaran.pendaftaran-create');
+        return view('livewire.dashboard.pendaftaran.pendaftaran-create');
     }
 
 }

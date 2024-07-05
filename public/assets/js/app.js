@@ -62,8 +62,11 @@
   onscroll(document, dashModalFixOnTop)
 
   const sidebarContainer = select('#sidebarContainer')
+  const sideMenuLeftContainer = select('#sideMenuLeftContainer')
   const sidebarRight = select('.sidebar-right')
   const sidebarShow = select('.sidebar-btn-show')
+  const sideMenuLeft = select('.side-menu-left')
+  const sideMenuLeftShow = select('.btn-show-left-menu')
   document.addEventListener('click', function(event) {
     const closable = select('.dash-modal-closable', true)
     closable.forEach(cl => {
@@ -84,7 +87,29 @@
         sidebarRight.style.right = '-300px'
       }
     }
+    if (sideMenuLeft && !sideMenuLeft.contains(event.target) && sideMenuLeftShow && !sideMenuLeftShow.contains(event.target)) {
+      if (sideMenuLeftContainer && sideMenuLeft) {
+        sideMenuLeftContainer.classList.add('d-none')
+        sideMenuLeft.style.left = '-300px'
+      }
+    }
   })
+  if (sidebarShow) {
+    sidebarShow.addEventListener('click', function() {
+      if (sidebarContainer && sidebarRight) {
+        sidebarContainer.classList.remove('d-none')
+        sidebarRight.style.right = '0'
+      }
+    })
+  }
+  if (sideMenuLeftShow) {
+    sideMenuLeftShow.addEventListener('click', function() {
+      if (sideMenuLeftContainer && sideMenuLeft) {
+        sideMenuLeftContainer.classList.remove('d-none')
+        sideMenuLeft.style.left = '0'
+      }
+    })
+  }
   const sidebarClose = select('.sidebar-btn-close')
   if (sidebarClose) {
     sidebarClose.addEventListener('click', function() {
@@ -94,15 +119,15 @@
       }
     })
   }
-  if (sidebarShow) {
-    sidebarShow.addEventListener('click', function() {
-      if (sidebarContainer && sidebarRight) {
-        sidebarContainer.classList.remove('d-none')
-        sidebarRight.style.right = '0'
+  const sideMenuLeftClose = select('.menu-left-btn-close')
+  if (sideMenuLeftClose) {
+    sideMenuLeftClose.addEventListener('click', function() {
+      if (sideMenuLeftContainer && sideMenuLeft) {
+        sideMenuLeftContainer.classList.add('d-none')
+        sideMenuLeft.style.left = '-300px'
       }
     })
   }
-
 
   const modalRight = select('.modal-right')
   const modalRightContent = select('.modal-right-content')

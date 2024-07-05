@@ -7,17 +7,25 @@ use App\Services\APIClient\RegionAPIService;
 use App\Services\AppService\FileService;
 use App\Services\AppService\Impl\FileServiceImpl;
 use App\Services\DomainServices\DokumenPemohonService;
+use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\Impl\DokumenPemohonServiceImpl;
+use App\Services\DomainServices\Impl\EntriDataServiceImpl;
 use App\Services\DomainServices\Impl\JenisPerizinanServiceImpl;
+use App\Services\DomainServices\Impl\PegawaiServiceImpl;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\Impl\PemohonServiceImpl;
 use App\Services\DomainServices\Impl\PerizinanServiceImpl;
+use App\Services\DomainServices\Impl\RoleServiceImpl;
 use App\Services\DomainServices\Impl\StatusIzinServiceImpl;
 use App\Services\DomainServices\Impl\SyaratIzinServiceImpl;
+use App\Services\DomainServices\Impl\UserServiceImpl;
 use App\Services\DomainServices\JenisPerizinanService;
+use App\Services\DomainServices\PegawaiService;
 use App\Services\DomainServices\PerizinanService;
+use App\Services\DomainServices\RoleService;
 use App\Services\DomainServices\StatusIzinService;
 use App\Services\DomainServices\SyaratIzinService;
+use App\Services\DomainServices\UserService;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
@@ -35,6 +43,10 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
             DokumenPemohonService::class,
             PerizinanService::class,
             StatusIzinService::class,
+            UserService::class,
+            RoleService::class,
+            EntriDataService::class,
+            PegawaiService::class,
         ];
     }
 
@@ -51,6 +63,10 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(DokumenPemohonService::class, DokumenPemohonServiceImpl::class);
         $this->app->singleton(PerizinanService::class, PerizinanServiceImpl::class);
         $this->app->singleton(StatusIzinService::class, StatusIzinServiceImpl::class);
+        $this->app->singleton(UserService::class, UserServiceImpl::class);
+        $this->app->singleton(RoleService::class, RoleServiceImpl::class);
+        $this->app->singleton(EntriDataService::class, EntriDataServiceImpl::class);
+        $this->app->singleton(PegawaiService::class, PegawaiServiceImpl::class);
     }
 
     /**

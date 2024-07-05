@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Admin\Pendaftaran;
+namespace App\Livewire\Dashboard\Pendaftaran;
 
 use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\PemohonService;
@@ -45,7 +45,7 @@ class PendaftaranIndex extends Component
     public function render()
     {
         $this->setDataList();
-        return view('livewire.admin.pendaftaran.pendaftaran-index');
+        return view('livewire.dashboard.pendaftaran.pendaftaran-index');
     }
 
     public function selectMenu($select_menu)

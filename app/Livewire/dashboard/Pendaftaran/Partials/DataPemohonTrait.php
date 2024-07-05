@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Livewire\Admin\Pendaftaran\Partials;
+namespace App\Livewire\Dashboard\Pendaftaran\Partials;
 
 use App\Livewire\Forms\DataPemohonForm;
 use App\Models\Pemohon;

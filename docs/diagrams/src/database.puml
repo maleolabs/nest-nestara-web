@@ -1,5 +1,7 @@
 @startuml pmptsp
 
+skinparam linetype ortho
+
 entity User {
     * id: bigint
     --
@@ -126,7 +128,8 @@ entity Izin {
     * jenis_permohonan: enum('baru', 'perubahan', 'perpanjangan')
       tanggal_peninjauan: datetime
       lokasi_izin: varchar(255)
-    * pengelola_layanan_id: unsignedBigInt <<FK>> ref id on Pegawai
+      pengelola_layanan_id: unsignedBigInt <<FK>> ref id on Pegawai
+      penada_tangan_id: unsignedBigInt <<FK>>
     --
       deleted_at: datetime
     * created_at: datetime
@@ -143,16 +146,6 @@ entity StatusIzin {
     --
     * created_at: datetime
     * updated_at: datetime
-}
-
-enum NamaStatusIzin {
-    didaftarkan
-    diproses
-    dibatalkan
-}
-
-enum ProgresStatus {
-    sedang di proses
 }
 
 entity EntriDataIzin {
@@ -191,6 +184,8 @@ Izin |o--|{ DokumenPemohon
 Izin ||--|{ StatusIzin
 Izin }|--|| Pegawai
 Izin }|--|{ EntriDataIzin
+Izin }o--|| PenandaTangan
+Izin }o--|{ TimTeknis
 
 
 @enduml

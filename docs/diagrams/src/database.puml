@@ -28,6 +28,7 @@ entity Roles {
 entity Pegawai {
     * id: bigint
     --
+    * user_id: unsignedBigInt <<FK>>
     * nama: varchar(100)
     * jabatan: varchar(100)
     --
@@ -78,6 +79,9 @@ entity JenisPerizinan {
     * id: bigint
     --
     * nama: varchar(255)
+    * kelopok_izin: varchar(100)
+    * durasi: int
+    * masa_berlaku: int
     --
       deleted_at: datetime
     * created_at: datetime

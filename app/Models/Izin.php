@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -30,6 +31,26 @@ class Izin extends Model
     public function status_izin(): HasMany
     {
         return $this->hasMany(StatusIzin::class);
+    }
+
+    public function entri_data_izin(): HasMany
+    {
+        return $this->hasMany(EntriDataIzin::class);
+    }
+
+    public function pengelola_layanan(): BelongsTo
+    {
+        return $this->belongsTo(Pegawai::class);
+    }
+
+    public function penanda_tangan(): BelongsTo
+    {
+        return $this->belongsTo(PenandaTangan::class); 
+    }
+
+    public function tim_teknis(): BelongsToMany
+    {
+        return $this->belongsToMany(TimTeknis::class, 'izin_tim_teknis');
     }
 
     public function getNoPendaftaranAttribute($value)

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->text('nama')->nullable(false);
             $table->string('tipe', 50)->default('pdf');
             $table->boolean('online')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

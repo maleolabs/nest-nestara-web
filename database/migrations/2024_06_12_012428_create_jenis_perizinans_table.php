@@ -14,6 +14,10 @@ return new class extends Migration
         Schema::create('jenis_perizinan', function (Blueprint $table) {
             $table->id();
             $table->string('nama')->nullable(false);
+            $table->string('kelompok_izin', 100)->default('izin tanpa retribusi');
+            $table->integer('durasi')->default(1);
+            $table->integer('masa_berlaku')->default(0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

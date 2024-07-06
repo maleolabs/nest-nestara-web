@@ -33,32 +33,42 @@
         </div>
     </div>
     <div class="content-wrap py-3">
-        <div class="container">
-            @if ($preview_data_izin)
-                @livewire('dashboard.pendaftaran.preview-data-izin', ['preview_izin_id' => $preview_izin_id])
-            @else
-                <div class="d-flex gap-3 align-items-center">
-                    <div class="input-group input-group-outline my-3">
-                        <label class="form-label">Cari {{ $menu == self::DATA_PEMOHON ? 'ID atau nama pemohon...' : 'jenis izin, ID, atau nama pemohon...' }}</label>
-                        <input type="text" class="form-control" wire:model.live='search'>
-                    </div>
-                    @if ($menu == self::DATA_IZIN_BARU)
-                        <div class="input-group input-group-outline" style="width: fit-content">
-                            <select name="filter_status" id="filter-status" class="form-select px-2" wire:model.live='filter_status'>
-                                <option value="{{ App\utils\enums\StatusIzinEnum::DIDAFTARKAN }}" class="text-capitalize">{{ App\utils\enums\StatusIzinEnum::DIDAFTARKAN }}</option>
-                                <option value="{{ App\utils\enums\StatusIzinEnum::PROSES }}" class="text-capitalize">{{ App\utils\enums\StatusIzinEnum::PROSES }}</option>
-                                <option value="{{ App\utils\enums\StatusIzinEnum::BATAL }}" class="text-capitalize">{{ App\utils\enums\StatusIzinEnum::BATAL }}</option>
-                            </select>
+        @if ($preview_data_izin)
+            @livewire('dashboard.pendaftaran.preview-data-izin', ['preview_izin_id' => $preview_izin_id])
+        @else
+            <div class="row px-2">
+                <div class="col-md-9">
+                    <div class="card min-vh-50 p-3">
+                        <div class="d-flex gap-3 align-items-center">
+                            <div class="input-group input-group-outline my-3">
+                                <label class="form-label">Cari {{ $menu == self::DATA_PEMOHON ? 'ID atau nama pemohon...' : 'jenis izin, ID, atau nama pemohon...' }}</label>
+                                <input type="text" class="form-control" wire:model.live='search'>
+                            </div>
+                            @if ($menu == self::DATA_IZIN_BARU)
+                                <div class="input-group input-group-outline" style="width: fit-content">
+                                    <select name="filter_status" id="filter-status" class="form-select px-2" wire:model.live='filter_status'>
+                                        <option value="{{ App\utils\enums\StatusIzinEnum::DIDAFTARKAN }}" class="text-capitalize">{{ App\utils\enums\StatusIzinEnum::DIDAFTARKAN }}</option>
+                                        <option value="{{ App\utils\enums\StatusIzinEnum::PROSES }}" class="text-capitalize">{{ App\utils\enums\StatusIzinEnum::PROSES }}</option>
+                                        <option value="{{ App\utils\enums\StatusIzinEnum::BATAL }}" class="text-capitalize">{{ App\utils\enums\StatusIzinEnum::BATAL }}</option>
+                                    </select>
+                                </div>
+                            @endif
                         </div>
-                    @endif
+                        @if ($layout == 'grid')
+                            @include('livewire.dashboard.pendaftaran.partials.grid')
+                        @else
+                            @include('livewire.dashboard.pendaftaran.partials.table')
+                        @endif
+                    </div>
                 </div>
-                @if ($layout == 'grid')
-                    @include('livewire.dashboard.pendaftaran.partials.grid')
-                @else
-                    @include('livewire.dashboard.pendaftaran.partials.table')
-                @endif
-            @endif
-        </div>
+                <div class="col-md-3 order-md-last">
+                    <div class="card d-flex gap-2 flex-column align-items-center p-3">
+                        <img src="{{ asset('storage/web/layanan-icon.png') }}" class="img-fluid img-rounded img-rounded-md">
+                        <h5 class="text-center text-bold spacing-normal">Layanan</h5>
+                    </div>
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 @push('scripts')

@@ -12,5 +12,20 @@ class DashboardController extends Controller
     {
         return response()->view('back-office.index');
     }
+
+    public function pendataan()
+    {
+        return response()->view('back-office.pendataan');
+    }
+
+    public function timTeknis()
+    {
+        return response()->view('back-office.tim-teknis');
+    }
+
+    public function penetapan()
+    {
+        return response()->view('back-office.penetapan');
+    }
     
 }

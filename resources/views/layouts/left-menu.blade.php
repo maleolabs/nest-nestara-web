@@ -32,19 +32,19 @@
                 </li>
                 <div class="nav-devider">Pengelolaan izin</div>
                 <li class="nav-item">
-                    <a href="javascript:;" class="nav-link">
+                    <a href="{{ route('pegawai.pendataan') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.pendataan' ? ' active' : '' }}">
                         <i class="fa-solid fa-file-signature"></i>
                         <span>Pendataan</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="javascript:;" class="nav-link">
+                    <a href="{{ route('pegawai.tim-teknis') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.tim-teknis' ? ' active' : '' }}">
                         <i class="fa-solid fa-people-group"></i>
                         <span>Tim Teknis</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="javascript:;" class="nav-link">
+                    <a href="{{ route('pegawai.penetapan') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.penetapan' ? ' active' : '' }}">
                         <i class="fa-solid fa-file-circle-check"></i>
                         <span>Penetapan</span>
                     </a>

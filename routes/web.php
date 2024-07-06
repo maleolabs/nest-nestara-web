@@ -68,6 +68,9 @@ Route::middleware('auth')->group(function() {
     Route::middleware(['role:pegawai'])->group(function() {
         Route::prefix('/back-office')->group(function() {
             Route::get('/dashboard', [BackOfficeDashboardController::class, 'index'])->name('pegawai.dashboard');
+            Route::get('/pendataan', [BackOfficeDashboardController::class, 'pendataan'])->name('pegawai.pendataan');
+            Route::get('/tim-teknis', [BackOfficeDashboardController::class, 'timTeknis'])->name('pegawai.tim-teknis');
+            Route::get('/penetapan', [BackOfficeDashboardController::class, 'penetapan'])->name('pegawai.penetapan');
         });
     });
 

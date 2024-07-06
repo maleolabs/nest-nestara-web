@@ -2,7 +2,7 @@
 <body>
     @include('dashboard.dashboard-nav')
     <main id="back-office-main" class="main">
-        <div class="container-fluid">
+        <div class="bg-light">
             @yield('main')
         </div>
     </main>

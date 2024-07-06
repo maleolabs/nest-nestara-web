@@ -39,20 +39,23 @@
             <div class="row px-2">
                 <div class="col-md-9">
                     <div class="card min-vh-50 p-3">
-                        <div class="d-flex gap-3 align-items-center">
-                            <div class="input-group input-group-outline my-3">
+                        <div class="d-flex align-items-end gap-3 mb-4">
+                            <div>
+                                <label for="start_date" class="form-label mb-0">Dari Tanggal</label>
+                                <div class="input-group input-group-outline">
+                                    <input type="date" class="form-control" id="start_date" name="start_date" wire:model.live='start_date'>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="end_date" class="form-label mb-0">Sampai Tanggal</label>
+                                <div class="input-group input-group-outline">
+                                    <input type="date" class="form-control" id="end_date" name="end_date" wire:model.live='end_date'>
+                                </div>
+                            </div>
+                            <div class="input-group input-group-outline">
                                 <label class="form-label">Cari {{ $menu == self::DATA_PEMOHON ? 'ID atau nama pemohon...' : 'jenis izin, ID, atau nama pemohon...' }}</label>
                                 <input type="text" class="form-control" wire:model.live='search'>
                             </div>
-                            @if ($menu == self::DATA_IZIN_BARU)
-                                <div class="input-group input-group-outline" style="width: fit-content">
-                                    <select name="filter_status" id="filter-status" class="form-select px-2" wire:model.live='filter_status'>
-                                        <option value="{{ App\utils\enums\StatusIzinEnum::DIDAFTARKAN }}" class="text-capitalize">{{ App\utils\enums\StatusIzinEnum::DIDAFTARKAN }}</option>
-                                        <option value="{{ App\utils\enums\StatusIzinEnum::PROSES }}" class="text-capitalize">{{ App\utils\enums\StatusIzinEnum::PROSES }}</option>
-                                        <option value="{{ App\utils\enums\StatusIzinEnum::BATAL }}" class="text-capitalize">{{ App\utils\enums\StatusIzinEnum::BATAL }}</option>
-                                    </select>
-                                </div>
-                            @endif
                         </div>
                         @if ($layout == 'grid')
                             @include('livewire.dashboard.pendaftaran.partials.grid')

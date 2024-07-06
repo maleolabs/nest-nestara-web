@@ -156,7 +156,6 @@
                                             <label for="pendaftaran-selesai" class="form-check-label">Pendaftaran Selesai</label>
                                         </div>
                                         <div class="d-flex justify-content-start gap-3">
-                                            <button class="btn btn-light" type="reset">Reset</button>
                                             <button class="btn bg-gradient-primary" type="submit">Simpan</button>
                                         </div>
                                     </form>

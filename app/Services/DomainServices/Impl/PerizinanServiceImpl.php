@@ -35,8 +35,18 @@ class PerizinanServiceImpl implements PerizinanService
         return Izin::find($id);
     }
 
-    public function getAll($search = '', $filter_status, $sort = 'DESC'): array
+    public function getAll(
+        string $search = '', 
+        array $filter_status = [], 
+        array $filter_status_progress = [], 
+        string $filter_start_date = null, 
+        string $filter_end_date = null, 
+        string $sort = 'DESC'
+    ): array
     {
+        $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
+        $filter_end_date = Carbon::parse($filter_end_date)->addDay()->ToDateString() ?? Carbon::now()->toDateTimeString();
+
         $semua_izin = Izin::where(function ($query) use ($search) {
             $query->whereHas('jenis_perizinan', function($jenis_perizinan) use ($search) {
                 $jenis_perizinan->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($search) . '%']);
@@ -44,10 +54,18 @@ class PerizinanServiceImpl implements PerizinanService
                 $pemohon->whereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%'])
                     ->orWhere('nomor_id', 'LIKE', '%' . $search . '%');
             });
-        })->whereHas('status_izin', function ($status_izin) use ($filter_status) {
-            $status_izin->where('nama', $filter_status)
-                ->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) FROM status_izin WHERE status_izin.izin_id = izin.id)'));   
-        })->orderBy('created_at', $sort)->get();
+        })->whereHas('status_izin', function ($status_izin) use ($filter_status, $filter_status_progress) {
+            if (!empty($filter_status)) {
+                $status_izin->whereIn('nama', $filter_status);
+                if (!empty($filter_status_progress))
+                    $status_izin->whereIn('progres', $filter_status_progress);
+                $status_izin->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) FROM status_izin WHERE status_izin.izin_id = izin.id)'));   
+            }
+        })
+        ->whereBetween('created_at', [$filter_start_date, $filter_end_date])
+        ->orderBy('created_at', $sort)
+        ->get();
+
         return $semua_izin->all();
     }
 

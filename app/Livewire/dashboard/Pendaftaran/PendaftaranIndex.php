@@ -6,6 +6,7 @@ use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\utils\enums\StatusIzinEnum;
+use Carbon\Carbon;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -27,6 +28,8 @@ class PendaftaranIndex extends Component
         $semua_perpanjangan = [],
         $semua_perubahan = [];
     public $search = '',
+        $start_date,
+        $end_date,
         $filter_status;
 
     public function mount()
@@ -43,6 +46,9 @@ class PendaftaranIndex extends Component
         if ($this->preview_izin_id) {
             $this->preview_data_izin = true;
         }
+
+        $this->start_date = Carbon::today()->subMonth()->toDateString();
+        $this->end_date = Carbon::today()->toDateString();
     }
 
     public function render()
@@ -63,7 +69,9 @@ class PendaftaranIndex extends Component
     private function setDataList()
     {
         $this->semua_pemohon = $this->getPemohonService()->getAll($this->search, $this->filter_status);
-        $this->semua_izin = $this->getPerizinanService()->getAll($this->search, $this->filter_status);
+        $start_date = Carbon::parse($this->start_date)->toDateTimeString();
+        $end_date = Carbon::parse($this->end_date)->toDateTimeString();
+        $this->semua_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::DIDAFTARKAN, StatusIzinEnum::DITINJAU], [], $start_date, $end_date, 'ASC');
     }
 
     #[On('change-layout')]

@@ -4,6 +4,7 @@ namespace App\Livewire\Dashboard\BackOffice;
 
 use App\Services\DomainServices\PerizinanService;
 use App\utils\enums\StatusIzinEnum;
+use Carbon\Carbon;
 use Livewire\Component;
 
 class Pendataan extends Component
@@ -33,7 +34,9 @@ class Pendataan extends Component
     {
         if (isset($this->getMenu()[$menu])) {
             if ($menu == self::DEFAULT_MENU) {
-                $this->all_izin = $this->getPerizinanService()->getAll($this->search, StatusIzinEnum::DITINJAU);
+                $start_date = Carbon::parse($this->start_date)->toDateString();
+                $end_date = Carbon::parse($this->end_date)->toDateString();
+                $this->all_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::PROSES], [], $start_date, $end_date, 'ASC');
             }
             $this->active_menu = $menu;
             $this->dispatch('menu-selected', ['menu' => $menu]);

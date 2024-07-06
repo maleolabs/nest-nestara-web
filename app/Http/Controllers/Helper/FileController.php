@@ -37,7 +37,9 @@ class FileController extends Controller
         $type = $finfo->buffer($file);
         return response($file, 200)
             ->header('Content-Type', $type)
-            ->header('Content-Disposition', 'inline; filename="'.$file_name.'"');
+            ->header('Content-Disposition', 'inline; filename="'.$file_name.'"')
+            ->header('Cache-Control', 'no-cache, must-revalidate')
+            ->header('Pragma', 'no-cache');
     }
 
 }

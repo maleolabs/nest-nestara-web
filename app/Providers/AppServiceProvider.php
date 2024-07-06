@@ -5,7 +5,9 @@ namespace App\Providers;
 use App\Services\APIClient\Impl\EmsifaAPIService;
 use App\Services\APIClient\RegionAPIService;
 use App\Services\AppService\FileService;
+use App\Services\AppService\PdfToTextService;
 use App\Services\AppService\Impl\FileServiceImpl;
+use App\Services\AppService\Impl\PdfToTextServiceImpl;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\Impl\DokumenPemohonServiceImpl;
@@ -47,6 +49,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
             RoleService::class,
             EntriDataService::class,
             PegawaiService::class,
+            PdfToTextService::class,
         ];
     }
 
@@ -67,6 +70,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(RoleService::class, RoleServiceImpl::class);
         $this->app->singleton(EntriDataService::class, EntriDataServiceImpl::class);
         $this->app->singleton(PegawaiService::class, PegawaiServiceImpl::class);
+        $this->app->singleton(PdfToTextService::class, PdfToTextServiceImpl::class);
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -104,6 +105,7 @@ class PreviewDataIzin extends Component
         } else if ($tipe == 'pdf') {
             $this->modalPdfSource = $path;
             $this->modalImgSource = null;
+            $path = route('render-file', ['file_name' => $path]);
         }
         $this->dispatch('set-preview-img-modal', [
             'path' => $path,

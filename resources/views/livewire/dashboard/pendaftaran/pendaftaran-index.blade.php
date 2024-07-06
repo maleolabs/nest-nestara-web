@@ -72,61 +72,12 @@
     </div>
 </div>
 @push('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.min.js" integrity="sha512-Z8CqofpIcnJN80feS2uccz+pXWgZzeKxDsDNMD/dJ6997/LSRY+W4NmEt9acwR+Gt9OHN0kkI1CTianCwoqcjQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.6.347/pdf.worker.min.js" integrity="sha512-lHibs5XrZL9hXP3Dhr/d2xJgPy91f2mhVAasrSbMkbmoTSm2Kz8DuSWszBLUg31v+BM6tSiHSqT72xwjaNvl0g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
-        Livewire.on('set-preview-img-modal', data => {
-            let btnShowModal = document.getElementById('btnShowPreviewModal')
-            if (btnShowModal) {
-                setTimeout(() => {
-                    btnShowModal.click()
-
-                    const res = data[0]
-                    let type = res.type
-                    if (type == 'pdf') {
-                        let fileName = res.path
-                        let set_url = `{{ env('APP_URL') }}/files/${fileName}`
-                        const pdfContainer = document.getElementById('pdf-container')
-    
-                        pdfjsLib.getDocument(set_url).promise.then(pdfDoc => {
-                            for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
-                                pdfDoc.getPage(pageNum).then(page => {
-                                    const scale = 1.5;
-                                    const viewport = page.getViewport({ scale })
-    
-                                    const canvasWraper = document.createElement('div')
-                                    canvasWraper.classList.add('canvas-wraper')
-    
-                                    const canvas = document.createElement('canvas')
-                                    const context = canvas.getContext('2d')
-                                    canvas.height = viewport.height
-                                    canvas.width = viewport.width
-    
-                                    pdfContainer.style.width = `${viewport.width + 4}px`
-                                    pdfContainer.style.height = `${viewport.height}px`
-    
-                                    const renderContext = {
-                                        canvasContext: context,
-                                        viewport: viewport
-                                    }
-    
-                                    canvasWraper.appendChild(canvas)
-                                    pdfContainer.appendChild(canvasWraper)
-    
-                                    page.render(renderContext)
-                                })
-                            }
-                        })
-                    }
-                }, 100)
-            }
-        })
-
         const btnCloseModal = document.getElementById('btn-close-modal')
         if (btnCloseModal) {
             Livewire.dispatch('refresh-component')
         }
-
+        
         function switchTab(tab) {
             let url = new URL(window.location)
             url.searchParams.set('tab', tab)

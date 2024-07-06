@@ -26,13 +26,15 @@
                         <td class="text-sm">
                             <p class="text-xs font-weight-bold mb-0">{{ $pemohon->nomor_id }}</p>
                         </td>
-                        <td class="d-flex align-items-center gap-2">
-                            @if($pemohon->user != null)
-                                <img src="{{ asset('storage/users/' . $pemohon->user->foto) }}" alt="{{ $pemohon->nama_pemohon }}" class="img-circle img-circle-sm">
-                            @endif
-                            <h6 class="mb-0 text-sm">
-                                {{ str_capitalize($pemohon->nama_pemohon, true) }}
-                            </h6>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                @if($pemohon->user != null)
+                                    <img src="{{ asset('storage/users/' . $pemohon->user->foto) }}" alt="{{ $pemohon->nama_pemohon }}" class="img-circle img-circle-sm">
+                                @endif
+                                <h6 class="mb-0 text-sm">
+                                    {{ str_capitalize($pemohon->nama_pemohon, true) }}
+                                </h6>
+                            </div>
                         </td>
                         <td>
                             <p class="text-sm text-secondary mb-0 text-capitalize">

@@ -11,7 +11,7 @@ class DataPemohonForm extends Form
     #[Validate('required|string|max:8')]
     public $sumber_identitas;
     
-    #[Validate('required|string|max:16')]
+    #[Validate('required|string|max:17')]
     public $nomor_id;
     
     #[Validate('required|string|max:100')]

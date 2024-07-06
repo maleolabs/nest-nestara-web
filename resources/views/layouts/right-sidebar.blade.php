@@ -3,7 +3,7 @@
         <div class="d-flex align-items-top justify-content-between mb-4">
             <img src="{{ asset('storage/users/' . auth()->user()->foto) }}" alt="none" class="img-circle img-circle-sm">
             <div class="ms-2 me-auto">
-                <h6 class="text-sm spacing-normal mb-0">{{ Str::limit(auth()->user()->name, 20) }}</h6>
+                <h6 class="text-sm spacing-normal mb-0">{{ Str::limit(auth()->user()->name, 17) }}</h6>
                 <p class="text-muted m-0 text-sm">
                     {{ Str::limit(auth()->user()->email, 20) }}
                 </p>

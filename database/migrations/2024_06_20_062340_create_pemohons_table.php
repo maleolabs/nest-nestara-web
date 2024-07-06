@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable(true);
             $table->string('sumber_identitas', 10);
-            $table->string('nomor_id', 15);
+            $table->string('nomor_id', 17);
             $table->string('nama_pemohon', 100);
             $table->string('no_telepon', 15);
             $table->bigInteger('provinsi');

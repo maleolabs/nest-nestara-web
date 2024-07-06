@@ -20,6 +20,7 @@ class StatusIzinEnum
             self::DIDAFTARKAN,
             self::PERUBAHAN,
             self::PERPANJANGAN,
+            self::DITINJAU,
             self::PROSES,
             self::PENERBITAN,
             self::PENYERAHAN,

@@ -132,7 +132,7 @@
                 </span>
                 <span class="ms-1 d-sm-inline d-none">Tambah data baru</span>
             </button>
-            <a href="{{ route('pendaftaran.index') }}" class="btn bg-gradient-info w-100" title="Lihat semua data pemohon">
+            <a href="{{ route('layanan.pendaftaran') }}" class="btn bg-gradient-info w-100" title="Lihat semua data pemohon">
                 <i class="fa-solid fa-eye text-md"></i>
                 <span class="ms-1 d-sm-inline d-none">Lihat semua data</span>
             </a>

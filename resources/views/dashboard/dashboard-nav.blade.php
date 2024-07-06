@@ -17,7 +17,7 @@
                         </a>
                     </li>
                     <li class="breadcrumb-item">
-                        <a href="{{ route('admin.dashboard') }}">Dashboard</a>
+                        <a href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
                     @stack('breadcrumb-item')
                 </ol>

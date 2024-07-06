@@ -7,20 +7,6 @@
     @csrf
     <div class="row">
         <div class="col-sm-8 mb-sm-0 mb-3">
-            <div class="border rounded-2 mb-3 p-3">
-                <h6 class="text-bold text-sm mb-3">Data Permohonan</h6>
-                <label for="id" class="form-label">Jenis Izin</label>
-                <div class="input-group input-group-outline">
-                    <select class="form-select" id="jenisPerizinanSelect" wire:model='data_izin_form.jenis_izin'>
-                        @foreach ($allPerizinan as $perizinan)
-                            <option value="{{ $perizinan->jenis }}">{{ $perizinan->jenis }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                @error('data_izin_form.jenis_izin')
-                    <div class="text-sm text-danger mt-1">{{ $message }}</div>
-                @enderror
-            </div>
             <div class="border rounded p-3">
                 <h6 class="text-bold text-sm mb-3">Pemohon Izin</h6>
                 <div class="input-group input-group-outline">
@@ -30,6 +16,20 @@
                         <i class="fa-solid fa-spinner fa-spin"></i>
                     </div>
                 </div>
+            </div>
+            <div class="border rounded-2 mt-3 p-3">
+                <h6 class="text-bold text-sm mb-3">Data Permohonan</h6>
+                <label for="id" class="form-label">Jenis Izin</label>
+                <div class="input-group input-group-outline">
+                    <select class="form-select" id="jenisPerizinanSelect" wire:model='data_izin_form.jenis_izin'>
+                        @foreach ($allPerizinan as $perizinan)
+                            <option value="{{ $perizinan->nama }}">{{ $perizinan->nama }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                @error('data_izin_form.jenis_izin')
+                    <div class="text-sm text-danger mt-1">{{ $message }}</div>
+                @enderror
             </div>
         </div>
         <div class="col-sm-4">

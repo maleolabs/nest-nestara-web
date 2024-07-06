@@ -1,7 +1,7 @@
 @extends('layanan.layouts.app')
 @push('breadcrumb-item')
     <li class="breadcrumb-item">
-        <a href="{{ route('admin.pendaftaran.index') }}">
+        <a href="{{ route('layanan.pendaftaran') }}">
             Pendaftaran
         </a>
     </li>

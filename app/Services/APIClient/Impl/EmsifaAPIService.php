@@ -18,6 +18,8 @@ class EmsifaAPIService implements RegionAPIService
 
     private const LOCAL_REGION_PATH = 'region';
 
+    private const NOT_FOUND = 'tidak ditemukan';
+
     private function fileService(): FileService
     {
         return app(FileService::class);
@@ -32,7 +34,7 @@ class EmsifaAPIService implements RegionAPIService
     {
         $url = 'province/' . $province_id . '.json';
         $province_data = $this->fetchData(self::GET_METHOD, $url);
-        return $province_data['name'];
+        return count($province_data) > 0 ? $province_data['name'] : 'provinsi ' . self::NOT_FOUND;
     }
 
     public function getRegenciesByProvince(int $province_id): array
@@ -45,7 +47,7 @@ class EmsifaAPIService implements RegionAPIService
     {
         $url = 'regency/' . $regency_id . '.json';
         $regency_data = $this->fetchData(self::GET_METHOD, $url);
-        return $regency_data['name'];
+        return count($regency_data) > 0 ? $regency_data['name'] : 'kabupaten ' . self::NOT_FOUND;
     }
 
     public function getDistrictsByRegency(int $regency_id): array
@@ -58,7 +60,7 @@ class EmsifaAPIService implements RegionAPIService
     {
         $url = 'district/' . $district_id . '.json';
         $district_data = $this->fetchData(self::GET_METHOD, $url);
-        return $district_data['name'];
+        return count($district_data) > 0 ? $district_data['name'] : 'kecamatan ' . self::NOT_FOUND;
     }
 
     public function getVillagesByDistrict(int $district_id): array
@@ -71,7 +73,7 @@ class EmsifaAPIService implements RegionAPIService
     {
         $url = 'village/' . $village_id . '.json';
         $village_data = $this->fetchData(self::GET_METHOD, $url);
-        return $village_data['name'];
+        return count($village_data) > 0 ? $village_data['name'] : 'kelurahan ' . self::NOT_FOUND;
     }
 
     private function fetchData(string $method, string $param): array

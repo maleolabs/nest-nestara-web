@@ -69,9 +69,7 @@ class PendaftaranIndex extends Component
     private function setDataList()
     {
         $this->semua_pemohon = $this->getPemohonService()->getAll($this->search, $this->filter_status);
-        $start_date = Carbon::parse($this->start_date)->toDateTimeString();
-        $end_date = Carbon::parse($this->end_date)->toDateTimeString();
-        $this->semua_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::DIDAFTARKAN, StatusIzinEnum::DITINJAU], [], $start_date, $end_date, 'ASC');
+        $this->semua_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::DIDAFTARKAN, StatusIzinEnum::DITINJAU], [], $this->start_date, $this->end_date, 'ASC');
     }
 
     #[On('change-layout')]

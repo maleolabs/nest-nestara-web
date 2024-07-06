@@ -2574,7 +2574,7 @@ button.btn-app-tertiary-light:active {
 
 .sticky-top-nav {
   position: sticky;
-  top: 60px;
+  top: 72px;
   z-index: 999;
 }
 

@@ -74,100 +74,103 @@
                                         @endif">
                                         {{ $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN ? "{$status->nama} ({$status->progres})" : $status->nama }}
                                     </p>
-                                    <p class="mb-0">{{ $status->updated_at->translatedFormat('l, d F Y H:i') . ' WITA' }}</p>
-                                    <small class="text-muted text-sm fst-italic">{{ $status->keterangan ?? '' }}</small>
+                                    <p class="mb-0 text-sm">{{ $status->created_at->translatedFormat('l, d F Y H:i') . ' WITA.' }}</p>
+                                    @if ($status->created_at != $status->updated_at)
+                                        <p class="mb-0 text-sm">
+                                            <i class="fa-solid fa-rotate me-1"></i>
+                                            {{ 'Terakhir diupdate ' .$status->updated_at->translatedFormat('l, d F Y H:i') . ' WITA' }}
+                                        </p>
+                                    @endif
+                                    @if ($status->keterangan)
+                                        <small class="text-muted text-sm">{{ 'Keterangan: ' . $status->keterangan ?? '' }}</small>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
                     </div>
-                    <div class="mt-4">
-                        <ul class="nav nav-tabs nav-tabs-bordered">
-                            <li class="nav-item">
-                                <a href="javascript:;" class="nav-link @if($active_tab != self::TINDAKAN)active @endif" data-bs-toggle="tab" data-bs-target="#persyaratan-tab">
-                                    Persyaratan
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="javascript:;" class="nav-link @if($active_tab == self::TINDAKAN)active @endif" data-bs-toggle="tab" data-bs-target="#tindakan-tab">
-                                    Tindakan
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="tab-content border border-top-0 rounded-bottom-2 p-4">
-                            <div class="tab-pane fade @if($active_tab != self::TINDAKAN)show active @endif" id="persyaratan-tab">
-                                @if (count($preview_izin_syarat_izin) > 0)
-                                    <p class="mt-3 mb-0 text-muted">Persyaratan</p>
-                                    <div class="rounded-3 border border-danger bg-danger-light p-3 my-3 text-danger">
-                                        <strong>Penting:</strong>
-                                        <p class="mb-0">
-                                            Dokumen ini bersifat sangat sensitif dan rahasia. Pastikan untuk tidak menyimpan atau mengunduhnya di tempat yang tidak aman atau diakses oleh pihak yang tidak berwenang.
-                                        </p>
-                                    </div>
-                                    @foreach ($preview_izin_syarat_izin as $syarat)
-                                        <h6 @if(!isset($syarat->dokumen_pemohon[0]))class="text-muted text-decoration-line-through"@endif>
-                                            @if (isset($syarat->dokumen_pemohon[0]))
-                                                <a href="{{ route('download-file', ['file_name' => $syarat->dokumen_pemohon[0]->nama_file]) }}" class="text-decoration-none d-inline">
-                                                    <i class="fa-solid fa-download me-1"></i>
-                                                </a>
-                                                <a href="javascript:;" class="text-decoration-none d-inline" wire:click="showImgModal('{{ $syarat->nama }}', '{{ $syarat->dokumen_pemohon[0]->nama_file }}', '{{ $syarat->tipe }}')">
-                                                    <i class="fa-solid fa-eye me-1"></i>
-                                                </a>
-                                                <button type="button" id="btnShowPreviewModal" data-bs-toggle="modal" data-bs-target="#showDocumentImgModal" class="opacity-0"></button>
-                                            @else
-                                                <i class="fa-solid fa-download me-1"></i>
-                                                <i class="fa-solid fa-eye me-1"></i>
-                                            @endif
-                                            {{ $syarat->nama }}
-                                        </h6>
-                                    @endforeach
-                                @else
-                                    <p class="mt-3 text-muted">
-                                        <i class="fa-solid fa-circle-info me-1"></i>
-                                        Tidak ada persyaratan untuk perizinan ini!
-                                    </p>
-                                @endif
-                            </div>
-                            <div class="tab-pane fade @if($active_tab == self::TINDAKAN)show active @endif" id="tindakan-tab">
-                                @if ($this->canProcess())
-                                    <form wire:submit.prevent='saveAction'>
-                                        <label for="tanggal_peninjauan" class="form-label">Tanggal Peninjauan</label>
-                                        <div class="input-group input-group-outline mb-3">
-                                            <input type="datetime" class="form-control disabled @error('tanggal_peninjauan')is-invalid @enderror" id="tanggal_peninjauan" disabled wire:model='tanggal_peninjauan'>
-                                        </div>
-                                        @error('tanggal_peninjauan')
-                                            <div class="mb-3 text-danger text-sm">{{ $message }}</div>
-                                        @enderror
-                                        <label for="lokasi_izin" class="form-label">Lokasi Izin</label>
-                                        <div class="input-group input-group-outline mb-3">
-                                            <input type="text" class="form-control @error('lokasi_izin')is-invalid @enderror" id="lokasi_izin" wire:model='lokasi_izin'>
-                                        </div>
-                                        @error('lokasi_izin')
-                                            <div class="mb-3 text-danger text-sm">{{ $message }}</div>
-                                        @enderror
-                                        <label for="keterangan" class="form-label">Keterangan</label>
-                                        <div class="input-group input-group-outline mb-3">
-                                            <textarea rows="3" class="form-control @error('keterangan')is-invalid @enderror" id="keterangan" wire:model='keterangan'></textarea>
-                                        </div>
-                                        @error('keterangan')
-                                            <div class="mb-3 text-danger text-sm">{{ $message }}</div>
-                                        @enderror
-                                        <div class="form-check ps-0 mb-3">
-                                            <input type="checkbox" class="form-check-input" id="pendaftaran-selesai" wire:model='pendaftaran_selesai'>
-                                            <label for="pendaftaran-selesai" class="form-check-label">Pendaftaran Selesai</label>
-                                        </div>
-                                        <div class="d-flex justify-content-start gap-3">
-                                            <button class="btn bg-gradient-primary" type="submit">Simpan</button>
-                                        </div>
-                                    </form>
-                                @else
-                                    <small class="text-muted">Tanggal Peninjauan</small>
-                                    <h6>{{ Carbon\Carbon::parse($preview_izin->tanggal_peninjauan)->translatedFormat('d F Y H:i') . ' WITA' }}</h6>
-                                    <small class="text-muted">Lokasi Izin</small>
-                                    <h6>{{ $preview_izin->lokasi_izin }}</h6>
-                                @endif
+                    @role('pegawai')
+                        <div class="mt-4">
+                            <h6 class="text-bold">
+                                <i class="fa-regular fa-circle-right me-1"></i>
+                                Detail permohonan
+                            </h6>
+                            <div class="ps-4">
+                                <small class="text-muted">Tanggal Peninjauan</small>
+                                <p>{{ Carbon\Carbon::parse($preview_izin->tanggal_peninjauan)->translatedFormat('d F Y H:i') . ' WITA' }}</p>
+                                <small class="text-muted">Lokasi Izin</small>
+                                <p>{{ $preview_izin->lokasi_izin }}</p>
                             </div>
                         </div>
-                    </div>
+                        <div class="mt-4">
+                            <h6 class="text-bold">
+                                <i class="fa-regular fa-circle-right me-1"></i>
+                                Persyaratan
+                            </h6>
+                            <div class="px-4">
+                                @include('livewire.dashboard.pendaftaran.partials.preview-izin-persyaratan-show')
+                            </div>
+                        </div>
+                    @elserole('pengelola_layanan')
+                        <div class="mt-4">
+                            <ul class="nav nav-tabs nav-tabs-bordered">
+                                <li class="nav-item">
+                                    <a href="javascript:;" class="nav-link @if($active_tab != self::TINDAKAN)active @endif" data-bs-toggle="tab" data-bs-target="#persyaratan-tab">
+                                        Persyaratan
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="javascript:;" class="nav-link @if($active_tab == self::TINDAKAN)active @endif" data-bs-toggle="tab" data-bs-target="#tindakan-tab">
+                                        Tindakan
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content border border-top-0 rounded-bottom-2 p-4">
+                                <div class="tab-pane fade @if($active_tab != self::TINDAKAN)show active @endif" id="persyaratan-tab">
+                                    <p class="mt-3 mb-0 text-muted">Persyaratan</p>
+                                    @include('livewire.dashboard.pendaftaran.partials.preview-izin-persyaratan-show')
+                                </div>
+                                <div class="tab-pane fade @if($active_tab == self::TINDAKAN)show active @endif" id="tindakan-tab">
+                                    @if ($this->canProcess())
+                                        <form wire:submit.prevent='saveAction'>
+                                            <label for="tanggal_peninjauan" class="form-label">Tanggal Peninjauan</label>
+                                            <div class="input-group input-group-outline mb-3">
+                                                <input type="datetime" class="form-control disabled @error('tanggal_peninjauan')is-invalid @enderror" id="tanggal_peninjauan" disabled wire:model='tanggal_peninjauan'>
+                                            </div>
+                                            @error('tanggal_peninjauan')
+                                                <div class="mb-3 text-danger text-sm">{{ $message }}</div>
+                                            @enderror
+                                            <label for="lokasi_izin" class="form-label">Lokasi Izin</label>
+                                            <div class="input-group input-group-outline mb-3">
+                                                <input type="text" class="form-control @error('lokasi_izin')is-invalid @enderror" id="lokasi_izin" wire:model='lokasi_izin'>
+                                            </div>
+                                            @error('lokasi_izin')
+                                                <div class="mb-3 text-danger text-sm">{{ $message }}</div>
+                                            @enderror
+                                            <label for="keterangan" class="form-label">Keterangan</label>
+                                            <div class="input-group input-group-outline mb-3">
+                                                <textarea rows="3" class="form-control @error('keterangan')is-invalid @enderror" id="keterangan" wire:model='keterangan'></textarea>
+                                            </div>
+                                            @error('keterangan')
+                                                <div class="mb-3 text-danger text-sm">{{ $message }}</div>
+                                            @enderror
+                                            <div class="form-check ps-0 mb-3">
+                                                <input type="checkbox" class="form-check-input" id="pendaftaran-selesai" wire:model='pendaftaran_selesai'>
+                                                <label for="pendaftaran-selesai" class="form-check-label">Pendaftaran Selesai</label>
+                                            </div>
+                                            <div class="d-flex justify-content-start gap-3">
+                                                <button class="btn bg-gradient-primary" type="submit">Simpan</button>
+                                            </div>
+                                        </form>
+                                    @else
+                                        <small class="text-muted">Tanggal Peninjauan</small>
+                                        <h6>{{ Carbon\Carbon::parse($preview_izin->tanggal_peninjauan)->translatedFormat('d F Y H:i') . ' WITA' }}</h6>
+                                        <small class="text-muted">Lokasi Izin</small>
+                                        <h6>{{ $preview_izin->lokasi_izin }}</h6>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+                    @endrole
                 </div>
             </div>
         @endif

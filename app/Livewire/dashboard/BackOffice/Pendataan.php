@@ -5,10 +5,15 @@ namespace App\Livewire\Dashboard\BackOffice;
 use App\Services\DomainServices\PerizinanService;
 use App\utils\enums\StatusIzinEnum;
 use Carbon\Carbon;
+use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class Pendataan extends Component
 {
+
+    #[Url()]
+    public $preview_izin_id;
 
     private const DEFAULT_MENU = 'Entri Data';
 
@@ -22,25 +27,43 @@ class Pendataan extends Component
 
     public function mount()
     {
-        $this->selectMenu(self::DEFAULT_MENU);
+        $this->selectMenu(self::DEFAULT_MENU, false);
+
+        $this->start_date = Carbon::today()->toDateString();
+        $this->end_date = Carbon::today()->toDateString();
     }
 
     public function render()
     {
+        $this->setDataList();
         return view('livewire.dashboard.back-office.pendataan');
     }
 
-    public function selectMenu($menu)
+    private function setDataList()
+    {
+        $start_date = Carbon::parse($this->start_date)->toDateString();
+        $end_date = Carbon::parse($this->end_date)->toDateString();
+        $this->all_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::PROSES], [], $start_date, $end_date);
+    }
+
+    public function previewDataIzin($izin_id)
+    {
+        $this->preview_izin_id = $izin_id;
+    }
+
+    public function selectMenu($menu, $reset_url = true)
     {
         if (isset($this->getMenu()[$menu])) {
-            if ($menu == self::DEFAULT_MENU) {
-                $start_date = Carbon::parse($this->start_date)->toDateString();
-                $end_date = Carbon::parse($this->end_date)->toDateString();
-                $this->all_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::PROSES], [], $start_date, $end_date, 'ASC');
-            }
             $this->active_menu = $menu;
+            $this->preview_izin_id = $reset_url ? null : $this->preview_izin_id;
             $this->dispatch('menu-selected', ['menu' => $menu]);
         }
+    }
+
+    #[On('preview-izin-not-found')]
+    public function onPreviewIzinNotFound()
+    {
+        $this->preview_izin_id = null;
     }
 
     private function getMenu(): array

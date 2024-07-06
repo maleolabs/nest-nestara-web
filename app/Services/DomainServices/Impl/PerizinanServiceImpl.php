@@ -5,6 +5,7 @@ namespace App\Services\DomainServices\Impl;
 use App\Models\Izin;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\StatusIzinService;
+use App\utils\enums\BackOfficeStatusEnum;
 use App\utils\enums\StatusIzinEnum;
 use App\utils\enums\StatusIzinProgressEnum;
 use Carbon\Carbon;
@@ -85,6 +86,7 @@ class PerizinanServiceImpl implements PerizinanService
         $this->statusIzinService->updateStatusIzin($izin_id, StatusIzinEnum::DITINJAU, StatusIzinProgressEnum::PROCESSING, $keterangan);
         if ($selesai) {
             $this->statusIzinService->updateStatusIzin($izin_id, StatusIzinEnum::DITINJAU, StatusIzinProgressEnum::FINISHED, $keterangan);
+            $this->statusIzinService->updateStatusIzin($izin_id, StatusIzinEnum::PROSES, StatusIzinProgressEnum::UNPROCESSED, BackOfficeStatusEnum::BELUM_ENTRI);
         }
 
         DB::commit();

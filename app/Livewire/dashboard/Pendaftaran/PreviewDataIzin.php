@@ -67,7 +67,11 @@ class PreviewDataIzin extends Component
     private function setDataPreview()
     {
         if ($this->preview_izin_id) {
-            $this->preview_izin = $this->getPerizinanService()->find($this->preview_izin_id);
+            $this->preview_izin = $this->getPerizinanService()->find(intval($this->preview_izin_id));
+            if (!$this->preview_izin) {
+                $this->dispatch('preview-izin-not-found');
+                return;
+            }
             $this->preview_izin_syarat_izin = $this->getSyaratIzinService()->getByJenisAndPemohon($this->preview_izin->jenis_perizinan_id, $this->preview_izin->pemohon_id);
             $this->tanggal_peninjauan = $this->preview_izin->tanggal_peninjauan ? $this->preview_izin->tanggal_peninjauan : Carbon::now()->format('Y-m-d H:i');
             $this->lokasi_izin = $this->preview_izin->lokasi_izin;

@@ -55,7 +55,7 @@
                 @endforelse
             @elseif ($menu == self::DATA_IZIN_BARU)
                 @forelse ($semua_izin as $izin)
-                    <tr class="cursor-pointer" wire:click='previewDataIzin({{ $izin->id }})'>
+                    <tr class="cursor-pointer data-izin" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})'>
                         <td class="align-middle text-center text-sm">{{ $loop->iteration }}</td>
                         <td class="text-sm">
                             <p class="text-xs font-weight-bold mb-0">{{ $izin->no_pendaftaran }}</p>

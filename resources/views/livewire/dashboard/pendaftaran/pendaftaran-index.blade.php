@@ -73,10 +73,19 @@
 </div>
 @push('scripts')
     <script>
-        const btnCloseModal = document.getElementById('btn-close-modal')
+        const btnCloseModal = $('#btn-close-modal')
         if (btnCloseModal) {
             Livewire.dispatch('refresh-component')
         }
+
+        $('.data-izin').each(function(index, elemen) {
+            $(elemen).on('click', function() {
+                const izinId = $(this).attr('data-izin-id')
+                let url = new URL(window.location)
+                url.searchParams.set('preview_izin_id', izinId)
+                window.history.pushState({}, '', url)
+            })
+        });
         
         function switchTab(tab) {
             let url = new URL(window.location)

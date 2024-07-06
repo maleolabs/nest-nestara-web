@@ -13,7 +13,7 @@ use Livewire\Component;
 class PendaftaranIndex extends Component
 {
     #[Url()]
-    public $layout, $tab;
+    public $layout, $tab, $preview_izin_id;
     public $menu;
     public $preview_data_izin = false;
 
@@ -28,7 +28,6 @@ class PendaftaranIndex extends Component
         $semua_perubahan = [];
     public $search = '',
         $filter_status;
-    public $preview_izin_id;
 
     public function mount()
     {
@@ -38,8 +37,12 @@ class PendaftaranIndex extends Component
             self::DATA_PERPANJANGAN_IZIN,
             self::DATA_PERUBAHAN_IZIN
         ];
-        $this->tab != null ? (in_array($this->tab, $tabs) ? $this->selectMenu($this->tab) : $this->selectMenu(self::DATA_PEMOHON)) : $this->selectMenu(self::DATA_PEMOHON);
+        $this->tab != null ? (in_array($this->tab, $tabs) ? $this->selectMenu($this->tab, false) : $this->selectMenu(self::DATA_PEMOHON, false)) : $this->selectMenu(self::DATA_PEMOHON, false);
         $this->filter_status = StatusIzinEnum::DIDAFTARKAN;
+        
+        if ($this->preview_izin_id) {
+            $this->preview_data_izin = true;
+        }
     }
 
     public function render()
@@ -48,12 +51,13 @@ class PendaftaranIndex extends Component
         return view('livewire.dashboard.pendaftaran.pendaftaran-index');
     }
 
-    public function selectMenu($select_menu)
+    public function selectMenu($select_menu, $reset_url = true)
     {
         $this->menu = $select_menu;
         $this->dispatch('menu-selected', ['menu' => $select_menu]);
         $this->search = '';
         $this->preview_data_izin = false;
+        $this->preview_izin_id = $reset_url ? null : $this->preview_izin_id;
     }
 
     private function setDataList()

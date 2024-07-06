@@ -44,6 +44,7 @@
                                 {{ $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN ? "{$status->nama} ({$status->progres})" : $status->nama }}
                             </p>
                             <p class="mb-0">{{ $status->created_at->translatedFormat('l, d F Y H:i') . ' WITA' }}</p>
+                            <small class="text-muted text-sm fst-italic">{{ $status->keterangan ?? '' }}</small>
                         </div>
                     </div>
                 @endforeach

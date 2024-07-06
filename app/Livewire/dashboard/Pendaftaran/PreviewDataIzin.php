@@ -6,6 +6,8 @@ use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
+use App\utils\enums\StatusIzinEnum;
+use App\utils\enums\StatusIzinProgressEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
@@ -25,6 +27,7 @@ class PreviewDataIzin extends Component
 
     public $tanggal_peninjauan,
         $lokasi_izin,
+        $keterangan,
         $pendaftaran_selesai;
 
     public $active_tab;
@@ -38,7 +41,6 @@ class PreviewDataIzin extends Component
 
     public function render()
     {
-        $this->tanggal_peninjauan = Carbon::now()->format('Y-m-d H:i');
         $this->setDataPreview();
         return view('livewire.dashboard.pendaftaran.preview-data-izin');
     }
@@ -54,7 +56,7 @@ class PreviewDataIzin extends Component
             throw ValidationException::withMessages([
                 'pendaftaran_selesai' => 'kesalahan'
             ]);
-        $saved = $this->getPerizinanService()->saveRegistrationAction($this->preview_izin_id, $this->tanggal_peninjauan, $this->lokasi_izin, $this->pendaftaran_selesai);
+        $saved = $this->getPerizinanService()->saveRegistrationAction($this->preview_izin_id, $this->tanggal_peninjauan, $this->lokasi_izin, $this->keterangan, $this->pendaftaran_selesai);
     }
 
     public function back()
@@ -67,6 +69,9 @@ class PreviewDataIzin extends Component
         if ($this->preview_izin_id) {
             $this->preview_izin = $this->getPerizinanService()->find($this->preview_izin_id);
             $this->preview_izin_syarat_izin = $this->getSyaratIzinService()->getByJenisAndPemohon($this->preview_izin->jenis_perizinan_id, $this->preview_izin->pemohon_id);
+            $this->tanggal_peninjauan = $this->preview_izin->tanggal_peninjauan ? $this->preview_izin->tanggal_peninjauan : Carbon::now()->format('Y-m-d H:i');
+            $this->lokasi_izin = $this->preview_izin->lokasi_izin;
+            $this->keterangan = $this->preview_izin->ket;
         }
     }
 
@@ -74,6 +79,16 @@ class PreviewDataIzin extends Component
     {
         $pemohon = $this->getPemohonService()->find($pemohon_id);
         return "{$pemohon->detail_alamat}, " . $this->getRegionValue('kelurahan', $pemohon->kelurahan) . ', ' . $this->getRegionValue('kecamatan', $pemohon->kecamatan) . ', ' . $this->getRegionValue('kabupaten', $pemohon->kabupaten) . ', ' . $this->getRegionValue('provinsi', $pemohon->provinsi);
+    }
+
+    private function canProcess(): bool
+    {
+        $last_status = $this->preview_izin->status_izin->last();
+        if ($last_status->nama == StatusIzinEnum::DIDAFTARKAN && $last_status->progres == StatusIzinProgressEnum::FINISHED)
+            return true;
+        else if ($last_status->nama == StatusIzinEnum::DITINJAU && ($last_status->progres == StatusIzinProgressEnum::UNPROCESSED || $last_status->progres == StatusIzinProgressEnum::PROCESSING))
+            return true;
+        return false;
     }
 
     private function getRegionValue($type, $id): string

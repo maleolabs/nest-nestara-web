@@ -13,6 +13,6 @@ interface PerizinanService
 
     function getAll($search = '', $filter_status, $sort = 'DESC'): array;
 
-    function saveRegistrationAction(int $izin_id, string $tanggal_peninjauan, string $lokasi_izin, bool $selesai = false): bool;
+    function saveRegistrationAction(int $izin_id, string $tanggal_peninjauan, string $lokasi_izin, string $keterangan = null, bool $selesai = false): bool;
     
 }

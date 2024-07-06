@@ -74,7 +74,8 @@
                                         @endif">
                                         {{ $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN ? "{$status->nama} ({$status->progres})" : $status->nama }}
                                     </p>
-                                    <p class="mb-0">{{ $status->created_at->translatedFormat('l, d F Y H:i') . ' WITA' }}</p>
+                                    <p class="mb-0">{{ $status->updated_at->translatedFormat('l, d F Y H:i') . ' WITA' }}</p>
+                                    <small class="text-muted text-sm fst-italic">{{ $status->keterangan ?? '' }}</small>
                                 </div>
                             </div>
                         @endforeach
@@ -127,7 +128,7 @@
                                 @endif
                             </div>
                             <div class="tab-pane fade @if($active_tab == self::TINDAKAN)show active @endif" id="tindakan-tab">
-                                @if ($preview_izin->status_izin->last()->nama == App\utils\enums\StatusIzinEnum::DIDAFTARKAN)
+                                @if ($this->canProcess())
                                     <form wire:submit.prevent='saveAction'>
                                         <label for="tanggal_peninjauan" class="form-label">Tanggal Peninjauan</label>
                                         <div class="input-group input-group-outline mb-3">
@@ -143,6 +144,13 @@
                                         @error('lokasi_izin')
                                             <div class="mb-3 text-danger text-sm">{{ $message }}</div>
                                         @enderror
+                                        <label for="keterangan" class="form-label">Keterangan</label>
+                                        <div class="input-group input-group-outline mb-3">
+                                            <textarea rows="3" class="form-control @error('keterangan')is-invalid @enderror" id="keterangan" wire:model='keterangan'></textarea>
+                                        </div>
+                                        @error('keterangan')
+                                            <div class="mb-3 text-danger text-sm">{{ $message }}</div>
+                                        @enderror
                                         <div class="form-check ps-0 mb-3">
                                             <input type="checkbox" class="form-check-input" id="pendaftaran-selesai" wire:model='pendaftaran_selesai'>
                                             <label for="pendaftaran-selesai" class="form-check-label">Pendaftaran Selesai</label>
@@ -154,7 +162,7 @@
                                     </form>
                                 @else
                                     <small class="text-muted">Tanggal Peninjauan</small>
-                                    <h6>{{ $preview_izin->tanggal_peninjauan }}</h6>
+                                    <h6>{{ Carbon\Carbon::parse($preview_izin->tanggal_peninjauan)->translatedFormat('d F Y H:i') . ' WITA' }}</h6>
                                     <small class="text-muted">Lokasi Izin</small>
                                     <h6>{{ $preview_izin->lokasi_izin }}</h6>
                                 @endif

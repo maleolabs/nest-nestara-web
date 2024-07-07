@@ -14,6 +14,8 @@ interface StatusIzinService {
 
 	function delete(int $id): bool;
 
+	function saveAllStatusIzin(array $status_izin_data): void;
+
 	function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null): void;
 
 }

@@ -44,5 +44,7 @@ interface PerizinanService
     ): array;
 
     function saveRegistrationAction(int $izin_id, string $tanggal_peninjauan, string $lokasi_izin, string $keterangan = null, bool $selesai = false, int $pegawai_id = null): bool;
+
+    function updateIzinStatusThatHaveBeenReviewed(): void;
     
 }

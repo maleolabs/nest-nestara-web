@@ -5,6 +5,7 @@ namespace App\Services\DomainServices\Impl;
 use App\Services\DomainServices\StatusIzinService;
 use App\Models\StatusIzin;
 use App\utils\enums\StatusIzinProgressEnum;
+use Illuminate\Support\Facades\DB;
 
 class StatusIzinServiceImpl implements StatusIzinService {
 
@@ -30,6 +31,11 @@ class StatusIzinServiceImpl implements StatusIzinService {
 	public function delete(int $id): bool
 	{
 		return false;
+	}
+
+	public function saveAllStatusIzin(array $status_izin_data): void
+	{
+		DB::table('status_izin')->insert($status_izin_data);
 	}
 
 	public function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null): void

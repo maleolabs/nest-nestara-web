@@ -46,7 +46,7 @@ class PerizinanServiceImpl implements PerizinanService
     ): array
     {
         $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
-        $filter_end_date = Carbon::parse($filter_end_date)->addDay()->ToDateString() ?? Carbon::now()->toDateTimeString();
+        $filter_end_date = Carbon::parse($filter_end_date)->addDay()->ToDateTimeString();
 
         $semua_izin = Izin::where(function ($query) use ($search) {
             $query->whereHas('jenis_perizinan', function($jenis_perizinan) use ($search) {
@@ -90,6 +90,27 @@ class PerizinanServiceImpl implements PerizinanService
 
         DB::commit();
         return true;
+    }
+
+    public function updateIzinStatusThatHaveBeenReviewed(): void
+    {
+        $all_izin_will_be_updated = [];
+        $all_izin_id = Izin::whereHas('status_izin', function ($status_izin) {
+            $status_izin
+                ->where('nama', StatusIzinEnum::DITINJAU)
+                ->where('progres', StatusIzinProgressEnum::FINISHED);
+        })->pluck('id');
+        foreach ($all_izin_id as $id) {
+            $all_izin_will_be_updated[] = [
+                'izin_id' => $id,
+                'nama' => StatusIzinEnum::PROSES,
+                'keterangan' => BackOfficeStatusEnum::BELUM_ENTRI,
+                'progres' => StatusIzinProgressEnum::UNPROCESSED,
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+        }
+        $this->statusIzinService->saveAllStatusIzin($all_izin_will_be_updated);
     }
     
 }

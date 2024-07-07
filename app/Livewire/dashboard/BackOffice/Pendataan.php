@@ -28,7 +28,7 @@ class Pendataan extends Component
     public function mount()
     {
         $this->getPerizinanService()->updateIzinStatusThatHaveBeenReviewed();
-        
+
         $this->selectMenu(self::DEFAULT_MENU, false);
 
         $this->start_date = Carbon::today()->toDateString();

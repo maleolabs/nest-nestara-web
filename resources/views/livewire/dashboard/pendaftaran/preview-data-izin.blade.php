@@ -104,10 +104,16 @@
                                 Detail permohonan
                             </h6>
                             <div class="ps-4">
-                                <small class="text-muted">Tanggal Peninjauan</small>
-                                <p>{{ Carbon\Carbon::parse($preview_izin->tanggal_peninjauan)->translatedFormat('d F Y H:i') . ' WITA' }}</p>
-                                <small class="text-muted">Lokasi Izin</small>
-                                <p>{{ $preview_izin->lokasi_izin }}</p>
+                                <small class="text-muted">
+                                    <i class="fa-regular fa-calendar-check me-1"></i>
+                                    Tanggal Peninjauan
+                                </small>
+                                <h6 class="text-dark">{{ Carbon\Carbon::parse($preview_izin->tanggal_peninjauan)->translatedFormat('d F Y H:i') . ' WITA' }}</h6>
+                                <small class="text-muted">
+                                    <i class="fa-solid fa-building me-1"></i>
+                                    Lokasi Izin
+                                </small>
+                                <h6 class="text-dark">{{ $preview_izin->lokasi_izin }}</h6>
                             </div>
                         </div>
                         <div class="mt-4">
@@ -266,55 +272,70 @@
                                 @endif
                             </div>
                         @endif
-                        <form wire:submit.prevent='saveEntri'>
+                        @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data)
                             <div class="row">
                                 @foreach ($entri_data as $entri)
-                                    @if ($entri->tipe == 'textarea')
-                                        <div class="col-12 mb-3">
-                                            @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SEDANG_ENTRI || $edit_entri_data)
-                                                <label for="{{ $entri->id }}" class="mb-1">
-                                                    {{ $entri->nama }}
-                                                    @if ($entri->mandatori)
-                                                        <span class="text-danger ms-1">*</span>
-                                                    @endif
-                                                </label>
-                                            @endif
-                                            <div class="input-group input-group-outline">
-                                                <textarea name="{{ $entri->id }}" class="form-control {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}" id="{{ $entri->id }}" rows="3" wire:model='entri_data_izin.{{ $entri->id }}' {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}></textarea>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <div class="col-md-6 mb-3">
-                                            <div class="input-group input-group-outline">
-                                                <label for="{{ $entri->id }}" class="form-label">
-                                                    {{ $entri->nama }}
-                                                    @if ($entri->mandatori)
-                                                        <span class="text-danger ms-1">*</span>
-                                                    @endif
-                                                </label>
-                                                <input type="{{ $entri->tipe }}" class="form-control{{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}" wire:model='entri_data_izin.{{ $entri->id }}' {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}>
-                                            </div>
-                                            @if ($entri->is_multi_value)
-                                                <p class="mb-0 mt-1 text-xs">
-                                                    <i class="fa-solid fa-info-circle me-1"></i>
-                                                    Untuk menambahkan beberapa data, pisahkan dengan simbol ";" (contoh: data1;data2;data3)
-                                                </p>
-                                            @endif
-                                        </div>
-                                    @endif
+                                    <div class="{{ $entri->tipe == 'textarea' ? 'col-12' : 'col-md-6' }} mb-3">
+                                        <small class="text-muted">{{ $entri->nama }}</small>
+                                        @if ($entri->is_multi_value && count(explode($entri->value_separator, $entri_data_izin[$entri->id])) > 1)
+                                            @foreach (explode($entri->value_separator, $entri_data_izin[$entri->id]) as $item)
+                                                <h6 class="mb-0">{{ $loop->iteration . '. ' . $item }}</h6>
+                                            @endforeach
+                                        @else
+                                            <h6 class="mb-0">{{ $entri->tipe == 'date' ? Carbon\Carbon::parse($entri_data_izin[$entri->id])->translatedFormat('d F Y') : $entri_data_izin[$entri->id] }}</h6>
+                                        @endif
+                                    </div>
                                 @endforeach
                             </div>
-                            @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SEDANG_ENTRI || $edit_entri_data)
-                                <div class="d-flex align-items-center gap-3 mt-4">
-                                    @if ($edit_entri_data)
-                                        <button class="btn btn-secondary" type="button" wire:click='cancelEditEntriData'>batal</button>
-                                    @else
-                                        <button class="btn btn-secondary" type="reset">reset</button>
-                                    @endif
-                                    <button class="btn bg-gradient-primary" type="submit">simpan</button>
+                        @else
+                            <form wire:submit.prevent='saveEntri'>
+                                <div class="row">
+                                    @foreach ($entri_data as $entri)
+                                        @if ($entri->tipe == 'textarea')
+                                            <div class="col-12 mb-3">
+                                                <div class="input-group input-group-outline">
+                                                    <label for="{{ $entri->id }}" class="form-label">
+                                                        {{ $entri->nama }}
+                                                        @if ($entri->mandatori)
+                                                            <span class="text-danger ms-1">*</span>
+                                                        @endif
+                                                    </label>
+                                                    <textarea name="{{ $entri->id }}" class="form-control {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}" id="{{ $entri->id }}" rows="3" wire:model='entri_data_izin.{{ $entri->id }}' {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}></textarea>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <div class="col-md-6 mb-3">
+                                                <div class="input-group input-group-outline">
+                                                    <label for="{{ $entri->id }}" class="form-label">
+                                                        {{ $entri->nama }}
+                                                        @if ($entri->mandatori)
+                                                            <span class="text-danger ms-1">*</span>
+                                                        @endif
+                                                    </label>
+                                                    <input type="{{ $entri->tipe }}" class="form-control{{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}" wire:model='entri_data_izin.{{ $entri->id }}' {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}>
+                                                </div>
+                                                @if ($entri->is_multi_value)
+                                                    <p class="mb-0 mt-1 text-xs">
+                                                        <i class="fa-solid fa-info-circle me-1"></i>
+                                                        Untuk menambahkan beberapa data, pisahkan dengan simbol ";" (contoh: data1;data2;data3)
+                                                    </p>
+                                                @endif
+                                            </div>
+                                        @endif
+                                    @endforeach
                                 </div>
-                            @endif
-                        </form>
+                                @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SEDANG_ENTRI || $edit_entri_data)
+                                    <div class="d-flex align-items-center gap-3 mt-4">
+                                        @if ($edit_entri_data)
+                                            <button class="btn btn-secondary" type="button" wire:click='cancelEditEntriData'>batal</button>
+                                        @else
+                                            <button class="btn btn-secondary" type="reset">reset</button>
+                                        @endif
+                                        <button class="btn bg-gradient-primary" type="submit">simpan</button>
+                                    </div>
+                                @endif
+                            </form>
+                        @endif
                     @endif
                 </div>
             </div>

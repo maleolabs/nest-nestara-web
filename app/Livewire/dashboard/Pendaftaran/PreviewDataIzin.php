@@ -47,7 +47,8 @@ class PreviewDataIzin extends Component
     public function render()
     {
         $this->setDataPreview();
-        $this->setEntriData();
+        if (!$this->edit_entri_data)
+            $this->setEntriData();
         return view('livewire.dashboard.pendaftaran.preview-data-izin');
     }
 

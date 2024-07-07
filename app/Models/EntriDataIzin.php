@@ -14,6 +14,11 @@ class EntriDataIzin extends Model
 
     protected $table = 'entri_data_izin';
 
+    public function getValueAttribute($value)
+    {
+        return strtoupper($value);
+    }
+
     public function entri_data(): BelongsTo
     {
         return $this->belongsTo(EntriData::class);

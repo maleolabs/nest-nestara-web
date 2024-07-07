@@ -32,7 +32,7 @@ trait EntriDataTrait
 
     public function editEntriData()
     {
-        $this->edit_entri_data = true;
+        $this->edit_entri_data = $this->canEditEntriData();
     }
 
     public function cancelEditEntriData()
@@ -48,9 +48,15 @@ trait EntriDataTrait
 
     public function saveEntri()
     {
+        $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
         $this->entri_data = $this->getEntriDataService()->saveEntriDataIzin($this->entri_data_izin, $this->preview_izin_id);
-        $this->getStatusIzinService()->updateStatusIzin($this->preview_izin_id, StatusIzinEnum::PROSES, StatusIzinProgressEnum::PROCESSING, BackOfficeStatusEnum::SUDAH_ENTRI);
+        $this->getStatusIzinService()->updateStatusIzin($this->preview_izin_id, StatusIzinEnum::PROSES, StatusIzinProgressEnum::PROCESSING, BackOfficeStatusEnum::SUDAH_ENTRI, $pegawai_id);
         $this->cancelEditEntriData();
+    }
+
+    public function canEditEntriData(): bool
+    {
+        return $this->last_izin_status->pegawai_id == auth()->user()->pegawai->id;
     }
 
     protected function getEntriDataService(): EntriDataService

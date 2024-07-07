@@ -38,11 +38,6 @@ class Izin extends Model
         return $this->hasMany(EntriDataIzin::class);
     }
 
-    public function pengelola_layanan(): BelongsTo
-    {
-        return $this->belongsTo(Pegawai::class);
-    }
-
     public function penanda_tangan(): BelongsTo
     {
         return $this->belongsTo(PenandaTangan::class); 

@@ -18,5 +18,10 @@ class StatusIzin extends Model
     {
         return $this->belongsTo(Izin::class);
     }
+
+    public function pegawai(): BelongsTo
+    {
+        return $this->belongsTo(Pegawai::class);
+    }
     
 }

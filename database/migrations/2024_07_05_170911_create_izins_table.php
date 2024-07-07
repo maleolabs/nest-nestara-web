@@ -16,7 +16,6 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('jenis_perizinan_id');
             $table->unsignedBigInteger('pemohon_id');
-            $table->unsignedBigInteger('pengelola_layanan_id')->nullable(true);
             $table->unsignedBigInteger('penanda_tangan_id')->nullable(true);
             $table->integer('no_pendaftaran');
             $table->enum('jenis_permohonan', JenisPermohonanEnum::all())->default(JenisPermohonanEnum::BARU);
@@ -27,7 +26,6 @@ return new class extends Migration
 
             $table->foreign('jenis_perizinan_id')->references('id')->on('jenis_perizinan');
             $table->foreign('pemohon_id')->references('id')->on('pemohon');
-            $table->foreign('pengelola_layanan_id')->references('id')->on('pegawai');
             $table->foreign('penanda_tangan_id')->references('id')->on('penanda_tangan');
         });
     }

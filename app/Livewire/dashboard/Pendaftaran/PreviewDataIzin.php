@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Dashboard\Pendaftaran;
 
+use App\Livewire\Dashboard\BackOffice\Partials\EntriDataTrait;
 use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
@@ -17,9 +18,13 @@ use Livewire\Component;
 class PreviewDataIzin extends Component
 {
 
+    use EntriDataTrait;
+
     public $preview_izin_id,
         $preview_izin,
-        $preview_izin_syarat_izin = [];
+        $preview_izin_syarat_izin = [],
+        $last_izin_status,
+        $jenis_perizinan_id;
 
     public $modalImgTitle,
         $modalImgSource,
@@ -42,6 +47,7 @@ class PreviewDataIzin extends Component
     public function render()
     {
         $this->setDataPreview();
+        $this->setEntriData();
         return view('livewire.dashboard.pendaftaran.preview-data-izin');
     }
 
@@ -76,6 +82,10 @@ class PreviewDataIzin extends Component
             $this->tanggal_peninjauan = $this->preview_izin->tanggal_peninjauan ? $this->preview_izin->tanggal_peninjauan : Carbon::now()->format('Y-m-d H:i');
             $this->lokasi_izin = $this->preview_izin->lokasi_izin;
             $this->keterangan = $this->preview_izin->ket;
+
+            $this->last_izin_status = $this->preview_izin->status_izin->last();
+            
+            $this->jenis_perizinan_id = $this->preview_izin->jenis_perizinan_id;
         }
     }
 

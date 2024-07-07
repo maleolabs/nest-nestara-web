@@ -25,4 +25,5 @@ class Pegawai extends Model
     {
         return $this->hasMany(PenandaTangan::class);
     }
+
 }

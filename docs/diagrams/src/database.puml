@@ -93,6 +93,11 @@ entity EntriData {
     --
     * jenis_perizinan_id: unsignedBigInt <<FK>>
     * nama: varchar (100)
+    * tipe: varchar(20)
+    * mandatori: boolean
+    * max: int
+    * is_mulsti_value: boolean
+    * value_separator: varchar(5)
     --
       deleted_at: datetime
     * created_at: datetime
@@ -132,7 +137,6 @@ entity Izin {
     * jenis_permohonan: enum('baru', 'perubahan', 'perpanjangan')
       tanggal_peninjauan: datetime
       lokasi_izin: varchar(255)
-      pengelola_layanan_id: unsignedBigInt <<FK>> ref id on Pegawai
       penada_tangan_id: unsignedBigInt <<FK>>
     --
       deleted_at: datetime
@@ -147,6 +151,7 @@ entity StatusIzin {
     * nama: enum
     * keterangan: varchar(255)
     * progres: enum
+      pegawai_id: unsignedBigInt <<FK>>
     --
     * created_at: datetime
     * updated_at: datetime
@@ -186,10 +191,9 @@ DokumenPemohon }o--|| SyaratIzin
 Pemohon ||--o{ Izin
 Izin |o--|{ DokumenPemohon
 Izin ||--|{ StatusIzin
-Izin }|--|| Pegawai
 Izin }|--|{ EntriDataIzin
 Izin }o--|| PenandaTangan
 Izin }o--|{ TimTeknis
-
+StatusIzin }o--o| Pegawai
 
 @enduml

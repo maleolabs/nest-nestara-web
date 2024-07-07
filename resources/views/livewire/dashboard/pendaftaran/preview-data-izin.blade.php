@@ -1,10 +1,10 @@
 <div>
-    <md-linear-progress wire:loading wire:target='back, saveAction' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
+    <md-linear-progress wire:loading wire:target='back, saveAction, saveEntri' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
 
     <div class="row px-2">
         @if ($preview_izin)
-            <div class="col-md-3 d-flex align-items-stretch">
-                <div class="card w-100 p-4">
+            <div class="col-md-3 d-flex align-items-stretch mb-4">
+                <div class="card w-100 p-4 mb-0">
                     <div class="d-flex flex-column gap-3">
                         <img src="{{ asset('storage/users/' . $preview_izin->pemohon->user->foto) }}" class="img-fluid img-rounded img-rounded-lg mx-auto">
                         <div class="px-2">
@@ -26,8 +26,8 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-9 d-flex align-items-stretch">
-                <div class="card w-100 p-4">
+            <div class="col-md-9 d-flex align-items-stretch mb-4">
+                <div class="card w-100 p-4 mb-0">
                     <p class="mb-0 text-sm">Jenis perizinan</p>
                     <h3 class="spacing-md">{{ str_capitalize($preview_izin->jenis_perizinan->nama, true) }}</h3>
                     <h6 class="mb-0 spacing-normal">
@@ -174,6 +174,89 @@
                 </div>
             </div>
         @endif
+        @role('pegawai')
+            <div class="col-12">
+                <div class="card p-4 position-relative mb-0">
+                    <h5 class="text-bold mb-1">
+                        <i class="fa-regular fa-circle-right me-1"></i>
+                        Entri Data
+                    </h5>
+                    @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI)
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <p class="text-sm mb-0">Anda sudah melakukan entri data pada {{ $last_izin_status->updated_at->translatedFormat('l, d F Y H:i') . ' WITA' }}</p>
+                            @if (!$edit_entri_data)
+                                <button class="btn btn-sm btn-secondary" type="button" wire:click='editEntriData'>
+                                    edit
+                                    <i class="fa-solid fa-pencil ms-1" wire:loading.remove wire:target='editEntriData'></i>
+                                    <div class="spinner-border spinner-border-sm ms-1" role="status" wire:loading wire:target='editEntriData'>
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </button>
+                            @endif
+                        </div>
+                    @endif
+                    <form wire:submit.prevent='saveEntri'>
+                        <div class="row">
+                            @foreach ($entri_data as $entri)
+                                @if ($entri->tipe == 'textarea')
+                                    <div class="col-12 mb-3">
+                                        @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SEDANG_ENTRI || $edit_entri_data)
+                                            <label for="{{ $entri->id }}" class="mb-1">
+                                                {{ $entri->nama }}
+                                                @if ($entri->mandatori)
+                                                    <span class="text-danger ms-1">*</span>
+                                                @endif
+                                            </label>
+                                        @endif
+                                        <div class="input-group input-group-outline">
+                                            <textarea name="{{ $entri->id }}" class="form-control {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}" id="{{ $entri->id }}" rows="3" wire:model='entri_data_izin.{{ $entri->id }}' {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}></textarea>
+                                        </div>
+                                    </div>
+                                @else
+                                    <div class="col-md-6 mb-3">
+                                        <div class="input-group input-group-outline">
+                                            <label for="{{ $entri->id }}" class="form-label">
+                                                {{ $entri->nama }}
+                                                @if ($entri->mandatori)
+                                                    <span class="text-danger ms-1">*</span>
+                                                @endif
+                                            </label>
+                                            <input type="{{ $entri->tipe }}" class="form-control{{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}" wire:model='entri_data_izin.{{ $entri->id }}' {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}>
+                                        </div>
+                                        @if ($entri->is_multi_value)
+                                            <p class="mb-0 mt-1 text-xs">
+                                                <i class="fa-solid fa-info-circle me-1"></i>
+                                                Untuk menambahkan beberapa data, pisahkan dengan simbol ";" (contoh: data1;data2;data3)
+                                            </p>
+                                        @endif
+                                    </div>
+                                @endif
+                            @endforeach
+                        </div>
+                        @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SEDANG_ENTRI || $edit_entri_data)
+                            <div class="d-flex align-items-center gap-3 mt-4">
+                                @if ($edit_entri_data)
+                                    <button class="btn btn-secondary" type="button" wire:click='cancelEditEntriData'>batal</button>
+                                @else
+                                    <button class="btn btn-secondary" type="reset">reset</button>
+                                @endif
+                                <button class="btn bg-gradient-primary" type="submit">simpan</button>
+                            </div>
+                        @endif
+                    </form>
+                    @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::BELUM_ENTRI)
+                        <div class="position-absoslute inset-0 w-100 h-100 bg-white z-1 opacity-75 d-flex aling-items-center justify-content-center">
+                            <button class="btn bg-gradient-primary d-flex align-items-center" type="button" wire:click='entriData'>
+                                entri data
+                                <div class="spinner-border spinner-border-sm ms-2" role="status" wire:loading wire:target='entriData'>
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </button>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @endrole
     </div>
     <div class="modal fade" id="showDocumentImgModal" tabindex="-1" aria-labelledby="showDocumentImgModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-fullscreen">

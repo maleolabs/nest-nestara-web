@@ -15,6 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('jenis_perizinan_id');
             $table->string('nama', 100);
+            $table->string('tipe', 20);
+            $table->boolean('mandatori')->default(true);
+            $table->integer('max');
+            $table->boolean('is_multi_value')->default(false);
+            $table->string('value_separator', 5)->default(';');
             $table->softDeletes();
             $table->timestamps();
 

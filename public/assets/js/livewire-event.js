@@ -43,3 +43,64 @@ Livewire.on('set-preview-img-modal', data => {
         }, 100)
     }
 })
+Livewire.hook('morph.updated', ({el, component}) => {
+    console.log(el);
+    setTimeout(() => {
+        var inputs = document.querySelectorAll('input');
+        for (var i = 0; i < inputs.length; i++) {
+            input = inputs[i]
+            if (input.value != "") {
+                input.parentElement.classList.add('is-filled');
+            } else {
+                input.parentElement.classList.remove('is-filled');
+            }
+            
+            inputs[i].addEventListener('focus', function(e) {
+                this.parentElement.classList.add('is-focused');
+            }, false);
+
+            inputs[i].onkeyup = function(e) {
+                if (this.value != "") {
+                    this.parentElement.classList.add('is-filled');
+                } else {
+                    this.parentElement.classList.remove('is-filled');
+                }
+            };
+
+            inputs[i].addEventListener('focusout', function(e) {
+                if (this.value != "") {
+                    this.parentElement.classList.add('is-filled');
+                }
+                this.parentElement.classList.remove('is-focused');
+            }, false);
+        }
+        var textareas = document.querySelectorAll('textarea');
+        for (var i = 0; i < textareas.length; i++) {
+            textarea = textareas[i]
+            if (textarea.value != "") {
+                textarea.parentElement.classList.add('is-filled');
+            } else {
+                textarea.parentElement.classList.remove('is-filled');
+            }
+            
+            textareas[i].addEventListener('focus', function(e) {
+                this.parentElement.classList.add('is-focused');
+            }, false);
+
+            textareas[i].onkeyup = function(e) {
+                if (this.value != "") {
+                    this.parentElement.classList.add('is-filled');
+                } else {
+                    this.parentElement.classList.remove('is-filled');
+                }
+            };
+
+            textareas[i].addEventListener('focusout', function(e) {
+                if (this.value != "") {
+                    this.parentElement.classList.add('is-filled');
+                }
+                this.parentElement.classList.remove('is-focused');
+            }, false);
+        }
+    }, 500);
+})

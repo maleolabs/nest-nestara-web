@@ -32,19 +32,21 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		return false;
 	}
 
-	public function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null): void
+	public function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null): void
 	{
 		$status_izin = StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->first();
 		if ($status_izin) {
 			$status_izin->progres = $progres;
 			$status_izin->keterangan = $ket;
+			$status_izin->pegawai_id = $pegawai_id;
 			$status_izin->save();
 		} else {
 			StatusIzin::create([
 				'izin_id' => $izin_id,
 				'nama' => $status,
 				'progres' => $progres,
-				'keterangan' => $ket
+				'keterangan' => $ket,
+				'pegawai_id' => $pegawai_id
 			]);
 		}
 	}

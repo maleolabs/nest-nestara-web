@@ -82,7 +82,16 @@
                                         </p>
                                     @endif
                                     @if ($status->keterangan)
-                                        <small class="text-muted text-sm">{{ 'Keterangan: ' . $status->keterangan ?? '' }}</small>
+                                        <p class="text-muted text-sm mb-0">
+                                            <i class="fa-solid fa-info-circle me-1"></i>
+                                            {{ 'Keterangan: ' . $status->keterangan ?? '' }}
+                                        </p>
+                                    @endif
+                                    @if ($status->pegawai_id)
+                                        <p class="text-muted text-sm">
+                                            <i class="fa-solid fa-user-tie me-1"></i>
+                                            {{ "Pegawai yang memeriksa: {$status->pegawai->nama}" }}
+                                        </p>
                                     @endif
                                 </div>
                             </div>

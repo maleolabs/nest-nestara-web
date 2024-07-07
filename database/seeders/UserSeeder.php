@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Pegawai;
 use App\Models\User;
 use App\utils\libs\ImageGenerator;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -32,6 +33,11 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'foto' => $pengelola_layanan_foto
         ]);
+        Pegawai::create([
+            'user_id' => $pengelola_layanan->id,
+            'nama' => $pengelola_layanan_name,
+            'jabatan' => 'pegawai'
+        ]);
         $pegawai_name = fake()->name();
         $pegawai_foto = ImageGenerator::letterImage(substr($pegawai_name, 0, 1), 'public/users');
         $pegawai = User::create([
@@ -39,6 +45,11 @@ class UserSeeder extends Seeder
             'email' => 'pegawai@pmptsp.com',
             'password' => Hash::make('password'),
             'foto' => $pegawai_foto
+        ]);
+        Pegawai::create([
+            'user_id' => $pegawai->id,
+            'nama' => $pegawai_name,
+            'jabatan' => 'pegawai'
         ]);
         $pemohon_name = fake()->name();
         $pemohon_foto = ImageGenerator::letterImage(substr($pemohon_name, 0, 1), 'public/users');

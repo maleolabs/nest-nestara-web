@@ -62,7 +62,8 @@ class PreviewDataIzin extends Component
             throw ValidationException::withMessages([
                 'pendaftaran_selesai' => 'kesalahan'
             ]);
-        $saved = $this->getPerizinanService()->saveRegistrationAction($this->preview_izin_id, $this->tanggal_peninjauan, $this->lokasi_izin, $this->keterangan, $this->pendaftaran_selesai);
+        $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
+        $saved = $this->getPerizinanService()->saveRegistrationAction($this->preview_izin_id, $this->tanggal_peninjauan, $this->lokasi_izin, $this->keterangan, $this->pendaftaran_selesai, $pegawai_id);
     }
 
     public function back()

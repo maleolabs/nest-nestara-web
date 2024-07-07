@@ -98,7 +98,8 @@ class PerizinanServiceImpl implements PerizinanService
         $all_izin_id = Izin::whereHas('status_izin', function ($status_izin) {
             $status_izin
                 ->where('nama', StatusIzinEnum::DITINJAU)
-                ->where('progres', StatusIzinProgressEnum::FINISHED);
+                ->where('progres', StatusIzinProgressEnum::FINISHED)
+                ->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) FROM status_izin WHERE status_izin.izin_id = izin.id)'));
         })->pluck('id');
         foreach ($all_izin_id as $id) {
             $all_izin_will_be_updated[] = [

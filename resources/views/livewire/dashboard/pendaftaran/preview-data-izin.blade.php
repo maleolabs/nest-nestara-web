@@ -32,15 +32,15 @@
                     <h3 class="spacing-md">{{ str_capitalize($preview_izin->jenis_perizinan->nama, true) }}</h3>
                     <h6 class="mb-0 spacing-normal">
                         <i class="fa-solid fa-layer-group"></i>
-                        Izin tanpa retribusi
+                        {{ $preview_izin->jenis_perizinan->kelompok_izin }}
                     </h6>
                     <h6 class="mb-0 spacing-normal">
                         <i class="fa-solid fa-hourglass-half mx-1"></i>
-                        Durasi pengerjaan 1 hari
+                        Durasi pengerjaan {{ $preview_izin->jenis_perizinan->durasi }}
                     </h6>
                     <h6 class="mb-0 spacing-normal">
                         <i class="fa-regular fa-calendar-check mx-1"></i>
-                        Masa berlaku izin 5 tahun
+                        Masa berlaku izin {{ $preview_izin->jenis_perizinan->masa_berlaku }}
                     </h6>
                     <div class="mt-4">
                         <h6 class="text-bold">
@@ -48,7 +48,7 @@
                             Status Izin
                         </h6>
                         @foreach ($preview_izin->status_izin as $status)
-                            <div class="d-flex align-items-top gap-2 mb-2 ps-4">
+                            <div class="d-flex align-items-top gap-2 mb-2 ps-4 icon-status-wraper">
                                 @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
                                     <i class="fa-regular fa-circle-check mt-1 text-success"></i>
                                 @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)

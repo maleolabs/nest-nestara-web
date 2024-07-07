@@ -44,6 +44,9 @@
     /* progress circle */
     --current-progress: 50deg;
     --md-sys-color-primary: #006A6A;
+
+    /* icons */
+    --line-icon-height: 0px;
 }
 
 * {
@@ -3227,4 +3230,22 @@ del::before {
 }
 .canvas-wraper:last-child {
   margin-bottom: 0;
+}
+
+/* icons */
+.icon-status-wraper > i {
+  position: relative;
+}
+.icon-status-wraper > i > .line-icon {
+  position: absolute;
+  content: '';
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 20px;
+  border-left: 3px dotted var(--color-grey-disable);
+  opacity: .7;
+}
+.icon-status-wraper:last-child i > .line-icon {
+  height: 0 !important;
 }

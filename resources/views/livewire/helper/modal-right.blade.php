@@ -6,48 +6,61 @@
                 <p class="mb-0 text-sm">Jenis perizinan</p>
                 <h3 class="spacing-md">{{ str_capitalize($selectedPreview->jenis_perizinan->nama, true) }}</h3>
                 <p class="mb-0 text-sm">Kelompok Izin</p>
-                <h6>Izin tanpa retribusi</h6>
+                <h6 class="text-capitalize">{{ $selectedPreview->jenis_perizinan->kelompok_izin }}</h6>
                 <h6 class="mb-0">
                     <i class="fa-solid fa-hourglass-half me-1"></i>
-                    Durasi pengerjaan 1 hari
+                    Durasi pengerjaan {{ $selectedPreview->jenis_perizinan->durasi }}
                 </h6>
                 <h6 class="mb-0">
                     <i class="fa-regular fa-calendar-check me-1"></i>
-                    Masa berlaku izin 5 tahun
+                    Masa berlaku izin {{ $selectedPreview->jenis_perizinan->masa_berlaku }}
                 </h6>
                 <p class="mt-3 mb-0 text-muted">Status izin</p>
-                @foreach ($selectedPreview->status_izin as $status)
-                    <div class="d-flex align-items-top gap-2 mb-3">
-                        @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
-                            <i class="fa-regular fa-circle-check mt-1 text-success"></i>
-                        @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
-                            <i class="fa-solid fa-circle-minus mt-1 text-muted"></i>
-                        @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
-                            <i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>
-                        @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
-                            <i class="fa-solid fa-circle-xmark mt-1 text-danger"></i>
-                        @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
-                            <i class="fa-solid fa-triangle-exclamation mt-1 text-warning"></i>
-                        @endif
-                        <div>
-                            <p class="mb-0 @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
-                                    text-success
-                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
-                                    text-muted
-                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
-                                    text-dark
-                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
-                                    text-danger
-                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
-                                    text-warning
-                                @endif">
-                                {{ $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN ? "{$status->nama} ({$status->progres})" : $status->nama }}
-                            </p>
-                            <p class="mb-0">{{ $status->created_at->translatedFormat('l, d F Y H:i') . ' WITA' }}</p>
-                            <small class="text-muted text-sm fst-italic">{{ $status->keterangan ?? '' }}</small>
+                <div>
+                    @foreach ($selectedPreview->status_izin as $status)
+                        <div class="d-flex align-items-top gap-2 mb-3 icon-status-wraper">
+                            @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
+                                <i class="fa-regular fa-circle-check mt-1 text-success"></i>
+                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
+                                <i class="fa-solid fa-circle-minus mt-1 text-muted"></i>
+                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
+                                <i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>
+                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
+                                <i class="fa-solid fa-circle-xmark mt-1 text-danger"></i>
+                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
+                                <i class="fa-solid fa-triangle-exclamation mt-1 text-warning"></i>
+                            @endif
+                            <div>
+                                <p class="mb-0 @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
+                                        text-success
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
+                                        text-muted
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
+                                        text-dark
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
+                                        text-danger
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
+                                        text-warning
+                                    @endif">
+                                    {{ $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN ? "{$status->nama} ({$status->progres})" : $status->nama }}
+                                </p>
+                                <p class="mb-0">{{ $status->created_at->translatedFormat('l, d F Y H:i') . ' WITA' }}</p>
+                                @if ($status->created_at != $status->updated_at)
+                                    <p class="mb-0 text-sm">
+                                        <i class="fa-solid fa-rotate me-1"></i>
+                                        {{ 'Terakhir diupdate ' .$status->updated_at->translatedFormat('l, d F Y H:i') . ' WITA' }}
+                                    </p>
+                                @endif
+                                @if ($status->keterangan)
+                                    <small class="text-muted text-sm fst-italic">
+                                        <i class="fa-solid fa-info-circle me-1"></i>
+                                        {{ $status->keterangan }}
+                                    </small>
+                                @endif
+                            </div>
                         </div>
-                    </div>
-                @endforeach
+                    @endforeach
+                </div>
                 <div class="rounded-3 bg-app-primary-light p-3 mt-3">
                     <strong>Informasi:</strong>
                     <p class="mb-0">

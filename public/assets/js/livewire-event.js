@@ -44,7 +44,30 @@ Livewire.on('set-preview-img-modal', data => {
     }
 })
 Livewire.hook('morph.updated', ({el, component}) => {
-    console.log(el);
+    setInputsHandle()
+    setIconLineHeight()
+})
+
+window.onload = setIconLineHeight()
+
+function setIconLineHeight() {
+    const iconWraper = document.querySelectorAll('.icon-status-wraper')
+    iconWraper.forEach(wraper => {
+        const height = wraper.offsetHeight;
+        var icon = wraper.querySelector('i')
+
+        var lineIcon = icon.querySelector('.line-icon')
+        if (!lineIcon) {
+            var lineIcon = document.createElement('span')
+            lineIcon.classList.add('line-icon')
+            lineIcon.style.height = (height - 20) + "px"
+        }
+        icon.appendChild(lineIcon)
+    })
+
+}
+
+function setInputsHandle() {
     setTimeout(() => {
         var inputs = document.querySelectorAll('input');
         for (var i = 0; i < inputs.length; i++) {
@@ -103,4 +126,4 @@ Livewire.hook('morph.updated', ({el, component}) => {
             }, false);
         }
     }, 500);
-})
+}

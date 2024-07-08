@@ -33,9 +33,12 @@ if (!function_exists('renderStatusIzinWithIcon')) {
         if ($status->progres == StatusIzinProgressEnum::FINISHED && $status->nama != StatusIzinEnum::BATAL) {
             $icon = '<i class="fa-regular fa-circle-check mt-1 text-success"></i>';
             $textColor = 'text-success';
-        } elseif ($status->progres == StatusIzinProgressEnum::UNPROCESSED || $status->progres == StatusIzinProgressEnum::PROCESSING) {
+        } elseif ($status->progres == StatusIzinProgressEnum::UNPROCESSED) {
+            $icon = $status->nama == StatusIzinEnum::PROSES ? '<i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>' : '<i class="fa-solid fa-circle-minus mt-1"></i>';
+            $textColor = 'text-muted';
+        } elseif ($status->progres == StatusIzinProgressEnum::PROCESSING) {
             $icon = '<i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>';
-            $textColor = $status->progres == StatusIzinProgressEnum::UNPROCESSED ? 'text-muted' : 'text-dark';
+            $textColor = 'text-dark';
         } elseif ($status->progres == StatusIzinProgressEnum::CANCELED || $status->nama == StatusIzinEnum::BATAL) {
             $icon = '<i class="fa-solid fa-circle-xmark mt-1 text-danger"></i>';
             $textColor = 'text-danger';
@@ -68,9 +71,12 @@ if (!function_exists('renderStatusIzinWithIconAndDetails')) {
         if ($status->progres == StatusIzinProgressEnum::FINISHED && $status->nama != StatusIzinEnum::BATAL) {
             $icon = '<i class="fa-regular fa-circle-check mt-1 text-success"></i>';
             $textColor = 'text-success';
-        } elseif ($status->progres == StatusIzinProgressEnum::UNPROCESSED || $status->progres == StatusIzinProgressEnum::PROCESSING) {
+        } elseif ($status->progres == StatusIzinProgressEnum::UNPROCESSED) {
+            $icon = $status->nama == StatusIzinEnum::PROSES ? '<i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>' : '<i class="fa-solid fa-circle-minus mt-1"></i>';
+            $textColor = 'text-muted';
+        } elseif ($status->progres == StatusIzinProgressEnum::PROCESSING) {
             $icon = '<i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>';
-            $textColor = $status->progres == StatusIzinProgressEnum::UNPROCESSED ? 'text-muted' : 'text-dark';
+            $textColor = 'text-dark';
         } elseif ($status->progres == StatusIzinProgressEnum::CANCELED || $status->nama == StatusIzinEnum::BATAL) {
             $icon = '<i class="fa-solid fa-circle-xmark mt-1 text-danger"></i>';
             $textColor = 'text-danger';

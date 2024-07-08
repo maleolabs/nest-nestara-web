@@ -22,7 +22,7 @@
                     @endforeach
                 </div>
                 @php($izin_last_status = $selectedPreview->status_izin->last())
-                @if ($izin_last_status->nama = App\utils\enums\StatusIzinEnum::BATAL)
+                @if ($izin_last_status->nama == App\utils\enums\StatusIzinEnum::BATAL)
                     <div class="p-3">
                         <p class="text-dark mb-0">Permohonan izin ini telah dibatalkan. Anda dapat menghapusnya.</p>
                         <button class="btn bg-gradient-danger d-flex align-items-center" type="button" wire:click='delete({{ $selectedPreview->id }})'>

@@ -15,6 +15,7 @@
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pemohon</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis Izin</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status Izin</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pegawai yang meninjau</th>
             @endif
         </tr>
         </thead>
@@ -57,6 +58,10 @@
                 @endforelse
             @elseif ($menu == self::DATA_IZIN_BARU)
                 @forelse ($semua_izin as $izin)
+                    @php
+                        $status = $izin->status_izin->last();
+                        $statusClasses = getStatusIzinClasses($status)
+                    @endphp
                     <tr class="cursor-pointer data-izin" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})'>
                         <td class="align-middle text-center text-sm">{{ $loop->iteration }}</td>
                         <td class="text-sm">
@@ -76,10 +81,6 @@
                             </p>
                         </td>
                         <td class="d-flex flex-column align-items-center">
-                            @php
-                                $status = $izin->status_izin->last();
-                                $statusClasses = getStatusIzinClasses($status)
-                            @endphp
                             <span class="badge badge-dot">
                                 <i class="{{ $statusClasses['bgClass'] }}"></i>
                                 <span class="text-sm {{ $statusClasses['textClass'] }}">
@@ -88,7 +89,11 @@
                             </span>
                             <p class="text-xs text-muted mb-0">{{ $status->updated_at->diffForHumans() }}</p>
                         </td>
-
+                        <td>
+                            <p class="text-wrap text-sm text-bold text-center mb-0">
+                                {{ $status->pegawai ? $status->pegawai->nama : 'Belum ada pegawai yang meninjau' }}
+                            </p>
+                        </td>
                     </tr>
                 @empty
                     <tr>

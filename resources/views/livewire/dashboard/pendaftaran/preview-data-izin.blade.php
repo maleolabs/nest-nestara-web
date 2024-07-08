@@ -2,7 +2,7 @@
     <md-linear-progress wire:loading wire:target='back, saveAction, saveEntri' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
 
     <div class="row px-2">
-        @if ($preview_izin)
+        @if ($this->canAccess())
             <div class="col-md-3 d-flex align-items-stretch mb-4">
                 <div class="card w-100 p-4 mb-0">
                     <div class="d-flex flex-column gap-3">
@@ -103,31 +103,37 @@
                                         <form wire:submit.prevent='saveAction'>
                                             <label for="tanggal_peninjauan" class="form-label">Tanggal Peninjauan</label>
                                             <div class="input-group input-group-outline mb-3">
-                                                <input type="datetime" class="form-control disabled @error('tanggal_peninjauan')is-invalid @enderror" id="tanggal_peninjauan" disabled wire:model='tanggal_peninjauan'>
+                                                <input type="datetime" class="form-control disabled @error('tanggal_peninjauan')is-invalid @enderror" id="tanggal_peninjauan" disabled wire:model.live='tanggal_peninjauan'>
                                             </div>
                                             @error('tanggal_peninjauan')
                                                 <div class="mb-3 text-danger text-sm">{{ $message }}</div>
                                             @enderror
                                             <label for="lokasi_izin" class="form-label">Lokasi Izin</label>
                                             <div class="input-group input-group-outline mb-3">
-                                                <input type="text" class="form-control @error('lokasi_izin')is-invalid @enderror" id="lokasi_izin" wire:model='lokasi_izin'>
+                                                <input type="text" class="form-control @error('lokasi_izin')is-invalid @enderror" id="lokasi_izin" wire:model.live='lokasi_izin'>
                                             </div>
                                             @error('lokasi_izin')
                                                 <div class="mb-3 text-danger text-sm">{{ $message }}</div>
                                             @enderror
                                             <label for="keterangan" class="form-label">Keterangan</label>
-                                            <div class="input-group input-group-outline mb-3">
-                                                <textarea rows="3" class="form-control @error('keterangan')is-invalid @enderror" id="keterangan" wire:model='keterangan'></textarea>
+                                            <div class="input-group input-group-outline @error('keterangan')mb-1 @else mb-3 @enderror">
+                                                <textarea rows="3" class="form-control @error('keterangan')is-invalid @enderror" id="keterangan" wire:model.live='keterangan'></textarea>
                                             </div>
                                             @error('keterangan')
                                                 <div class="mb-3 text-danger text-sm">{{ $message }}</div>
                                             @enderror
-                                            <div class="form-check ps-0 mb-3">
-                                                <input type="checkbox" class="form-check-input" id="pendaftaran-selesai" wire:model='pendaftaran_selesai'>
-                                                <label for="pendaftaran-selesai" class="form-check-label">Pendaftaran Selesai</label>
+                                            <div class="d-flex align-items-center gap-3 mb-3">
+                                                <div class="form-check ps-0">
+                                                    <input type="radio" class="form-check-input" name="action_confirm" id="permohonan-selesai" wire:model.live='action_confirm' value="permohonan-selesai">
+                                                    <label for="permohonan-selesai" class="form-check-label">Permohonan Selesai</label>
+                                                </div>
+                                                <div class="form-check ps-0">
+                                                    <input type="radio" class="form-check-input" name="action_confirm" id="revisi-permohonan" wire:model.live='action_confirm' value="revisi-permohonan">
+                                                    <label for="revisi-permohonan" class="form-check-label">Revisi Permohonan</label>
+                                                </div>
                                             </div>
                                             <div class="d-flex justify-content-start gap-3">
-                                                <button class="btn bg-gradient-primary" type="submit">Simpan</button>
+                                                <button class="btn bg-gradient-primary{{ !$tanggal_peninjauan || !$lokasi_izin || !$action_confirm || ($action_confirm == 'revisi-permohonan' && !$keterangan) ? ' disabled' : '' }}" {{ !$tanggal_peninjauan || !$lokasi_izin || !$action_confirm || ($action_confirm == 'revisi-permohonan' && !$keterangan) ? 'disabled' : '' }} type="submit">Simpan</button>
                                             </div>
                                         </form>
                                     @else
@@ -312,7 +318,7 @@
             @endrole
         @else
             <div class="position-absolute top-0 start-0 h-100 w-100 d-flex align-items-center justify-content-center">
-                Tidak ada permohonan izin, kemungkinan telah di hapus
+                {{ $permission_message }}
             </div>
         @endif
     </div>

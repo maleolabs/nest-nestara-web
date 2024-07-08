@@ -65,12 +65,12 @@ interface PerizinanService
      * @param string $tanggal_peninjauan Tanggal peninjauan lokasi perizinan.
      * @param string $lokasi_izin Lokasi perizinan yang ditinjau.
      * @param string|null $keterangan Keterangan tambahan terkait tindakan registrasi (opsional).
-     * @param bool $selesai Menandakan apakah tindakan registrasi telah selesai atau belum.
+     * @param string $status_permohonan Menandakan status tindakan registrasi (permohonan-selesai atau revisi-permohonan).
      * @param int|null $pegawai_id ID pegawai yang melakukan tindakan registrasi (opsional).
      *
      * @return bool Mengembalikan nilai true jika penyimpanan data berhasil, false jika gagal.
      */
-    function saveRegistrationAction(int $izin_id, string $tanggal_peninjauan, string $lokasi_izin, string $keterangan = null, bool $selesai = false, int $pegawai_id = null): bool;
+    function saveRegistrationAction(int $izin_id, string $tanggal_peninjauan, string $lokasi_izin, string $keterangan = null, string $status_permohonan = 'permohonan-selesai', int $pegawai_id = null): bool;
 
     /**
      * Melakukan pembatalan atau revisi terhadap perizinan yang telah didaftarkan.

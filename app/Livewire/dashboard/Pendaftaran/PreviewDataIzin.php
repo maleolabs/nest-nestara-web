@@ -34,7 +34,10 @@ class PreviewDataIzin extends Component
     public $tanggal_peninjauan,
         $lokasi_izin,
         $keterangan,
-        $pendaftaran_selesai;
+        $action_confirm,
+        $editing_data_action = false;
+
+    public $permission_message;
 
     public $active_tab;
     private const TINDAKAN = 'tindakan';
@@ -42,19 +45,52 @@ class PreviewDataIzin extends Component
     
     public function mount()
     {
-        $this->pendaftaran_selesai = true;
+        $this->action_confirm = 'permohonan-selesai';
         $this->getPerizinanService()->updateIzinStatusWhenEntriDataHasChanged($this->preview_izin_id);
         $this->setDataPreview();
         $this->is_entri_changed = $this->last_izin_status && $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI;
         $this->dispatch('component-rendered');
     }
 
+    public function updated($field)
+    {
+        $action_data = [
+            'tanggal_peninjauan',
+            'lokasi_izin',
+            'keterangan',
+            'action_confirm',
+        ];
+        if (in_array($field, $action_data)) {
+            $this->active_tab = self::TINDAKAN;
+            $this->editing_data_action = true;
+            if ($this->action_confirm == 'revisi-permohonan' && !$this->keterangan)
+                throw ValidationException::withMessages([
+                    'keterangan' => 'Keterangan revisi permohonan harus diisi!'
+                ]);
+        }
+    }
+
     public function render()
     {
         $this->setDataPreview();
+        $this->canAccess();
         if (!$this->edit_entri_data)
             $this->setEntriData();
         return view('livewire.dashboard.pendaftaran.preview-data-izin');
+    }
+
+    protected function canAccess(): bool
+    {
+        if (!$this->preview_izin) {
+            $this->permission_message = 'Data tidak ditemukan!';
+            return false;
+        }
+        $user = auth()->user();
+        if (!$user->hasRole('pegawai') && $this->last_izin_status->nama == StatusIzinEnum::PROSES) {
+            $this->permission_message = 'Permohonan izin ini sedang diproses oleh back office, silahkan menunggu proses selesai.';
+            return false;
+        } 
+        return true;
     }
 
     public function saveAction()
@@ -64,12 +100,21 @@ class PreviewDataIzin extends Component
             'tanggal_peninjauan' => ['required'],
             'lokasi_izin' => ['required', 'max:255'],
         ]);
-        if (!is_bool($this->pendaftaran_selesai))
+        $action_confirm_data = [
+            'permohonan-selesai',
+            'revisi-permohonan',
+        ];
+        if (!in_array($this->action_confirm, $action_confirm_data))
             throw ValidationException::withMessages([
-                'pendaftaran_selesai' => 'kesalahan'
+                'action_confirm' => 'kesalahan'
             ]);
         $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
-        $saved = $this->getPerizinanService()->saveRegistrationAction($this->preview_izin_id, $this->tanggal_peninjauan, $this->lokasi_izin, $this->keterangan, $this->pendaftaran_selesai, $pegawai_id);
+        $saved = $this->getPerizinanService()->saveRegistrationAction($this->preview_izin_id, $this->tanggal_peninjauan, $this->lokasi_izin, $this->keterangan, $this->action_confirm, $pegawai_id);
+        if ($saved) {
+            $this->editing_data_action = false;
+            $this->action_confirm = null;
+            $this->keterangan = null;
+        }
     }
 
     public function back()
@@ -86,9 +131,12 @@ class PreviewDataIzin extends Component
                 return;
             }
             $this->preview_izin_syarat_izin = $this->getSyaratIzinService()->getByJenisAndPemohon($this->preview_izin->jenis_perizinan_id, $this->preview_izin->pemohon_id);
-            $this->tanggal_peninjauan = $this->preview_izin->tanggal_peninjauan ? $this->preview_izin->tanggal_peninjauan : Carbon::now()->format('Y-m-d H:i');
-            $this->lokasi_izin = $this->preview_izin->lokasi_izin;
-            $this->keterangan = $this->preview_izin->ket;
+
+            if (!$this->editing_data_action) {
+                $this->tanggal_peninjauan = $this->preview_izin->tanggal_peninjauan ? $this->preview_izin->tanggal_peninjauan : Carbon::now()->format('Y-m-d H:i');
+                $this->lokasi_izin = $this->preview_izin->lokasi_izin;
+                $this->keterangan = $this->preview_izin->ket;
+            }
 
             $this->last_izin_status = $this->preview_izin->status_izin->last();
             
@@ -104,13 +152,14 @@ class PreviewDataIzin extends Component
 
     private function canProcess(): bool
     {
-        $last_status = $this->preview_izin->status_izin->last();
-        if ($last_status->nama == StatusIzinEnum::DIDAFTARKAN && $last_status->progres == StatusIzinProgressEnum::FINISHED)
-            return true;
-        else if ($last_status->nama == StatusIzinEnum::DITINJAU && ($last_status->progres == StatusIzinProgressEnum::UNPROCESSED || $last_status->progres == StatusIzinProgressEnum::PROCESSING))
-            return true;
-        return false;
-    }
+        $allowedStatuses = [
+            [StatusIzinEnum::DIDAFTARKAN, StatusIzinProgressEnum::FINISHED],
+            [StatusIzinEnum::REVISI_PERSYARATAN, StatusIzinProgressEnum::FINISHED],
+            [StatusIzinEnum::DITINJAU, StatusIzinProgressEnum::UNPROCESSED],
+            [StatusIzinEnum::DITINJAU, StatusIzinProgressEnum::PROCESSING]
+        ];
+
+        return in_array([$this->last_izin_status->nama, $this->last_izin_status->progres], $allowedStatuses);    }
 
     private function getRegionValue($type, $id): string
     {

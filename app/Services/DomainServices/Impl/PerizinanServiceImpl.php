@@ -74,7 +74,7 @@ class PerizinanServiceImpl implements PerizinanService
         return $semua_izin->all();
     }
 
-    public function saveRegistrationAction(int $izin_id, string $tanggal_peninjauan, string $lokasi_izin, string $keterangan = null, bool $selesai = false, int $pegawai_id = null): bool
+    public function saveRegistrationAction(int $izin_id, string $tanggal_peninjauan, string $lokasi_izin, string $keterangan = null, string $status_permohonan = 'permohonan-selesai', int $pegawai_id = null): bool
     {
         DB::beginTransaction();
         $izin = Izin::find($izin_id);
@@ -87,10 +87,10 @@ class PerizinanServiceImpl implements PerizinanService
         $izin->lokasi_izin = $lokasi_izin;
         $izin->save();
 
-        $this->statusIzinService->updateStatusIzin($izin_id, Status::DITINJAU, Progres::PROCESSING, $keterangan, $pegawai_id);
-        if ($selesai) {
+        if ($status_permohonan == 'permohonan-selesai')
             $this->statusIzinService->updateStatusIzin($izin_id, Status::DITINJAU, Progres::FINISHED, $keterangan, $pegawai_id);
-        }
+        else if ($status_permohonan == 'revisi-permohonan')
+            $this->statusIzinService->updateStatusIzin($izin_id, Status::REVISI_PERSYARATAN, Progres::UNPROCESSED, $keterangan, $pegawai_id);
 
         DB::commit();
         return true;

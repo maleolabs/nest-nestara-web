@@ -1,10 +1,8 @@
 @include('layouts.header')
-<body>
+<body class="bg-light">
     @include('dashboard.dashboard-nav')
     <main id="back-office-main" class="main">
-        <div class="bg-light">
-            @yield('main')
-        </div>
+        @yield('main')
     </main>
 </body>
 @include('layouts.footer')

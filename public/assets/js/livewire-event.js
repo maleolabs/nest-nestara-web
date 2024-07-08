@@ -57,11 +57,13 @@ function setIconLineHeight() {
         var icon = wraper.querySelector('i')
 
         var lineIcon = icon.querySelector('.line-icon')
-        if (!lineIcon) {
-            var lineIcon = document.createElement('span')
-            lineIcon.classList.add('line-icon')
-            lineIcon.style.height = (height - 20) + "px"
+        if (lineIcon) {
+            icon.removeChild(lineIcon)
         }
+        var lineIcon = document.createElement('span')
+        lineIcon.classList.add('line-icon')
+        lineIcon.style.height = (height - 20) + "px"
+
         icon.appendChild(lineIcon)
     })
 

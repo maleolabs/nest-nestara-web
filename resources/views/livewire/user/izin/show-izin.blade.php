@@ -18,9 +18,7 @@
                         <div class="d-flex align-items-top gap-2 my-3">
                             @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
                                 <i class="fa-regular fa-circle-check mt-1 text-success"></i>
-                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
-                                <i class="fa-solid fa-circle-minus mt-1 text-muted"></i>
-                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
+                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED || $status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
                                 <i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>
                             @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
                                 <i class="fa-solid fa-circle-xmark mt-1 text-danger"></i>
@@ -39,7 +37,7 @@
                                     @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
                                         text-warning
                                     @endif">
-                                    {{ $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN ? "{$status->nama} ({$status->progres})" : $status->nama }}
+                                    {{ $status->nama }}
                                 </p>
                                 <p class="mb-0">{{ $status->created_at->translatedFormat('l, d F Y H:i') . ' WITA' }}</p>
                             </div>

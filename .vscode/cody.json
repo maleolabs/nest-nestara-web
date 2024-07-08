@@ -1,0 +1,16 @@
+{
+  "KomentarKode": {
+    "prompt": "buatkan komentar dari kode ini dalam bahasa indonesia",
+    "context": {
+      "selection": true
+    },
+    "mode": "edit"
+  },
+  "HapusKomentar": {
+    "prompt": "hapus komentar dari kode ini",
+    "context": {
+      "selection": true
+    },
+    "mode": "edit"
+  }
+}

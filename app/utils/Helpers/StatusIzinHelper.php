@@ -60,7 +60,7 @@ if (!function_exists('renderStatusIzinWithIcon')) {
 }
 
 if (!function_exists('renderStatusIzinWithIconAndDetails')) {
-    function renderStatusIzinWithIconAndDetails($status, $can_read_keterangan = false, $can_read_pegawai = false)
+    function renderStatusIzinWithIconAndDetails($status, $can_read_progres = false, $can_read_keterangan = false, $can_read_pegawai = false)
     {
         $icon = '';
         $textColor = '';
@@ -79,7 +79,7 @@ if (!function_exists('renderStatusIzinWithIconAndDetails')) {
             $textColor = 'text-warning';
         }
 
-        $namaStatus = $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN ? "{$status->nama} ({$status->progres})" : $status->nama;
+        $namaStatus = $can_read_progres && $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN && $status->nama != App\utils\enums\StatusIzinEnum::BATAL ? "{$status->nama} ({$status->progres})" : $status->nama;
         $createdAt = $status->created_at->translatedFormat('l, d F Y H:i') . ' WITA';
         $updatedAt = $status->updated_at->translatedFormat('l, d F Y H:i') . ' WITA';
         $keterangan = $can_read_keterangan && $status->keterangan ? '<p class="text-muted text-sm mb-0"><i class="fa-solid fa-info-circle me-1"></i>Keterangan: ' . $status->keterangan . '</p>' : '';

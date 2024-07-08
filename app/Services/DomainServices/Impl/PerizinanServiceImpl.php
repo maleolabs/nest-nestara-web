@@ -157,7 +157,13 @@ class PerizinanServiceImpl implements PerizinanService
 
     public function delete(int $izin_id): void
     {
-        $this->statusIzinService;
+        DB::transaction(function () use ($izin_id) {
+            $izin = Izin::find($izin_id);
+            if (!$izin)
+                return;
+            $this->statusIzinService->deleteAllByIzinId($izin_id);
+            $izin->delete();
+        });
     }
 
     public function updateIzinStatusThatHaveBeenReviewed(): void

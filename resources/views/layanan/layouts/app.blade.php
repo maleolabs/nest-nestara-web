@@ -1,5 +1,5 @@
 @include('layouts.header')
-<body>
+<body class="bg-light">
     @include('dashboard.dashboard-nav')
     <main id="layanan-main" class="main">
         @yield('main')

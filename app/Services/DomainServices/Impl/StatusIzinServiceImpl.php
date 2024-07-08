@@ -48,4 +48,9 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		}
 	}
 
+	public function deleteAllByIzinId(int $izin_id): void
+	{
+		StatusIzin::where('izin_id', $izin_id)->delete();
+	}
+
 }

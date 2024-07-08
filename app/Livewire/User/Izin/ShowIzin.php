@@ -13,6 +13,10 @@ class ShowIzin extends Component
     public $selectedPreview, 
         $selectedPreviewSyaratIzin = [];
 
+    public $to_confirm_delete = false,
+        $delete_izin_id,
+        $confirm_delete;
+
     public function render()
     {
         return view('livewire.user.izin.show-izin', [
@@ -40,6 +44,21 @@ class ShowIzin extends Component
     public function cancel(int $id)
     {
         $this->getPerizinanService()->cancelRegistration($id);
+    }
+
+    public function delete(int $id)
+    {
+        $this->closePreview();
+        $this->to_confirm_delete = true;
+        $this->delete_izin_id = $id;
+    }
+
+    public function confirmDelete()
+    {
+        $this->getPerizinanService()->delete($this->delete_izin_id);
+        $this->confirm_delete = false;
+        $this->delete_izin_id = null;
+        $this->to_confirm_delete = false;
     }
 
     public function getPerizinanService(): PerizinanService

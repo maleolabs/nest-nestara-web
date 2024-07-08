@@ -45,7 +45,7 @@ class PreviewDataIzin extends Component
         $this->pendaftaran_selesai = true;
         $this->getPerizinanService()->updateIzinStatusWhenEntriDataHasChanged($this->preview_izin_id);
         $this->setDataPreview();
-        $this->is_entri_changed = $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI;
+        $this->is_entri_changed = $this->last_izin_status && $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI;
         $this->dispatch('component-rendered');
     }
 

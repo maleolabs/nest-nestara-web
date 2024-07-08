@@ -18,15 +18,28 @@
                 <p class="mt-3 mb-0 text-muted">Status izin</p>
                 <div>
                     @foreach ($selectedPreview->status_izin as $status)
-                        {!! renderStatusIzinWithIconAndDetails($status, $this->isIzinCancelable($status->nama) , false) !!}
+                        {!! renderStatusIzinWithIconAndDetails($status, false, $this->isIzinCancelable($status->nama) , false) !!}
                     @endforeach
                 </div>
-                <div class="rounded-3 bg-app-primary-light p-3 mt-3">
-                    <strong>Informasi:</strong>
-                    <p class="mb-0">
-                        Dokumen Anda akan divalidasi terlebih dahulu, kemudian akan diproses oleh petugas, dan izin Anda akan diterbitkan setelah semua tahap selesai.
-                    </p>
-                </div>  
+                @php($izin_last_status = $selectedPreview->status_izin->last())
+                @if ($izin_last_status->nama = App\utils\enums\StatusIzinEnum::BATAL)
+                    <div class="p-3">
+                        <p class="text-dark mb-0">Permohonan izin ini telah dibatalkan. Anda dapat menghapusnya.</p>
+                        <button class="btn bg-gradient-danger d-flex align-items-center" type="button" wire:click='delete({{ $selectedPreview->id }})'>
+                            <span wire:loading.remove wire:target='delete'>hapus permohonan izin</span>
+                            <div class="spinner-border spinner-border-sm ms-1" role="status" wire:loading wire:target='delete'>
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </button>
+                    </div>
+                @else
+                    <div class="rounded-3 bg-app-primary-light p-3 mt-3">
+                        <strong>Informasi:</strong>
+                        <p class="mb-0">
+                            Dokumen Anda akan divalidasi terlebih dahulu, kemudian akan diproses oleh petugas, dan izin Anda akan diterbitkan setelah semua tahap selesai.
+                        </p>
+                    </div>  
+                @endif
                 <p class="mt-3 mb-0 text-muted">Persyaratan</p>
                 @foreach ($selectedPreviewSyaratIzin as $syarat)
                     <h6 @if(!isset($syarat->dokumen_pemohon[0]))class="text-muted text-decoration-line-through"@endif>

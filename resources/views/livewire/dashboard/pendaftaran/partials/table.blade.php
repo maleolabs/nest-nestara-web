@@ -77,37 +77,18 @@
                         </td>
                         <td class="d-flex flex-column align-items-center">
                             @php
-                                $status = $izin->status_izin->last()
+                                $status = $izin->status_izin->last();
+                                $statusClasses = getStatusIzinClasses($status)
                             @endphp
                             <span class="badge badge-dot">
-                                @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
-                                    <i class="bg-success"></i>
-                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
-                                    <i class="bg-dark"></i>
-                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
-                                    <i class="bg-info"></i>
-                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
-                                    <i class="bg-danger"></i>
-                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
-                                    <i class="bg-warning"></i>
-                                @endif
-                                <span class="text-sm 
-                                    @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
-                                        text-success
-                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
-                                        text-muted
-                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
-                                        text-dark
-                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
-                                        text-danger
-                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
-                                        text-warning
-                                    @endif">
-                                    {{ $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN ? "{$status->nama} ({$status->progres})" : $status->nama }}
+                                <i class="{{ $statusClasses['bgClass'] }}"></i>
+                                <span class="text-sm {{ $statusClasses['textClass'] }}">
+                                    {{ $status->nama }}
                                 </span>
                             </span>
                             <p class="text-xs text-muted mb-0">{{ $status->updated_at->diffForHumans() }}</p>
                         </td>
+
                     </tr>
                 @empty
                     <tr>

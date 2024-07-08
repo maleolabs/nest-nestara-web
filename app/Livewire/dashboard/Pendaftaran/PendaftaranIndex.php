@@ -40,7 +40,16 @@ class PendaftaranIndex extends Component
             self::DATA_PERPANJANGAN_IZIN,
             self::DATA_PERUBAHAN_IZIN
         ];
-        $this->tab != null ? (in_array($this->tab, $tabs) ? $this->selectMenu($this->tab, false) : $this->selectMenu(self::DATA_PEMOHON, false)) : $this->selectMenu(self::DATA_PEMOHON, false);
+
+        $defaultMenu = self::DATA_PEMOHON;
+        if ($this->tab !== null) {
+            $isTabValid = in_array($this->tab, $tabs);
+            $selectedMenu = $isTabValid ? $this->tab : $defaultMenu;
+        } else {
+            $selectedMenu = $defaultMenu;
+        }
+        $this->selectMenu($selectedMenu, false);
+
         $this->filter_status = StatusIzinEnum::DIDAFTARKAN;
         
         if ($this->preview_izin_id) {
@@ -69,7 +78,7 @@ class PendaftaranIndex extends Component
     private function setDataList()
     {
         $this->semua_pemohon = $this->getPemohonService()->getAll($this->search, $this->filter_status);
-        $this->semua_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::DIDAFTARKAN, StatusIzinEnum::DITINJAU], [], $this->start_date, $this->end_date, 'ASC');
+        $this->semua_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::DIDAFTARKAN, StatusIzinEnum::DITINJAU, StatusIzinEnum::REVISI_PERSYARATAN, StatusIzinEnum::BATAL], [], $this->start_date, $this->end_date, 'ASC');
     }
 
     #[On('change-layout')]

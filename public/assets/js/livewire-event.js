@@ -48,6 +48,10 @@ Livewire.hook('morph.updated', ({el, component}) => {
     setIconLineHeight()
 })
 
+Livewire.on('component-rendered', ({el, component}) => {
+    setIconLineHeight()
+})
+
 window.onload = setIconLineHeight()
 
 function setIconLineHeight() {

@@ -48,53 +48,7 @@
                             Status Izin
                         </h6>
                         @foreach ($preview_izin->status_izin as $status)
-                            <div class="d-flex align-items-top gap-2 mb-2 ps-4 icon-status-wraper">
-                                @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
-                                    <i class="fa-regular fa-circle-check mt-1 text-success"></i>
-                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
-                                    <i class="fa-solid fa-circle-minus mt-1 text-muted"></i>
-                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
-                                    <i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>
-                                @elseif ($status->progres == App\utils\enums\StatusIzinEnum::BATAL || $status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
-                                    <i class="fa-solid fa-circle-xmark mt-1 text-danger"></i>
-                                @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
-                                    <i class="fa-solid fa-triangle-exclamation mt-1 text-warning"></i>
-                                @endif
-                                <div>
-                                    <p class="mb-0 @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
-                                            text-success
-                                        @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
-                                            text-muted
-                                        @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
-                                            text-dark
-                                        @elseif ($status->progres == App\utils\enums\StatusIzinEnum::BATAL || $status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
-                                            text-danger
-                                        @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
-                                            text-warning
-                                        @endif">
-                                        {{ $status->nama != App\utils\enums\StatusIzinEnum::DIDAFTARKAN ? "{$status->nama} ({$status->progres})" : $status->nama }}
-                                    </p>
-                                    <p class="mb-0 text-sm">{{ $status->created_at->translatedFormat('l, d F Y H:i') . ' WITA.' }}</p>
-                                    @if ($status->created_at != $status->updated_at)
-                                        <p class="mb-0 text-sm">
-                                            <i class="fa-solid fa-rotate me-1"></i>
-                                            {{ 'Terakhir diupdate ' .$status->updated_at->translatedFormat('l, d F Y H:i') . ' WITA' }}
-                                        </p>
-                                    @endif
-                                    @if ($status->keterangan)
-                                        <p class="text-muted text-sm mb-0">
-                                            <i class="fa-solid fa-info-circle me-1"></i>
-                                            {{ 'Keterangan: ' . $status->keterangan ?? '' }}
-                                        </p>
-                                    @endif
-                                    @if ($status->pegawai_id)
-                                        <p class="text-muted text-sm">
-                                            <i class="fa-solid fa-user-tie me-1"></i>
-                                            {{ "Pegawai yang memeriksa: {$status->pegawai->nama}" }}
-                                        </p>
-                                    @endif
-                                </div>
-                            </div>
+                            {!! renderStatusIzinWithIconAndDetails($status, true, true) !!}
                         @endforeach
                     </div>
                     @role('pegawai')

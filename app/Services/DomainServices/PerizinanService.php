@@ -94,6 +94,13 @@ interface PerizinanService
     function saveRegistrationRevision(int $izin_id, string $keterangan = null): void;
 
     /**
+     * Mendapatkan semua status perizinan yang dapat dibatalkan.
+     *
+     * @return array
+     */
+    function getAllStatusCancelable(): array;
+
+    /**
      * Membatalkan registrasi perizinan yang telah didaftarkan.
      *
      * @param int $izin_id ID perizinan yang akan dibatalkan.

@@ -29,7 +29,8 @@
         },
         "files" : [
             "app/utils/string_helper.php",
-            "app/utils/property_helper.php"
+            "app/utils/property_helper.php",
+            "app/utils/Helpers/StatusIzinHelper.php"
         ]
     },
     "autoload-dev": {

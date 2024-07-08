@@ -1,6 +1,11 @@
 <div class="container mb-5">
-    <h3>Aktivitas</h3>
-    <h6>{{ count($semua_izin) . ' Izin' }}</h6>
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h3>Aktivitas</h3>
+            <h6>{{ count($semua_izin) . ' Izin' }}</h6>
+        </div>
+        <a href="{{ route('create-izin') }}" class="btn bg-gradient-primary">buat izin baru</a>
+    </div>
     <div class="row">
         @foreach ($semua_izin->reverse() as $izin)
             <div class="col-12 mb-3">
@@ -15,49 +20,25 @@
                         @php
                             $status = $izin->status_izin->last()
                         @endphp
-                        <div class="d-flex align-items-top gap-2 my-3">
-                            @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
-                                <i class="fa-regular fa-circle-check mt-1 text-success"></i>
-                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED || $status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
-                                <i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>
-                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
-                                <i class="fa-solid fa-circle-xmark mt-1 text-danger"></i>
-                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
-                                <i class="fa-solid fa-triangle-exclamation mt-1 text-warning"></i>
-                            @endif
-                            <div>
-                                <p class="mb-0 @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
-                                        text-success
-                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
-                                        text-muted
-                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
-                                        text-dark
-                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
-                                        text-danger
-                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
-                                        text-warning
-                                    @endif">
-                                    {{ $status->nama }}
-                                </p>
-                                <p class="mb-0">{{ $status->created_at->translatedFormat('l, d F Y H:i') . ' WITA' }}</p>
+                        {!! renderStatusIzinWithIcon($status) !!}
+                    </div>
+                    @if ($this->isIzinCancelable($izin->status_izin->last()->nama))
+                        <div class="ms-auto mb-auto">
+                            <div class="dropdown">
+                                <button class="btn p-0 card-icon rounded-circle" data-bs-toggle="dropdown" id="cancelIzinAction">
+                                    <i class="fa-solid fa-ellipsis-vertical text-sm"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="cancelIzinAction">
+                                    <li>
+                                        <a class="dropdown-item" href="javascript:;" wire:click='cancel({{ $izin->id }})'>
+                                            <i class="fa-solid fa-circle-minus me-1"></i>
+                                            Batalkan
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
-                    </div>
-                    <div class="ms-auto mb-auto">
-                        <div class="dropdown">
-                            <button class="btn p-0 card-icon rounded-circle" data-bs-toggle="dropdown" id="dataIzinAction">
-                                <i class="fa-solid fa-ellipsis-vertical text-sm"></i>
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dataIzinAction">
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="fa-solid fa-circle-minus me-1"></i>
-                                        Batalkan
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    @endif
                 </div>
             </div>
         @endforeach

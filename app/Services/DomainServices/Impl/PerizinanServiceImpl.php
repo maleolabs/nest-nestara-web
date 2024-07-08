@@ -125,6 +125,15 @@ class PerizinanServiceImpl implements PerizinanService
         DB::commit();
     }
 
+    public function getAllStatusCancelable(): array
+    {
+        return [
+            Status::DIDAFTARKAN,
+            Status::DITINJAU,
+            Status::REVISI_PERSYARATAN
+        ];
+    }
+
     public function cancelRegistration(int $izin_id, string $keterangan = null): void
     {
         DB::beginTransaction();
@@ -135,12 +144,8 @@ class PerizinanServiceImpl implements PerizinanService
         }
 
         $izin_last_status = $izin->status_izin->last();
-        $cancelable_permission = [
-            Status::DIDAFTARKAN,
-            Status::DITINJAU,
-            Status::REVISI_PERSYARATAN
-        ];
-        if (!in_array($izin_last_status->nama, $cancelable_permission)) {
+
+        if (!in_array($izin_last_status->nama, $this->getAllStatusCancelable())) {
             DB::rollBack();
             return;
         }

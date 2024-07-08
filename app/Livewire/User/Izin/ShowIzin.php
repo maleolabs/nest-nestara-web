@@ -20,6 +20,11 @@ class ShowIzin extends Component
         ]);
     }
 
+    public function isIzinCancelable(string $izin_status)
+    {
+        return in_array($izin_status, $this->getPerizinanService()->getAllStatusCancelable());
+    }
+
     public function preview(int $id)
     {
         $this->selectedPreview = $this->getPerizinanService()->find($id);
@@ -30,6 +35,11 @@ class ShowIzin extends Component
     {
         $this->selectedPreview = null;
         $this->selectedPreviewSyaratIzin = [];
+    }
+
+    public function cancel(int $id)
+    {
+        $this->getPerizinanService()->cancelRegistration($id);
     }
 
     public function getPerizinanService(): PerizinanService

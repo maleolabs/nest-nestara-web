@@ -7,7 +7,7 @@ use App\Models\Izin;
 interface PerizinanService
 {
     
-    function save(int $jenis_izin_id, int $pemohon_id): ?Izin;
+    function saveRegistration(int $jenis_izin_id, int $pemohon_id): ?Izin;
 
     function find(int $id): ?Izin;
 
@@ -44,6 +44,12 @@ interface PerizinanService
     ): array;
 
     function saveRegistrationAction(int $izin_id, string $tanggal_peninjauan, string $lokasi_izin, string $keterangan = null, bool $selesai = false, int $pegawai_id = null): bool;
+
+    function rollbackRegistration(int $izin_id, string $keterangan, int $pegawai_id): void;
+
+    function saveRegistrationRevision(int $izin_id, string $keterangan = null): void;
+
+    function cancelRegistration(int $zin_id, string $keterangan = null): void;
 
     function updateIzinStatusThatHaveBeenReviewed(): void;
 

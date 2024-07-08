@@ -4,7 +4,7 @@ namespace App\Services\DomainServices\Impl;
 
 use App\Services\DomainServices\StatusIzinService;
 use App\Models\StatusIzin;
-use App\utils\enums\StatusIzinProgressEnum;
+use App\utils\enums\StatusIzinProgressEnum as Progres;
 use Illuminate\Support\Facades\DB;
 
 class StatusIzinServiceImpl implements StatusIzinService {
@@ -14,23 +14,13 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		return StatusIzin::create([
 			'izin_id' => $izin_id,
 			'nama' => $nama_status,
-			'progres' => StatusIzinProgressEnum::FINISHED
+			'progres' => Progres::FINISHED
 		]);
 	}
 
-	public function find(int $id): ?StatusIzin
+	public function findByNamaAndIzin(string $nama, int $izin_id): ?StatusIzin
 	{
-		return null;
-	}
-
-	public function update(int $id, array $data_statusizin): ?StatusIzin
-	{
-		return null;
-	}
-
-	public function delete(int $id): bool
-	{
-		return false;
+		return StatusIzin::where('nama', $nama)->where('izin_id', $izin_id)->first();
 	}
 
 	public function saveAllStatusIzin(array $status_izin_data): void
@@ -38,10 +28,10 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		DB::table('status_izin')->insert($status_izin_data);
 	}
 
-	public function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null, $updated_at = null): void
+	public function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null, $updated_at = null, bool $new = false): void
 	{
 		$status_izin = StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->first();
-		if ($status_izin) {
+		if ($status_izin && !$new) {
 			$status_izin->progres = $progres;
 			$status_izin->keterangan = $ket;
 			$status_izin->pegawai_id = $pegawai_id;

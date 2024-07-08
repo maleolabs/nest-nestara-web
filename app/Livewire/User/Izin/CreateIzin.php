@@ -65,7 +65,7 @@ class CreateIzin extends Component
     {
         $this->saveDataPemohon(auth()->user()->id);
         $this->saveDataIzin();
-        $this->getPerizinanService()->save($this->selectedPerizinan->id, $this->pemohon_id);
+        $this->getPerizinanService()->saveRegistration($this->selectedPerizinan->id, $this->pemohon_id);
         Session::push('data-izin-saved', 'Anda telah berhasil mendaftar ' . $this->selectedPerizinan->nama);
         return redirect()->route('user.izin');
     }

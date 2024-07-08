@@ -23,7 +23,7 @@
                                 <i class="fa-regular fa-circle-check mt-1 text-success"></i>
                             @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED || $status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
                                 <i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>
-                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
+                            @elseif ($status->progres == App\utils\enums\StatusIzinEnum::BATAL || $status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
                                 <i class="fa-solid fa-circle-xmark mt-1 text-danger"></i>
                             @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
                                 <i class="fa-solid fa-triangle-exclamation mt-1 text-warning"></i>
@@ -35,7 +35,7 @@
                                         text-muted
                                     @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
                                         text-dark
-                                    @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
+                                    @elseif ($status->progres == App\utils\enums\StatusIzinEnum::BATAL || $status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
                                         text-danger
                                     @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
                                         text-warning

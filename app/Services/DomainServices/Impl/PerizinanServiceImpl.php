@@ -6,9 +6,9 @@ use App\Models\Izin;
 use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\StatusIzinService;
-use App\utils\enums\BackOfficeStatusEnum;
-use App\utils\enums\StatusIzinEnum;
-use App\utils\enums\StatusIzinProgressEnum;
+use App\utils\enums\BackOfficeStatusEnum as OfficeStatus;
+use App\utils\enums\StatusIzinEnum as Status;
+use App\utils\enums\StatusIzinProgressEnum as Progres;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -25,13 +25,13 @@ class PerizinanServiceImpl implements PerizinanService
         $this->entriDataService = $entriDataService;
     }
     
-    public function save(int $jenis_izin_id, int $pemohon_id): ?Izin
+    public function saveRegistration(int $jenis_izin_id, int $pemohon_id): ?Izin
     {
         $izin = Izin::create([
             'jenis_perizinan_id' => $jenis_izin_id,
             'pemohon_id' => $pemohon_id
         ]);
-        $this->statusIzinService->save($izin->id, StatusIzinEnum::DIDAFTARKAN);
+        $this->statusIzinService->save($izin->id, Status::DIDAFTARKAN);
         return $izin;
     }
 
@@ -87,13 +87,56 @@ class PerizinanServiceImpl implements PerizinanService
         $izin->lokasi_izin = $lokasi_izin;
         $izin->save();
 
-        $this->statusIzinService->updateStatusIzin($izin_id, StatusIzinEnum::DITINJAU, StatusIzinProgressEnum::PROCESSING, $keterangan, $pegawai_id);
+        $this->statusIzinService->updateStatusIzin($izin_id, Status::DITINJAU, Progres::PROCESSING, $keterangan, $pegawai_id);
         if ($selesai) {
-            $this->statusIzinService->updateStatusIzin($izin_id, StatusIzinEnum::DITINJAU, StatusIzinProgressEnum::FINISHED, $keterangan, $pegawai_id);
+            $this->statusIzinService->updateStatusIzin($izin_id, Status::DITINJAU, Progres::FINISHED, $keterangan, $pegawai_id);
         }
 
         DB::commit();
         return true;
+    }
+
+    public function rollbackRegistration(int $izin_id, string $keterangan, int $pegawai_id): void
+    {
+        DB::beginTransaction();
+        $izin = Izin::find($izin_id);
+        if (!$izin) {
+            DB::rollBack();
+            return;
+        }
+
+        $this->statusIzinService->updateStatusIzin($izin_id, Status::REVISI_PERSYARATAN, Progres::UNPROCESSED, $keterangan, $pegawai_id, null, true);
+
+        DB::commit();
+    }
+
+    public function saveRegistrationRevision(int $izin_id, string $keterangan = null): void
+    {
+        DB::beginTransaction();
+        $izin = Izin::find($izin_id);
+        if (!$izin) {
+            DB::rollBack();
+            return;
+        }
+
+        $revision_status = $this->statusIzinService->findByNamaAndIzin(Status::REVISI_PERSYARATAN, $izin_id);
+        $this->statusIzinService->updateStatusIzin($izin_id, Status::REVISI_PERSYARATAN, Progres::FINISHED, $keterangan, $revision_status->pegawai_id);
+
+        DB::commit();
+    }
+
+    public function cancelRegistration(int $izin_id, string $keterangan = null): void
+    {
+        DB::beginTransaction();
+        $izin = Izin::find($izin_id);
+        if (!$izin) {
+            DB::rollBack();
+            return;
+        }
+
+        $this->statusIzinService->updateStatusIzin($izin_id, Status::BATAL, Progres::FINISHED, $keterangan);
+
+        DB::commit();
     }
 
     public function updateIzinStatusThatHaveBeenReviewed(): void
@@ -101,16 +144,16 @@ class PerizinanServiceImpl implements PerizinanService
         $all_izin_will_be_updated = [];
         $all_izin_id = Izin::whereHas('status_izin', function ($status_izin) {
             $status_izin
-                ->where('nama', StatusIzinEnum::DITINJAU)
-                ->where('progres', StatusIzinProgressEnum::FINISHED)
+                ->where('nama', Status::DITINJAU)
+                ->where('progres', Progres::FINISHED)
                 ->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) FROM status_izin WHERE status_izin.izin_id = izin.id)'));
         })->pluck('id');
         foreach ($all_izin_id as $id) {
             $all_izin_will_be_updated[] = [
                 'izin_id' => $id,
-                'nama' => StatusIzinEnum::PROSES,
-                'keterangan' => BackOfficeStatusEnum::BELUM_ENTRI,
-                'progres' => StatusIzinProgressEnum::UNPROCESSED,
+                'nama' => Status::PROSES,
+                'keterangan' => OfficeStatus::BELUM_ENTRI,
+                'progres' => Progres::UNPROCESSED,
                 'created_at' => now(),
                 'updated_at' => now()
             ];
@@ -122,11 +165,11 @@ class PerizinanServiceImpl implements PerizinanService
     {
         $modifiable_izin = Izin::whereHas('status_izin', function ($status_izin) {
             $status_izin
-                ->where('nama', StatusIzinEnum::PROSES)
-                ->where('progres', StatusIzinProgressEnum::PROCESSING)
+                ->where('nama', Status::PROSES)
+                ->where('progres', Progres::PROCESSING)
                 ->where(function ($status_ket) {
-                    $status_ket->where('keterangan', BackOfficeStatusEnum::SUDAH_ENTRI)
-                        ->orWhere('keterangan', BackOfficeStatusEnum::SEDANG_ENTRI);
+                    $status_ket->where('keterangan', OfficeStatus::SUDAH_ENTRI)
+                        ->orWhere('keterangan', OfficeStatus::SEDANG_ENTRI);
                 })
                 ->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) FROM status_izin WHERE status_izin.izin_id = izin.id)'));
         })->pluck('id');
@@ -142,9 +185,9 @@ class PerizinanServiceImpl implements PerizinanService
             return;
 
         $last_izin_status = $izin->status_izin->last();
-        if (!$this->entriDataService->isEntriDataIzinExistsByIzinAndJenis($izin_id, $izin->jenis_perizinan_id) && $last_izin_status->progres == StatusIzinProgressEnum::PROCESSING) {
+        if (!$this->entriDataService->isEntriDataIzinExistsByIzinAndJenis($izin_id, $izin->jenis_perizinan_id) && $last_izin_status->progres == Progres::PROCESSING) {
             $entri_deleted_at = $this->entriDataService->getDeletedAtByJenis($izin->jenis_perizinan_id);
-            $this->statusIzinService->updateStatusIzin($izin_id, StatusIzinEnum::PROSES, StatusIzinProgressEnum::PROCESSING, BackOfficeStatusEnum::PERUBAHAN_ENTRI, $last_izin_status->pegawai_id, $entri_deleted_at);
+            $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::PERUBAHAN_ENTRI, $last_izin_status->pegawai_id, $entri_deleted_at);
         }
     }
     

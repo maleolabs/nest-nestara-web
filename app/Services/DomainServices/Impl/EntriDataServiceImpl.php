@@ -5,6 +5,8 @@ namespace App\Services\DomainServices\Impl;
 use App\Services\DomainServices\EntriDataService;
 use App\Models\EntriData;
 use App\Models\EntriDataIzin;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class EntriDataServiceImpl implements EntriDataService {
 
@@ -61,6 +63,61 @@ class EntriDataServiceImpl implements EntriDataService {
 				'updated_at' => now()
 			]
 		);
+	}
+
+	public function isEntriDataIzinExistsByIzinAndJenis(int $izin_id, int $jenis_perizinan_id): bool
+	{
+		$entri_data = EntriData::select('id')->where('jenis_perizinan_id', $jenis_perizinan_id)->get();
+		$entri_data_izin = EntriDataIzin::select('entri_data_id')->where('izin_id', $izin_id)->get();
+		return (count($entri_data_izin) == count($entri_data)) && ($entri_data->pluck('id') == $entri_data_izin->pluck('entri_data_id'));
+	}
+
+	public function getOldEntriDataByIzin(\App\Models\Izin $izin): array
+	{
+		$data_old = [];
+		$data_with_deletes_entri = $this->getTrashedEntriData($izin->id);
+		
+		if (count($data_with_deletes_entri) == 0)
+			return $data_old;
+		$plucked_data_with_deletes_entri = $data_with_deletes_entri->mapWithKeys(function ($data) {
+			return [$data->entri_data->nama => $data->value];
+		});
+		$entri_data = EntriData::select('id', 'nama')->where('jenis_perizinan_id', $izin->jenis_perizinan_id)->get();
+		foreach ($entri_data as $entri) {
+			if (isset($plucked_data_with_deletes_entri[$entri->nama]))
+				$data_old[$entri->id] = $plucked_data_with_deletes_entri[$entri->nama];
+		}
+		return $data_old;
+	}
+
+	public function hasTrashedEntriDataIzin(int $izin_id): bool
+	{
+		return count($this->getTrashedEntriData($izin_id)) > 0;
+	}
+
+	private function getTrashedEntriData(int $izin_id): Collection
+	{
+		return EntriDataIzin::where('izin_id', $izin_id)->with('entri_data', function($entri_data_query) {
+					$entri_data_query->withTrashed();
+				})->get();
+	}
+
+	public function getDeletedAtByJenis(int $jenis_perizinan_id): ?string
+	{
+		$trashed_entri = EntriData::onlyTrashed()
+							->where('jenis_perizinan_id', $jenis_perizinan_id)
+							->first();
+		return $trashed_entri->deleted_at ?? null;
+	}
+
+	public function deleteOldEntriData(int $jenis_perizinan_id): void
+	{
+		DB::transaction(function () use ($jenis_perizinan_id) {
+			$old_entri_data = EntriData::onlyTrashed()
+									->where('jenis_perizinan_id', $jenis_perizinan_id);
+			EntriDataIzin::whereIn('entri_data_id', $old_entri_data->pluck('id'))->delete();
+			$old_entri_data->forceDelete();
+		});
 	}
 	
 }

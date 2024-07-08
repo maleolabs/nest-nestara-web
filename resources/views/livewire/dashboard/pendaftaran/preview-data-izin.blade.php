@@ -191,8 +191,8 @@
         @endif
         @role('pegawai')
             <div class="col-12">
-                <div class="card mb-0{{ $last_izin_status->keterangan != App\utils\enums\BackOfficeStatusEnum::BELUM_ENTRI ? ' p-4' : '' }}">
-                    @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::BELUM_ENTRI)
+                <div class="card mb-0{{ $last_izin_status->keterangan != App\utils\enums\BackOfficeStatusEnum::BELUM_ENTRI && $last_izin_status->keterangan != App\utils\enums\BackOfficeStatusEnum::PERUBAHAN_ENTRI ? ' p-4' : '' }}">
+                    @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::BELUM_ENTRI || $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::PERUBAHAN_ENTRI)
                         <div class="vh-30 position-relative">
                             <div class="position-absolute z-1 inset-0 w-100 h-100 p-4 vh-30 overflow-hidden">
                                 <h5 class="text-bold mb-1">
@@ -203,42 +203,37 @@
                                     @foreach ($entri_data as $entri)
                                         @if ($entri->tipe == 'textarea')
                                             <div class="col-12 mb-3">
-                                                @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SEDANG_ENTRI || $edit_entri_data)
-                                                    <label for="{{ $entri->id }}" class="mb-1">
+                                                <div class="input-group input-group-outline">
+                                                    <label class="form-label">
                                                         {{ $entri->nama }}
                                                         @if ($entri->mandatori)
                                                             <span class="text-danger ms-1">*</span>
                                                         @endif
                                                     </label>
-                                                @endif
-                                                <div class="input-group input-group-outline">
-                                                    <textarea name="{{ $entri->id }}" class="form-control {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}" id="{{ $entri->id }}" rows="3" wire:model='entri_data_izin.{{ $entri->id }}' {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}></textarea>
+                                                    <textarea class="form-control"></textarea>
                                                 </div>
                                             </div>
                                         @else
                                             <div class="col-md-6 mb-3">
                                                 <div class="input-group input-group-outline">
-                                                    <label for="{{ $entri->id }}" class="form-label">
+                                                    <label class="form-label">
                                                         {{ $entri->nama }}
                                                         @if ($entri->mandatori)
                                                             <span class="text-danger ms-1">*</span>
                                                         @endif
                                                     </label>
-                                                    <input type="{{ $entri->tipe }}" class="form-control{{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}" wire:model='entri_data_izin.{{ $entri->id }}' {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}>
+                                                    <input type="{{ $entri->tipe }}" class="form-control">
                                                 </div>
-                                                @if ($entri->is_multi_value)
-                                                    <p class="mb-0 mt-1 text-xs">
-                                                        <i class="fa-solid fa-info-circle me-1"></i>
-                                                        Untuk menambahkan beberapa data, pisahkan dengan simbol ";" (contoh: data1;data2;data3)
-                                                    </p>
-                                                @endif
                                             </div>
                                         @endif
                                     @endforeach
                                 </div>
                             </div>
-                            <div class="position-absolute inset-0 w-100 h-100 z-2 d-flex aling-items-center justify-content-center bg-gradient-light-up-bottom rounded-3">
-                                <button class="btn bg-gradient-primary d-flex align-items-center align-self-center" type="button" wire:click='entriData'>
+                            <div class="position-absolute inset-0 w-100 h-100 z-2 d-flex flex-column gap-2 align-items-center justify-content-center bg-gradient-light-up-bottom rounded-3">
+                                @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::PERUBAHAN_ENTRI)
+                                    <p class="mb-0 text-bold">{{ $last_izin_status->keterangan }}</p>
+                                @endif
+                                <button class="btn bg-gradient-primary d-flex align-items-center" type="button" wire:click='entriData'>
                                     entri data
                                     <div class="spinner-border spinner-border-sm ms-2" role="status" wire:loading wire:target='entriData'>
                                         <span class="visually-hidden">Loading...</span>
@@ -272,6 +267,22 @@
                                 @endif
                             </div>
                         @endif
+                        @if ($is_entri_changed)
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <p class="text-sm mb-0">{{ App\utils\enums\BackOfficeStatusEnum::PERUBAHAN_ENTRI }}</p>
+                                @if (!$edit_entri_data)
+                                    @if ($this->thereIsOldEntriData())
+                                        <button class="btn btn-sm btn-secondary" type="button" wire:click='getOldEntriData'>
+                                            ambil data lama yang sesuai
+                                            <i class="fa-solid fa-pencil ms-1" wire:loading.remove wire:target='getOldEntriData'></i>
+                                            <div class="spinner-border spinner-border-sm ms-1" role="status" wire:loading wire:target='getOldEntriData'>
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </button>
+                                    @endif
+                                @endif
+                            </div>
+                        @endif
                         @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data)
                             <div class="row">
                                 @foreach ($entri_data as $entri)
@@ -300,8 +311,11 @@
                                                             <span class="text-danger ms-1">*</span>
                                                         @endif
                                                     </label>
-                                                    <textarea name="{{ $entri->id }}" class="form-control {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}" id="{{ $entri->id }}" rows="3" wire:model='entri_data_izin.{{ $entri->id }}' {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}></textarea>
+                                                    <textarea name="{{ $entri->id }}" class="form-control {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }} @error('entri_data_izin.' . $entri->id)is-invalid @enderror" id="{{ $entri->id }}" rows="3" wire:model='entri_data_izin.{{ $entri->id }}' {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}></textarea>
                                                 </div>
+                                                @error('entri_data_izin.' . $entri->id)
+                                                    <div class="text-danger text-sm">{{ str_replace('entri data izin.' . $entri->id, $entri->nama, $message) }}</div>
+                                                @enderror
                                             </div>
                                         @else
                                             <div class="col-md-6 mb-3">
@@ -312,8 +326,11 @@
                                                             <span class="text-danger ms-1">*</span>
                                                         @endif
                                                     </label>
-                                                    <input type="{{ $entri->tipe }}" class="form-control{{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}" wire:model='entri_data_izin.{{ $entri->id }}' {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}>
+                                                    <input type="{{ $entri->tipe }}" class="form-control{{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }} @error('entri_data_izin.' . $entri->id)is-invalid @enderror" wire:model='entri_data_izin.{{ $entri->id }}' {{ $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && !$edit_entri_data ? ' disabled' : '' }}>
                                                 </div>
+                                                @error('entri_data_izin.' . $entri->id)
+                                                    <div class="text-danger text-sm">{{ str_replace('entri data izin.' . $entri->id, $entri->nama, $message) }}</div>
+                                                @enderror
                                                 @if ($entri->is_multi_value)
                                                     <p class="mb-0 mt-1 text-xs">
                                                         <i class="fa-solid fa-info-circle me-1"></i>

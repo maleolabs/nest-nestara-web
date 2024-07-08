@@ -16,6 +16,6 @@ interface StatusIzinService {
 
 	function saveAllStatusIzin(array $status_izin_data): void;
 
-	function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null): void;
+	function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null, $updated_at = null): void;
 
 }

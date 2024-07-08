@@ -107,7 +107,7 @@
                                                             @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
                                                                 text-warning
                                                             @endif">
-                                                            {{ $status->keterangan }}
+                                                            {{ Str::limit($status->keterangan, 20) }}
                                                         </span>
                                                     </span>
                                                     <p class="text-xs text-muted mb-0">{{ $status->updated_at->diffForHumans() }}</p>

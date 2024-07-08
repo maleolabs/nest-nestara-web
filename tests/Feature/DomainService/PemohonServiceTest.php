@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Services\DomainServices\PemohonService;
 use App\Models\Pemohon;
+use Illuminate\Support\Facades\DB;
 
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertIsArray;
@@ -19,7 +20,9 @@ class PemohonServiceTest extends TestCase
     
     public function test_save(): void
     {
+        DB::statement("SET foreign_key_checks=0");
         Pemohon::truncate();
+        DB::statement("SET foreign_key_checks=1");
         $data_pemohon = [
             'sumber_identitas' => 'ktp',
             'nomor_id' => '7498473987423',
@@ -114,6 +117,9 @@ class PemohonServiceTest extends TestCase
 
     public function test_get_by_nomor_id_or_nama_pemohon()
     {
+        DB::statement("SET foreign_key_checks=0");
+        Pemohon::truncate();
+        DB::statement("SET foreign_key_checks=1");
         $data_pemohon = [
             'sumber_identitas' => 'ktp',
             'nomor_id' => '74984739874234',
@@ -145,7 +151,7 @@ class PemohonServiceTest extends TestCase
         assertNotNull($saved_data2);
 
         $get_all_like_nomor_id = $pemohonService->getByNomorIdOrNamaPemohon(7498473987423);
-        assertSame(6, count($get_all_like_nomor_id));
+        assertSame(2, count($get_all_like_nomor_id));
     }
 
     public function test_delete()

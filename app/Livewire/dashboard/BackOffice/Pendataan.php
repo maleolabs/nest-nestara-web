@@ -28,6 +28,7 @@ class Pendataan extends Component
     public function mount()
     {
         $this->getPerizinanService()->updateIzinStatusThatHaveBeenReviewed();
+        $this->getPerizinanService()->updateAllIzinStatusWhenEntriDataHasChanged();
 
         $this->selectMenu(self::DEFAULT_MENU, false);
 

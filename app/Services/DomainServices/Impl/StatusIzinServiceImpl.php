@@ -38,13 +38,14 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		DB::table('status_izin')->insert($status_izin_data);
 	}
 
-	public function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null): void
+	public function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null, $updated_at = null): void
 	{
 		$status_izin = StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->first();
 		if ($status_izin) {
 			$status_izin->progres = $progres;
 			$status_izin->keterangan = $ket;
 			$status_izin->pegawai_id = $pegawai_id;
+			$status_izin->updated_at = $updated_at ?? now();
 			$status_izin->save();
 		} else {
 			StatusIzin::create([

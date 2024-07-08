@@ -25,7 +25,7 @@ class EntriPenMasSeeder extends Seeder
             'nama' => 'menimbang',
             'tipe' => 'textarea',
             'mandatori' => true,
-            'max' => 100
+            'max' => 255
         ]);
         EntriData::create([
             'jenis_perizinan_id' => $izin_penmas->id,

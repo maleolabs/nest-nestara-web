@@ -3,7 +3,6 @@
 namespace App\Services\DomainServices;
 
 use App\Models\EntriData;
-use App\Models\EntriDataIzin;
 
 interface EntriDataService {
 
@@ -29,5 +28,18 @@ interface EntriDataService {
 	 * @return array
 	 */
 	function saveEntriDataIzin($entri_data_izin, int $izin_id, string $value = null): ?array;
+
+	function isEntriDataIzinExistsByIzinAndJenis(int $izin_id, int $jenis_perizinan_id): bool;
+
+	/**
+	 * retrieve old data that has been soft deleted
+	 */
+	function getOldEntriDataByIzin(\App\Models\Izin $izin): array;
+
+	function hasTrashedEntriDataIzin(int $izin_id): bool;
+
+	function getDeletedAtByJenis(int $jenis_perizinan_id): ?string;
+
+	function deleteOldEntriData(int $jenis_perizinan_id): void;
 
 }

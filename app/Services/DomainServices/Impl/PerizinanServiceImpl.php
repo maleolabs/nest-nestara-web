@@ -134,9 +134,25 @@ class PerizinanServiceImpl implements PerizinanService
             return;
         }
 
+        $izin_last_status = $izin->status_izin->last();
+        $cancelable_permission = [
+            Status::DIDAFTARKAN,
+            Status::DITINJAU,
+            Status::REVISI_PERSYARATAN
+        ];
+        if (!in_array($izin_last_status->nama, $cancelable_permission)) {
+            DB::rollBack();
+            return;
+        }
+
         $this->statusIzinService->updateStatusIzin($izin_id, Status::BATAL, Progres::FINISHED, $keterangan);
 
         DB::commit();
+    }
+
+    public function delete(int $izin_id): void
+    {
+        $this->statusIzinService;
     }
 
     public function updateIzinStatusThatHaveBeenReviewed(): void

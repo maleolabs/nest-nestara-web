@@ -2,6 +2,8 @@
 
 namespace App\Services\AppService;
 
+use App\Services\DomainServices\Helpers\Base64ImageHelper;
+
 interface FileService {
 
     /**
@@ -88,8 +90,7 @@ interface FileService {
      * @param string $image_data Data gambar yang dikodekan base64
      * @param string $folder Folder untuk menyimpan gambar
      * @param string $disk Disk untuk menyimpan gambar
-     * @return string Jalur ke file gambar yang disimpan
+     * @return \App\Services\DomainServices\Helpers\Base64ImageHelper helper untuk menghapus gambar jika diperlukan
      */
-    function saveBase64Img($image_data, string $folder = 'base64img', string $disk = 'public', bool $watermark = false): string;
-
+    function saveBase64Img($image_data, string $folder = 'base64img', string $disk = 'public', bool $watermark = false): Base64ImageHelper;
 }

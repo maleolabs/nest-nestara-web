@@ -3,6 +3,7 @@
 namespace App\Services\AppService\Impl;
 
 use App\Services\AppService\FileService;
+use App\Services\DomainServices\Helpers\Base64ImageHelper;
 use Carbon\Carbon;
 use Dotenv\Exception\InvalidFileException;
 use Illuminate\Support\Facades\Crypt;
@@ -78,7 +79,7 @@ class FileServiceImpl implements FileService {
         return $data;
     }
 
-    public function saveBase64Img($image_data, string $folder = 'base64img', string $disk = 'public', bool $watermark = false): string
+    public function saveBase64Img($image_data, string $folder = 'base64img', string $disk = 'public', bool $watermark = false): Base64ImageHelper
     {
         $image_data = str_replace('data:image/png;base64,', '', $image_data);
         $image_data = str_replace(' ', '+', $image_data);
@@ -87,7 +88,7 @@ class FileServiceImpl implements FileService {
         $file_name = Str::random() . '.png';
         $path = $disk . '/' . $folder. '/' . $file_name;
         Storage::put($path, $image_data);
-        return $path;
+        return new Base64ImageHelper($path);
     }
 
     private function cleanLivewireTmp()

@@ -27,10 +27,10 @@ interface DokumenPemohonService {
 	* @param int $pemohon_id ID pemohon
 	* @param int $syarat_izin_id ID syarat izin
 	* @param int $izin_id ID izin
-	* @param string $nama_file_alternate Nama file alternatif
+	* @param string $nama_file_alternatif Nama file alternatif
 	* @return DokumenPemohon|null Objek DokumenPemohon yang disimpan atau null jika gagal
 	*/
-	function saveFileAlternate(int $pemohon_id, int $syarat_izin_id, int $izin_id, string $nama_file_alternate): ?DokumenPemohon;
+	function saveFileAlternates(int $pemohon_id, int $syarat_izin_id, int $izin_id, string $nama_file_alternatif): ?DokumenPemohon;
 
 	/**
 	* Mencari dokumen pemohon berdasarkan ID
@@ -38,6 +38,15 @@ interface DokumenPemohonService {
 	* @return DokumenPemohon|null Objek DokumenPemohon yang ditemukan atau null jika tidak ditemukan
 	*/
 	function find(int $id): ?DokumenPemohon;
+
+	/**
+	* Mencari dokumen pemohon berdasarkan pemohon, syarat izin, dan izin
+	* @param int $pemohon_id ID pemohon
+	* @param int $syarat_izin_id ID syarat izin
+	* @param int $izin_id ID izin
+	* @return DokumenPemohon|null Objek DokumenPemohon jika ditemukan, null jika tidak ditemukan
+	*/
+	function findByPemohonAndSyaratAndIzin(int $pemohon_id, int $syarat_izin_id, int $izin_id): ?DokumenPemohon;
 
 	/**
 	* Mendapatkan semua dokumen pemohon berdasarkan pemohon, syarat izin, dan izin

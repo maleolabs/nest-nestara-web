@@ -24,12 +24,12 @@ class DokumenPemohonServiceImpl implements DokumenPemohonService {
 		}
 	}
 
-	public function saveFileAlternate(int $pemohon_id, int $syarat_izin_id, int $izin_id, string $nama_file_alternate): ?DokumenPemohon
+	public function saveFileAlternates(int $pemohon_id, int $syarat_izin_id, int $izin_id, string $nama_file_alternatif): ?DokumenPemohon
 	{
 		$dokumen = DokumenPemohon::where('pemohon_id', $pemohon_id)->where('syarat_izin_id', $syarat_izin_id)->where('izin_id', $izin_id)->first();
 		if (!$dokumen)
 			return null;
-		$dokumen->nama_file_alternatif = $nama_file_alternate;
+		$dokumen->nama_file_alternatif = $nama_file_alternatif;
 		$dokumen->save();
 		return $dokumen;
 	}
@@ -37,6 +37,11 @@ class DokumenPemohonServiceImpl implements DokumenPemohonService {
 	public function find(int $id): ?DokumenPemohon
 	{
 		return DokumenPemohon::find($id);
+	}
+
+	public function findByPemohonAndSyaratAndIzin(int $pemohon_id, int $syarat_izin_id, int $izin_id): ?DokumenPemohon
+	{
+		return DokumenPemohon::where('pemohon_id', $pemohon_id)->where('syarat_izin_id', $syarat_izin_id)->where('izin_id', $izin_id)->first();
 	}
 
 	public function getAllByPemohonAndSyaratAndIzin(int $pemohon_id, int $syarat_izin_id, int $izin_id): array

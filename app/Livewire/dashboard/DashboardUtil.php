@@ -17,8 +17,9 @@ class DashboardUtil extends Component
     #[On('save-preview-img')]
     public function savePreviewImg($image_data, $pemohon_id, $syarat_id, $izin_id)
     {
-        $image_path = $this->getFileService()->saveBase64Img($image_data, 'dokumen_persyaratan');
-        $obj = $this->getDokumenPemohonService()->saveFileAlternate($pemohon_id, $syarat_id, $izin_id, $image_path);
+        $existing_dokumen = $this->getDokumenPemohonService()->findByPemohonAndSyaratAndIzin($pemohon_id, $syarat_id, $izin_id);
+        $image_path = $this->getFileService()->saveBase64Img($image_data, 'dokumen_persyaratan')->deleteExisting($existing_dokumen->nama_file_alternatif)->getPath();
+        $this->getDokumenPemohonService()->saveFileAlternates($pemohon_id, $syarat_id, $izin_id, $image_path);
     }
 
     private function getFileService(): FileService

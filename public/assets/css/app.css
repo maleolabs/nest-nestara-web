@@ -3183,7 +3183,7 @@ button.btn-app-tertiary-light:active {
   position: relative;
   display: inline-block;
   width: 100%;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 }
 .img-preview-container:last-child {
   margin-bottom: 0;
@@ -3211,8 +3211,15 @@ button.btn-app-tertiary-light:active {
   background: linear-gradient(to bottom, rgba(255, 255, 255, .3), rgba(92, 99, 106, .6));
   transition: all ease-in-out.3s;
 }
+.img-preview-content button {
+  transition: all ease-in-out .3s;
+  filter: grayscale(1);
+}
 .img-preview-content:hover {
   background: rgba(92, 99, 106, .8);
+}
+.img-preview-content:hover button {
+  filter: grayscale(0);
 }
 .img-preview-content .img-title {
   font-size: 1.5rem;

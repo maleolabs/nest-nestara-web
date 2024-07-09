@@ -51,7 +51,11 @@ class SyaratIzinServiceImpl implements SyaratIzinService
 			$dokumen_pemohon->where('pemohon_id', $pemohon_id);
 		}])
 		->get();
-		return $persyaratan->all();
+		$result = [];
+		foreach ($persyaratan as $syarat) {
+			$result[$syarat->id] = $syarat;
+		}
+		return $result;
 	}
 
 	public function getIdsTypePdfByJenisAndPemohon(int $jenis_izin_id, int $pemohon_id): array

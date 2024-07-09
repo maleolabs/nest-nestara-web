@@ -12,52 +12,56 @@ Livewire.on('set-preview-img-modal', data => {
                 let set_url = res.path
                 const pdfContainer = document.getElementById('pdf-container')
 
-                pdfjsLib.getDocument(set_url).promise.then(pdfDoc => {
-                    let promises = [];
-                    for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
-                        promises.push(pdfDoc.getPage(pageNum).then(page => {
-                            if (temp && pageNum > 1) {
-                                return
-                            }
-                            const scale = 1.5;
-                            const viewport = page.getViewport({ scale })
-
-                            const canvasWraper = document.createElement('div')
-                            canvasWraper.classList.add('canvas-wraper')
-
-                            const canvas = document.createElement('canvas')
-                            const context = canvas.getContext('2d')
-                            canvas.height = viewport.height
-                            canvas.width = viewport.width
-
-                            pdfContainer.style.width = `${viewport.width + 4}px`
-                            pdfContainer.style.height = `${viewport.height}px`
-
-                            const renderContext = {
-                                canvasContext: context,
-                                viewport: viewport
-                            }
-
-                            canvasWraper.appendChild(canvas)
-                            pdfContainer.appendChild(canvasWraper)
-
-                            page.render(renderContext)
-                        }))
-                    }
-                    Promise.all(promises).then(() => {
-                        setTimeout(() => {
-                            const first_canvas = document.querySelector('canvas')
-                            const image = first_canvas.toDataURL('image/png')
-                            Livewire.dispatchTo('dashboard.dashboard-util', 'save-preview-img', { 
-                                image_data: image,
-                                pemohon_id: res.pemohon_id,
-                                syarat_id: res.syarat_id,
-                                izin_id: res.izin_id,
-                                temp: temp
-                            })
-                        }, 500);
+                try {
+                    pdfjsLib.getDocument(set_url).promise.then(pdfDoc => {
+                        let promises = [];
+                        for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+                            promises.push(pdfDoc.getPage(pageNum).then(page => {
+                                if (temp && pageNum > 1) {
+                                    return
+                                }
+                                const scale = 1.5;
+                                const viewport = page.getViewport({ scale })
+    
+                                const canvasWraper = document.createElement('div')
+                                canvasWraper.classList.add('canvas-wraper')
+    
+                                const canvas = document.createElement('canvas')
+                                const context = canvas.getContext('2d')
+                                canvas.height = viewport.height
+                                canvas.width = viewport.width
+    
+                                pdfContainer.style.width = `${viewport.width + 4}px`
+                                pdfContainer.style.height = `${viewport.height}px`
+    
+                                const renderContext = {
+                                    canvasContext: context,
+                                    viewport: viewport
+                                }
+    
+                                canvasWraper.appendChild(canvas)
+                                pdfContainer.appendChild(canvasWraper)
+    
+                                page.render(renderContext)
+                            }))
+                        }
+                        Promise.all(promises).then(() => {
+                            setTimeout(() => {
+                                const first_canvas = document.querySelector('canvas')
+                                const image = first_canvas.toDataURL('image/png')
+                                Livewire.dispatchTo('dashboard.dashboard-util', 'save-preview-img', { 
+                                    image_data: image,
+                                    pemohon_id: res.pemohon_id,
+                                    syarat_id: res.syarat_id,
+                                    izin_id: res.izin_id,
+                                    temp: temp
+                                })
+                            }, 500);
+                        })
                     })
-                })
+                } catch (error) {
+                    Livewire.dispatch('set-error', {message: error.message, syarat_id: res.syarat_id})
+                }
             }
         }, 100)
     }

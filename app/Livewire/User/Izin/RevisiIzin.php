@@ -4,6 +4,7 @@ namespace App\Livewire\User\Izin;
 
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
@@ -18,7 +19,8 @@ class RevisiIzin extends Component
         $status,
         $syarat_izin = [],
         $syarat_tipe_pdf = [],
-        $persyaratan = [];
+        $persyaratan = [],
+        $persyaratan_tmp = [];
 
     public function mount()
     {
@@ -26,12 +28,26 @@ class RevisiIzin extends Component
             $this->izin = $this->getPerizinanService()->find($this->izin_id);
             $this->status = $this->izin->status_izin->last();
         }
+        $this->setUpData();
+        $this->syarat_tipe_pdf = $this->getSyaratIzinService()->getIdsTypePdfByJenisAndPemohon($this->izin->jenis_perizinan_id, $this->izin->pemohon_id);
+        foreach ($this->syarat_izin as $key => $syarat) {
+            $syarat_dokumen = $syarat->dokumen_pemohon->first();
+            $nama_file = $syarat_dokumen->nama_file_alternatif ?? $syarat_dokumen->nama_file;
+            $this->persyaratan_tmp[$key] = route('render-file', ['file_name' => base64_encode($nama_file)]);
+        }
     }
 
     public function updatedPersyaratan($value, $key)
     {
+        $syarat_mime = $this->syarat_izin[$key]->tipe;
+        $mimes = ($syarat_mime =='img' || $syarat_mime ==  'image') ? 'mimes:jpg,png,jpeg' : 'mimes:pdf';
+        $this->validate([
+            "persyaratan.{$key}" => ['required',$mimes,'max:2048']
+        ]);
         if (in_array($key, $this->syarat_tipe_pdf))
             $this->dispatch('start-loading', ['id' => $key]);
+        else
+            $this->persyaratan_tmp[$key] = $this->getCleanTmpPath($value);
     }
     
     public function render()
@@ -43,36 +59,53 @@ class RevisiIzin extends Component
     private function setUpData()
     {
         if (!$this->izin)
-            return;
+            return redirect()->route('user.izin');
         $this->syarat_izin = $this->getSyaratIzinService()->getByJenisAndPemohon($this->izin->jenis_perizinan_id, $this->izin->pemohon_id);
-        $this->syarat_tipe_pdf = $this->getSyaratIzinService()->getIdsTypePdfByJenisAndPemohon($this->izin->jenis_perizinan_id, $this->izin->pemohon_id);
+    }
+
+    public function save()
+    {
+
     }
 
     #[On('set-pdf-img')]
     public function setPdfImg($id)
     {
-        $pdfTempUrl = $this->persyaratan[$id];
+        $pdfTempUrl = $this->getCleanTmpPath($this->persyaratan[$id]);
         if ($pdfTempUrl) {
-            $lvwTmpUrl = explode('/', $pdfTempUrl->temporaryUrl());
-            $lvwFileName = explode('?', $lvwTmpUrl[5]);
-            $pdfTempUrl = base64_encode('livewire-tmp/' . $lvwFileName[0]);
-            $pdfTempUrl = route('render-file', ['file_name' => $pdfTempUrl]);
+            $this->dispatch('set-preview-img-modal', [
+                'type' => 'pdf',
+                'path' => $pdfTempUrl,
+                'pemohon_id' => $this->izin->pemohon_id,
+                'izin_id' => $this->izin->id,
+                'syarat_id' => $id,
+                'temp' => true
+            ]);
         }
-        $this->dispatch('set-preview-img-modal', [
-            'type' => 'pdf',
-            'path' => $pdfTempUrl,
-            'pemohon_id' => $this->izin->pemohon_id,
-            'izin_id' => $this->izin->id,
-            'syarat_id' => $id,
-            'temp' => true
-        ]);
     }
 
     #[On('temp-img-uploaded')]
     public function tempImgUploaded($data)
     {
-        $this->persyaratan[$data['syarat_id']] = route('render-file', ['file_name' => base64_encode($data['temp_file_path'])]);
+        $this->persyaratan_tmp[$data['syarat_id']] = route('render-file', ['file_name' => base64_encode($data['temp_file_path'])]);
         $this->dispatch('stop-loading', ['id' => $data['syarat_id']]);
+    }
+
+    #[On('set-error')]
+    public function setErrorWhileRenderPdf($data)
+    {
+        $this->dispatch('stop-loading', ['id' => $data['syarat_id']]);
+        throw ValidationException::withMessages([
+            'persyaratan.'. $data['syarat_id'] => $data['message']
+        ]);
+    }
+
+    private function getCleanTmpPath($lvw_temp_file): string
+    {
+        $lvwTmpUrl = explode('/', $lvw_temp_file->temporaryUrl());
+        $lvwTmpUrl = explode('?', end($lvwTmpUrl));
+        $base64TmpPath = base64_encode('livewire-tmp/' . $lvwTmpUrl[0]);
+        return route('render-file', ['file_name' => $base64TmpPath]);
     }
 
     protected function canAccess(): bool

@@ -885,6 +885,9 @@ nav {
   #main {
     margin-left: 0;
   }
+  main {
+    margin: 100px 0 !important;
+  }
 }
 
 
@@ -1256,6 +1259,9 @@ nav {
 
 .w-fit {
   width: fit-content;
+}
+.w-max {
+  width: max-content;
 }
 
 .dash-card-mono.card-mono-primary {

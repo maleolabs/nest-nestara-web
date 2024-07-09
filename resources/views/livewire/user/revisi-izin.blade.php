@@ -4,15 +4,15 @@
             <div class="col-md-8 col-sm-10">
                 <div class="card mb-0">
                     <div class="card-header pb-3 border-bottom">
-                        <div class="d-flex justify-content-between align-items-start gap-3">
-                            <div>
-                                <h5 class="text-capitalize mb-0">{{ App\utils\enums\StatusIzinEnum::REVISI_PERSYARATAN }}</h5>
-                                <div class="d-flex gap-2">
-                                    <i class="fa-solid fa-arrow-circle-right"></i>
-                                    <p class="text-sm mb-0">{{ $status->keterangan }}</p>
-                                </div>
-                            </div>
-                            <button class="btn bg-gradient-primary">Simpan</button>
+                        <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
+                            <h5 class="text-capitalize mb-0">{{ App\utils\enums\StatusIzinEnum::REVISI_PERSYARATAN }}</h5>
+                            @if (count($persyaratan) > 0)
+                                <button class="btn bg-gradient-primary text-nowrap">Simpan</button>
+                            @endif
+                        </div>
+                        <div class="d-flex gap-2">
+                            <i class="fa-solid fa-arrow-circle-right"></i>
+                            <p class="text-sm mb-0">{{ $status->keterangan }}</p>
                         </div>
                     </div>
                     <div class="card-body pt-3">
@@ -22,7 +22,7 @@
                                     @php($img_preview_url = ($syarat->tipe == 'img' && isset($persyaratan[$syarat->id])) ? $persyaratan[$syarat->id]->temporaryUrl() : null)
                                     <img src="{{ $img_preview_url ??  route('render-file', ['file_name' => $syarat->dokumen_pemohon[0]->nama_file]) }}" alt="" class="img-preview">
                                     <div class="img-preview-content">
-                                        <h5 class="img-title">{{ $syarat->nama }}</h5>
+                                        <h5 class="img-title">{{ "{$syarat->nama} ({$syarat->tipe})" }}</h5>
                                         <div class="input-group input-group-outline mb-1 flex-column"
                                             x-data="{ uploading: false, progress: 0 }"
                                             x-on:livewire-upload-start="uploading = true"
@@ -42,12 +42,14 @@
                                             <button class="btn btn-sm bg-gradient-danger" type="button" title="hapus">
                                                 <i class="fa-solid fa-trash text-sm"></i>
                                             </button>
-                                            <button class="btn btn-sm bg-gradient-info" type="button" title="download">
-                                                <i class="fa-solid fa-download text-sm"></i>
-                                            </button>
-                                            <button class="btn btn-sm bg-gradient-info" type="button" title="lihat">
-                                                <i class="fa-solid fa-eye text-sm"></i>
-                                            </button>
+                                            @if (!isset($peryaratan[$syarat->id]))
+                                                <button class="btn btn-sm bg-gradient-info" type="button" title="download">
+                                                    <i class="fa-solid fa-download text-sm"></i>
+                                                </button>
+                                                <button class="btn btn-sm bg-gradient-info" type="button" title="lihat">
+                                                    <i class="fa-solid fa-eye text-sm"></i>
+                                                </button>
+                                            @endif
                                             <button class="btn btn-sm bg-gradient-secondary" onclick="document.getElementById('{{ 'syarat-' . $syarat->id }}').click()" type="button" title="ganti">
                                                 <i class="fa-solid fa-upload text-sm"></i>
                                             </button>

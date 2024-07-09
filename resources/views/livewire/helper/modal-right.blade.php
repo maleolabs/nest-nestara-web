@@ -73,7 +73,7 @@
         </button>
     </div>
     <div wire:loading wire:target='preview'>
-        <div class="position-absolute top-0 end-0 bottom-0 bg-white opacity-75 d-flex align-items-center justify-content-center" style="width: 700px">
+        <div class="position-absolute top-0 end-0 bottom-0 bg-white opacity-75 d-flex align-items-center justify-content-center modal-right-loading">
             <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
         </div>
     </div>

@@ -1,9 +1,12 @@
 Livewire.on('set-preview-img-modal', data => {
+    const res = data[0]
+    const temp = res.temp
     let btnShowModal = document.getElementById('btnShowPreviewModal')
-    if (btnShowModal) {
+    if (btnShowModal || temp) {
         setTimeout(() => {
-            btnShowModal.click()
-            const res = data[0]
+            if (btnShowModal) {
+                btnShowModal.click()
+            }
             let type = res.type
             if (type == 'pdf') {
                 let set_url = res.path
@@ -13,6 +16,9 @@ Livewire.on('set-preview-img-modal', data => {
                     let promises = [];
                     for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
                         promises.push(pdfDoc.getPage(pageNum).then(page => {
+                            if (temp && pageNum > 1) {
+                                return
+                            }
                             const scale = 1.5;
                             const viewport = page.getViewport({ scale })
 
@@ -47,6 +53,7 @@ Livewire.on('set-preview-img-modal', data => {
                                 pemohon_id: res.pemohon_id,
                                 syarat_id: res.syarat_id,
                                 izin_id: res.izin_id,
+                                temp: temp
                             })
                         }, 500);
                     })

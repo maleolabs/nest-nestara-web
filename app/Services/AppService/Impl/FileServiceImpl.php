@@ -7,6 +7,7 @@ use App\Services\DomainServices\Helpers\Base64ImageHelper;
 use Carbon\Carbon;
 use Dotenv\Exception\InvalidFileException;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ItemNotFoundException;
 use Illuminate\Support\Str;
@@ -65,8 +66,11 @@ class FileServiceImpl implements FileService {
 
     public function getFileRelativePath(string $path): ?string
     {
-        if (Storage::exists($path))
-            return Storage::get($path);
+        if (Storage::exists($path)) {
+            $path = Storage::get($path);
+            Log::channel('app')->info('get file relative path: true');
+            return $path;
+        }
         return null;
     }
 

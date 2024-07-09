@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\AppService\FileService;
 use finfo;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ItemNotFoundException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -32,7 +33,8 @@ class FileController extends Controller
         $file_name = base64_decode($file_name);
         try {
             $file_name_2 = explode('/', $file_name);
-            if (count($file_name_2) > 2)
+            Log::channel('app')->info('rendering file name: ' . $file_name);
+            if (count($file_name_2) > 1)
                 $file = $this->fileService->getFileRelativePath($file_name);
             else
                 $file = $this->fileService->getPrivateFile($file_name);

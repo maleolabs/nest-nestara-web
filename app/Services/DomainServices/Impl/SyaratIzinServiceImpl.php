@@ -53,5 +53,18 @@ class SyaratIzinServiceImpl implements SyaratIzinService
 		->get();
 		return $persyaratan->all();
 	}
+
+	public function getIdsTypePdfByJenisAndPemohon(int $jenis_izin_id, int $pemohon_id): array
+	{
+		$persyaratan = SyaratIzin::join('jenis_perizinan_syarat_izin', 'syarat_izin.id', '=', 'jenis_perizinan_syarat_izin.syarat_izin_id')
+		->where('jenis_perizinan_syarat_izin.jenis_perizinan_id', $jenis_izin_id)
+		->select('syarat_izin.*')
+		->where('syarat_izin.tipe', 'pdf')
+		->with(['dokumen_pemohon' => function($dokumen_pemohon) use ($pemohon_id) {
+			$dokumen_pemohon->where('pemohon_id', $pemohon_id);
+		}])
+		->pluck('syarat_izin.id');
+		return $persyaratan->all();
+	}
 	
 }

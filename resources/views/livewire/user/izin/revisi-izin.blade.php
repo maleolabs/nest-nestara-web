@@ -19,7 +19,7 @@
                         <div class="img-preview-wrapper">
                             @foreach ($syarat_izin as $syarat)
                                 <div class="img-preview-container ipc-md">
-                                    @php($img_preview_url = ($syarat->tipe == 'img' && isset($persyaratan[$syarat->id])) ? $persyaratan[$syarat->id]->temporaryUrl() : null)
+                                    @php($img_preview_url = $persyaratan[$syarat->id] ?? null)
                                     @php($file_path = $syarat->tipe == 'img' ? $syarat->dokumen_pemohon[0]->nama_file : $syarat->dokumen_pemohon[0]->nama_file_alternatif)
                                     <img src="{{ $img_preview_url ??  route('render-file', ['file_name' => base64_encode($file_path)]) }}" class="img-preview">
                                     <div class="img-preview-content">
@@ -56,6 +56,11 @@
                                             </button>
                                         </div>
                                     </div>
+                                    <div class="position-absolute inset-0 h-100 w-100 d-none align-items-center justify-content-center bg-dark opacity-75 rounded-3 preview-loading-img" id="loading-{{ $syarat->id }}" data-id="{{ $syarat->id }}">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
@@ -68,4 +73,52 @@
             <p>Izin tidak ditemukan!</p>
         </div>
     @endif
+    <div class="d-none" id="pdf-container"></div>
+    @livewire('dashboard.dashboard-util')
 </div>
+@push('scripts')
+    <script>
+        Livewire.on('start-loading', (data) => {
+            const loadingId = "loading-" + data[0].id
+            loadingEl = document.getElementById(loadingId)
+            setTimeout(() => {
+                loadingEl.classList.remove('d-none')
+                loadingEl.classList.add('d-flex')
+                searchIdsToKeep()
+            }, 100);
+        })
+        let loadingIds = []
+        function searchIdsToKeep() {
+            let keepIdsInterval = setInterval(() => {
+                let loadingPreviews = document.querySelectorAll('.preview-loading-img')
+                loadingPreviews.forEach(loadingPreview => {
+                    if (loadingPreview.classList.contains('d-flex')) {
+                        let izin_id = loadingPreview.getAttribute('data-id')
+                        let attr_id = loadingPreview.getAttribute('id')
+                        if (!loadingIds.includes(attr_id)) {
+                            Livewire.dispatch('set-pdf-img', {id: izin_id})
+                            loadingIds.push(attr_id)
+                        }
+                    }
+                })
+                loadingIds.forEach(loadingId => {
+                    loadingEl = document.getElementById(loadingId)
+                    if (!loadingEl.classList.contains('d-flex')) {
+                        loadingEl.classList.add('d-flex')
+                        loadingEl.classList.remove('d-none')
+                        clearInterval(keepIdsInterval)
+                    }
+                })
+            }, 500);
+        }
+        Livewire.on('stop-loading', (data) => {
+            const loadingId = "loading-" + data[0].id
+            loadingEl = document.getElementById(loadingId)
+            setTimeout(() => {
+                loadingEl.classList.remove('d-flex')
+                loadingEl.classList.add('d-none')
+                loadingIds = []
+            }, 100);
+        })
+    </script>
+@endpush

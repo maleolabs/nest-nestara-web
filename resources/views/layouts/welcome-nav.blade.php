@@ -14,9 +14,11 @@
                     Jenis Perizinan
                 </a>
                 @auth
-                    <a href="{{ route('user.izin') }}" class="welcome-nav-link {{ Route::currentRouteName() == 'user.izin' ? 'active' : '' }}">
-                        Izin saya
-                    </a>
+                    @role('pemohon')
+                        <a href="{{ route('user.izin') }}" class="welcome-nav-link {{ Route::currentRouteName() == 'user.izin' ? 'active' : '' }}">
+                            Izin saya
+                        </a>
+                    @endrole
                     <a href="javascript:;" class="ms-3 sidebar-btn-show position-relative">
                         <img src="{{ asset('storage/users/' . auth()->user()->foto) }}" alt="" class="profile-img">
                     </a>

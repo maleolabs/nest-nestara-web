@@ -4,7 +4,9 @@
             <button class="btn rounded m-0 border px-2 py-1 btn-show-left-menu">
                 <i class="fa-solid fa-bars text-lg"></i>
             </button>
-            <img src="{{ asset('storage/web/favicon.ico') }}" width="35" height="35" class="img-fluid">
+            <a href="{{ route('welcome') }}" title="Dinas PMPTSP">
+                <img src="{{ asset('storage/web/favicon.ico') }}" width="35" height="35" class="img-fluid">
+            </a>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item text-capitalize">

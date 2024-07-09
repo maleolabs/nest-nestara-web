@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'dashboard' => \App\Http\Middleware\DashboardMiddleware::class,
+            'show_izin' => \App\Http\Middleware\Izin\ShowIzinMiddleware::class,
+            'revisi_izin' => \App\Http\Middleware\Izin\RevisiIzinMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

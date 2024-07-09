@@ -24,9 +24,10 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/jenis-perizinan', [PerizinanController::class, 'jenisPerizinan'])->name('jenis-perizinan');
 
 Route::middleware('auth')->group(function() {
-    Route::middleware(['role:pemohon'])->group(function() {
+    Route::middleware(['role:pemohon', 'show_izin'])->group(function() {
         Route::get('/buat-izin-baru', [PerizinanController::class, 'create'])->name('create-izin');
         Route::get('/izin-saya', [PerizinanController::class, 'semuaIzin'])->name('user.izin');
+        Route::middleware(['revisi_izin'])->get('/revisi-izin/{izin_id}', [PerizinanController::class, 'revisiIzin'])->name('user.revisi-izin');
     });
 
     Route::middleware(['role:admin'])->group(function() {

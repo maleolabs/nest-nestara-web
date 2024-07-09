@@ -44,10 +44,22 @@ class DokumenPemohonServiceImpl implements DokumenPemohonService {
 		return DokumenPemohon::where('pemohon_id', $pemohon_id)->where('syarat_izin_id', $syarat_izin_id)->where('izin_id', $izin_id)->first();
 	}
 
-	public function getAllByPemohonAndSyaratAndIzin(int $pemohon_id, int $syarat_izin_id, int $izin_id): array
+	public function getAllByPemohonAndSyaratAndIzin(int $pemohon_id, int $jenis_perizinan_id, int $izin_id): array
 	{
-		$semua_dokumen = DokumenPemohon::where('pemohon_id', $pemohon_id)->where('syarat_izin_id', $syarat_izin_id)->where('izin_id', $izin_id)->get();
-		return $semua_dokumen->all();
+		$semua_dokumen = DokumenPemohon::
+			with(['syarat_izin' => function ($syarat_izin) use ($jenis_perizinan_id) {
+				$syarat_izin->whereHas('jenis_perizinan', function($jenis_perizinan) use ($jenis_perizinan_id) {
+					$jenis_perizinan->where('jenis_perizinan.id', $jenis_perizinan_id);
+				});
+			}])
+			->where('pemohon_id', $pemohon_id)
+			->where('izin_id', $izin_id)
+			->get();
+		$result = [];
+		foreach ($semua_dokumen as $dokumen) {
+			$result[$dokumen->syarat_izin_id] = $dokumen;
+		}
+		return $result;
 	}
 
 	public function deleteByPemohonAndSyaratIzin(int $pemohon_id, int $syarat_izin_id): bool

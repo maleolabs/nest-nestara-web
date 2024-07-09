@@ -49,13 +49,13 @@ interface DokumenPemohonService {
 	function findByPemohonAndSyaratAndIzin(int $pemohon_id, int $syarat_izin_id, int $izin_id): ?DokumenPemohon;
 
 	/**
-	* Mendapatkan semua dokumen pemohon berdasarkan pemohon, syarat izin, dan izin
+	* Mendapatkan semua dokumen pemohon berdasarkan pemohon, jenis perizinan, dan izin
 	* @param int $pemohon_id ID pemohon
-	* @param int $syarat_izin_id ID syarat izin
+	* @param int $jenis_perizinan_id ID jenis izin
 	* @param int $izin_id ID izin
 	* @return array Array dari objek DokumenPemohon
 	*/
-	function getAllByPemohonAndSyaratAndIzin(int $pemohon_id, int $syarat_izin_id, int $izin_id): array;
+	function getAllByPemohonAndSyaratAndIzin(int $pemohon_id, int $jenis_perizinan_id, int $izin_id): array;
 
 	/**
 	* Menghapus dokumen pemohon berdasarkan pemohon dan syarat izin

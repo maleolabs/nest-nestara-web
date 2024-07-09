@@ -4,6 +4,8 @@ namespace App\Livewire\Dashboard\Pendaftaran;
 
 use App\Livewire\Dashboard\BackOffice\Partials\EntriDataTrait;
 use App\Services\APIClient\RegionAPIService;
+use App\Services\DomainServices\DokumenPemohonService;
+use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
@@ -22,6 +24,7 @@ class PreviewDataIzin extends Component
 
     public $preview_izin_id,
         $preview_izin,
+        $preview_izin_dokumen = [],
         $preview_izin_syarat_izin = [],
         $last_izin_status,
         $jenis_perizinan_id;
@@ -129,8 +132,11 @@ class PreviewDataIzin extends Component
                 $this->dispatch('preview-izin-not-found');
                 return;
             }
-            $this->preview_izin_syarat_izin = $this->getSyaratIzinService()->getByJenisAndPemohon($this->preview_izin->jenis_perizinan_id, $this->preview_izin->pemohon_id);
+            $this->preview_izin_dokumen = $this->getDokumenPermohonService()->getAllByPemohonAndSyaratAndIzin($this->preview_izin->pemohon_id, $this->preview_izin->jenis_perizinan_id, $this->preview_izin_id);
 
+            $syarat_izin = $this->getJenisPerizinanService()->getPersyaratan($this->preview_izin->jenis_perizinan_id);
+            $this->preview_izin_syarat_izin = array_diff(array_keys($syarat_izin), array_keys($this->preview_izin_dokumen));
+            
             if (!$this->editing_data_action) {
                 $this->tanggal_peninjauan = $this->preview_izin->tanggal_peninjauan ? $this->preview_izin->tanggal_peninjauan : Carbon::now()->format('Y-m-d H:i');
                 $this->lokasi_izin = $this->preview_izin->lokasi_izin;
@@ -211,6 +217,11 @@ class PreviewDataIzin extends Component
         return app(PerizinanService::class);
     }
 
+    private function getJenisPerizinanService(): JenisPerizinanService
+    {
+        return app(JenisPerizinanService::class);
+    }
+
     private function getPemohonService(): PemohonService
     {
         return app(PemohonService::class);
@@ -224,6 +235,11 @@ class PreviewDataIzin extends Component
     private function getSyaratIzinService(): SyaratIzinService
     {
         return app(SyaratIzinService::class);
+    }
+
+    private function getDokumenPermohonService(): DokumenPemohonService
+    {
+        return app(DokumenPemohonService::class);
     }
     
 }

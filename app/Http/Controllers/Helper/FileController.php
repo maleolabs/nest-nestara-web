@@ -21,6 +21,7 @@ class FileController extends Controller
     
     public function download($file_name): StreamedResponse
     {
+        $file_name = base64_decode($file_name);
         return response()->streamDownload(function() use ($file_name) {
             echo $this->fileService->getPrivateFile($file_name);
         }, $file_name);
@@ -28,8 +29,13 @@ class FileController extends Controller
 
     public function render($file_name): Response
     {
+        $file_name = base64_decode($file_name);
         try {
-            $file = $this->fileService->getPrivateFile($file_name);
+            $file_name_2 = explode('/', $file_name);
+            if (count($file_name_2) > 2)
+                $file = $this->fileService->getFileRelativePath($file_name);
+            else
+                $file = $this->fileService->getPrivateFile($file_name);
         } catch (ItemNotFoundException $e) {
             abort(404, $e->getMessage());
         }

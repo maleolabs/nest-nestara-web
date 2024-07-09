@@ -11,7 +11,6 @@ use App\utils\enums\BackOfficeStatusEnum;
 use App\utils\enums\StatusIzinEnum;
 use App\utils\enums\StatusIzinProgressEnum;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -181,7 +180,7 @@ class PreviewDataIzin extends Component
         return str_capitalize($value, true);
     }
 
-    public function showImgModal($title, $path, $tipe)
+    public function showImgModal($title, $path, $tipe, $syarat_id = null)
     {
         $this->modalImgTitle = $title;
         if ($tipe == 'img') {
@@ -194,7 +193,10 @@ class PreviewDataIzin extends Component
         }
         $this->dispatch('set-preview-img-modal', [
             'path' => $path,
-            'type' => $tipe
+            'type' => $tipe,
+            'pemohon_id' => $this->preview_izin->pemohon_id,
+            'syarat_id' => $syarat_id,
+            'izin_id' => $this->preview_izin->id
         ]);
     }
 

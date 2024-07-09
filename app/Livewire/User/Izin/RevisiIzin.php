@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\User;
+namespace App\Livewire\User\Izin;
 
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
@@ -29,7 +29,7 @@ class RevisiIzin extends Component
     public function render()
     {
         $this->setUpData();
-        return view('livewire.user.revisi-izin');
+        return view('livewire.user.izin.revisi-izin');
     }
 
     private function setUpData()

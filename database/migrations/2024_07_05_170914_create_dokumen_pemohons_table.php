@@ -15,11 +15,14 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('pemohon_id');
             $table->unsignedBigInteger('syarat_izin_id');
+            $table->unsignedBigInteger('izin_id');
             $table->string('nama_file');
+            $table->string('nama_file_alternatif')->nullable();
+            $table->timestamps();
 
             $table->foreign('pemohon_id')->references('id')->on('pemohon');
             $table->foreign('syarat_izin_id')->references('id')->on('syarat_izin');
-            $table->timestamps();
+            $table->foreign('izin_id')->references('id')->on('izin');
         });
     }
 

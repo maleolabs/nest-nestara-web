@@ -20,7 +20,8 @@
                             @foreach ($syarat_izin as $syarat)
                                 <div class="img-preview-container ipc-md">
                                     @php($img_preview_url = ($syarat->tipe == 'img' && isset($persyaratan[$syarat->id])) ? $persyaratan[$syarat->id]->temporaryUrl() : null)
-                                    <img src="{{ $img_preview_url ??  route('render-file', ['file_name' => $syarat->dokumen_pemohon[0]->nama_file]) }}" alt="" class="img-preview">
+                                    @php($file_path = $syarat->tipe == 'img' ? $syarat->dokumen_pemohon[0]->nama_file : $syarat->dokumen_pemohon[0]->nama_file_alternatif)
+                                    <img src="{{ $img_preview_url ??  route('render-file', ['file_name' => base64_encode($file_path)]) }}" class="img-preview">
                                     <div class="img-preview-content">
                                         <h5 class="img-title">{{ "{$syarat->nama} ({$syarat->tipe})" }}</h5>
                                         <div class="input-group input-group-outline mb-1 flex-column"

@@ -8,10 +8,10 @@
     @foreach ($preview_izin_syarat_izin as $syarat)
         <h6 @if(!isset($syarat->dokumen_pemohon[0]))class="text-muted text-decoration-line-through"@endif>
             @if (isset($syarat->dokumen_pemohon[0]))
-                <a href="{{ route('download-file', ['file_name' => $syarat->dokumen_pemohon[0]->nama_file]) }}" class="text-decoration-none d-inline">
+                <a href="{{ route('download-file', ['file_name' => base64_encode($syarat->dokumen_pemohon[0]->nama_file)]) }}" class="text-decoration-none d-inline">
                     <i class="fa-solid fa-download me-1"></i>
                 </a>
-                <a href="javascript:;" class="text-decoration-none d-inline" wire:click="showImgModal('{{ $syarat->nama }}', '{{ $syarat->dokumen_pemohon[0]->nama_file }}', '{{ $syarat->tipe }}')">
+                <a href="javascript:;" class="text-decoration-none d-inline" wire:click="showImgModal('{{ $syarat->nama }}', '{{ base64_encode($syarat->dokumen_pemohon[0]->nama_file) }}', '{{ $syarat->tipe }}', {{ $syarat->id }})">
                     <i class="fa-solid fa-eye me-1"></i>
                 </a>
                 <button type="button" id="btnShowPreviewModal" data-bs-toggle="modal" data-bs-target="#showDocumentImgModal" class="opacity-0"></button>

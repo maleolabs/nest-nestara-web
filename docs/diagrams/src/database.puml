@@ -121,8 +121,9 @@ entity DokumenPemohon {
     --
     * pemohon_id: unsignedBigInt <<FK>>
     * syarat_izin_id: unsignedBigInt <<FK>>
-      izin_id: unsignedBigInt <<FK>>
+    * izin_id: unsignedBigInt <<FK>>
     * nama_file: varchar(255)
+      nama_file_alternatif: varchar(255)
     --
     * created_at: datetime
     * updated_at: datetime

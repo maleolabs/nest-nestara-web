@@ -62,6 +62,13 @@ class FileServiceImpl implements FileService {
         throw new ItemNotFoundException('file tidak ditemukan');
     }
 
+    public function getFileRelativePath(string $path): ?string
+    {
+        if (Storage::exists($path))
+            return Storage::get($path);
+        return null;
+    }
+
     public function getData(string $path): array
     {
         $data = [];
@@ -69,6 +76,18 @@ class FileServiceImpl implements FileService {
         if ($json_data)
             $data = json_decode($json_data, true);
         return $data;
+    }
+
+    public function saveBase64Img($image_data, string $folder = 'base64img', string $disk = 'public', bool $watermark = false): string
+    {
+        $image_data = str_replace('data:image/png;base64,', '', $image_data);
+        $image_data = str_replace(' ', '+', $image_data);
+        $image_data = base64_decode($image_data);
+
+        $file_name = Str::random() . '.png';
+        $path = $disk . '/' . $folder. '/' . $file_name;
+        Storage::put($path, $image_data);
+        return $path;
     }
 
     private function cleanLivewireTmp()

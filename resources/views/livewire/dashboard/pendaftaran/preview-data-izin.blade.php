@@ -349,4 +349,5 @@
             </div>
         </div>
     </div>
+    @livewire('dashboard.dashboard-util')
 </div>

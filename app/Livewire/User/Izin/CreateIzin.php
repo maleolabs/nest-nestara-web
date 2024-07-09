@@ -64,16 +64,15 @@ class CreateIzin extends Component
     public function save()
     {
         $this->saveDataPemohon(auth()->user()->id);
-        $this->saveDataIzin();
-        $this->getPerizinanService()->saveRegistration($this->selectedPerizinan->id, $this->pemohon_id);
-        Session::push('data-izin-saved', 'Anda telah berhasil mendaftar ' . $this->selectedPerizinan->nama);
+        $izin = $this->getPerizinanService()->saveRegistration($this->selectedPerizinan->id, $this->pemohon_id);
+        $this->saveDataIzin($izin->id);
         return redirect()->route('user.izin');
     }
 
-    private function saveDataIzin()
+    private function saveDataIzin($izin_id)
     {
         $data_persyaratan = $this->getFileService()->savePrivately($this->persyaratan);
-        $this->getDokumenPemohonService()->saveAll($this->pemohon_id, $data_persyaratan);
+        $this->getDokumenPemohonService()->saveAll($this->pemohon_id, $izin_id, $data_persyaratan);
     }
 
     public function editExistingDataPemohon()

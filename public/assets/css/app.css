@@ -2427,7 +2427,7 @@ button.btn-app-tertiary-light:active {
 }
 
 .mt-welcome-nav {
-  margin-top: 100px;
+  margin-top: 70px;
 }
 
 .mt-nav-fix {
@@ -3120,7 +3120,9 @@ button.btn-app-tertiary-light:active {
   display: none;
 }
 
-/* image */
+/* =========================================
+  image 
+  ========================================= */
 .img-circle {
   width: 60px;
   height: 60px;
@@ -3164,6 +3166,53 @@ button.btn-app-tertiary-light:active {
 .img-hover:hover,
 .img-hover:active {
   opacity: 1;
+}
+
+.img-preview-wraper {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.img-preview-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  margin-bottom: 12px;
+}
+.img-preview-container:last-child {
+  margin-bottom: 0;
+}
+.img-preview {
+  position: absolute;
+  display: block;
+  object-fit: cover;
+  width: 100%;
+  border-radius: 8px;
+}
+.img-preview-container.ipc-md,
+.img-preview-container.ipc-md .img-preview {
+  height: 300px;
+}
+.img-preview-content {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  gap: 8px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, .3), rgba(92, 99, 106, .6));
+  transition: all ease-in-out.3s;
+}
+.img-preview-content:hover {
+  background: rgba(92, 99, 106, .8);
+}
+.img-preview-content .img-title {
+  font-size: 1.5rem;
+  letter-spacing: 1px !important;
+  color: var(--color-white) !important;
+  font-weight: 600 !important;
 }
 
 /* table */

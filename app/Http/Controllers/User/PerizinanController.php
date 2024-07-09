@@ -26,4 +26,11 @@ class PerizinanController extends Controller
         return response()->view('user.izin-saya');
     }
 
+    public function revisiIzin(Request $request)
+    {
+        return response()->view('user.revisi-izin', [
+            'izin_id' => $request->route('izin_id')
+        ]);
+    }
+
 }

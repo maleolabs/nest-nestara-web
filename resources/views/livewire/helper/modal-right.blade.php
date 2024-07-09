@@ -32,6 +32,14 @@
                             </div>
                         </button>
                     </div>
+                @elseif ($izin_last_status->nama == App\utils\enums\StatusIzinEnum::REVISI_PERSYARATAN)
+                    <div class="p-3">
+                        <p class="text-dark mb-0">{{ $izin_last_status->keterangan }}</p>
+                        <a href="{{ route('user.revisi-izin', ['izin_id' => $selectedPreview->id]) }}" class="btn bg-gradient-warning">
+                            buka halaman perbaikan
+                            <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i>
+                        </a>
+                    </div>
                 @else
                     <div class="rounded-3 bg-app-primary-light p-3 mt-3">
                         <strong>Informasi:</strong>

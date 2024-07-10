@@ -1,16 +1,27 @@
 <div class="container">
     <md-linear-progress wire:loading wire:target='save' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
     @if ($this->canAccess())
-        <div class="row justify-content-center">
+        <div class="row">
+            <div class="col-md-4 col-sm-2 order-sm-last">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="input-group input-group-outline mb-3">
+                            <label for="keterangan" class="form-label">Keterangan</label>
+                            <textarea name="keterangan" id="keterangan" rows="5" class="form-control @error('keterangan')in-invalid @enderror" wire:model.live='keterangan'></textarea>
+                            @error('keterangan')
+                                <div class="text-danger text-sm">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        @if (count($persyaratan) > 0 || $keterangan)
+                            <button class="btn bg-gradient-primary text-nowrap" wire:loading.remove wire:target='save' wire:click='save'>Simpan</button>
+                        @endif
+                    </div>
+                </div>
+            </div>
             <div class="col-md-8 col-sm-10">
                 <div class="card">
                     <div class="card-header pb-3 border-bottom">
-                        <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
-                            <h5 class="text-capitalize mb-0">{{ App\utils\enums\StatusIzinEnum::REVISI_PERSYARATAN }}</h5>
-                            @if (count($persyaratan) > 0 && !$saved)
-                                <button class="btn bg-gradient-primary text-nowrap" wire:click='save'>Simpan</button>
-                            @endif
-                        </div>
+                        <h5 class="text-capitalize mb-0">{{ App\utils\enums\StatusIzinEnum::REVISI_PERSYARATAN }}</h5>
                         <div class="d-flex gap-2">
                             <i class="fa-solid fa-arrow-circle-right"></i>
                             <p class="text-sm mb-0">{{ $status->keterangan }}</p>

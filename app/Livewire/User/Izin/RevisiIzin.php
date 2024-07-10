@@ -6,6 +6,7 @@ use App\Services\AppService\FileService;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
+use App\utils\enums\StatusIzinProgressEnum;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -24,13 +25,15 @@ class RevisiIzin extends Component
         $persyaratan = [],
         $persyaratan_tmp = [],
         $persyarata_actual_tmp = [],
-        $saved = false;
+        $keterangan;
 
     public function mount()
     {
         if ($this->izin_id) {
             $this->izin = $this->getPerizinanService()->find($this->izin_id);
             $this->status = $this->izin->status_izin->last();
+            if ($this->status->progres == StatusIzinProgressEnum::FINISHED)
+                $this->keterangan = $this->status->keterangan;
         }
         $this->setUpData();
         $this->syarat_tipe_pdf = $this->getSyaratIzinService()->getIdsTypePdfByJenisAndPemohon($this->izin->jenis_perizinan_id, $this->izin->pemohon_id);
@@ -69,8 +72,12 @@ class RevisiIzin extends Component
 
     public function save()
     {
-        $this->getDokumenPemohonService()->saveAllWithFile($this->izin->pemohon_id, $this->izin->id, $this->persyaratan, $this->persyarata_actual_tmp);
-        $this->saved = true;
+        if (count($this->persyaratan) > 0)
+            $this->getDokumenPemohonService()->saveAllWithFile($this->izin->pemohon_id, $this->izin->id, $this->persyaratan, $this->persyarata_actual_tmp);
+
+        $this->getPerizinanService()->saveRegistrationRevision($this->izin_id, $this->keterangan);
+
+        $this->persyaratan = [];
     }
 
     #[On('set-pdf-img')]

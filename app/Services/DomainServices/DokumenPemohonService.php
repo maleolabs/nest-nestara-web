@@ -33,6 +33,15 @@ interface DokumenPemohonService {
 	function saveFileAlternates(int $pemohon_id, int $syarat_izin_id, int $izin_id, string $nama_file_alternatif): ?DokumenPemohon;
 
 	/**
+	* Menyimpan semua file alternatif untuk dokumen pemohon
+	* @param int $pemohon_id ID pemohon
+	* @param int $izin_id ID izin
+	* @param array $alt_files Array dari file alternatif yang akan disimpan dengan array key adalah ID syarat izin
+	* @return void
+	*/
+	function saveAllFileAlternates(int $pemohon_id, int $izin_id, array $alt_files): void;
+
+	/**
 	* Mencari dokumen pemohon berdasarkan ID
 	* @param int $id ID dokumen pemohon
 	* @return DokumenPemohon|null Objek DokumenPemohon yang ditemukan atau null jika tidak ditemukan

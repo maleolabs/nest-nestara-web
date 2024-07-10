@@ -65,7 +65,8 @@ class RevisiIzin extends Component
 
     public function save()
     {
-
+        $data_persyaratan = $this->getFileService()->savePrivately($this->persyaratan);
+        $this->getDokumenPemohonService()->saveAll($this->izin->pemohon_id, $this->izin_id, $data_persyaratan);
     }
 
     #[On('set-pdf-img')]

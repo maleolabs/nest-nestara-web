@@ -2,7 +2,7 @@
 
 namespace App\Services\AppService;
 
-use App\Services\DomainServices\Helpers\Base64ImageHelper;
+use App\Services\AppService\Helpers\FileManager;
 
 interface FileService {
 
@@ -33,6 +33,16 @@ interface FileService {
      * daftar file yang disimpan
      */
     function savePrivately($files, $file_name = null): array;
+
+    /**
+     * Menyimpan gambar  ke disk
+     *
+     * @param string $image_data Data gambar
+     * @param string $folder Folder untuk menyimpan gambar
+     * @param string $disk Disk untuk menyimpan gambar
+     * @return \App\Services\DomainServices\Helpers\FileManager helper untuk beberapa option tambahan
+     */
+    function saveFile(): FileManager;
 
     /**
      * menyimpan dan mendapatkan file sementara
@@ -84,13 +94,4 @@ interface FileService {
      */
     function getData(string $path): array;
 
-    /**
-     * Menyimpan gambar yang dikodekan base64 ke disk
-     *
-     * @param string $image_data Data gambar yang dikodekan base64
-     * @param string $folder Folder untuk menyimpan gambar
-     * @param string $disk Disk untuk menyimpan gambar
-     * @return \App\Services\DomainServices\Helpers\Base64ImageHelper helper untuk menghapus gambar jika diperlukan
-     */
-    function saveBase64Img($image_data, string $folder = 'base64img', string $disk = 'public', bool $watermark = false): Base64ImageHelper;
 }

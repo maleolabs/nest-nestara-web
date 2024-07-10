@@ -33,7 +33,7 @@ class FileController extends Controller
         $file_name = base64_decode($file_name);
         try {
             $file_name_2 = explode('/', $file_name);
-            Log::channel('app')->info('rendering file name: ' . $file_name);
+            Log::channel('app')->info('FileController@render.file_name: ' . $file_name);
             if (count($file_name_2) > 1)
                 $file = $this->fileService->getFileRelativePath($file_name);
             else
@@ -43,6 +43,9 @@ class FileController extends Controller
         }
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $type = $finfo->buffer($file);
+
+        Log::channel('app')->info("FileController@render.finfo: {$file_name}. Type: {$type}");
+
         return response($file, 200)
             ->header('Content-Type', $type)
             ->header('Content-Disposition', 'inline; filename="'.$file_name.'"')

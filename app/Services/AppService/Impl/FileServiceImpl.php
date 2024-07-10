@@ -3,7 +3,8 @@
 namespace App\Services\AppService\Impl;
 
 use App\Services\AppService\FileService;
-use App\Services\DomainServices\Helpers\Base64ImageHelper;
+use App\Services\AppService\Helpers\FileManager;
+use App\Services\AppService\Helpers\Impl\LocalStorageFileManager;
 use Carbon\Carbon;
 use Dotenv\Exception\InvalidFileException;
 use Illuminate\Support\Facades\Crypt;
@@ -47,6 +48,11 @@ class FileServiceImpl implements FileService {
         return $data_files;
     }
 
+    public function saveFile(): FileManager
+    {
+        return new LocalStorageFileManager();
+    }
+
     public function fileTemp(string $original_file_path, string $temp_file_name = null, string $temp_file_type = 'pdf'): ?string
     {
         Storage::deleteDirectory(self::TEMP_FOLDER_PATH);
@@ -67,8 +73,8 @@ class FileServiceImpl implements FileService {
     public function getFileRelativePath(string $path): ?string
     {
         if (Storage::exists($path)) {
+            Log::channel('app')->info('get file relative path: ' . $path);
             $path = Storage::get($path);
-            Log::channel('app')->info('get file relative path: true');
             return $path;
         }
         return null;
@@ -81,18 +87,6 @@ class FileServiceImpl implements FileService {
         if ($json_data)
             $data = json_decode($json_data, true);
         return $data;
-    }
-
-    public function saveBase64Img($image_data, string $folder = 'base64img', string $disk = 'public', bool $watermark = false): Base64ImageHelper
-    {
-        $image_data = str_replace('data:image/png;base64,', '', $image_data);
-        $image_data = str_replace(' ', '+', $image_data);
-        $image_data = base64_decode($image_data);
-
-        $file_name = Str::random() . '.png';
-        $path = $disk . '/' . $folder. '/' . $file_name;
-        Storage::put($path, $image_data);
-        return new Base64ImageHelper($path);
     }
 
     private function cleanLivewireTmp()

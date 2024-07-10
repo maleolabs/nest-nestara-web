@@ -4,8 +4,16 @@ namespace App\Services\DomainServices\Impl;
 
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Models\DokumenPemohon;
+use App\Services\AppService\FileService;
 
 class DokumenPemohonServiceImpl implements DokumenPemohonService {
+
+	protected FileService $fileService;
+
+	public function __construct(FileService $fileService)
+	{
+		$this->fileService = $fileService;
+	}
 
     public function save(array $data_dokumenpemohon): ?DokumenPemohon
 	{
@@ -32,6 +40,14 @@ class DokumenPemohonServiceImpl implements DokumenPemohonService {
 		$dokumen->nama_file_alternatif = $nama_file_alternatif;
 		$dokumen->save();
 		return $dokumen;
+	}
+
+	public function saveAllFileAlternates(int $pemohon_id, int $izin_id, array $alt_files): void
+	{
+		foreach ($alt_files as $syarat_id => $nama_file) {
+			// $nama_file = $this->fileService->;
+			$this->saveFileAlternates($pemohon_id, $syarat_id, $izin_id, $nama_file);
+		}
 	}
 
 	public function find(int $id): ?DokumenPemohon

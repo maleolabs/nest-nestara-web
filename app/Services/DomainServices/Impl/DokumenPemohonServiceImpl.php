@@ -32,6 +32,33 @@ class DokumenPemohonServiceImpl implements DokumenPemohonService {
 		}
 	}
 
+	public function saveAllWithFile(int $pemohon_id, int $izin_id, array $persyaratan_dokumen, array $alternates_files = []): void
+	{
+		foreach ($persyaratan_dokumen as $syarat_id => $file) {
+			$nama_file = $this->fileService->fileManager()
+				->saveFile()
+				->fileData($file)
+				->disk('private_files')
+				->folder('dokumen_persyaratan_izin')
+				->encrypt()
+				->save()
+				->getFileName();
+
+			$nama_file_alternatif = null;
+			if (isset($alternates_files[$syarat_id])) {
+				$nama_file_alternatif = $this->fileService->fileManager()
+					->moveFile()
+					->from($alternates_files[$syarat_id])
+					->toPublic('dokumen_persyaratan')
+					->move();
+			}
+			DokumenPemohon::updateOrCreate(
+				['pemohon_id' => $pemohon_id,'syarat_izin_id' => $syarat_id, 'izin_id' => $izin_id],
+				['nama_file' => $nama_file, 'nama_file_alternatif' => $nama_file_alternatif]
+			);
+		}
+	}
+
 	public function saveFileAlternates(int $pemohon_id, int $syarat_izin_id, int $izin_id, string $nama_file_alternatif): ?DokumenPemohon
 	{
 		$dokumen = DokumenPemohon::where('pemohon_id', $pemohon_id)->where('syarat_izin_id', $syarat_izin_id)->where('izin_id', $izin_id)->first();

@@ -27,31 +27,31 @@ class LocalStorageMover implements MoveFile
         $this->encrypt = false;
     }
 
-    public function from(string $path): MoveFile
+    public function from(string $path): self
     {
         $this->from_path = $path;
         return $this;
     }
 
-    public function to(string $path): MoveFile
+    public function to(string $path): self
     {
         $this->to_path = $path;
         return $this;
     }
 
-    public function toPublic(string $folder = ''): MoveFile
+    public function toPublic(string $folder = ''): self
     {
         $this->public_folder = $this->public_folder . '/' . $folder;
         return $this;
     }
 
-    public function encrypt(): MoveFile
+    public function encrypt(): self
     {
         $this->encrypt = true;
         return $this;
     }
 
-    public function replaceExisting(): MoveFile
+    public function replaceExisting(): self
     {
         $this->replace_existing = true;
         return $this;

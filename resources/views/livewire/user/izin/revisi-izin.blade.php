@@ -1,4 +1,5 @@
 <div class="container">
+    <md-linear-progress wire:loading wire:target='save' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
     @if ($this->canAccess())
         <div class="row justify-content-center">
             <div class="col-md-8 col-sm-10">
@@ -7,7 +8,7 @@
                         <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
                             <h5 class="text-capitalize mb-0">{{ App\utils\enums\StatusIzinEnum::REVISI_PERSYARATAN }}</h5>
                             @if (count($persyaratan) > 0)
-                                <button class="btn bg-gradient-primary text-nowrap">Simpan</button>
+                                <button class="btn bg-gradient-primary text-nowrap" wire:click='save'>Simpan</button>
                             @endif
                         </div>
                         <div class="d-flex gap-2">

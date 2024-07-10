@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User\Izin;
 
+use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
 use Illuminate\Validation\ValidationException;
@@ -20,7 +21,8 @@ class RevisiIzin extends Component
         $syarat_izin = [],
         $syarat_tipe_pdf = [],
         $persyaratan = [],
-        $persyaratan_tmp = [];
+        $persyaratan_tmp = [],
+        $persyarata_actual_tmp = [];
 
     public function mount()
     {
@@ -65,8 +67,7 @@ class RevisiIzin extends Component
 
     public function save()
     {
-        $data_persyaratan = $this->getFileService()->savePrivately($this->persyaratan);
-        $this->getDokumenPemohonService()->saveAll($this->izin->pemohon_id, $this->izin_id, $data_persyaratan);
+        $this->getDokumenPemohonService()->saveAllWithFile($this->izin->pemohon_id, $this->izin->id, $this->persyaratan, $this->persyaratan_tmp);
     }
 
     #[On('set-pdf-img')]
@@ -123,5 +124,11 @@ class RevisiIzin extends Component
     {
         return app(SyaratIzinService::class);
     }
+
+    private function getDokumenPemohonService(): DokumenPemohonService
+    {
+        return app(DokumenPemohonService::class);
+    }
+
     
 }

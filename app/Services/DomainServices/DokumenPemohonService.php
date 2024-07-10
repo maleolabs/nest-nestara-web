@@ -22,6 +22,8 @@ interface DokumenPemohonService {
 	*/
 	function saveAll(int $pemohon_id, int $izin_id, array $data_persyaratan): void;
 
+	function saveAllWithFile(int $pemohon_id, int $izin_id, array $persyaratan_dokumen, array $alternates_files = []): void;
+
 	/**
 	* Menyimpan file alternatif untuk dokumen persyaratan
 	* @param int $pemohon_id ID pemohon

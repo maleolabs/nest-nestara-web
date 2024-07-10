@@ -32,7 +32,7 @@ class Pendataan extends Component
 
         $this->selectMenu(self::DEFAULT_MENU, false);
 
-        $this->start_date = Carbon::today()->toDateString();
+        $this->start_date = Carbon::today()->subDay()->toDateString();
         $this->end_date = Carbon::today()->toDateString();
     }
 

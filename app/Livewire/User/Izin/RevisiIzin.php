@@ -2,6 +2,7 @@
 
 namespace App\Livewire\User\Izin;
 
+use App\Services\AppService\FileService;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
@@ -22,7 +23,8 @@ class RevisiIzin extends Component
         $syarat_tipe_pdf = [],
         $persyaratan = [],
         $persyaratan_tmp = [],
-        $persyarata_actual_tmp = [];
+        $persyarata_actual_tmp = [],
+        $saved = false;
 
     public function mount()
     {
@@ -67,7 +69,8 @@ class RevisiIzin extends Component
 
     public function save()
     {
-        $this->getDokumenPemohonService()->saveAllWithFile($this->izin->pemohon_id, $this->izin->id, $this->persyaratan, $this->persyaratan_tmp);
+        $this->getDokumenPemohonService()->saveAllWithFile($this->izin->pemohon_id, $this->izin->id, $this->persyaratan, $this->persyarata_actual_tmp);
+        $this->saved = true;
     }
 
     #[On('set-pdf-img')]
@@ -89,8 +92,11 @@ class RevisiIzin extends Component
     #[On('temp-img-uploaded')]
     public function tempImgUploaded($data)
     {
-        $this->persyaratan_tmp[$data['syarat_id']] = route('render-file', ['file_name' => base64_encode($data['temp_file_path'])]);
-        $this->dispatch('stop-loading', ['id' => $data['syarat_id']]);
+        $uploaded_temp_id = $data['syarat_id'];
+        $uploaded_temp_img = $data['temp_file_path'];
+        $this->persyarata_actual_tmp[$uploaded_temp_id] = $uploaded_temp_img;
+        $this->persyaratan_tmp[$uploaded_temp_id] = route('render-file', ['file_name' => base64_encode($uploaded_temp_img)]);
+        $this->dispatch('stop-loading', ['id' => $uploaded_temp_id]);
     }
 
     #[On('set-error')]
@@ -104,10 +110,21 @@ class RevisiIzin extends Component
 
     private function getCleanTmpPath($lvw_temp_file): string
     {
+        $path = $this->getLivewireTmp($lvw_temp_file);
+        $base64TmpPath = $this->encode_file_path($path);
+        return route('render-file', ['file_name' => $base64TmpPath]);
+    }
+
+    private function encode_file_path($path): string
+    {
+        return base64_encode($path);
+    }
+
+    private function getLivewireTmp($lvw_temp_file): string
+    {
         $lvwTmpUrl = explode('/', $lvw_temp_file->temporaryUrl());
         $lvwTmpUrl = explode('?', end($lvwTmpUrl));
-        $base64TmpPath = base64_encode('livewire-tmp/' . $lvwTmpUrl[0]);
-        return route('render-file', ['file_name' => $base64TmpPath]);
+        return 'livewire-tmp/' . $lvwTmpUrl[0];
     }
 
     protected function canAccess(): bool
@@ -130,5 +147,9 @@ class RevisiIzin extends Component
         return app(DokumenPemohonService::class);
     }
 
+    private function getFileService(): FileService
+    {
+        return app(FileService::class);
+    }
     
 }

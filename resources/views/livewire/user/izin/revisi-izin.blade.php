@@ -7,7 +7,7 @@
                     <div class="card-header pb-3 border-bottom">
                         <div class="d-flex justify-content-between align-items-center gap-3 mb-2">
                             <h5 class="text-capitalize mb-0">{{ App\utils\enums\StatusIzinEnum::REVISI_PERSYARATAN }}</h5>
-                            @if (count($persyaratan) > 0)
+                            @if (count($persyaratan) > 0 && !$saved)
                                 <button class="btn bg-gradient-primary text-nowrap" wire:click='save'>Simpan</button>
                             @endif
                         </div>

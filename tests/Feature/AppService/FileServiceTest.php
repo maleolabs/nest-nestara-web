@@ -9,6 +9,7 @@ use Illuminate\Support\ItemNotFoundException;
 use Tests\TestCase;
 
 use function PHPUnit\Framework\assertNotNull;
+use function PHPUnit\Framework\assertNull;
 use function PHPUnit\Framework\assertSame;
 
 class FileServiceTest extends TestCase
@@ -25,6 +26,13 @@ class FileServiceTest extends TestCase
         } catch (ItemNotFoundException $e) {
             assertSame('file tidak ditemukan', $e->getMessage());
         }
+    }
+
+    public function test_move_file()
+    {
+        $from_path = 'temp_files/dokumen_persyaratan/cQkdrapVJdaB94K2.png';
+        $moved_path = $this->fileService()->fileManager()->moveFile()->from($from_path)->toPublic('moved_file')->move();
+        assertNull($moved_path);
     }
 
     private function fileService(): FileService

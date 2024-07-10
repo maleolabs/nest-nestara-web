@@ -7,6 +7,15 @@ use App\Services\AppService\Helpers\FileManager;
 interface FileService {
 
     /**
+     * FileManager memberikan berbagai metode untuk pengelolaan file,
+     * seperti menyimpan, memindahkan, mengambil, dan menghapus file dengan sangat mudah.
+     *
+     * @return FileManager
+     * Instance dari FileManager
+     */
+    function fileManager(): FileManager;
+
+    /**
      * menyimpan data ke dalam file
      *
      * @param string $path
@@ -33,16 +42,6 @@ interface FileService {
      * daftar file yang disimpan
      */
     function savePrivately($files, $file_name = null): array;
-
-    /**
-     * Menyimpan gambar  ke disk
-     *
-     * @param string $image_data Data gambar
-     * @param string $folder Folder untuk menyimpan gambar
-     * @param string $disk Disk untuk menyimpan gambar
-     * @return \App\Services\DomainServices\Helpers\FileManager helper untuk beberapa option tambahan
-     */
-    function saveFile(): FileManager;
 
     /**
      * menyimpan dan mendapatkan file sementara

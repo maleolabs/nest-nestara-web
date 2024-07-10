@@ -20,13 +20,13 @@ class DashboardUtil extends Component
     {
         $image_path = '';
         if ($temp) {
-            $image_path = $this->getFileService()->saveFile()
+            $image_path = $this->getFileService()->fileManager()
+                            ->saveFile()
                             ->imageData($image_data)
                             ->decodeBase64()
                             ->disk('temp_files')
                             ->folder('dokumen_persyaratan')
-                            ->save()
-                            ->getPath();
+                            ->save();
 
             $this->dispatch('temp-img-uploaded', [
                 'temp_file_path' => $image_path,
@@ -34,13 +34,13 @@ class DashboardUtil extends Component
             ]);
         } else {
             $existing_dokumen = $this->getDokumenPemohonService()->findByPemohonAndSyaratAndIzin($pemohon_id, $syarat_id, $izin_id);
-            $image_path = $this->getFileService()->saveFile()
+            $image_path = $this->getFileService()->fileManager()
+                            ->saveFile()
                             ->imageData($image_data)
                             ->decodeBase64()
                             ->folder('dokumen_persyaratan')
                             ->deleteExisting($existing_dokumen->nama_file_alternatif)
-                            ->save()
-                            ->getPath();
+                            ->save();
 
             $this->getDokumenPemohonService()->saveFileAlternates($pemohon_id, $syarat_id, $izin_id, $image_path);
         }

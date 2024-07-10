@@ -18,6 +18,11 @@ class FileServiceImpl implements FileService {
     private const PRIVATE_FOLDER_PATH = "private_files/dokumen_persyaratan_izin/";
     private const TEMP_FOLDER_PATH = "temp_files/";
 
+    public function fileManager(): FileManager
+    {
+        return new LocalStorageFileManager();
+    }
+
     public function save(string $path, mixed $data, bool $replace_if_exist = false)
     {
         if ($replace_if_exist)
@@ -46,11 +51,6 @@ class FileServiceImpl implements FileService {
         $this->cleanLivewireTmp();
 
         return $data_files;
-    }
-
-    public function saveFile(): FileManager
-    {
-        return new LocalStorageFileManager();
     }
 
     public function fileTemp(string $original_file_path, string $temp_file_name = null, string $temp_file_type = 'pdf'): ?string

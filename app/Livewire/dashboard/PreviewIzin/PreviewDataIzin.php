@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard\PreviewIzin;
 
 use App\Livewire\Dashboard\BackOffice\Partials\EntriDataTrait;
+use App\Livewire\Dashboard\BackOffice\Partials\TinjauanLapanganTrait;
 use App\Livewire\Dashboard\PreviewIzin\Partials\HasPermissionToAccess;
 use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\DokumenPemohonService;
@@ -22,7 +23,7 @@ use Livewire\Component;
 class PreviewDataIzin extends Component
 {
 
-    use EntriDataTrait, HasPermissionToAccess;
+    use EntriDataTrait, TinjauanLapanganTrait, HasPermissionToAccess;
 
     public $preview_izin_id,
         $preview_izin,
@@ -50,7 +51,9 @@ class PreviewDataIzin extends Component
         if ($this->hasPermission(PreviewFeatureEnum::ENTRI_DATA)) {
             $this->is_entri_changed = $this->last_izin_status && $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI;
             $this->getPerizinanService()->updateIzinStatusWhenEntriDataHasChanged($this->preview_izin_id);
-            $this->has_permission = true;
+        }
+        if ($this->hasPermission(PreviewFeatureEnum::TINJAUAN_LAPANGAN)) {
+            $this->setTinjauanLapanganFormData();
         }
         if ($this->hasPermission(PreviewFeatureEnum::TINJAUAN_PERMOHONAN)) {
             $this->action_confirm = 'permohonan-selesai';

@@ -5,7 +5,7 @@ skinparam linetype ortho
 entity User {
     * id: bigint
     --
-    * nama: varchar(100)
+      nama: varchar(100)
     * email: varchar(100)
     * password: varchar(255)
       foto: varchar(100)
@@ -28,7 +28,7 @@ entity Roles {
 entity Pegawai {
     * id: bigint
     --
-    * user_id: unsignedBigInt <<FK>>
+      user_id: unsignedBigInt <<FK>>
     * nama: varchar(100)
     * jabatan: varchar(100)
     --
@@ -37,19 +37,11 @@ entity Pegawai {
     * updated_at: datetime
 }
 
-entity PenandaTangan {
+entity PeranPegawai {
     * id: bigint
     --
     * pegawai_id: unsignedBigInt <<FK>>
-    --
-    * created_at: datetime
-    * updated_at: datetime
-}
-
-entity TimTeknis {
-    * id: bigint
-    --
-    * pegawai_id: unsignedBigInt <<FK>>
+    * peran: enum('penandatangan', 'timteknis')
     --
     * created_at: datetime
     * updated_at: datetime
@@ -183,8 +175,7 @@ entity Pengaturan {
 User }o--|{ Roles
 User ||--o| Pemohon
 User ||--o| Pegawai
-Pegawai ||--o{ PenandaTangan
-Pegawai ||--o{ TimTeknis
+Pegawai }o--|{ PeranPegawai
 JenisPerizinan }|--o{ SyaratIzin
 JenisPerizinan ||--o{ EntriData
 EntriDataIzin }o--|| EntriData
@@ -194,8 +185,8 @@ Pemohon ||--o{ Izin
 Izin |o--|{ DokumenPemohon
 Izin ||--|{ StatusIzin
 Izin }|--|{ EntriDataIzin
-Izin }o--|| PenandaTangan
-Izin }o--|{ TimTeknis
+Izin }o--|| Pegawai: penanda_tangan
+Izin }o--|{ Pegawai: tim_teknis
 StatusIzin }o--o| Pegawai
 
 @enduml

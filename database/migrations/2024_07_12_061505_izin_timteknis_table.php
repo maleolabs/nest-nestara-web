@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('penanda_tangan', function (Blueprint $table) {
+        Schema::create('izin_timteknis', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->unsignedBigInteger('izin_id');
+            $table->unsignedBigInteger('pegawai_id');
+
+            $table->foreign('izin_id')->references('id')->on('izin');
+            $table->foreign('pegawai_id')->references('id')->on('pegawai');
         });
     }
 
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('penanda_tangan');
+        Schema::dropIfExists('izin_timteknis');
     }
 };

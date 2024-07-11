@@ -38,14 +38,14 @@ class Izin extends Model
         return $this->hasMany(EntriDataIzin::class);
     }
 
-    public function penanda_tangan(): BelongsTo
+    public function penandatangan(): BelongsTo
     {
-        return $this->belongsTo(PenandaTangan::class); 
+        return $this->belongsTo(Pegawai::class, 'penandatangan_id', 'id');
     }
 
-    public function tim_teknis(): BelongsToMany
+    public function timteknis(): BelongsToMany
     {
-        return $this->belongsToMany(TimTeknis::class, 'izin_tim_teknis');
+        return $this->belongsToMany(Pegawai::class, 'izin_timteknis', 'izin_id', 'pegawai_id');
     }
 
     public function getNoPendaftaranAttribute($value)

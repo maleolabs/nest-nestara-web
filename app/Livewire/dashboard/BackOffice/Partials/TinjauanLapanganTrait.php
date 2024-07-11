@@ -5,17 +5,17 @@ namespace App\Livewire\Dashboard\BackOffice\Partials;
 trait TinjauanLapanganTrait
 {
 
-    public $penanda_tangan = [],
-        $tim_teknis = [];
+    public $semua_penanda_tangan = [],
+        $semua_tim_teknis = [];
 
-    public function setTinjuanLapanganFormData()
+    public function setTinjauanLapanganFormData()
     {
-        $this->penanda_tangan = [
+        $this->semua_penanda_tangan = [
 
         ];
 
-        $this->tim_teknis = [
-            
+        $this->semua_tim_teknis = [
+
         ];
     }
 

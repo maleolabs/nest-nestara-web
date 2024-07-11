@@ -16,8 +16,10 @@
                 <label for="penanda_tangan" class="form-label">No Surat</label>
                 <select class="form-select @error('penanda_tangan')is-invalid @enderror" id="penanda_tangan" wire:model="penanda_tangan">
                     <option selected>Pilih Penandatangan</option>
-                    <option value="jokow">jokowi</option>
-                    <option value="prabowo">prabowo</option>
+                    @foreach ($semua_penanda_tangan as $penanda_tangan)
+                        <option value="{{ $penanda_tangan->id }}">{{ $penanda_tangan->nama }}</option>
+                        <option value="prabowo">prabowo</option>
+                    @endforeach
                 </select>
                 @error('penanda_tangan')
                     <div class="text-danger text-sm">{{ $message }}</div>

@@ -28,8 +28,8 @@
             </div>
             <div class="col-md-9 d-flex align-items-stretch mb-4">
                 <div class="card w-100 p-4 mb-0">
-                    <div class="d-flex flex-sm-row flex-column justify-content-sm-between align-items-sm-top align-items-between {{ $last_izin_status->keterangan == \App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI ? 'flex-sm-row-reverse flex-column-reverse' : '' }} gap-3">
-                        @if ($last_izin_status->nama == \App\utils\enums\StatusIzinEnum::PROSES && $last_izin_status->keterangan == \App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI)
+                    <div class="d-flex flex-sm-row flex-column justify-content-sm-between align-items-sm-top align-items-between {{ $last_izin_status->keterangan == \App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN ? 'flex-sm-row-reverse flex-column-reverse' : '' }} gap-3">
+                        @if ($last_izin_status->nama == \App\utils\enums\StatusIzinEnum::PROSES && $last_izin_status->keterangan == \App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN)
                             <div>
                                 <a href="#timTeknis" class="btn btn-info">
                                     <i class="fa-solid fa-arrows-down-to-line fa-bounce fs-3"></i>
@@ -169,18 +169,18 @@
                                     <i class="fa-regular fa-circle-right me-1"></i>
                                     Entri Data
                                 </h6>
-                                <div class="d-flex align-items-center gap-2">
-                                    @if ($last_izin_status == App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN)
+                                @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN)
+                                    <div class="d-flex align-items-center gap-2">
                                         <button class="btn btn-sm btn-warning" wire:click='reEditEntriData' wire:loading.remove wire:target='reEditEntriData'>
                                             Edit Entri Data
                                         </button>
                                         <span class="spinner-border spinner-border-sm" role="status" wire:loading wire:target='reEditEntriData'>
                                         </span>
-                                    @endif
-                                    <button class="btn btn-sm btn-light">
-                                        minimize
-                                    </button>
-                                </div>
+                                        <button class="btn btn-sm btn-light">
+                                            minimize
+                                        </button>
+                                    </div>
+                                @endif
                             </div>
                             @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && $last_izin_status->keterangan != App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN)
                                 @include('livewire.dashboard.preview-izin.button-edit-entri-data')

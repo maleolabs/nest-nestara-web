@@ -220,8 +220,12 @@ class PerizinanServiceImpl implements PerizinanService
 
     public function hasDataEntri(int $izin_id): bool
     {
+        $not_allowed_keterangan = [
+            OfficeStatus::BELUM_ENTRI,
+            OfficeStatus::SEDANG_ENTRI
+        ];
         $izin_status = $this->statusIzinService->findByNamaAndIzin(Status::PROSES, $izin_id);
-        return $izin_status && ($izin_status->keterangan == OfficeStatus::SUDAH_ENTRI);
+        return $izin_status && !in_array($izin_status->keterangan, $not_allowed_keterangan);
     }
 
     public function keepOldEntri(int $izin_id): void
@@ -231,6 +235,17 @@ class PerizinanServiceImpl implements PerizinanService
             return;
         $izin->ambil_entri_lama = true;
         $izin->save();
+    }
+
+    public function updateStatusIfEntriDataAlrearyEntered(int $izin_id, ?int $pegawai_id = null): void
+    {
+        $izin = $this->find($izin_id);
+        if (!$izin)
+            return;
+        $izin_status = $izin->status_izin->last();
+        if ($izin_status->nama == Status::PROSES && $izin->status_izin->last()->keterangan == OfficeStatus::SUDAH_ENTRI) {
+            $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::ENTRI_TINJAUAN_LAPANGAN, $pegawai_id);
+        }
     }
     
 }

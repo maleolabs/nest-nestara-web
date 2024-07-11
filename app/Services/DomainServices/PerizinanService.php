@@ -162,5 +162,7 @@ interface PerizinanService
      * @return void Fungsi ini tidak mengembalikan nilai apa pun.
      */
     function keepOldEntri(int $izin_id): void;
+
+    function updateStatusIfEntriDataAlrearyEntered(int $izin_id, ?int $pegawai_id = null): void;
     
 }

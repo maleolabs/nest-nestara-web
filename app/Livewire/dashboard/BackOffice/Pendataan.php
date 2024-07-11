@@ -32,7 +32,7 @@ class Pendataan extends Component
         $this->getPerizinanService()->updateIzinStatusThatHaveBeenReviewed();
         $this->getPerizinanService()->updateAllIzinStatusWhenEntriDataHasChanged();
 
-        $this->selectMenu($this->tab, true);
+        $this->selectMenu($this->tab, false);
 
         $this->start_date = Carbon::today()->subMonth()->toDateString();
         $this->end_date = Carbon::today()->toDateString();
@@ -88,6 +88,10 @@ class Pendataan extends Component
     public function selectMenu($menu, $reset_url = true)
     {
         if (isset($this->getMenu()[$menu])) {
+            if ($this->preview_izin_id) {
+                $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
+                $this->getPerizinanService()->updateStatusIfEntriDataAlrearyEntered($this->preview_izin_id, $pegawai_id);
+            }
             $this->active_menu = $menu;
             $this->preview_izin_id = $reset_url ? null : $this->preview_izin_id;
             $this->dispatch('menu-selected', ['menu' => $menu]);

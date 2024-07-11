@@ -32,7 +32,7 @@ if (!function_exists('getStatusIzinProcessClasses')) {
             BackOfficeStatusEnum::BELUM_ENTRI => 'muted',
             BackOfficeStatusEnum::SEDANG_ENTRI => 'dark',
             BackOfficeStatusEnum::SUDAH_ENTRI => 'info',
-            BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN => 'warning'
+            BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN => 'dark'
         ];
 
         $textClass = "text-{$statusClass[$status->keterangan]}";

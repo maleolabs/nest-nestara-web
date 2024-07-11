@@ -34,7 +34,7 @@
     </div>
     <div class="content-wrap py-3">
         @if ($preview_data_izin)
-            @livewire('dashboard.pendaftaran.preview-data-izin', ['preview_izin_id' => $preview_izin_id])
+            @livewire('dashboard.preview-izin.preview-data-izin', ['preview_izin_id' => $preview_izin_id])
         @else
             <div class="row px-2">
                 <div class="col-md-9">

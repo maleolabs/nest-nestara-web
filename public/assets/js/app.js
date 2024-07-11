@@ -163,7 +163,6 @@
   }
 
   const scrollto = (el) => {
-    console.log(el);
     let header = select(el)
     let offset = header.offsetHeight
 

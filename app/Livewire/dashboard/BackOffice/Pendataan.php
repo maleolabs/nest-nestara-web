@@ -32,7 +32,7 @@ class Pendataan extends Component
         $this->getPerizinanService()->updateIzinStatusThatHaveBeenReviewed();
         $this->getPerizinanService()->updateAllIzinStatusWhenEntriDataHasChanged();
 
-        $this->selectMenu($this->tab, false);
+        $this->selectMenu($this->tab, true);
 
         $this->start_date = Carbon::today()->subMonth()->toDateString();
         $this->end_date = Carbon::today()->toDateString();
@@ -64,7 +64,7 @@ class Pendataan extends Component
             });
         } else {
             $filtered_data = array_filter($this->all_izin, function ($izin) {
-                return $izin->status_izin->last()->keterangan == BackOfficeStatusEnum::SUDAH_ENTRI;
+                return $izin->status_izin->last()->keterangan == BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN;
             });
         }
         return $filtered_data;
@@ -75,7 +75,8 @@ class Pendataan extends Component
         return [
             BackOfficeStatusEnum::BELUM_ENTRI,
             BackOfficeStatusEnum::PERUBAHAN_ENTRI,
-            BackOfficeStatusEnum::SEDANG_ENTRI
+            BackOfficeStatusEnum::SEDANG_ENTRI,
+            BackOfficeStatusEnum::SUDAH_ENTRI,
         ];
     }
 

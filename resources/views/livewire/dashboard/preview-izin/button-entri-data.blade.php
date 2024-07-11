@@ -35,7 +35,7 @@
         </div>
     </div>
     <div class="position-absolute inset-0 w-100 h-100 z-2 d-flex flex-column gap-2 align-items-center justify-content-center bg-gradient-light-up-bottom rounded-3">
-        @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::PERUBAHAN_ENTRI)
+        @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::PERUBAHAN_ENTRI && !$preview_izin->ambil_entri_lama)
             <p class="mb-0 text-bold">{{ $last_izin_status->keterangan }}</p>
             <div class="d-flex justify-content-center gap-3 align-items-center">
                 <a href="{{ route('pegawai.pendataan') }}" class="btn bg-gradient-info d-flex align-items-center">

@@ -87,7 +87,7 @@
                                 Persyaratan
                             </h6>
                             <div class="px-4">
-                                @include('livewire.dashboard.pendaftaran.partials.preview-izin-persyaratan-show')
+                                @include('livewire.dashboard.preview-izin.preview-izin-persyaratan-show')
                             </div>
                         </div>
                     @elserole('pengelola_layanan')
@@ -107,7 +107,7 @@
                             <div class="tab-content border border-top-0 rounded-bottom-2 p-4">
                                 <div class="tab-pane fade @if($active_tab != self::TINDAKAN)show active @endif" id="persyaratan-tab">
                                     <p class="mt-3 mb-0 text-muted">Persyaratan</p>
-                                    @include('livewire.dashboard.pendaftaran.partials.preview-izin-persyaratan-show')
+                                    @include('livewire.dashboard.preview-izin.preview-izin-persyaratan-show')
                                 </div>
                                 <div class="tab-pane fade @if($active_tab == self::TINDAKAN)show active @endif" id="tindakan-tab">
                                     @if ($this->canProcess())
@@ -164,17 +164,29 @@
                 <div class="col-12 mb-4">
                     <div class="card mb-0">
                         <div class="card-body">
-                            <h6 class="text-bold mb-4">
-                                <i class="fa-regular fa-circle-right me-1"></i>
-                                Entri Data
-                            </h6>
-                            @if (!$preview_izin->ambil_entri_lama)
-                                @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI)
-                                    @include('livewire.dashboard.preview-izin.button-edit-entri-data')
-                                @endif
-                                @if ($is_entri_changed)
-                                    @include('livewire.dashboard.preview-izin.button-entri-has-changed')
-                                @endif
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="text-bold mb-4">
+                                    <i class="fa-regular fa-circle-right me-1"></i>
+                                    Entri Data
+                                </h6>
+                                <div class="d-flex align-items-center gap-2">
+                                    @if ($last_izin_status == App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN)
+                                        <button class="btn btn-sm btn-warning" wire:click='reEditEntriData' wire:loading.remove wire:target='reEditEntriData'>
+                                            Edit Entri Data
+                                        </button>
+                                        <span class="spinner-border spinner-border-sm" role="status" wire:loading wire:target='reEditEntriData'>
+                                        </span>
+                                    @endif
+                                    <button class="btn btn-sm btn-light">
+                                        minimize
+                                    </button>
+                                </div>
+                            </div>
+                            @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI && $last_izin_status->keterangan != App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN)
+                                @include('livewire.dashboard.preview-izin.button-edit-entri-data')
+                            @endif
+                            @if ($is_entri_changed && !$preview_izin->ambil_entri_lama)
+                                @include('livewire.dashboard.preview-izin.button-entri-has-changed')
                             @endif
                             @include('livewire.dashboard.preview-izin.saved-entri-data')
                         </div>
@@ -184,12 +196,12 @@
 
             @role('pegawai')
                 <div class="col-12">
-                    @if (!$preview_izin->ambil_entri_lama)
-                        @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::BELUM_ENTRI || $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::PERUBAHAN_ENTRI)
-                            <div class="card mb-4">
-                                @include('livewire.dashboard.preview-izin.button-entri-data')
-                            </div>
-                        @else
+                    @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::BELUM_ENTRI || $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::PERUBAHAN_ENTRI)
+                        <div class="card mb-4">
+                            @include('livewire.dashboard.preview-izin.button-entri-data')
+                        </div>
+                    @else
+                        @if ($this->isFormNotEntered())
                             @if ($this->isFormFillAuthorized())
                                 <div class="card mb-4">
                                     <div class="card-body">
@@ -208,16 +220,10 @@
                         @endif
                     @endif
 
-                    @if ($last_izin_status->keterangan == \App\utils\enums\BackOfficeStatusEnum::SUDAH_ENTRI)
+                    @if ($last_izin_status->keterangan == \App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN)
                         <div class="card" id="timTeknis">
-                            <div class="card-header">
-                                <h5 class="text-bold mb-1">
-                                    <i class="fa-regular fa-circle-right me-1"></i>
-                                    Entri Tinjauan
-                                </h5>
-                            </div>
                             <div class="card-body">
-                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus nam culpa perferendis? Delectus ratione necessitatibus blanditiis quibusdam molestias inventore mollitia ex error quod quasi aliquid minima, similique est iure a?
+                                @include('livewire.dashboard.preview-izin.penjadwalan-tim-form')
                             </div>
                         </div>
                     @endif
@@ -233,3 +239,40 @@
     @include('livewire.dashboard.preview-izin.modal-show-document')
     @livewire('dashboard.dashboard-util')
 </div>
+@push('scripts')
+    <script>
+        Livewire.hook('component.init', ({component, cleanup}) => {
+            setInterval(() => {
+                select2Init()
+            }, 200);
+        })
+        Livewire.hook('morph.updated', ({ el, component }) => {
+            select2Init()
+            observeSelect2Value()
+        })
+        function select2Init() {
+            $('#penanda_tangan_select').select2({
+                placeholder: 'Pilih penanda tangan',
+                theme: "bootstrap-5",
+            })
+        }
+        function observeSelect2Value() {
+            const select2El = document.querySelector('.select2-selection__rendered')
+            if (select2El) {
+                const observer = new MutationObserver((mutations) => {
+                    mutations.forEach((mutation) => {
+                        if (mutation.type === 'characterData' || mutation.type === 'childList') {
+                            @this.set('data_izin_form.jenis_izin', select2El.textContent)
+                        }
+                    });
+                });
+                const config = {
+                    childList: true,
+                    subtree: true,
+                    characterData: true
+                }
+                observer.observe(select2El, config)
+            }
+        }
+    </script>
+@endpush

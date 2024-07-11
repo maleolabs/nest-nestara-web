@@ -1,5 +1,6 @@
 <?php
 
+use App\utils\enums\BackOfficeStatusEnum;
 use App\utils\enums\StatusIzinEnum;
 use App\utils\enums\StatusIzinProgressEnum;
 
@@ -16,6 +17,26 @@ if (!function_exists('getStatusIzinClasses')) {
 
         $textClass = "text-{$statusClass[$status->progres]}";
         $bgClass = "bg-{$statusClass[$status->progres]}";
+
+        return [
+            'textClass' => $textClass,
+            'bgClass' => $bgClass,
+        ];
+    }
+}
+
+if (!function_exists('getStatusIzinProcessClasses')) {
+    function getStatusIzinProcessClasses($status)
+    {
+        $statusClass = [
+            BackOfficeStatusEnum::BELUM_ENTRI => 'muted',
+            BackOfficeStatusEnum::SEDANG_ENTRI => 'dark',
+            BackOfficeStatusEnum::SUDAH_ENTRI => 'info',
+            BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN => 'warning'
+        ];
+
+        $textClass = "text-{$statusClass[$status->keterangan]}";
+        $bgClass = "bg-{$statusClass[$status->keterangan]}";
 
         return [
             'textClass' => $textClass,

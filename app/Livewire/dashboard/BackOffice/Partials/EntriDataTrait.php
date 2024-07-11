@@ -47,6 +47,13 @@ trait EntriDataTrait
         $this->edit_entri_data = $this->canEditEntriData();
     }
 
+    public function reEditEntriData()
+    {
+        $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
+        $this->getStatusIzinService()->updateStatusIzin($this->preview_izin_id, StatusIzinEnum::PROSES, StatusIzinProgressEnum::PROCESSING, BackOfficeStatusEnum::SEDANG_ENTRI, $pegawai_id);
+        return redirect()->route('pegawai.pendataan', ['preview_izin_id' => $this->preview_izin_id]);
+    }
+
     public function cancelEditEntriData()
     {
         $this->edit_entri_data = false;
@@ -100,11 +107,16 @@ trait EntriDataTrait
             ]);
     }
 
+    public function isFormNotEntered(): bool
+    {
+        return $this->isFormFillAuthorized() && ($this->last_izin_status->keterangan == BackOfficeStatusEnum::SEDANG_ENTRI || $this->edit_entri_data);
+    }
+
     public function isFormFillAuthorized(): bool
     {
         $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
         $has_authorized = $pegawai_id == $this->last_izin_status->pegawai_id;
-        return $has_authorized && ($this->last_izin_status->keterangan == BackOfficeStatusEnum::SEDANG_ENTRI || $this->edit_entri_data);
+        return $has_authorized;
     }
 
     public function thereIsOldEntriData(): bool

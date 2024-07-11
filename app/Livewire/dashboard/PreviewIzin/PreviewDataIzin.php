@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Dashboard\Pendaftaran;
+namespace App\Livewire\Dashboard\PreviewIzin;
 
 use App\Livewire\Dashboard\BackOffice\Partials\EntriDataTrait;
 use App\Services\APIClient\RegionAPIService;
@@ -78,7 +78,7 @@ class PreviewDataIzin extends Component
         $this->canAccess();
         if (!$this->edit_entri_data)
             $this->setEntriData();
-        return view('livewire.dashboard.pendaftaran.preview-data-izin');
+        return view('livewire.dashboard.preview-izin.preview-data-izin');
     }
 
     protected function canAccess(): bool

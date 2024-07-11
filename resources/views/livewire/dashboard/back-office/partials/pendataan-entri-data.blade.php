@@ -40,6 +40,10 @@
                     </thead>
                     <tbody>
                         @forelse ($all_izin as $izin)
+                            @php
+                                $status = $izin->status_izin->last();
+                                $statusClasses = getStatusIzinProcessClasses($status)
+                            @endphp
                             <tr class="cursor-pointer data-izin" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})'>
                                 <td class="align-middle text-center text-sm">{{ $loop->iteration }}</td>
                                 <td class="text-sm">
@@ -59,33 +63,9 @@
                                     </p>
                                 </td>
                                 <td class="d-flex flex-column align-items-center">
-                                    @php
-                                        $status = $izin->status_izin->last()
-                                    @endphp
                                     <span class="badge badge-dot">
-                                        @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
-                                            <i class="bg-success"></i>
-                                        @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
-                                            <i class="bg-dark"></i>
-                                        @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
-                                            <i class="bg-info"></i>
-                                        @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
-                                            <i class="bg-danger"></i>
-                                        @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
-                                            <i class="bg-warning"></i>
-                                        @endif
-                                        <span class="text-sm 
-                                            @if ($status->progres == App\utils\enums\StatusIzinProgressEnum::FINISHED)
-                                                text-success
-                                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::UNPROCESSED)
-                                                text-muted
-                                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::PROCESSING)
-                                                text-dark
-                                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::CANCELED)
-                                                text-danger
-                                            @elseif ($status->progres == App\utils\enums\StatusIzinProgressEnum::ERROR)
-                                                text-warning
-                                            @endif">
+                                        <i class="{{ $statusClasses['bgClass'] }}"></i>
+                                        <span class="text-sm {{ $statusClasses['textClass'] }}">
                                             {{ Str::limit($status->keterangan, 20) }}
                                         </span>
                                     </span>

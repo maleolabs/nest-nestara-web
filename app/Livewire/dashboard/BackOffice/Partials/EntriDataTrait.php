@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard\BackOffice\Partials;
 
 use App\Services\DomainServices\EntriDataService;
+use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\StatusIzinService;
 use App\utils\enums\BackOfficeStatusEnum;
 use App\utils\enums\StatusIzinEnum;
@@ -25,9 +26,9 @@ trait EntriDataTrait
     {
         if (!is_int($this->jenis_perizinan_id))
             return;
-        $this->entri_data = $this->getEntriDataService()->getByJenisPerizinanId($this->jenis_perizinan_id);
+        $this->entri_data = $this->getEntriDataService()->getByJenisPerizinanIdWithOldData($this->jenis_perizinan_id, $this->preview_izin_id);
         foreach ($this->entri_data as $entri) {
-            if ($entri_data_izin = $entri->entri_data_izin->where('izin_id', $this->preview_izin_id)->first())
+            if ($entri_data_izin = $this->getEntriDataService()->findFirstEntriIzinByDataId($entri->id, $this->preview_izin_id))
                 $this->entri_data_izin[$entri->id] = $entri_data_izin->value;
             $key_entri = "entri_data_izin.{$entri->id}";
             if ($entri->mandatori)
@@ -54,8 +55,18 @@ trait EntriDataTrait
 
     public function entriData()
     {
-        if ($this->last_izin_status && ($this->last_izin_status->keterangan == BackOfficeStatusEnum::BELUM_ENTRI || $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI))
-            $this->getStatusIzinService()->updateStatusIzin($this->preview_izin_id, StatusIzinEnum::PROSES, StatusIzinProgressEnum::PROCESSING, BackOfficeStatusEnum::SEDANG_ENTRI);
+        if ($this->last_izin_status && ($this->last_izin_status->keterangan == BackOfficeStatusEnum::BELUM_ENTRI || $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI)) {
+            $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
+            $this->getStatusIzinService()->updateStatusIzin($this->preview_izin_id, StatusIzinEnum::PROSES, StatusIzinProgressEnum::PROCESSING, BackOfficeStatusEnum::SEDANG_ENTRI, $pegawai_id);
+        }
+    }
+
+    public function keepOldEntri()
+    {
+        if ($this->last_izin_status && $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI) {
+            $this->getStatusIzinService()->updateStatusIzin($this->preview_izin_id, StatusIzinEnum::PROSES, StatusIzinProgressEnum::PROCESSING, BackOfficeStatusEnum::SUDAH_ENTRI);
+            $this->getPerizinanService()->keepOldEntri($this->preview_izin_id);
+        }
     }
 
     public function saveEntri()
@@ -75,12 +86,35 @@ trait EntriDataTrait
 
     public function canEditEntriData(): bool
     {
-        return $this->last_izin_status->pegawai_id == auth()->user()->pegawai->id;
+        return $this->last_izin_status->pegawai_id == auth()->user()->pegawai->id
+            && $this->last_izin_status->nama == StatusIzinEnum::PROSES
+            && ($this->editableEntriDataStatus());
+    }
+
+    public function editableEntriDataStatus(): bool
+    {
+        return in_array($this->last_izin_status->progres, [
+                StatusIzinProgressEnum::UNPROCESSED,
+                StatusIzinProgressEnum::PROCESSING,
+                StatusIzinProgressEnum::FINISHED
+            ]);
+    }
+
+    public function isFormFillAuthorized(): bool
+    {
+        $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
+        $has_authorized = $pegawai_id == $this->last_izin_status->pegawai_id;
+        return $has_authorized && ($this->last_izin_status->keterangan == BackOfficeStatusEnum::SEDANG_ENTRI || $this->edit_entri_data);
     }
 
     public function thereIsOldEntriData(): bool
     {
-        return $this->getEntriDataService()->hasTrashedEntriDataIzin($this->preview_izin_id);
+        return $this->getEntriDataService()->hasTrashedEntriDataIzin($this->preview_izin_id) && $this->last_izin_status->keterangan != BackOfficeStatusEnum::PERUBAHAN_ENTRI;
+    }
+
+    protected function canAccessSavedEntriData(): bool
+    {
+        return $this->getPerizinanService()->hasDataEntri($this->preview_izin_id) && !$this->edit_entri_data;
     }
 
     protected function getEntriDataService(): EntriDataService
@@ -91,6 +125,11 @@ trait EntriDataTrait
     protected function getStatusIzinService(): StatusIzinService
     {
         return app(StatusIzinService::class);
+    }
+
+    protected function getPerizinanService(): PerizinanService
+    {
+        return app(PerizinanService::class);
     }
 
 }

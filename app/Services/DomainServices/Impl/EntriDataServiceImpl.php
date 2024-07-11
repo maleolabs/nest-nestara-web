@@ -20,6 +20,16 @@ class EntriDataServiceImpl implements EntriDataService {
 		return null;
 	}
 
+	public function findFirstEntriIzinByDataId(int $data_id, int $izin_id): ?EntriDataIzin
+	{
+		$entri_data_izin = EntriDataIzin::where('entri_data_id', $data_id)->where('izin_id', $izin_id)->first();
+		if (!$entri_data_izin)
+			$entri_data_izin = EntriDataIzin::whereHas('entri_data', function ($entri_data) use ($data_id) {
+				$entri_data->where('id', $data_id)->withTrashed();
+			})->where('izin_id', $izin_id)->first();
+		return $entri_data_izin;
+	}
+
 	public function update(int $id, array $data_entridata): ?EntriData
 	{
 		return null;
@@ -33,6 +43,15 @@ class EntriDataServiceImpl implements EntriDataService {
 	public function getByJenisPerizinanId(int $jenis_perizinan_id): array
 	{
 		$entri_data = EntriData::where('jenis_perizinan_id', $jenis_perizinan_id)->get();
+		return $entri_data->all();
+	}
+
+	public function getByJenisPerizinanIdWithOldData(int $jenis_perizinan_id, int $izin_id): array
+	{
+		$izin = $this->getPerizinanService()->find($izin_id);
+		if (!$izin)
+			return [];
+		$entri_data = EntriData::where('jenis_perizinan_id', $jenis_perizinan_id)->onlyTrashed()->get();
 		return $entri_data->all();
 	}
 
@@ -116,8 +135,12 @@ class EntriDataServiceImpl implements EntriDataService {
 			$old_entri_data = EntriData::onlyTrashed()
 									->where('jenis_perizinan_id', $jenis_perizinan_id);
 			EntriDataIzin::whereIn('entri_data_id', $old_entri_data->pluck('id'))->delete();
-			$old_entri_data->forceDelete();
 		});
+	}
+
+	private function getPerizinanService(): \App\Services\DomainServices\PerizinanService
+	{
+		return app(\App\Services\DomainServices\PerizinanService::class);
 	}
 	
 }

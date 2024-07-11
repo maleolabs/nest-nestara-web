@@ -88,7 +88,7 @@ class PreviewDataIzin extends Component
             return false;
         }
         $user = auth()->user();
-        if (!$user->hasRole('pegawai') && $this->last_izin_status->nama == StatusIzinEnum::PROSES) {
+        if ($user->hasRole('pengelola_layanan') && $this->last_izin_status->nama == StatusIzinEnum::PROSES) {
             $this->permission_message = 'Permohonan izin ini sedang diproses oleh back office, silahkan menunggu proses selesai.';
             return false;
         } 

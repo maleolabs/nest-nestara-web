@@ -208,7 +208,7 @@ class PerizinanServiceImpl implements PerizinanService
     public function updateIzinStatusWhenEntriDataHasChanged(int $izin_id): void
     {
         $izin = $this->find($izin_id);
-        if (!$izin)
+        if (!$izin || $izin->ambil_entri_lama)
             return;
 
         $last_izin_status = $izin->status_izin->last();
@@ -216,6 +216,21 @@ class PerizinanServiceImpl implements PerizinanService
             $entri_deleted_at = $this->entriDataService->getDeletedAtByJenis($izin->jenis_perizinan_id);
             $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::PERUBAHAN_ENTRI, $last_izin_status->pegawai_id, $entri_deleted_at);
         }
+    }
+
+    public function hasDataEntri(int $izin_id): bool
+    {
+        $izin_status = $this->statusIzinService->findByNamaAndIzin(Status::PROSES, $izin_id);
+        return $izin_status && ($izin_status->keterangan == OfficeStatus::SUDAH_ENTRI);
+    }
+
+    public function keepOldEntri(int $izin_id): void
+    {
+        $izin = $this->find($izin_id);
+        if (!$izin)
+            return;
+        $izin->ambil_entri_lama = true;
+        $izin->save();
     }
     
 }

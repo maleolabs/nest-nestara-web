@@ -139,6 +139,7 @@ entity Izin {
       tanggal_peninjauan: datetime
       lokasi_izin: varchar(255)
       penada_tangan_id: unsignedBigInt <<FK>>
+      ambil_entri_lama: boolean
     --
       deleted_at: datetime
     * created_at: datetime

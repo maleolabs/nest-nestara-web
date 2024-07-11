@@ -163,7 +163,8 @@
   }
 
   const scrollto = (el) => {
-    let header = select('#header')
+    console.log(el);
+    let header = select(el)
     let offset = header.offsetHeight
 
     let elementPos = select(el).offsetTop
@@ -235,7 +236,7 @@
     }
   }, true)
 
-  window.addEventListener('load', () => {
+  document.addEventListener('DOMContentLoaded', () => {
     if (window.location.hash) {
       if (select(window.location.hash)) {
         scrollto(window.location.hash)

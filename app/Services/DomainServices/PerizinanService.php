@@ -141,5 +141,26 @@ interface PerizinanService
      * @return void
      */
     function updateIzinStatusWhenEntriDataHasChanged(int $izin_id): void;
+
+    /**
+     * Memeriksa apakah sudah ada entri data untuk ID izin tertentu.
+     *
+     * Fungsi ini memverifikasi apakah sudah ada entri data yang terkait
+     * dengan ID izin yang diberikan.
+     *
+     * @param int $izin_id ID izin yang akan diperiksa entri datanya.
+     * 
+     * @return bool Mengembalikan true jika sudah ada entri data untuk ID izin yang diberikan, false jika tidak ada.
+     */
+    function hasDataEntri(int $izin_id): bool;
+
+    /**
+     * Mengatur agar izin mengambil data entri lama untuk ID izin tertentu.
+     *
+     * @param int $izin_id ID izin yang akan diatur untuk mengambil data entri lama.
+     * 
+     * @return void Fungsi ini tidak mengembalikan nilai apa pun.
+     */
+    function keepOldEntri(int $izin_id): void;
     
 }

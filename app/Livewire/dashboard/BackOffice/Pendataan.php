@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard\BackOffice;
 
 use App\Services\DomainServices\PerizinanService;
+use App\utils\enums\BackOfficeStatusEnum;
 use App\utils\enums\StatusIzinEnum;
 use Carbon\Carbon;
 use Livewire\Attributes\On;
@@ -13,7 +14,7 @@ class Pendataan extends Component
 {
 
     #[Url()]
-    public $preview_izin_id;
+    public $tab, $preview_izin_id;
 
     private const DEFAULT_MENU = 'Entri Data';
 
@@ -23,16 +24,17 @@ class Pendataan extends Component
         $start_date,
         $end_date;
 
-    public $all_izin = [];
+    public $all_izin = [],
+        $count_izin = [];
 
     public function mount()
     {
         $this->getPerizinanService()->updateIzinStatusThatHaveBeenReviewed();
         $this->getPerizinanService()->updateAllIzinStatusWhenEntriDataHasChanged();
 
-        $this->selectMenu(self::DEFAULT_MENU, false);
+        $this->selectMenu($this->tab, false);
 
-        $this->start_date = Carbon::today()->subDay()->toDateString();
+        $this->start_date = Carbon::today()->subMonth()->toDateString();
         $this->end_date = Carbon::today()->toDateString();
     }
 
@@ -47,6 +49,34 @@ class Pendataan extends Component
         $start_date = Carbon::parse($this->start_date)->toDateString();
         $end_date = Carbon::parse($this->end_date)->toDateString();
         $this->all_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::PROSES], [], $start_date, $end_date);
+        $this->count_izin[self::DEFAULT_MENU] = count($this->getFilteredDataList(self::DEFAULT_MENU));
+        $this->count_izin['Penjadwalan Tim Teknis'] = count($this->getFilteredDataList('Penjadwalan Tim Teknis'));
+        $this->all_izin = $this->getFilteredDataList($this->active_menu);
+    }
+
+    private function getFilteredDataList($filter): array
+    {
+        $filtered_data = [];
+        if ($filter == self::DEFAULT_MENU) {
+            $filtered_data = array_filter($this->all_izin, function ($izin) {
+                $izin_status = $izin->status_izin->last();
+                return in_array($izin_status->keterangan, $this->getEnterableStatuses());
+            });
+        } else {
+            $filtered_data = array_filter($this->all_izin, function ($izin) {
+                return $izin->status_izin->last()->keterangan == BackOfficeStatusEnum::SUDAH_ENTRI;
+            });
+        }
+        return $filtered_data;
+    }
+
+    private function getEnterableStatuses(): array
+    {
+        return [
+            BackOfficeStatusEnum::BELUM_ENTRI,
+            BackOfficeStatusEnum::PERUBAHAN_ENTRI,
+            BackOfficeStatusEnum::SEDANG_ENTRI
+        ];
     }
 
     public function previewDataIzin($izin_id)
@@ -60,6 +90,8 @@ class Pendataan extends Component
             $this->active_menu = $menu;
             $this->preview_izin_id = $reset_url ? null : $this->preview_izin_id;
             $this->dispatch('menu-selected', ['menu' => $menu]);
+        } else {
+            $this->selectMenu(self::DEFAULT_MENU, true);
         }
     }
 

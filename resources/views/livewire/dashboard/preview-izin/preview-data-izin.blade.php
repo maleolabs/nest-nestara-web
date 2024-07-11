@@ -242,16 +242,14 @@
 @push('scripts')
     <script>
         Livewire.hook('component.init', ({component, cleanup}) => {
-            setInterval(() => {
-                select2Init()
-            }, 200);
+            select2Init()
         })
         Livewire.hook('morph.updated', ({ el, component }) => {
             select2Init()
             observeSelect2Value()
         })
         function select2Init() {
-            $('#penanda_tangan_select').select2({
+            $('#penanda_tangan').select2({
                 placeholder: 'Pilih penanda tangan',
                 theme: "bootstrap-5",
             })

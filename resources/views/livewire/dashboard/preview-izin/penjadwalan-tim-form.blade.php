@@ -14,10 +14,10 @@
             </div>
             <div class="input-group input-group-outline mb-3">
                 <label for="penanda_tangan" class="form-label">No Surat</label>
-                <select class="form-select @error('penanda_tangan')is-invalid @enderror" id="penanda_tangan" wire:model="penanda_tangan" id="penanda_tangan_select">
-                    <option value="">Pilih Penandatangan</option>
-                    <option value="">jokowi</option>
-                    <option value="">prabowo</option>
+                <select class="form-select @error('penanda_tangan')is-invalid @enderror" id="penanda_tangan" wire:model="penanda_tangan">
+                    <option selected>Pilih Penandatangan</option>
+                    <option value="jokow">jokowi</option>
+                    <option value="prabowo">prabowo</option>
                 </select>
                 @error('penanda_tangan')
                     <div class="text-danger text-sm">{{ $message }}</div>

@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard\PreviewIzin;
 
 use App\Livewire\Dashboard\BackOffice\Partials\EntriDataTrait;
+use App\Livewire\Dashboard\PreviewIzin\Partials\HasPermissionToAccess;
 use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\JenisPerizinanService;
@@ -10,6 +11,7 @@ use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
 use App\utils\enums\BackOfficeStatusEnum;
+use App\utils\enums\PreviewFeatureEnum;
 use App\utils\enums\StatusIzinEnum;
 use App\utils\enums\StatusIzinProgressEnum;
 use Carbon\Carbon;
@@ -20,7 +22,7 @@ use Livewire\Component;
 class PreviewDataIzin extends Component
 {
 
-    use EntriDataTrait;
+    use EntriDataTrait, HasPermissionToAccess;
 
     public $preview_izin_id,
         $preview_izin,
@@ -39,36 +41,41 @@ class PreviewDataIzin extends Component
         $action_confirm,
         $editing_data_action = false;
 
-    public $permission_message;
-
     public $active_tab;
     private const TINDAKAN = 'tindakan';
     private const PERSYARATAN = 'persyaratan';
     
     public function mount()
     {
-        $this->action_confirm = 'permohonan-selesai';
-        $this->getPerizinanService()->updateIzinStatusWhenEntriDataHasChanged($this->preview_izin_id);
+        if ($this->hasPermission(PreviewFeatureEnum::ENTRI_DATA)) {
+            $this->is_entri_changed = $this->last_izin_status && $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI;
+            $this->getPerizinanService()->updateIzinStatusWhenEntriDataHasChanged($this->preview_izin_id);
+            $this->has_permission = true;
+        }
+        if ($this->hasPermission(PreviewFeatureEnum::TINJAUAN_PERMOHONAN)) {
+            $this->action_confirm = 'permohonan-selesai';
+        }
         $this->setDataPreview();
-        $this->is_entri_changed = $this->last_izin_status && $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI;
         $this->dispatch('component-rendered');
     }
 
     public function updated($field)
     {
-        $action_data = [
-            'tanggal_peninjauan',
-            'lokasi_izin',
-            'keterangan',
-            'action_confirm',
-        ];
-        if (in_array($field, $action_data)) {
-            $this->active_tab = self::TINDAKAN;
-            $this->editing_data_action = true;
-            if ($this->action_confirm == 'revisi-permohonan' && !$this->keterangan)
-                throw ValidationException::withMessages([
-                    'keterangan' => 'Keterangan revisi permohonan harus diisi!'
-                ]);
+        if ($this->has_permission) {
+            $action_data = [
+                'tanggal_peninjauan',
+                'lokasi_izin',
+                'keterangan',
+                'action_confirm',
+            ];
+            if (in_array($field, $action_data)) {
+                $this->active_tab = self::TINDAKAN;
+                $this->editing_data_action = true;
+                if ($this->action_confirm == 'revisi-permohonan' && !$this->keterangan)
+                    throw ValidationException::withMessages([
+                        'keterangan' => 'Keterangan revisi permohonan harus diisi!'
+                    ]);
+            }
         }
     }
 
@@ -79,20 +86,6 @@ class PreviewDataIzin extends Component
         if (!$this->edit_entri_data)
             $this->setEntriData();
         return view('livewire.dashboard.preview-izin.preview-data-izin');
-    }
-
-    protected function canAccess(): bool
-    {
-        if (!$this->preview_izin) {
-            $this->permission_message = 'Data tidak ditemukan!';
-            return false;
-        }
-        $user = auth()->user();
-        if ($user->hasRole('pengelola_layanan') && $this->last_izin_status->nama == StatusIzinEnum::PROSES) {
-            $this->permission_message = 'Permohonan izin ini sedang diproses oleh back office, silahkan menunggu proses selesai.';
-            return false;
-        } 
-        return true;
     }
 
     public function saveAction()

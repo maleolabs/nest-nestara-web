@@ -61,21 +61,19 @@ class PreviewDataIzin extends Component
 
     public function updated($field)
     {
-        if ($this->has_permission) {
-            $action_data = [
-                'tanggal_peninjauan',
-                'lokasi_izin',
-                'keterangan',
-                'action_confirm',
-            ];
-            if (in_array($field, $action_data)) {
-                $this->active_tab = self::TINDAKAN;
-                $this->editing_data_action = true;
-                if ($this->action_confirm == 'revisi-permohonan' && !$this->keterangan)
-                    throw ValidationException::withMessages([
-                        'keterangan' => 'Keterangan revisi permohonan harus diisi!'
-                    ]);
-            }
+        $action_data = [
+            'tanggal_peninjauan',
+            'lokasi_izin',
+            'keterangan',
+            'action_confirm',
+        ];
+        if (in_array($field, $action_data)) {
+            $this->active_tab = self::TINDAKAN;
+            $this->editing_data_action = true;
+            if ($this->action_confirm == 'revisi-permohonan' && !$this->keterangan)
+                throw ValidationException::withMessages([
+                    'keterangan' => 'Keterangan revisi permohonan harus diisi!'
+                ]);
         }
     }
 

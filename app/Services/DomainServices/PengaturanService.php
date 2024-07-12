@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Services\DomainServices;
+
+use App\Models\Pengaturan;
+
+interface PengaturanService {
+
+    /**
+     * Membuat atau memperbarui pengaturan berdasarkan nama.
+     *
+     * @param string $nama Nama pengaturan.
+     * @param mixed $value Nilai pengaturan.
+     * @param string|null $group (Opsional) Kelompok pengaturan.
+     * @param mixed|null $user_id (Opsional) ID pengguna terkait.
+     * @return Pengaturan|null Objek Pengaturan yang diperbarui atau dibuat, atau null jika gagal.
+     */
+    function updateOrCreate(string $nama, $value, string $group = null, $user_id = null): ?Pengaturan;
+
+    /**
+     * Menemukan pengaturan berdasarkan nama.
+     *
+     * @param string $nama Nama pengaturan.
+     * @param mixed|null $default Nilai default jika pengaturan tidak ditemukan.
+     * @param mixed|null $user_id (Opsional) ID pengguna terkait.
+     * @return Pengaturan|null Objek Pengaturan yang ditemukan, atau null jika tidak ditemukan.
+     */
+    function find(string $nama, $user_id = null): ?Pengaturan;
+
+    /**
+     * Mendapatkan semua kelompok pengaturan.
+     *
+     * @return array Daftar semua kelompok pengaturan.
+     */
+    function getAllGroups(): array;
+
+    /**
+     * Menghapus pengaturan berdasarkan ID.
+     *
+     * @param int $id ID pengaturan.
+     * @return bool True jika pengaturan berhasil dihapus, false jika gagal.
+     */
+    function delete(int $id): bool;
+	
+}

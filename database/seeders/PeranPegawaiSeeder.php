@@ -18,7 +18,7 @@ class PeranPegawaiSeeder extends Seeder
             'penandatangan',
             'timteknis',
         ];
-        $all_pegawai = Pegawai::factory(5)->createMany();
+        $all_pegawai = Pegawai::factory()->createMany();
         foreach ($all_pegawai as $pegawai) {
             PeranPegawai::create([
                 'pegawai_id' => $pegawai->id,

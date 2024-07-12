@@ -1,5 +1,5 @@
 <div>
-    <md-linear-progress wire:loading wire:target='back, saveAction, saveEntri' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
+    <md-linear-progress wire:loading wire:target='back, saveAction, saveEntri, saveTinjauanLapangan' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
 
     <div class="row px-2">
         @if ($this->canAccess())
@@ -223,7 +223,7 @@
                     @if ($last_izin_status->keterangan == \App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN)
                         <div class="card" id="timTeknis">
                             <div class="card-body">
-                                @include('livewire.dashboard.preview-izin.penjadwalan-tim-form')
+                                @include('livewire.dashboard.back-office.partials.penjadwalan-tim-form')
                             </div>
                         </div>
                     @endif
@@ -239,38 +239,3 @@
     @include('livewire.dashboard.preview-izin.modal-show-document')
     @livewire('dashboard.dashboard-util')
 </div>
-@push('scripts')
-    <script>
-        Livewire.hook('component.init', ({component, cleanup}) => {
-            select2Init()
-        })
-        Livewire.hook('morph.updated', ({ el, component }) => {
-            select2Init()
-            observeSelect2Value()
-        })
-        function select2Init() {
-            $('#penanda_tangan').select2({
-                placeholder: 'Pilih penanda tangan',
-                theme: "bootstrap-5",
-            })
-        }
-        function observeSelect2Value() {
-            const select2El = document.querySelector('.select2-selection__rendered')
-            if (select2El) {
-                const observer = new MutationObserver((mutations) => {
-                    mutations.forEach((mutation) => {
-                        if (mutation.type === 'characterData' || mutation.type === 'childList') {
-                            @this.set('data_izin_form.jenis_izin', select2El.textContent)
-                        }
-                    });
-                });
-                const config = {
-                    childList: true,
-                    subtree: true,
-                    characterData: true
-                }
-                observer.observe(select2El, config)
-            }
-        }
-    </script>
-@endpush

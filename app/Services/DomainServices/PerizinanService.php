@@ -163,6 +163,27 @@ interface PerizinanService
      */
     function keepOldEntri(int $izin_id): void;
 
+    /**
+     * Memperbarui status perizinan jika data entri sudah dimasukkan.
+     *
+     * Fungsi ini memperbarui status perizinan berdasarkan apakah data entri
+     * sudah dimasukkan atau belum. Jika data entri sudah dimasukkan, status
+     * perizinan akan diperbarui.
+     *
+     * @param int $izin_id ID perizinan yang akan diperbarui statusnya.
+     * @param ?int $pegawai_id ID pegawai yang terkait dengan perizinan (opsional).
+     *
+     * @return void Fungsi ini tidak mengembalikan nilai apa pun.
+     */
     function updateStatusIfEntriDataAlrearyEntered(int $izin_id, ?int $pegawai_id = null): void;
-    
+
+    /**
+     * Menyimpan hasil tinjuan lapangan untuk permohonan izin tertentu.
+     *
+     * @param int $izin_id ID permohonan izin yang akan disimpan hasil tinjauannya.
+     * @param int $penandatangan_id ID penandatangan yang akan menandatangani surat.
+     * @param array $timteknis Data ID tim teknis yang melakukan tinjauan lapangan.
+     */
+    function savePeninjauanLapangan(int $izin_id, int $penandatangan_id, array $timteknis_ids): void;
+
 }

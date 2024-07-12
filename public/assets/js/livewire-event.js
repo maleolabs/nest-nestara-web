@@ -126,6 +126,26 @@ function setInputsHandle() {
                 this.parentElement.classList.remove('is-focused');
             }, false);
         }
+        var selects = document.querySelectorAll('select');
+        for (var i = 0; i < selects.length; i++) {
+            select = selects[i]
+            if (select.value != "") {
+                select.parentElement.classList.add('is-filled');
+            } else {
+                select.parentElement.classList.remove('is-filled');
+            }
+            
+            selects[i].addEventListener('focus', function(e) {
+                this.parentElement.classList.add('is-focused');
+            }, false);
+
+            selects[i].addEventListener('focusout', function(e) {
+                if (this.value != "") {
+                    this.parentElement.classList.add('is-filled');
+                }
+                this.parentElement.classList.remove('is-focused');
+            }, false);
+        }
         var textareas = document.querySelectorAll('textarea');
         for (var i = 0; i < textareas.length; i++) {
             textarea = textareas[i]

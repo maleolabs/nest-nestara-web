@@ -254,5 +254,23 @@ class PerizinanServiceImpl implements PerizinanService
             $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::ENTRI_TINJAUAN_LAPANGAN, $pegawai_id);
         }
     }
+
+    public function savePeninjauanLapangan(int $izin_id, int $penandatangan_id, array $timteknis_ids): void
+    {
+        $izin = $this->find($izin_id);
+        if (!$izin)
+            return;
+
+        // todo: create nomor surat
+        $no_surat = '0';
+
+        $izin->no_surat = $no_surat;
+        $izin->penandatangan_id = $penandatangan_id;
+        $izin->save();
+        $izin->timteknis()->attach($timteknis_ids);
+
+        $izin_status = $izin->status_izin->last();
+        // todo: update status
+    }
     
 }

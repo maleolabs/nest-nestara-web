@@ -35,7 +35,7 @@ class PegawaiServiceImpl implements PegawaiService {
 	public function getTimTeknis(): array
 	{
 		$tim_teknis = Pegawai::whereHas('peran_pegawai', function ($query) {
-			$query->where('peran', 'tim_teknis');
+			$query->where('peran', 'timteknis');
 		})->get();
 		return $tim_teknis->all();
 	}

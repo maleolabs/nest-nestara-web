@@ -5,12 +5,12 @@ skinparam linetype ortho
 entity User {
     * id: bigint
     --
-      nama: varchar(100)
+      nama: varchar(100) <<nullable>>
     * email: varchar(100)
     * password: varchar(255)
       foto: varchar(100)
     --
-      deleted_at: datetime
+      deleted_at: datetime <<nullable>>
     * created_at: datetime
     * updated_at: datetime
 }
@@ -28,11 +28,12 @@ entity Roles {
 entity Pegawai {
     * id: bigint
     --
-      user_id: unsignedBigInt <<FK>>
+      user_id: unsignedBigInt <<nullable, FK>>
     * nama: varchar(100)
-    * jabatan: varchar(100)
+      nip: varchar(20) <<nullable>>
+      jabatan: varchar(100) <<nullable>>
     --
-      deleted_at: datetime
+      deleted_at: datetime <<nullable>>
     * created_at: datetime
     * updated_at: datetime
 }
@@ -60,9 +61,9 @@ entity Pemohon {
     * kecamatan: int
     * kelurahan: int
     * detail_alamat: varchar(255)
-      alamat_luar_negeri: varchar(255)
+      alamat_luar_negeri: varchar(255) <<nullable>>
     --
-      deleted_at: datetime
+      deleted_at: datetime <<nullable>>
     * created_at: datetime
     * updated_at: datetime
 }
@@ -75,7 +76,7 @@ entity JenisPerizinan {
     * durasi: int
     * masa_berlaku: int
     --
-      deleted_at: datetime
+      deleted_at: datetime <<nullable>>
     * created_at: datetime
     * updated_at: datetime
 }
@@ -91,7 +92,7 @@ entity EntriData {
     * is_mulsti_value: boolean
     * value_separator: varchar(5)
     --
-      deleted_at: datetime
+      deleted_at: datetime <<nullable>>
     * created_at: datetime
     * updated_at: datetime
 }
@@ -103,7 +104,7 @@ entity SyaratIzin {
     * tipe: varchar(10)
     * online: boolean
     --
-      deleted_at: datetime
+      deleted_at: datetime <<nullable>>
     * created_at: datetime
     * updated_at: datetime
 }
@@ -128,12 +129,13 @@ entity Izin {
     * jenis_perizinan_id: unsignedBigInt <<FK>>
     * no_pendaftaran: int
     * jenis_permohonan: enum('baru', 'perubahan', 'perpanjangan')
-      tanggal_peninjauan: datetime
-      lokasi_izin: varchar(255)
-      penada_tangan_id: unsignedBigInt <<FK>>
-      ambil_entri_lama: boolean
+      tanggal_peninjauan: datetime <<nullable>>
+      lokasi_izin: varchar(255) <<nullable>>
+      penada_tangan_id: unsignedBigInt <<nullable, FK>>
+      nomor_surat: varchar(25) <<nullable>>
+      ambil_entri_lama: boolean <<default: false>>
     --
-      deleted_at: datetime
+      deleted_at: datetime <<nullable>>
     * created_at: datetime
     * updated_at: datetime
 }
@@ -165,8 +167,11 @@ entity EntriDataIzin {
 entity Pengaturan {
     * id: bigint
     --
+    * group: varchar(100)
     * nama: varchar(255)
-    * value: text
+      value: text <<nullable>>
+      tipe: enum('text', 'int', 'boolean', 'datetime', 'json') <<default: 'text'>>
+      user_id: unsignedBigInt <<nullable, FK>>
     --
     * created_at: datetime
     * updated_at: datetime

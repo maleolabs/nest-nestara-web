@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('nama', 100);
-            $table->string('jabatan', 100);
+            $table->string('nip', 20)->nullable();
+            $table->string('jabatan', 100)->nullable();
             $table->softDeletes();
             $table->timestamps();
 

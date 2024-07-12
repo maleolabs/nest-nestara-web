@@ -27,9 +27,16 @@ trait EntriDataTrait
         if (!is_int($this->jenis_perizinan_id))
             return;
         $this->entri_data = $this->getEntriDataService()->getByJenisPerizinanIdWithOldData($this->jenis_perizinan_id, $this->preview_izin_id);
+        $setup_entri = [];
         foreach ($this->entri_data as $entri) {
-            if ($entri_data_izin = $this->getEntriDataService()->findFirstEntriIzinByDataId($entri->id, $this->preview_izin_id))
+            if ($entri_data_izin = $this->getEntriDataService()->findFirstEntriIzinByDataId($entri->id, $this->preview_izin_id)) {
                 $this->entri_data_izin[$entri->id] = $entri_data_izin->value;
+                $setup_entri[] = $entri;
+            }
+        }
+        if (count($setup_entri) > 0)
+            $this->entri_data = $setup_entri;
+        foreach ($this->entri_data as $entri) {
             $key_entri = "entri_data_izin.{$entri->id}";
             if ($entri->mandatori)
                 $this->entri_data_validate[$key_entri][] = "max:{$entri->max}";

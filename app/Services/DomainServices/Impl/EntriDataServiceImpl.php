@@ -51,7 +51,7 @@ class EntriDataServiceImpl implements EntriDataService {
 		$izin = $this->getPerizinanService()->find($izin_id);
 		if (!$izin)
 			return [];
-		$entri_data = EntriData::where('jenis_perizinan_id', $jenis_perizinan_id)->onlyTrashed()->get();
+		$entri_data = EntriData::where('jenis_perizinan_id', $jenis_perizinan_id)->withTrashed()->get();
 		return $entri_data->all();
 	}
 

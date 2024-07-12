@@ -195,8 +195,7 @@ class PerizinanServiceImpl implements PerizinanService
                 ->where('nama', Status::PROSES)
                 ->where('progres', Progres::PROCESSING)
                 ->where(function ($status_ket) {
-                    $status_ket->where('keterangan', OfficeStatus::SUDAH_ENTRI)
-                        ->orWhere('keterangan', OfficeStatus::SEDANG_ENTRI);
+                    $status_ket->whereIn('keterangan', $this->getUpdatableStatusWhenEntriDataHasChanged());
                 })
                 ->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) FROM status_izin WHERE status_izin.izin_id = izin.id)'));
         })->pluck('id');
@@ -212,10 +211,18 @@ class PerizinanServiceImpl implements PerizinanService
             return;
 
         $last_izin_status = $izin->status_izin->last();
-        if (!$this->entriDataService->isEntriDataIzinExistsByIzinAndJenis($izin_id, $izin->jenis_perizinan_id) && $last_izin_status->progres == Progres::PROCESSING && $last_izin_status->keterangan == OfficeStatus::SUDAH_ENTRI) {
+        if (!$this->entriDataService->isEntriDataIzinExistsByIzinAndJenis($izin_id, $izin->jenis_perizinan_id) && $last_izin_status->progres == Progres::PROCESSING && in_array($last_izin_status->keterangan, $this->getUpdatableStatusWhenEntriDataHasChanged())) {
             $entri_deleted_at = $this->entriDataService->getDeletedAtByJenis($izin->jenis_perizinan_id);
             $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::PERUBAHAN_ENTRI, $last_izin_status->pegawai_id, $entri_deleted_at);
         }
+    }
+
+    private function getUpdatableStatusWhenEntriDataHasChanged(): array
+    {
+        return [
+            OfficeStatus::SUDAH_ENTRI,
+            OfficeStatus::ENTRI_TINJAUAN_LAPANGAN
+        ];
     }
 
     public function hasDataEntri(int $izin_id): bool

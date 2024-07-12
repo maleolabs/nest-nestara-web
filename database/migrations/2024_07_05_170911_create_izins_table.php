@@ -21,7 +21,7 @@ return new class extends Migration
             $table->enum('jenis_permohonan', JenisPermohonanEnum::all())->default(JenisPermohonanEnum::BARU);
             $table->dateTime('tanggal_peninjauan')->nullable();
             $table->string('lokasi_izin')->nullable();
-            $table->boolean('ambil_data_lama')->default(false);
+            $table->boolean('ambil_entri_lama')->default(false);
             $table->softDeletes();
             $table->timestamps();
 

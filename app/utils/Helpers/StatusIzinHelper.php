@@ -32,6 +32,7 @@ if (!function_exists('getStatusIzinProcessClasses')) {
             BackOfficeStatusEnum::BELUM_ENTRI => 'muted',
             BackOfficeStatusEnum::SEDANG_ENTRI => 'dark',
             BackOfficeStatusEnum::SUDAH_ENTRI => 'info',
+            BackOfficeStatusEnum::PERUBAHAN_ENTRI => 'warning',
             BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN => 'dark'
         ];
 

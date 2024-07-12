@@ -17,6 +17,12 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService {
         return JenisPerizinan::with('syarat_izin')->where('nama', $name)->first();
     }
 
+    public function getAll(string $sorting_by = 'created_at', string $sort = 'DESC'): array
+    {
+        $jenis_perizinan = JenisPerizinan::orderBy($sorting_by, $sort)->get();
+        return $jenis_perizinan->all();
+    }
+
     public function getPersyaratan(int $jenis_id): array
     {
         $perizinan = JenisPerizinan::find($jenis_id);

@@ -20,6 +20,7 @@ use App\Services\DomainServices\Impl\PengaturanServiceImpl;
 use App\Services\DomainServices\Impl\PerizinanServiceImpl;
 use App\Services\DomainServices\Impl\RoleServiceImpl;
 use App\Services\DomainServices\Impl\StatusIzinServiceImpl;
+use App\Services\DomainServices\Impl\SuratServiceImpl;
 use App\Services\DomainServices\Impl\SyaratIzinServiceImpl;
 use App\Services\DomainServices\Impl\UserServiceImpl;
 use App\Services\DomainServices\JenisPerizinanService;
@@ -28,6 +29,7 @@ use App\Services\DomainServices\PengaturanService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\RoleService;
 use App\Services\DomainServices\StatusIzinService;
+use App\Services\DomainServices\SuratService;
 use App\Services\DomainServices\SyaratIzinService;
 use App\Services\DomainServices\UserService;
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -53,6 +55,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
             PegawaiService::class,
             PdfToTextService::class,
             PengaturanService::class,
+            SuratService::class,
         ];
     }
 
@@ -75,6 +78,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(PegawaiService::class, PegawaiServiceImpl::class);
         $this->app->singleton(PdfToTextService::class, PdfToTextServiceImpl::class);
         $this->app->singleton(PengaturanService::class, PengaturanServiceImpl::class);
+        $this->app->singleton(SuratService::class, SuratServiceImpl::class);
     }
 
     /**

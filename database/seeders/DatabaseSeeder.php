@@ -17,5 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PersyaratanIzinSeeder::class);
 
         $this->call(EntriPenMasSeeder::class);
+
+        $this->call(PengaturanSeeder::class);
     }
 }

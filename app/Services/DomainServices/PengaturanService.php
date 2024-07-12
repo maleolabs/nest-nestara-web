@@ -7,6 +7,14 @@ use App\Models\Pengaturan;
 interface PengaturanService {
 
     /**
+     * Membuat banyak pengaturan sekaligus.
+     *
+     * @param array $pengaturan Array asosiasi dengan nama pengaturan sebagai kunci dan nilai pengaturan sebagai nilai.
+     * @return void
+     */
+    function createMany(array $pengaturan): void;
+
+    /**
      * Membuat atau memperbarui pengaturan berdasarkan nama.
      *
      * @param string $nama Nama pengaturan.
@@ -26,6 +34,15 @@ interface PengaturanService {
      * @return Pengaturan|null Objek Pengaturan yang ditemukan, atau null jika tidak ditemukan.
      */
     function find(string $nama, $user_id = null): ?Pengaturan;
+
+    /**
+     * Mencari objek Pengaturan berdasarkan nama dan group
+     *
+     * @param string $nama Nama Pengaturan yang akan dicari.
+     * @param string $group Group Pengaturan yang akan dicari.
+     * @return Pengaturan|null Objek Pengaturan jika ditemukan, jika tidak null.
+     */
+    function findByNamaAndGroup(string $nama, string $group): ?Pengaturan;
 
     /**
      * Mendapatkan semua kelompok pengaturan.

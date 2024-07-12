@@ -21,6 +21,15 @@ interface JenisPerizinanService {
     function findByName(string $name): ?JenisPerizinan;
 
     /**
+     * Mengambil semua catatan jenis perizinan, secara opsional diurutkan berdasarkan kolom dan arah tertentu.
+     *
+     * @param string $sorting_by Kolom untuk mengurutkan hasil. Default ke 'created_at'.
+     * @param string $sort Arah pengurutan, baik 'ASC' atau 'DESC'. Default ke 'DESC'.
+     * @return array Sebuah array dari model JenisPerizinan.
+     */
+    function getAll(string $sorting_by = 'created_at', string $sort = 'DESC'): array;
+
+    /**
      * Mendapatkan daftar persyaratan berdasarkan id jenis perizinan
      * @param int $jenis_id
      * @return array

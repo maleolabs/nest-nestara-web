@@ -220,7 +220,7 @@
                         @endif
                     @endif
 
-                    @if ($last_izin_status->keterangan == \App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN)
+                    @if ($this->tinjauLapangan())
                         <div class="card" id="timTeknis">
                             <div class="card-body">
                                 @include('livewire.dashboard.back-office.partials.penjadwalan-tim-form')

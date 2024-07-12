@@ -6,6 +6,7 @@ use App\Models\Izin;
 use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\StatusIzinService;
+use App\Services\DomainServices\SuratService;
 use App\utils\enums\BackOfficeStatusEnum as OfficeStatus;
 use App\utils\enums\StatusIzinEnum as Status;
 use App\utils\enums\StatusIzinProgressEnum as Progres;
@@ -19,10 +20,16 @@ class PerizinanServiceImpl implements PerizinanService
 
     protected EntriDataService $entriDataService;
 
-    public function __construct(StatusIzinService $statusIzinService, EntriDataService $entriDataService)
+    protected SuratService $suratService;
+
+    public function __construct(
+        StatusIzinService $statusIzinService, 
+        EntriDataService $entriDataService,
+        SuratService $suratService)
     {
         $this->statusIzinService = $statusIzinService;
         $this->entriDataService = $entriDataService;
+        $this->suratService = $suratService;
     }
     
     public function saveRegistration(int $jenis_izin_id, int $pemohon_id): ?Izin
@@ -255,22 +262,37 @@ class PerizinanServiceImpl implements PerizinanService
         }
     }
 
-    public function savePeninjauanLapangan(int $izin_id, int $penandatangan_id, array $timteknis_ids): void
+    public function savePeninjauanLapangan(int $izin_id, int $penandatangan_id, array $timteknis_ids, ?string $nomor_surat = null): void
     {
-        $izin = $this->find($izin_id);
-        if (!$izin)
-            return;
-
-        // todo: create nomor surat
-        $no_surat = '0';
-
-        $izin->no_surat = $no_surat;
-        $izin->penandatangan_id = $penandatangan_id;
-        $izin->save();
-        $izin->timteknis()->attach($timteknis_ids);
-
-        $izin_status = $izin->status_izin->last();
-        // todo: update status
+        DB::transaction(function () use ($izin_id, $penandatangan_id, $timteknis_ids, $nomor_surat) {
+            $izin = $this->find($izin_id);
+            if (!$izin)
+                return;
+    
+            if (!$nomor_surat)
+                $nomor_surat = $this->suratService->generateNomorSurat($izin->jenis_perizinan_id);
+    
+            $izin->no_surat = $nomor_surat;
+            $izin->penandatangan_id = $penandatangan_id;
+            $izin->save();
+            $izin->timteknis()->attach(array_keys($timteknis_ids));
+    
+            $izin_status = $izin->status_izin->last();
+            $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN, $izin_status->pegawai_id);
+    
+            $nomor_surat_parts = explode('/', $nomor_surat);
+            $format_surat = $this->suratService->getActualFormat();
+            $format_parts = explode('/', $format_surat);
+            $nomor_terakhir = 0;
+            $nomor_terakhir_jp = 0;
+            foreach ($format_parts as $index => $part) {
+                if ($part == '{nomor}')
+                    $nomor_terakhir = $nomor_surat_parts[$index];
+                else if ($part == '{no-jenis-izin}')
+                    $nomor_terakhir_jp = $nomor_surat_parts[$index];
+            }
+            $this->suratService->updateNomorSurat($nomor_terakhir, $izin->jenis_perizinan_id, $nomor_terakhir_jp);
+        });
     }
     
 }

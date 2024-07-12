@@ -23,32 +23,36 @@ class SuratServiceImpl implements SuratService {
 
     public function generateNomorSurat(int $jenis_perizinan_id): string
     {
-        $format_surat = $this->pengaturanService->find('format-surat');
-        $nomor_surat = $this->pengaturanService->find('nomor-surat');
-        $instansi_surat = $this->pengaturanService->find('instansi-surat');
-        if (!$format_surat || !$nomor_surat || !$instansi_surat) $this->generateDefaultFormatSurat();
+        $nomor_surat = $this->getNomor();
+        $generated_nomor_surat = $this->getFormat($jenis_perizinan_id, false);
+        $generated_nomor_surat = str_replace('{nomor}', $nomor_surat, $generated_nomor_surat);
+        return $generated_nomor_surat;
+    }
 
-        $nomor_surat = $nomor_surat->value + 1;
+    public function getFormat(int $jenis_perizinan_id, bool $clear_unreplace_format = true): string
+    {
+        $format_surat = $this->pengaturanService->find('format-surat');
+        $instansi_surat = $this->pengaturanService->find('instansi-surat');
+        if (!$format_surat || !$instansi_surat) $this->generateDefaultFormatSurat();
 
         $jenis_nama = "JENIS-{$jenis_perizinan_id}";
         $jenis_nomor = "NO-JENIS-{$jenis_perizinan_id}";
         $jenis_izin = $this->pengaturanService->findByNamaAndGroup($jenis_nama, 'izin');
         $no_jenis_izin = $this->pengaturanService->findByNamaAndGroup($jenis_nomor, 'izin');
-        if (!$jenis_izin ||!$no_jenis_izin) $this->generateDefaultJenisPerizinanFormat();
+        if (!$jenis_izin || !$no_jenis_izin) $this->generateDefaultJenisPerizinanFormat();
+        $no_jenis_izin = (int) $no_jenis_izin->value + 1;
 
         $today = Carbon::today();
 
         $generated_nomor_surat = str_replace([
-            '{nomor}',
             '{instansi}',
             '{jenis-izin}',
             '{no-jenis-izin}',
             '{tahun}'
         ], [
-            $nomor_surat,
             $instansi_surat->value,
             $jenis_izin->value,
-            $no_jenis_izin->value,
+            str_pad($no_jenis_izin, 4, '0', STR_PAD_LEFT),
             $today->year
         ], $format_surat->value);
 
@@ -63,7 +67,25 @@ class SuratServiceImpl implements SuratService {
             }
         }
 
-        return $generated_nomor_surat;
+        return $clear_unreplace_format ? str_replace('{nomor}', '', $generated_nomor_surat) : $generated_nomor_surat;
+    }
+
+    public function getActualFormat(): string
+    {
+        $format = $this->pengaturanService->findByNamaAndGroup('format-surat', 'izin');
+        dd($format);
+        if (!$format) {
+            $this->generateDefaultFormatSurat();
+            $this->getActualFormat();
+        }
+        return $format->value;
+    }
+
+    public function getNomor(): int
+    {
+        $nomor_surat = $this->pengaturanService->find('nomor-surat');
+        if (!$nomor_surat) return 1;
+        return (int) $nomor_surat->value + 1;
     }
 
     public function updateNomorSurat(

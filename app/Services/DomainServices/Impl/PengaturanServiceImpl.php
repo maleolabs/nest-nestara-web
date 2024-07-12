@@ -36,7 +36,6 @@ class PengaturanServiceImpl implements PengaturanService {
 	{
 		return Pengaturan::where('nama', $nama)
 				->where('group', $group)
-				->orderBy('user_id', 'DESC')
 				->first();
 	}
 

@@ -48,6 +48,7 @@ class PreviewDataIzin extends Component
     
     public function mount()
     {
+        $this->setDataPreview();
         if ($this->hasPermission(PreviewFeatureEnum::ENTRI_DATA)) {
             $this->is_entri_changed = $this->last_izin_status && $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI;
             $this->getPerizinanService()->updateIzinStatusWhenEntriDataHasChanged($this->preview_izin_id);
@@ -58,7 +59,6 @@ class PreviewDataIzin extends Component
         if ($this->hasPermission(PreviewFeatureEnum::TINJAUAN_PERMOHONAN)) {
             $this->action_confirm = 'permohonan-selesai';
         }
-        $this->setDataPreview();
         $this->dispatch('component-rendered');
     }
 
@@ -178,6 +178,11 @@ class PreviewDataIzin extends Component
                 break;
         }
         return str_capitalize($value, true);
+    }
+
+    private function tinjauLapangan(): bool
+    {
+        return ($this->last_izin_status && ($this->last_izin_status->keterangan == BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN || $this->last_izin_status->keterangan == BackOfficeStatusEnum::SUDAH_ENTRI_TINJAUAN_LAPANGAN)) || $this->hasTinjauanLapangan();
     }
 
     public function showImgModal($title, $path, $tipe, $syarat_id = null)

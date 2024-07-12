@@ -13,6 +13,29 @@ interface SuratService {
     function generateNomorSurat(int $jenis_perizinan_id): string;
 
     /**
+     * Mendapatkan format untuk surat berdasarkan jenis perizinan.
+     *
+     * @param int $jenis_perizinan_id ID jenis perizinan untuk mendapatkan format surat.
+     * @param bool $clear_unreplace_format Menentukan apakah format yang tidak tergantikan harus dihapus atau tidak.
+     * @return string Format untuk surat yang sesuai dengan jenis perizinan.
+     */
+    function getFormat(int $jenis_perizinan_id, bool $clear_unreplace_format = true): string;
+
+    /**
+     * Mendapatkan format surat yang sebenarnya.
+     *
+     * @return string Format surat yang sesuai dengan jenis perizinan.
+     */
+    function getActualFormat(): string;
+
+    /**
+     * Mendapatkan nomor surat saat ini berdasarkan jenis perizinan.
+     *
+     * @return int Nomor surat saat ini untuk jenis perizinan yang ditentukan.
+     */
+    function getNomor(): int;
+
+    /**
      * Memperbarui nomor surat untuk jenis perizinan yang ditentukan.
      *
      * @param int|null $nomor_terakhir Nomor surat terakhir yang digunakan. Jika null, nomor surat akan dimulai dari 1.

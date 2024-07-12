@@ -9,6 +9,7 @@ class BackOfficeStatusEnum
     public const SEDANG_ENTRI = 'sedang di entri';
     public const SUDAH_ENTRI = 'sudah di entri';
     public const ENTRI_TINJAUAN_LAPANGAN = 'sedang di entri tinjauan lapangan';
+    public const SUDAH_ENTRI_TINJAUAN_LAPANGAN ='sudah di entri tinjauan lapangan';
     public const PERUBAHAN_ENTRI = 'terjadi perubahan data. mohon untuk entri data kembali!';
 
     public static function all(): array
@@ -18,6 +19,7 @@ class BackOfficeStatusEnum
             self::SEDANG_ENTRI,
             self::SUDAH_ENTRI,
             self::ENTRI_TINJAUAN_LAPANGAN,
+            self::SUDAH_ENTRI_TINJAUAN_LAPANGAN,
             self::PERUBAHAN_ENTRI
         ];
     }

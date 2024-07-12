@@ -96,7 +96,7 @@ class Pendataan extends Component
             $this->preview_izin_id = $reset_url ? null : $this->preview_izin_id;
             $this->dispatch('menu-selected', ['menu' => $menu]);
         } else {
-            $this->selectMenu(self::DEFAULT_MENU, true);
+            $this->selectMenu(self::DEFAULT_MENU, false);
         }
     }
 

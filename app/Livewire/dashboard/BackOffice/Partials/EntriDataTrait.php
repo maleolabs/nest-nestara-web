@@ -36,6 +36,10 @@ trait EntriDataTrait
         }
         if (count($setup_entri) > 0)
             $this->entri_data = $setup_entri;
+        else
+            $this->entri_data = array_filter($this->entri_data, function ($entri) {
+                return $entri->deleted_at == null;
+            });
         foreach ($this->entri_data as $entri) {
             $key_entri = "entri_data_izin.{$entri->id}";
             if ($entri->mandatori)

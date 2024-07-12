@@ -2,6 +2,8 @@
 
 namespace App\Livewire\Dashboard\BackOffice\Partials;
 
+use App\Services\DomainServices\PegawaiService;
+
 trait TinjauanLapanganTrait
 {
 
@@ -10,13 +12,13 @@ trait TinjauanLapanganTrait
 
     public function setTinjauanLapanganFormData()
     {
-        $this->semua_penanda_tangan = [
+        $this->semua_penanda_tangan = $this->getPegawaiService()->getAllPenandaTangan();
+        $this->semua_tim_teknis = $this->getPegawaiService()->getTimTeknis();
+    }
 
-        ];
-
-        $this->semua_tim_teknis = [
-
-        ];
+    protected function getPegawaiService(): PegawaiService
+    {
+        return app(PegawaiService::class);
     }
 
 }

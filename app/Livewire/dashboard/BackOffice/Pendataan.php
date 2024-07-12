@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard\BackOffice;
 
 use App\Services\DomainServices\PerizinanService;
+use App\Services\DomainServices\StatusIzinService;
 use App\utils\enums\BackOfficeStatusEnum;
 use App\utils\enums\StatusIzinEnum;
 use Carbon\Carbon;
@@ -88,11 +89,18 @@ class Pendataan extends Component
     public function selectMenu($menu, $reset_url = true)
     {
         if (isset($this->getMenu()[$menu])) {
+            $izin_last_status = null;
             if ($this->preview_izin_id) {
                 $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
                 $this->getPerizinanService()->updateStatusIfEntriDataAlrearyEntered($this->preview_izin_id, $pegawai_id);
+                $izin_last_status = $this->getStatusIzinService()->findLastStatusByIzin($this->preview_izin_id);
             }
-            $this->active_menu = $menu;
+
+            if ($izin_last_status && $izin_last_status->keterangan == BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN)
+                $this->active_menu = 'Penjadwalan Tim Teknis';
+            else 
+                $this->active_menu = $menu;
+
             $this->preview_izin_id = $reset_url ? null : $this->preview_izin_id;
             $this->dispatch('menu-selected', ['menu' => $menu]);
         } else {
@@ -117,6 +125,11 @@ class Pendataan extends Component
     private function getPerizinanService(): PerizinanService
     {
         return app(PerizinanService::class);
+    }
+
+    private function getStatusIzinService(): StatusIzinService
+    {
+        return app(StatusIzinService::class);
     }
     
 }

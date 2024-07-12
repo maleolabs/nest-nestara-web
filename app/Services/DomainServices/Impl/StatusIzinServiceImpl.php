@@ -23,6 +23,11 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		return StatusIzin::where('nama', $nama)->where('izin_id', $izin_id)->first();
 	}
 
+	public function findLastStatusByIzin(int $izin_id): ?StatusIzin
+	{
+		return StatusIzin::where('izin_id', $izin_id)->latest('created_at')->first();
+	}
+
 	public function saveAllStatusIzin(array $status_izin_data): void
 	{
 		DB::table('status_izin')->insert($status_izin_data);

@@ -1,12 +1,13 @@
 <div class="row">
-    <div class="col-md-3 order-md-last">
-        <div class="card d-flex gap-2 flex-column align-items-center p-3">
+    <div class="col-md-3 order-last">
+        <div class="card d-flex gap-2 flex-column align-items-center p-3 w-100">
             <img src="{{ asset('storage/web/employees.png') }}" class="img-fluid img-rounded img-rounded-md">
             <h5 class="text-center text-bold spacing-normal">Back Office</h5>
+            <img src="{{ asset('storage/web/back-office-path.png') }}" class="img-fluid w-100">
         </div>
     </div>
-    <div class="col-md-9">
-        <div class="card min-vh-50 p-4">
+    <div class="col-md-9 d-flex align-items-stretch">
+        <div class="card min-vh-50 p-4 w-100">
             <div class="d-flex align-items-end gap-3 mb-4">
                 <div>
                     <label for="start_date" class="form-label mb-0">Dari Tanggal</label>

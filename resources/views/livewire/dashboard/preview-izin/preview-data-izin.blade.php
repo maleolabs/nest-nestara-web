@@ -188,8 +188,8 @@
             @endif
 
             @role('pegawai')
-                <div class="col-12 {{ $this->tinjauLapangan() ? 'order-first mb-4' : '' }}">
-                    @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::BELUM_ENTRI || $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::PERUBAHAN_ENTRI)
+                <div class="col-12">
+                    @if ($this->isFormNotReady())
                         <div class="card mb-4">
                             @include('livewire.dashboard.preview-izin.button-entri-data')
                         </div>

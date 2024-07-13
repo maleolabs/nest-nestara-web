@@ -128,7 +128,7 @@ class SuratServiceImpl implements SuratService {
             'instansi' => '{instansi}',
             'jenis-izin' => '{jenis-izin}',
             'no-jenis-izin' => '{no-jenis-izin}',
-            'bulan-romawi' => [
+            'bulan' => [
                 '{bulan-romawi}',
                 '{bulan-angka}',
                 '{bulan-nama}'

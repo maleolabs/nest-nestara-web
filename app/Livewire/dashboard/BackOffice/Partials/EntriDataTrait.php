@@ -118,6 +118,11 @@ trait EntriDataTrait
             ]);
     }
 
+    public function isFormNotReady(): bool
+    {
+        return $this->last_izin_status->keterangan == BackOfficeStatusEnum::BELUM_ENTRI || $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI;
+    }
+
     public function isFormNotEntered(): bool
     {
         return $this->isFormFillAuthorized() && ($this->last_izin_status->keterangan == BackOfficeStatusEnum::SEDANG_ENTRI || $this->edit_entri_data);

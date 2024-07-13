@@ -74,7 +74,7 @@ trait TinjauanLapanganTrait
     protected function hasTinjauanLapangan(): bool
     {
         $izin = $this->preview_izin;
-        return $izin && $izin->no_surat && $izin->penandatangan_id && count($izin->timteknis) > 0;
+        return $izin && $izin->no_surat && $izin->penandatangan_id && count($izin->timpemeriksa) > 0;
     }
 
     private function validateTinjauanLapanganForm()

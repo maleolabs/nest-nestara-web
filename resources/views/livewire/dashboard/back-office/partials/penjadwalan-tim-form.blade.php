@@ -3,7 +3,7 @@
         <i class="fa-regular fa-circle-right me-1"></i>
         Entri Tinjauan Lapangan
     </h6>
-    @if (!$edit_tinjau_lapangan)
+    @if ($this->hasTinjauanLapangan() && !$edit_tinjau_lapangan)
         <button class="btn btn-sm btn-light" wire:click='editTinjauData' wire:loading.class='disabled' wire:target='editTinjauData'>
             <span class="spinner-border spinner-border-sm" wire:loading wire:target='editTinjauData'></span>
             <span wire:loading.remove wire:target='editTinjauData'>
@@ -48,11 +48,11 @@
                 <p class="mb-1 text-sm">Tim Pemeriksa</p>
                 @foreach ($semua_tim_pemeriksa as $timpemeriksa)
                     <div class="form-check ps-0">
-                        <input type="checkbox" class="form-check-input" id="tim_teknis-{{ $timpemeriksa->id }}" name="tim_teknis" wire:model="tim_teknis.{{ $timpemeriksa->id }}">
-                        <label for="tim_teknis-{{ $timpemeriksa->id }}" class="form-check-label">{{ $timpemeriksa->nama }}</label>
+                        <input type="checkbox" class="form-check-input" id="tim_pemeriksa-{{ $timpemeriksa->id }}" name="tim_pemeriksa" wire:model="tim_pemeriksa.{{ $timpemeriksa->id }}">
+                        <label for="tim_pemeriksa-{{ $timpemeriksa->id }}" class="form-check-label">{{ $timpemeriksa->nama }}</label>
                     </div>
                 @endforeach
-                @error('tim_teknis')
+                @error('tim_pemeriksa')
                     <div class="text-danger text-sm">{{ $message }}</div>
                 @enderror
                 <div class="mt-3">

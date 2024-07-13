@@ -275,7 +275,7 @@ class PerizinanServiceImpl implements PerizinanService
             $izin->no_surat = $nomor_surat;
             $izin->penandatangan_id = $penandatangan_id;
             $izin->save();
-            $izin->timteknis()->sync(array_keys($timteknis_ids));
+            $izin->timpemeriksa()->sync(array_keys($timteknis_ids));
     
             $izin_status = $izin->status_izin->last();
             $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN, $izin_status->pegawai_id);

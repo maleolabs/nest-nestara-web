@@ -30,17 +30,19 @@ class TimTeknis extends Component
 
     public function mount()
     {
+        $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
+        $this->getPerizinanService()->updateStatusAllIfTinjauanLapanganAlreadyEntered($pegawai_id);
+
         if ($this->tab && in_array($this->tab, $this->getMenu())) $this->selectMenu($this->tab);
         else $this->selectMenu(self::HASIL_TINJAUAN);
 
         $this->start_date = Carbon::today()->subMonth()->toDateString();
         $this->end_date = Carbon::today()->toDateString();
-
-        $this->setHasilTinjauanData();
     }
 
     public function render()
     {
+        $this->setHasilTinjauanData();
         return view('livewire.dashboard.back-office.tim-teknis');
     }
 

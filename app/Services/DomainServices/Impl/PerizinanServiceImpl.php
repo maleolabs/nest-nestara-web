@@ -294,5 +294,22 @@ class PerizinanServiceImpl implements PerizinanService
             $this->suratService->updateNomorSurat($nomor_terakhir, $izin->jenis_perizinan_id, $nomor_terakhir_jp);
         });
     }
+
+    public function updateStatusAllIfTinjauanLapanganAlreadyEntered(int $pegawai_id): void
+    {
+        $semua_izin = Izin::whereHas('status_izin', function ($status_izin) {
+            $status_izin->where('nama', Status::PROSES)
+                ->where('progres', Progres::PROCESSING)
+                ->where('keterangan', OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN)
+                ->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) from status_izin WHERE status_izin.izin_id = izin.id)'));
+        })->get();
+        foreach ($semua_izin as $izin) {
+            $izin_status = $izin->status_izin->last();
+            if ($izin_status->nama == Status::PROSES && $izin->status_izin->last()->keterangan == OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN) {
+                $this->statusIzinService->updateStatusIzin($izin->id, Status::PROSES, Progres::PROCESSING, OfficeStatus::TIM_TEKNIS, $pegawai_id);
+            }
+        }
+        
+    }
     
 }

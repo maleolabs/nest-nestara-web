@@ -35,6 +35,7 @@ if (!function_exists('getStatusIzinProcessClasses')) {
             BackOfficeStatusEnum::PERUBAHAN_ENTRI => 'warning',
             BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN => 'dark',
             BackOfficeStatusEnum::SUDAH_ENTRI_TINJAUAN_LAPANGAN =>'success',
+            BackOfficeStatusEnum::TIM_TEKNIS => 'dark',
         ];
 
         $textClass = "text-{$statusClass[$status->keterangan]}";

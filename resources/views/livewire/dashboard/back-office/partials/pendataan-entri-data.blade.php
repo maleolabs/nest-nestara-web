@@ -36,7 +36,7 @@
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID Pemohon</th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pemohon</th>
                             <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis Izin</th>
-                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status Izin</th>
+                            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                         </tr>
                     </thead>
                     <tbody>

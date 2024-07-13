@@ -29,23 +29,17 @@ interface PerizinanService
     /**
      * Mengambil daftar perizinan dengan filter tertentu.
      *
-     * @param string $search Kata kunci pencarian (opsional, default: kosong).
-     *                       Jika tidak diberikan, akan mengembalikan semua perizinan.
+     * @param string $search Kata kunci pencarian (opsional, default: kosong). Jika tidak diberikan, akan mengembalikan semua perizinan.
      *
-     * @param array $filter_status Filter berdasarkan status perizinan (opsional, default: kosong).
-     *                             Jika tidak diberikan, akan mengembalikan semua status.
+     * @param array $filter_status Filter berdasarkan status perizinan (opsional, default: kosong). Jika tidak diberikan, akan mengembalikan semua status.
      *
-     * @param array $filter_status_progress Filter berdasarkan status progres perizinan (opsional, default: kosong).
-     *                                      Jika tidak diberikan, akan mengembalikan semua status progres.
+     * @param array $filter_status_progress Filter berdasarkan status progres perizinan (opsional, default: kosong). Jika tidak diberikan, akan mengembalikan semua status progres.
      *
-     * @param string $filter_start_date Filter tanggal mulai perizinan (opsional, default: satu bulan sebelum hari ini).
-     *                                  Jika tidak diberikan, akan menggunakan satu bulan sebelum hari ini.
+     * @param string $filter_start_date Filter tanggal mulai perizinan (opsional, default: satu bulan sebelum hari ini). Jika tidak diberikan, akan menggunakan satu bulan sebelum hari ini.
      *
-     * @param string $filter_end_date Filter tanggal akhir perizinan (opsional, default: hari ini).
-     *                                Jika tidak diberikan, akan menggunakan hari ini.
+     * @param string $filter_end_date Filter tanggal akhir perizinan (opsional, default: hari ini). Jika tidak diberikan, akan menggunakan hari ini.
      *
-     * @param string $sort Urutan pengurutan hasil (opsional, default: 'DESC').
-     *                     Dapat berisi 'ASC' atau 'DESC'.
+     * @param string $sort Urutan pengurutan hasil (opsional, default: 'DESC').  Dapat berisi 'ASC' atau 'DESC'.
      *
      * @return array Daftar perizinan yang sesuai dengan filter yang diberikan.
      */
@@ -186,5 +180,18 @@ interface PerizinanService
      * @param string|null $nomor_surat Nomor surat yang akan disimpan (opsional).
      */
     function savePeninjauanLapangan(int $izin_id, int $penandatangan_id, array $timteknis_ids, ?string $nomor_surat = null): void;
+
+    /**
+     * Memperbarui status semua izin jika hasil tinjauan lapangan sudah dimasukkan.
+     *
+     * Fungsi ini memperbarui status perizinan berdasarkan apakah hasil tinjauan lapangan
+     * sudah dimasukkan atau belum. Jika hasil tinjauan lapangan sudah dimasukkan, status
+     * perizinan akan diperbarui.
+     *
+     * @param ?int $pegawai_id ID pegawai yang terkait dengan perizinan (opsional).
+     *
+     * @return void Fungsi ini tidak mengembalikan nilai apa pun.
+     */
+    function updateStatusAllIfTinjauanLapanganAlreadyEntered(int $pegawai_id): void;
 
 }

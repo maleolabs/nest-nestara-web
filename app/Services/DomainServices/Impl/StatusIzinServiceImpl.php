@@ -2,9 +2,12 @@
 
 namespace App\Services\DomainServices\Impl;
 
+use App\Models\RiwayatProsesIzin;
 use App\Services\DomainServices\StatusIzinService;
 use App\Models\StatusIzin;
+use App\utils\enums\StatusIzinEnum;
 use App\utils\enums\StatusIzinProgressEnum as Progres;
+use App\utils\enums\StatusIzinProgressEnum;
 use Illuminate\Support\Facades\DB;
 
 class StatusIzinServiceImpl implements StatusIzinService {
@@ -43,12 +46,20 @@ class StatusIzinServiceImpl implements StatusIzinService {
 			$status_izin->updated_at = $updated_at ?? now();
 			$status_izin->save();
 		} else {
-			StatusIzin::create([
+			$status_izin = StatusIzin::create([
 				'izin_id' => $izin_id,
 				'nama' => $status,
 				'progres' => $progres,
 				'keterangan' => $ket,
 				'pegawai_id' => $pegawai_id
+			]);
+		}
+
+		if ($status_izin->nama == StatusIzinEnum::PROSES) {
+			RiwayatProsesIzin::create([
+				'status_izin_id' => $status_izin->id,
+				'progres' => $status_izin->progres,
+				'keterangan' => $status_izin->keterangan,
 			]);
 		}
 	}

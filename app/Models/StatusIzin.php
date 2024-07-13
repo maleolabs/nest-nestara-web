@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class StatusIzin extends Model
 {
@@ -22,6 +23,11 @@ class StatusIzin extends Model
     public function pegawai(): BelongsTo
     {
         return $this->belongsTo(Pegawai::class);
+    }
+
+    public function riwayat_proses_izin(): HasMany
+    {
+        return $this->hasMany(RiwayatProsesIzin::class);
     }
     
 }

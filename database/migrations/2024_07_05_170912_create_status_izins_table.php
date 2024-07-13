@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('izin_id');
             $table->enum('nama', StatusIzinEnum::all());
-            $table->string('keterangan')->nullable(true);
             $table->enum('progres', StatusIzinProgressEnum::all());
             $table->unsignedBigInteger('pegawai_id')->nullable();
+            $table->string('keterangan')->nullable(true);
             $table->timestamps();
 
             $table->foreign('izin_id')->references('id')->on('izin');

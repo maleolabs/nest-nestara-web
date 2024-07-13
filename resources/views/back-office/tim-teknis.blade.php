@@ -5,8 +5,16 @@
             Tim Teknis
         </a>
     </li>
-    <li class="breadcrumb-item active" id="teim-teknis-sub-breadcrumb"></li>
+    <li class="breadcrumb-item active" id="tim-teknis-sub-breadcrumb"></li>
 @endpush
 @section('main')
-    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Sapiente exercitationem eaque error, odit veniam unde nesciunt voluptatum quos recusandae deleniti. Ducimus ratione consequatur ex error culpa ab ad quo earum.
+    @livewire('dashboard.back-office.tim-teknis')
 @endsection
+@push('scripts')
+    <script>
+        let pendaftaranSubBread = document.getElementById("tim-teknis-sub-breadcrumb")
+        Livewire.on('menu-selected', function (event) {
+            pendaftaranSubBread.textContent = event[0].menu
+        })
+    </script>
+@endpush

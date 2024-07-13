@@ -145,6 +145,16 @@ trait EntriDataTrait
         return $this->getPerizinanService()->hasDataEntri($this->preview_izin_id) && !$this->edit_entri_data;
     }
 
+    protected function alreadyEntriData(): bool
+    {
+        $entering_status = [
+            BackOfficeStatusEnum::BELUM_ENTRI,
+            BackOfficeStatusEnum::SEDANG_ENTRI,
+            BackOfficeStatusEnum::SUDAH_ENTRI
+        ];
+        return !in_array($this->last_izin_status->keterangan, $entering_status);
+    }
+
     protected function getEntriDataService(): EntriDataService
     {
         return app(EntriDataService::class);

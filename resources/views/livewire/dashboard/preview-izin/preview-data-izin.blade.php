@@ -162,7 +162,7 @@
                                     <i class="fa-regular fa-circle-right me-1"></i>
                                     Entri Data
                                 </h6>
-                                @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN)
+                                @if ($this->alreadyEntriData())
                                     <div class="d-flex align-items-center gap-2">
                                         <button class="btn btn-sm btn-warning" wire:click='reEditEntriData' wire:loading.remove wire:target='reEditEntriData'>
                                             Edit Entri Data

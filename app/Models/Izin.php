@@ -43,9 +43,9 @@ class Izin extends Model
         return $this->belongsTo(Pegawai::class, 'penandatangan_id', 'id');
     }
 
-    public function timteknis(): BelongsToMany
+    public function timpemeriksa(): BelongsToMany
     {
-        return $this->belongsToMany(Pegawai::class, 'izin_timteknis', 'izin_id', 'pegawai_id');
+        return $this->belongsToMany(Pegawai::class, 'izin_timpemeriksa', 'izin_id', 'pegawai_id');
     }
 
     public function getNoPendaftaranAttribute($value)

@@ -18,9 +18,9 @@
     <h6 class="mb-3">{{ $saved_nosurat }}</h6>
     <p class="mb-1 text-muted text-sm">Penanda Tangan</p>
     <h6 class="mb-3">{{ $saved_penandatangan }}</h6>
-    <p class="mb-1 text-muted text-sm">Tim Teknis</p>
-    @foreach ($saved_timteknis as $pegawai_teknis)
-        <h6 class="mb-1">{{ (count($saved_timteknis) > 1 ? $loop->iteration . '. ' : '') . $pegawai_teknis->nama }}</h6>
+    <p class="mb-1 text-muted text-sm">Tim Pemeriksa</p>
+    @foreach ($saved_timpemeriksa as $pegawai_pemeriksa)
+        <h6 class="mb-1">{{ (count($saved_timpemeriksa) > 1 ? $loop->iteration . '. ' : '') . $pegawai_pemeriksa->nama }}</h6>
     @endforeach
 @else
     <form wire:submit.prevent="saveTinjauanLapangan">
@@ -45,11 +45,11 @@
                 @error('penandatangan')
                     <div class="text-danger text-sm mb-3">{{ $message }}</div>
                 @enderror
-                <p class="mb-1 text-sm">Tim Teknis</p>
-                @foreach ($semua_tim_teknis as $timteknis)
+                <p class="mb-1 text-sm">Tim Pemeriksa</p>
+                @foreach ($semua_tim_pemeriksa as $timpemeriksa)
                     <div class="form-check ps-0">
-                        <input type="checkbox" class="form-check-input" id="tim_teknis-{{ $timteknis->id }}" name="tim_teknis" wire:model="tim_teknis.{{ $timteknis->id }}">
-                        <label for="tim_teknis-{{ $timteknis->id }}" class="form-check-label">{{ $timteknis->nama }}</label>
+                        <input type="checkbox" class="form-check-input" id="tim_teknis-{{ $timpemeriksa->id }}" name="tim_teknis" wire:model="tim_teknis.{{ $timpemeriksa->id }}">
+                        <label for="tim_teknis-{{ $timpemeriksa->id }}" class="form-check-label">{{ $timpemeriksa->nama }}</label>
                     </div>
                 @endforeach
                 @error('tim_teknis')

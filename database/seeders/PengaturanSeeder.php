@@ -20,6 +20,7 @@ class PengaturanSeeder extends Seeder
     private function createPengaturanSurat()
     {
         $this->suratService()->generateDefaultFormatSurat();
+        $this->suratService()->generateDefaultJenisPerizinanFormat();
     }
 
     private function pengaturanService(): PengaturanService

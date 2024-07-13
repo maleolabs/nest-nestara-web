@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('peran_pegawai', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('pegawai_id');
-            $table->enum('peran', ['penandatangan', 'timteknis']);
+            $table->enum('peran', ['penandatangan', 'timpemeriksa']);
             $table->timestamps();
 
             $table->foreign('pegawai_id')->references('id')->on('pegawai');

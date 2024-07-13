@@ -14,33 +14,33 @@ trait TinjauanLapanganTrait
         $preview_izin_id,
         $jenis_perizinan_id,
         $semua_penanda_tangan = [],
-        $semua_tim_teknis = [],
+        $semua_tim_pemeriksa = [],
         $no_surat,
         $clean_no_surat,
         $no_surat_format,
         $penandatangan,
-        $tim_teknis = [],
+        $tim_pemeriksa = [],
         $edit_tinjau_lapangan = false,
         $saved_nosurat,
         $saved_penandatangan,
-        $saved_timteknis = [];
+        $saved_timpemeriksa = [];
 
     public function setTinjauanLapanganFormData()
     {
         $this->semua_penanda_tangan = $this->getPegawaiService()->getAllPenandaTangan();
-        $this->semua_tim_teknis = $this->getPegawaiService()->getTimTeknis();
+        $this->semua_tim_pemeriksa = $this->getPegawaiService()->getTimPemeriksa();
 
         if ($this->jenis_perizinan_id) {
-            if ($this->preview_izin->no_surat !== null && $this->preview_izin->penandatangan != null && count($this->preview_izin->timteknis) > 0 && !$this->edit_tinjau_lapangan) {
+            if ($this->preview_izin->no_surat !== null && $this->preview_izin->penandatangan != null && count($this->preview_izin->timpemeriksa) > 0 && !$this->edit_tinjau_lapangan) {
                 $this->saved_nosurat = $this->preview_izin->no_surat;
                 $this->saved_penandatangan = $this->preview_izin->penandatangan->nama;
-                $this->saved_timteknis = $this->preview_izin->timteknis;
+                $this->saved_timpemeriksa = $this->preview_izin->timpemeriksa;
 
                 $this->no_surat = ltrim(explode('/', $this->preview_izin->no_surat)[0], '0');
                 $this->penandatangan = $this->preview_izin->penandatangan_id;
-                $saved_timteknis = $this->saved_timteknis->all();
-                array_walk($saved_timteknis, function ($pegawai) {
-                    $this->tim_teknis[$pegawai->id] = true;
+                $saved_timpemeriksa = $this->saved_timpemeriksa->all();
+                array_walk($saved_timpemeriksa, function ($pegawai) {
+                    $this->tim_pemeriksa[$pegawai->id] = true;
                 });
             } else {
                 if (!$this->saved_nosurat)
@@ -65,7 +65,7 @@ trait TinjauanLapanganTrait
     {
         $this->validateTinjauanLapanganForm();
         $nomor_surat = $this->getCleanNoSurat() . $this->no_surat_format;
-        $this->getPerizinanService()->savePeninjauanLapangan($this->preview_izin_id, $this->penandatangan, $this->tim_teknis, $nomor_surat);
+        $this->getPerizinanService()->savePeninjauanLapangan($this->preview_izin_id, $this->penandatangan, $this->tim_pemeriksa, $nomor_surat);
         $this->setTinjauanLapanganFormData();
         if ($this->edit_tinjau_lapangan)
             $this->edit_tinjau_lapangan = false;
@@ -83,12 +83,12 @@ trait TinjauanLapanganTrait
             'no_surat' => ['required'],
             'penandatangan' => ['required']
         ]);
-        if (count($this->tim_teknis) <= 0)
+        if (count($this->tim_pemeriksa) <= 0)
             throw ValidationException::withMessages([
-                'tim_teknis' => 'Pilih tim teknis minimal 1!'
+                'tim_pemeriksa' => 'Pilih tim pemeriksa minimal 1!'
             ]);
         else {
-            $this->tim_teknis = array_filter($this->tim_teknis, function ($value) {
+            $this->tim_pemeriksa = array_filter($this->tim_pemeriksa, function ($value) {
                 return $value === true;
             });
         }

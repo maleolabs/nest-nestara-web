@@ -33,9 +33,9 @@ class Pegawai extends Model
         return $this->hasOne(Izin::class, 'penandatangan_id', 'id');
     }
 
-    public function izin_as_tim_teknis(): BelongsToMany
+    public function izin_as_tim_pemeriksa(): BelongsToMany
     {
-        return $this->belongsToMany(Izin::class, 'izin_timteknis', 'pegawai_id', 'izin_id');
+        return $this->belongsToMany(Izin::class, 'izin_timpemeriksa', 'pegawai_id', 'izin_id');
     }
 
 }

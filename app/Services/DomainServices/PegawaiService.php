@@ -30,11 +30,11 @@ interface PegawaiService {
     function getAllPenandaTangan(): array;
 
     /**
-     * Mengambil semua pegawai yang merupakan tim teknis.
+     * Mengambil semua pegawai yang merupakan tim pemeriksa.
      *
-     * @return array Mengembalikan array yang berisi semua objek Pegawai yang merupakan tim teknis.
+     * @return array Mengembalikan array yang berisi semua objek Pegawai yang merupakan tim pemeriksa.
      */
-    function getTimTeknis(): array;
+    function getTimPemeriksa(): array;
 
     /**
      * Memperbarui data pegawai berdasarkan ID.

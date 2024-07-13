@@ -11,7 +11,7 @@ class PegawaiServiceImpl implements PegawaiService {
     public function save(array $data_pegawai, ?string $peran_pegawai = null): ?Pegawai
 	{
 		$pegawai = Pegawai::create($data_pegawai);
-		if ($peran_pegawai && in_array($peran_pegawai, ['penandatangan', 'tim_teknis']))
+		if ($peran_pegawai && in_array($peran_pegawai, ['penandatangan', 'timpemeriksa']))
 			PeranPegawai::create([
 				'pegawai_id' => $pegawai->id,
 				'peran' => $peran_pegawai
@@ -32,10 +32,10 @@ class PegawaiServiceImpl implements PegawaiService {
 		return $penandatangan->all();
 	}
 
-	public function getTimTeknis(): array
+	public function getTimPemeriksa(): array
 	{
 		$tim_teknis = Pegawai::whereHas('peran_pegawai', function ($query) {
-			$query->where('peran', 'timteknis');
+			$query->where('peran', 'timpemeriksa');
 		})->get();
 		return $tim_teknis->all();
 	}

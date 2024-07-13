@@ -5,6 +5,7 @@ namespace App\Livewire\Dashboard\BackOffice\Partials;
 use App\Services\DomainServices\PegawaiService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SuratService;
+use App\utils\enums\BackOfficeStatusEnum;
 use Illuminate\Validation\ValidationException;
 
 trait TinjauanLapanganTrait
@@ -75,6 +76,14 @@ trait TinjauanLapanganTrait
     {
         $izin = $this->preview_izin;
         return $izin && $izin->no_surat && $izin->penandatangan_id && count($izin->timpemeriksa) > 0;
+    }
+
+    protected function canEditTinjauanLapangan(): bool
+    {
+        $editable_status = [
+            BackOfficeStatusEnum::SUDAH_ENTRI_TINJAUAN_LAPANGAN
+        ];
+        return in_array($this->last_izin_status->keterangan, $editable_status);
     }
 
     private function validateTinjauanLapanganForm()

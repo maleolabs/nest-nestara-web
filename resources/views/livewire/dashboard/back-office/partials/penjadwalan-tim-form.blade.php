@@ -3,7 +3,7 @@
         <i class="fa-regular fa-circle-right me-1"></i>
         Entri Tinjauan Lapangan
     </h6>
-    @if ($this->hasTinjauanLapangan() && !$edit_tinjau_lapangan)
+    @if ($this->hasTinjauanLapangan() && $this->canEditTinjauanLapangan() && !$edit_tinjau_lapangan)
         <button class="btn btn-sm btn-light" wire:click='editTinjauData' wire:loading.class='disabled' wire:target='editTinjauData'>
             <span class="spinner-border spinner-border-sm" wire:loading wire:target='editTinjauData'></span>
             <span wire:loading.remove wire:target='editTinjauData'>

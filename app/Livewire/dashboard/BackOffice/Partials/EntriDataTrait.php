@@ -152,7 +152,11 @@ trait EntriDataTrait
             BackOfficeStatusEnum::SEDANG_ENTRI,
             BackOfficeStatusEnum::SUDAH_ENTRI
         ];
-        return !in_array($this->last_izin_status->keterangan, $entering_status);
+        $editable_status = [
+            BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN,
+            BackOfficeStatusEnum::SUDAH_ENTRI_TINJAUAN_LAPANGAN
+        ];
+        return !in_array($this->last_izin_status->keterangan, $entering_status) && in_array($this->last_izin_status->keterangan, $editable_status);
     }
 
     protected function getEntriDataService(): EntriDataService

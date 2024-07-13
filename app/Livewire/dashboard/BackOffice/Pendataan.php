@@ -61,23 +61,32 @@ class Pendataan extends Component
         if ($filter == self::DEFAULT_MENU) {
             $filtered_data = array_filter($this->all_izin, function ($izin) {
                 $izin_status = $izin->status_izin->last();
-                return in_array($izin_status->keterangan, $this->getEnterableStatuses());
+                return in_array($izin_status->keterangan, $this->getDefaultMenuEnterableStatuses());
             });
         } else {
             $filtered_data = array_filter($this->all_izin, function ($izin) {
-                return $izin->status_izin->last()->keterangan == BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN;
+                $izin_status = $izin->status_izin->last();
+                return in_array($izin_status->keterangan, $this->getSecondMenuEnterableStatuses());
             });
         }
         return $filtered_data;
     }
 
-    private function getEnterableStatuses(): array
+    private function getDefaultMenuEnterableStatuses(): array
     {
         return [
             BackOfficeStatusEnum::BELUM_ENTRI,
             BackOfficeStatusEnum::PERUBAHAN_ENTRI,
             BackOfficeStatusEnum::SEDANG_ENTRI,
             BackOfficeStatusEnum::SUDAH_ENTRI,
+        ];
+    }
+
+    private function getSecondMenuEnterableStatuses(): array
+    {
+        return [
+            BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN,
+            BackOfficeStatusEnum::SUDAH_ENTRI_TINJAUAN_LAPANGAN,
         ];
     }
 

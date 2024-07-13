@@ -1,14 +1,27 @@
-<h6 class="text-bold mb-4">
-    <i class="fa-regular fa-circle-right me-1"></i>
-    Entri Tinjauan Lapangan
-</h6>
-@if ($this->hasTinjauanLapangan())
+<div class="d-flex justify-content-between align-items-center">
+    <h6 class="text-bold mb-4">
+        <i class="fa-regular fa-circle-right me-1"></i>
+        Entri Tinjauan Lapangan
+    </h6>
+    @if (!$edit_tinjau_lapangan)
+        <button class="btn btn-sm btn-light" wire:click='editTinjauData' wire:loading.class='disabled' wire:target='editTinjauData'>
+            <span class="spinner-border spinner-border-sm" wire:loading wire:target='editTinjauData'></span>
+            <span wire:loading.remove wire:target='editTinjauData'>
+                <i class="fa-solid fa-square-pen me-1 text-sm"></i>
+                edit
+            </span>
+        </button>
+    @endif
+</div>
+@if ($this->hasTinjauanLapangan() && !$edit_tinjau_lapangan)
     <p class="mb-1 text-muted text-sm">Nomor Surat</p>
-    <h6 class="mb-3">{{ $this->getCleanNoSurat() . $this->no_surat_format }}</h6>
+    <h6 class="mb-3">{{ $saved_nosurat }}</h6>
     <p class="mb-1 text-muted text-sm">Penanda Tangan</p>
-    <h6 class="mb-3"></h6>
+    <h6 class="mb-3">{{ $saved_penandatangan }}</h6>
     <p class="mb-1 text-muted text-sm">Tim Teknis</p>
-    <h6 class="mb-3"></h6>
+    @foreach ($saved_timteknis as $pegawai_teknis)
+        <h6 class="mb-1">{{ (count($saved_timteknis) > 1 ? $loop->iteration . '. ' : '') . $pegawai_teknis->nama }}</h6>
+    @endforeach
 @else
     <form wire:submit.prevent="saveTinjauanLapangan">
         <div class="row">

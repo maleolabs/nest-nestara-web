@@ -13,6 +13,8 @@ class SuratServiceImpl implements SuratService {
 
     protected JenisPerizinanService $jenisPerizinanService;
 
+    private const SURAT_GROUP = 'surat';
+
     public function __construct(
         PengaturanService $pengaturanService,
         JenisPerizinanService $jenisPerizinanService
@@ -33,13 +35,19 @@ class SuratServiceImpl implements SuratService {
     {
         $format_surat = $this->pengaturanService->find('format-surat');
         $instansi_surat = $this->pengaturanService->find('instansi-surat');
-        if (!$format_surat || !$instansi_surat) $this->generateDefaultFormatSurat();
+        if (!$format_surat || !$instansi_surat) {
+            $this->generateDefaultFormatSurat();
+            $this->getFormat($jenis_perizinan_id, $clear_unreplace_format);
+        } 
 
         $jenis_nama = "JENIS-{$jenis_perizinan_id}";
         $jenis_nomor = "NO-JENIS-{$jenis_perizinan_id}";
-        $jenis_izin = $this->pengaturanService->findByNamaAndGroup($jenis_nama, 'izin');
-        $no_jenis_izin = $this->pengaturanService->findByNamaAndGroup($jenis_nomor, 'izin');
-        if (!$jenis_izin || !$no_jenis_izin) $this->generateDefaultJenisPerizinanFormat();
+        $jenis_izin = $this->pengaturanService->find($jenis_nama);
+        $no_jenis_izin = $this->pengaturanService->find($jenis_nomor);
+        if (!$jenis_izin || !$no_jenis_izin) {
+            $this->generateDefaultJenisPerizinanFormat();
+            $this->getFormat($jenis_perizinan_id, $clear_unreplace_format);
+        }
         $no_jenis_izin = (int) $no_jenis_izin->value + 1;
 
         $today = Carbon::today();
@@ -72,8 +80,7 @@ class SuratServiceImpl implements SuratService {
 
     public function getActualFormat(): string
     {
-        $format = $this->pengaturanService->findByNamaAndGroup('format-surat', 'izin');
-        dd($format);
+        $format = $this->pengaturanService->findByNamaAndGroup('format-surat', self::SURAT_GROUP);
         if (!$format) {
             $this->generateDefaultFormatSurat();
             $this->getActualFormat();
@@ -98,23 +105,23 @@ class SuratServiceImpl implements SuratService {
         if (!$nomor_terakhir)
             $nomor_terakhir = (int) $nomor_surat->value + 1;
 
-        $this->pengaturanService->updateOrCreate('nomor-surat', $nomor_terakhir,'surat');
+        $this->pengaturanService->updateOrCreate('nomor-surat', $nomor_terakhir, self::SURAT_GROUP);
 
         $nomor_jenis_format = "NO-JENIS-{$jenis_perizinan_id}";
-        $nomor_jenis = $this->pengaturanService->findByNamaAndGroup($nomor_jenis_format, 'izin');
+        $nomor_jenis = $this->pengaturanService->findByNamaAndGroup($nomor_jenis_format, self::SURAT_GROUP);
         if (!$nomor_jenis) return;
         if (!$nomor_terakhir_jenis_perizinan)
             $nomor_terakhir_jenis_perizinan = (int) $nomor_jenis->value + 1;
 
-        $this->pengaturanService->updateOrCreate($nomor_jenis_format, $nomor_terakhir_jenis_perizinan, 'izin');
+        $this->pengaturanService->updateOrCreate($nomor_jenis_format, $nomor_terakhir_jenis_perizinan, self::SURAT_GROUP);
     }
 
     public function generateDefaultFormatSurat(): void
     {
         $formatSurat = '{nomor}/{instansi}/{jenis-izin}/{no-jenis-izin}/{bulan-romawi}/{tahun}';
-        $this->pengaturanService->updateOrCreate('nomor-surat', 0, 'surat');
-        $this->pengaturanService->updateOrCreate('instansi-surat', 'DPMPTSP-BB', 'surat');
-        $this->pengaturanService->updateOrCreate('format-surat', $formatSurat, 'surat');
+        $this->pengaturanService->updateOrCreate('nomor-surat', 0, self::SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('instansi-surat', 'DPMPTSP-BB', self::SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('format-surat', $formatSurat, self::SURAT_GROUP);
 
         $bagianFormatSurat = [
             'nomor' => '{nomor}',
@@ -128,7 +135,7 @@ class SuratServiceImpl implements SuratService {
             ],
             'tahun' => '{tahun}'
         ];
-        $this->pengaturanService->updateOrCreate('bagian-format-surat', $bagianFormatSurat, 'surat');
+        $this->pengaturanService->updateOrCreate('bagian-format-surat', $bagianFormatSurat, self::SURAT_GROUP);
     }
 
     public function generateDefaultJenisPerizinanFormat(): void
@@ -147,12 +154,12 @@ class SuratServiceImpl implements SuratService {
                 $jenis_format = strtoupper(str_replace(' ', '-', $jenisPerizinan->nama));
             
             $setupdatajenis[] = [
-                'group' => 'izin',
+                'group' => self::SURAT_GROUP,
                 'nama' => "JENIS-{$jenisPerizinan->id}",
                 'value' => $jenis_format
             ];
             $setupdatajenisnomor[] = [
-                'group' => 'izin',
+                'group' => self::SURAT_GROUP,
                 'nama' => "NO-JENIS-{$jenisPerizinan->id}",
                 'value' => 0
             ];

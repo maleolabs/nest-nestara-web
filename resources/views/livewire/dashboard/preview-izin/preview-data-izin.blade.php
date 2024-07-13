@@ -28,14 +28,7 @@
             </div>
             <div class="col-md-9 d-flex align-items-stretch mb-4">
                 <div class="card w-100 p-4 mb-0">
-                    <div class="d-flex flex-sm-row flex-column justify-content-sm-between align-items-sm-top align-items-between {{ $last_izin_status->keterangan == \App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN ? 'flex-sm-row-reverse flex-column-reverse' : '' }} gap-3">
-                        @if ($last_izin_status->nama == \App\utils\enums\StatusIzinEnum::PROSES && $last_izin_status->keterangan == \App\utils\enums\BackOfficeStatusEnum::ENTRI_TINJAUAN_LAPANGAN)
-                            <div>
-                                <a href="#timTeknis" class="btn btn-info">
-                                    <i class="fa-solid fa-arrows-down-to-line fa-bounce fs-3"></i>
-                                </a>
-                            </div>
-                        @endif
+                    <div class="d-flex flex-sm-row flex-column justify-content-sm-between align-items-sm-top align-items-between gap-3">
                         <div>
                             <p class="mb-0 text-sm">Jenis perizinan</p>
                             <h3 class="spacing-md">{{ str_capitalize($preview_izin->jenis_perizinan->nama, true) }}</h3>
@@ -195,7 +188,7 @@
             @endif
 
             @role('pegawai')
-                <div class="col-12">
+                <div class="col-12 {{ $this->tinjauLapangan() ? 'order-first mb-4' : '' }}">
                     @if ($last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::BELUM_ENTRI || $last_izin_status->keterangan == App\utils\enums\BackOfficeStatusEnum::PERUBAHAN_ENTRI)
                         <div class="card mb-4">
                             @include('livewire.dashboard.preview-izin.button-entri-data')
@@ -221,7 +214,7 @@
                     @endif
 
                     @if ($this->tinjauLapangan())
-                        <div class="card" id="timTeknis">
+                        <div class="card mb-0" id="timTeknis">
                             <div class="card-body">
                                 @include('livewire.dashboard.back-office.partials.penjadwalan-tim-form')
                             </div>

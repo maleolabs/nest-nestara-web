@@ -13,10 +13,9 @@ class TimTeknis extends Component
     use HasilTinjauanTrait;
 
     #[Url()]
-    public $tab;
+    public $tab, $preview_izin_id;
 
-    public $preview_izin_id,
-        $all_izin = [];
+    public $all_izin = [];
 
     public $search = '',
         $start_date,
@@ -33,8 +32,8 @@ class TimTeknis extends Component
         $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
         $this->getPerizinanService()->updateStatusAllIfTinjauanLapanganAlreadyEntered($pegawai_id);
 
-        if ($this->tab && in_array($this->tab, $this->getMenu())) $this->selectMenu($this->tab);
-        else $this->selectMenu(self::HASIL_TINJAUAN);
+        if ($this->tab && in_array($this->tab, $this->getMenu())) $this->selectMenu($this->tab, false);
+        else $this->selectMenu(self::HASIL_TINJAUAN, false);
 
         $this->start_date = Carbon::today()->subMonth()->toDateString();
         $this->end_date = Carbon::today()->toDateString();
@@ -46,10 +45,10 @@ class TimTeknis extends Component
         return view('livewire.dashboard.back-office.tim-teknis');
     }
 
-    public function selectMenu($menu)
+    public function selectMenu($menu, $clear_url = true)
     {
         $this->active_menu = $menu;
-        $this->preview_izin_id = null;
+        $this->preview_izin_id = $clear_url ? null : $this->preview_izin_id;
         $this->dispatch('menu-selected', ['menu' => $menu]);
     }
 

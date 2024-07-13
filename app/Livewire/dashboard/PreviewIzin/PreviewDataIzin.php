@@ -36,8 +36,7 @@ class PreviewDataIzin extends Component
         $modalImgSource,
         $modalPdfSource;
 
-    public $tanggal_peninjauan,
-        $lokasi_izin,
+    public $lokasi_izin,
         $keterangan,
         $action_confirm,
         $editing_data_action = false;
@@ -73,9 +72,10 @@ class PreviewDataIzin extends Component
         if (in_array($field, $action_data)) {
             $this->active_tab = self::TINDAKAN;
             $this->editing_data_action = true;
-            if ($this->action_confirm == 'revisi-permohonan' && !$this->keterangan)
-                throw ValidationException::withMessages([
-                    'keterangan' => 'Keterangan revisi permohonan harus diisi!'
+            if ($this->action_confirm == 'revisi-permohonan')
+                $this->validate([
+                    'lokasi_izin' => ['required', 'max:255'],
+                    'keterangan' => ['required','max:255'],
                 ]);
         }
     }
@@ -93,7 +93,6 @@ class PreviewDataIzin extends Component
     {
         $this->active_tab = self::TINDAKAN;
         $this->validate([
-            'tanggal_peninjauan' => ['required'],
             'lokasi_izin' => ['required', 'max:255'],
         ]);
         $action_confirm_data = [
@@ -105,7 +104,7 @@ class PreviewDataIzin extends Component
                 'action_confirm' => 'kesalahan'
             ]);
         $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
-        $saved = $this->getPerizinanService()->saveRegistrationAction($this->preview_izin_id, $this->tanggal_peninjauan, $this->lokasi_izin, $this->keterangan, $this->action_confirm, $pegawai_id);
+        $saved = $this->getPerizinanService()->saveRegistrationAction($this->preview_izin_id, $this->lokasi_izin, $this->keterangan, $this->action_confirm, $pegawai_id);
         if ($saved) {
             $this->editing_data_action = false;
             $this->action_confirm = null;
@@ -132,7 +131,6 @@ class PreviewDataIzin extends Component
             $this->preview_izin_syarat_izin = array_diff(array_keys($syarat_izin), array_keys($this->preview_izin_dokumen));
             
             if (!$this->editing_data_action) {
-                $this->tanggal_peninjauan = $this->preview_izin->tanggal_peninjauan ? $this->preview_izin->tanggal_peninjauan : Carbon::now()->format('Y-m-d H:i');
                 $this->lokasi_izin = $this->preview_izin->lokasi_izin;
                 $this->keterangan = $this->preview_izin->ket;
             }

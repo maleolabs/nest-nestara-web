@@ -55,18 +55,13 @@
                             </div>
                         </div>
                     </div>
-                    @role('pegawai')
+                    @if($this->canAccess() && $preview_izin->lokasi_izin !== null)
                         <div class="mt-4">
                             <h6 class="text-bold">
                                 <i class="fa-regular fa-circle-right me-1"></i>
                                 Detail permohonan
                             </h6>
                             <div class="ps-4">
-                                <small class="text-muted">
-                                    <i class="fa-regular fa-calendar-check me-1"></i>
-                                    Tanggal Peninjauan
-                                </small>
-                                <h6 class="text-dark">{{ Carbon\Carbon::parse($preview_izin->tanggal_peninjauan)->translatedFormat('d F Y H:i') . ' WITA' }}</h6>
                                 <small class="text-muted">
                                     <i class="fa-solid fa-building me-1"></i>
                                     Lokasi Izin
@@ -83,72 +78,63 @@
                                 @include('livewire.dashboard.preview-izin.preview-izin-persyaratan-show')
                             </div>
                         </div>
-                    @elserole('pengelola_layanan')
-                        <div class="mt-4">
-                            <ul class="nav nav-tabs nav-tabs-bordered">
-                                <li class="nav-item">
-                                    <a href="javascript:;" class="nav-link @if($active_tab != self::TINDAKAN)active @endif" data-bs-toggle="tab" data-bs-target="#persyaratan-tab">
-                                        Persyaratan
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="javascript:;" class="nav-link @if($active_tab == self::TINDAKAN)active @endif" data-bs-toggle="tab" data-bs-target="#tindakan-tab">
-                                        Tindakan
-                                    </a>
-                                </li>
-                            </ul>
-                            <div class="tab-content border border-top-0 rounded-bottom-2 p-4">
-                                <div class="tab-pane fade @if($active_tab != self::TINDAKAN)show active @endif" id="persyaratan-tab">
-                                    <p class="mt-3 mb-0 text-muted">Persyaratan</p>
-                                    @include('livewire.dashboard.preview-izin.preview-izin-persyaratan-show')
-                                </div>
-                                <div class="tab-pane fade @if($active_tab == self::TINDAKAN)show active @endif" id="tindakan-tab">
-                                    @if ($this->canProcess())
-                                        <form wire:submit.prevent='saveAction'>
-                                            <label for="tanggal_peninjauan" class="form-label">Tanggal Peninjauan</label>
-                                            <div class="input-group input-group-outline mb-3">
-                                                <input type="datetime" class="form-control disabled @error('tanggal_peninjauan')is-invalid @enderror" id="tanggal_peninjauan" disabled wire:model.live='tanggal_peninjauan'>
-                                            </div>
-                                            @error('tanggal_peninjauan')
-                                                <div class="mb-3 text-danger text-sm">{{ $message }}</div>
-                                            @enderror
-                                            <label for="lokasi_izin" class="form-label">Lokasi Izin</label>
-                                            <div class="input-group input-group-outline mb-3">
-                                                <input type="text" class="form-control @error('lokasi_izin')is-invalid @enderror" id="lokasi_izin" wire:model.live='lokasi_izin'>
-                                            </div>
-                                            @error('lokasi_izin')
-                                                <div class="mb-3 text-danger text-sm">{{ $message }}</div>
-                                            @enderror
-                                            <label for="keterangan" class="form-label">Keterangan</label>
-                                            <div class="input-group input-group-outline @error('keterangan')mb-1 @else mb-3 @enderror">
-                                                <textarea rows="3" class="form-control @error('keterangan')is-invalid @enderror" id="keterangan" wire:model.live='keterangan'></textarea>
-                                            </div>
-                                            @error('keterangan')
-                                                <div class="mb-3 text-danger text-sm">{{ $message }}</div>
-                                            @enderror
-                                            <div class="d-flex align-items-center gap-3 mb-3">
-                                                <div class="form-check ps-0">
-                                                    <input type="radio" class="form-check-input" name="action_confirm" id="permohonan-selesai" wire:model.live='action_confirm' value="permohonan-selesai">
-                                                    <label for="permohonan-selesai" class="form-check-label">Permohonan Selesai</label>
+                    @endif
+                    @role('pengelola_layanan')
+                        @if ($preview_izin->lokasi_izin === null)
+                            <div class="mt-4">
+                                <ul class="nav nav-tabs nav-tabs-bordered">
+                                    <li class="nav-item">
+                                        <a href="javascript:;" class="nav-link @if($active_tab != self::TINDAKAN)active @endif" data-bs-toggle="tab" data-bs-target="#persyaratan-tab">
+                                            Persyaratan
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="javascript:;" class="nav-link @if($active_tab == self::TINDAKAN)active @endif" data-bs-toggle="tab" data-bs-target="#tindakan-tab">
+                                            Tindakan
+                                        </a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content border border-top-0 rounded-bottom-2 p-4">
+                                    <div class="tab-pane fade @if($active_tab != self::TINDAKAN)show active @endif" id="persyaratan-tab">
+                                        <p class="mt-3 mb-0 text-muted">Persyaratan</p>
+                                        @include('livewire.dashboard.preview-izin.preview-izin-persyaratan-show')
+                                    </div>
+                                    <div class="tab-pane fade @if($active_tab == self::TINDAKAN)show active @endif" id="tindakan-tab">
+                                        @if ($this->canProcess())
+                                            <form wire:submit.prevent='saveAction'>
+                                                <label for="lokasi_izin" class="form-label">Lokasi Izin</label>
+                                                <div class="input-group input-group-outline mb-3">
+                                                    <input type="text" class="form-control @error('lokasi_izin')is-invalid @enderror" id="lokasi_izin" wire:model.live='lokasi_izin'>
                                                 </div>
-                                                <div class="form-check ps-0">
-                                                    <input type="radio" class="form-check-input" name="action_confirm" id="revisi-permohonan" wire:model.live='action_confirm' value="revisi-permohonan">
-                                                    <label for="revisi-permohonan" class="form-check-label">Revisi Permohonan</label>
+                                                @error('lokasi_izin')
+                                                    <div class="mb-3 text-danger text-sm">{{ $message }}</div>
+                                                @enderror
+                                                <label for="keterangan" class="form-label">Keterangan</label>
+                                                <div class="input-group input-group-outline @error('keterangan')mb-1 @else mb-3 @enderror">
+                                                    <textarea rows="3" class="form-control @error('keterangan')is-invalid @enderror" id="keterangan" wire:model.live='keterangan'></textarea>
                                                 </div>
-                                            </div>
-                                            <div class="d-flex justify-content-start gap-3">
-                                                <button class="btn bg-gradient-primary{{ !$tanggal_peninjauan || !$lokasi_izin || !$action_confirm || ($action_confirm == 'revisi-permohonan' && !$keterangan) ? ' disabled' : '' }}" {{ !$tanggal_peninjauan || !$lokasi_izin || !$action_confirm || ($action_confirm == 'revisi-permohonan' && !$keterangan) ? 'disabled' : '' }} type="submit">Simpan</button>
-                                            </div>
-                                        </form>
-                                    @else
-                                        <small class="text-muted">Tanggal Peninjauan</small>
-                                        <h6>{{ Carbon\Carbon::parse($preview_izin->tanggal_peninjauan)->translatedFormat('d F Y H:i') . ' WITA' }}</h6>
-                                        <small class="text-muted">Lokasi Izin</small>
-                                        <h6>{{ $preview_izin->lokasi_izin }}</h6>
-                                    @endif
+                                                @error('keterangan')
+                                                    <div class="mb-3 text-danger text-sm">{{ $message }}</div>
+                                                @enderror
+                                                <div class="d-flex align-items-center gap-3 mb-3">
+                                                    <div class="form-check ps-0">
+                                                        <input type="radio" class="form-check-input" name="action_confirm" id="permohonan-selesai" wire:model.live='action_confirm' value="permohonan-selesai">
+                                                        <label for="permohonan-selesai" class="form-check-label">Permohonan Selesai</label>
+                                                    </div>
+                                                    <div class="form-check ps-0">
+                                                        <input type="radio" class="form-check-input" name="action_confirm" id="revisi-permohonan" wire:model.live='action_confirm' value="revisi-permohonan">
+                                                        <label for="revisi-permohonan" class="form-check-label">Revisi Permohonan</label>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-start gap-3">
+                                                    <button class="btn bg-gradient-primary{{ !$lokasi_izin || !$action_confirm || ($action_confirm == 'revisi-permohonan' && !$keterangan) ? ' disabled' : '' }}" {{ !$lokasi_izin || !$action_confirm || ($action_confirm == 'revisi-permohonan' && !$keterangan) ? 'disabled' : '' }} type="submit">Simpan</button>
+                                                </div>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                     @endrole
                 </div>
             </div>

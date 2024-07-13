@@ -81,7 +81,7 @@ class PerizinanServiceImpl implements PerizinanService
         return $semua_izin->all();
     }
 
-    public function saveRegistrationAction(int $izin_id, string $tanggal_peninjauan, string $lokasi_izin, string $keterangan = null, string $status_permohonan = 'permohonan-selesai', int $pegawai_id = null): bool
+    public function saveRegistrationAction(int $izin_id, string $lokasi_izin, string $keterangan = null, string $status_permohonan = 'permohonan-selesai', int $pegawai_id = null): bool
     {
         DB::beginTransaction();
         $izin = Izin::find($izin_id);
@@ -89,8 +89,6 @@ class PerizinanServiceImpl implements PerizinanService
             DB::rollBack();
             return false;
         }
-        $tanggal_peninjauan = Carbon::parse($tanggal_peninjauan)->toDateTimeString();
-        $izin->tanggal_peninjauan = $tanggal_peninjauan;
         $izin->lokasi_izin = $lokasi_izin;
         $izin->save();
 

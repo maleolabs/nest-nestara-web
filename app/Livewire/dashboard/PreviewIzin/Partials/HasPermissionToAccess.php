@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Dashboard\PreviewIzin\Partials;
 
+use App\Models\StatusIzin;
 use App\utils\enums\PreviewFeatureEnum;
 use App\utils\enums\StatusIzinEnum;
 

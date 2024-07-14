@@ -5,22 +5,28 @@
         <div class="dash-menu-item{{ $active_menu == self::HASIL_TINJAUAN ? ' active' : '' }}" wire:click="selectMenu('{{ self::HASIL_TINJAUAN }}')" onclick="switchTab('{{ self::HASIL_TINJAUAN }}')">
             <span class="dash-menu-item-content">
                 <i class="fa-solid me-2"></i>
-                <span>{{ self::HASIL_TINJAUAN }}</span>
-                <span class="ms-2 badge rounded-pill bg-app-primary-light">9+</span>
+                <span class="text-capitalize">{{ str_replace('-', ' ', self::HASIL_TINJAUAN) }}</span>
+                @if ($count_hasil_tinjauan > 0)
+                    <span class="ms-2 badge rounded-pill bg-app-primary-light">{{ $count_hasil_tinjauan }}</span>
+                @endif
             </span>
         </div>
         <div class="dash-menu-item{{ $active_menu == self::BERITA_ACARA ? ' active' : '' }}" wire:click="selectMenu('{{ self::BERITA_ACARA }}')" onclick="switchTab('{{ self::BERITA_ACARA }}')">
             <span class="dash-menu-item-content">
                 <i class="fa-solid me-2"></i>
-                <span>{{ self::BERITA_ACARA }}</span>
-                <span class="ms-2 badge rounded-pill bg-app-primary-light">9+</span>
+                <span class="text-capitalize">{{ str_replace('-', ' ', self::BERITA_ACARA) }}</span>
+                @if ($count_berita_acara > 0)
+                    <span class="ms-2 badge rounded-pill bg-app-primary-light">{{ $count_berita_acara }}</span>
+                @endif
             </span>
         </div>
         <div class="dash-menu-item{{ $active_menu == self::REKOMENDASI ? ' active' : '' }}" wire:click="selectMenu('{{ self::REKOMENDASI }}')" onclick="switchTab('{{ self::REKOMENDASI }}')">
             <span class="dash-menu-item-content">
                 <i class="fa-solid me-2"></i>
-                <span>{{ self::REKOMENDASI }}</span>
-                <span class="ms-2 badge rounded-pill bg-app-primary-light">9+</span>
+                <span class="text-capitalize">{{ str_replace('-', ' ', self::REKOMENDASI) }}</span>
+                @if ($count_rekomendasi > 0)
+                    <span class="ms-2 badge rounded-pill bg-app-primary-light">{{ $count_rekomendasi }}</span>
+                @endif
             </span>
         </div>
     </div>

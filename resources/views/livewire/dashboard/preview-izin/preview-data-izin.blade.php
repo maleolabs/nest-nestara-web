@@ -213,7 +213,7 @@
                             <div class="alert alert-light">
                                 <p class="mt-3 text-muted">
                                     <i class="fa-solid fa-circle-info me-1"></i>
-                                    Tidak ada formulir entri data untuk perizinan ini!
+                                    Tidak ada formulir data entri untuk perizinan ini!
                                 </p>
                             </div>
                         @endif

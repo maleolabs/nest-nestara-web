@@ -193,4 +193,15 @@ interface PerizinanService
      */
     function updateStatusAllIfTinjauanLapanganAlreadyEntered(int $pegawai_id): void;
 
+    /**
+     * Memverifikasi permohonan izin.
+     *
+     * @param int $izin_id ID izin yang akan diverifikasi.
+     * 
+     * @param int $pegawai_id ID pegawai yang akan diverifikasi.
+     * 
+     * @return void Fungsi ini tidak mengembalikan nilai apapun.
+     */
+    function verifyPermohonanIzin(int $izin_id, int $pegawai_id): void;
+
 }

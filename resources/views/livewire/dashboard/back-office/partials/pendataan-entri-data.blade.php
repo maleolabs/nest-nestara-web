@@ -73,7 +73,7 @@
                                 <span class="badge badge-dot">
                                     <i class="{{ $statusClasses['bgClass'] }}"></i>
                                     <span class="text-sm {{ $statusClasses['textClass'] }}">
-                                        {{ Str::limit($status->keterangan, 20) }}
+                                        {{ Str::limit($status->keterangan, 16) }}
                                     </span>
                                 </span>
                                 <p class="text-xs text-muted mb-0">{{ $status->updated_at->diffForHumans() }}</p>

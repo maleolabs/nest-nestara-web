@@ -22,6 +22,14 @@ class Verifikasi extends Component
         return view('livewire.dashboard.back-office.verifikasi');
     }
 
+    public function verifikasi()
+    {
+        $auth_user = auth()->user();
+        $pegawai_id = $auth_user->pegawai ? $auth_user->pegawai->id : null;
+        $this->getPerizinanService()->verifyPermohonanIzin($this->preview_izin_id, $pegawai_id);
+        return redirect()->route('pegawai.tim-teknis');
+    }
+
     private function getPerizinanService(): PerizinanService
     {
         return app(PerizinanService::class);

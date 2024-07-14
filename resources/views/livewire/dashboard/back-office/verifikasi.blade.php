@@ -5,6 +5,7 @@
         </div>
         <div class="card-body">
             <h5>{{ $preview_izin->jenis_perizinan->nama }}</h5>
+            <button class="btn bg-gradient-primary" type="button" wire:click='verifikasi'>verifikasi</button>
         </div>
     @endif
 </div>

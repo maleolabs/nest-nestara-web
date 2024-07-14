@@ -24,6 +24,7 @@ class BackOfficeStatusEnum
             self::SUDAH_ENTRI_TINJAUAN_LAPANGAN,
             self::PERUBAHAN_ENTRI,
             self::BELUM_DIPERIKSA,
+            self::SUDAH_DI_PERIKSA,
         ];
     }
 

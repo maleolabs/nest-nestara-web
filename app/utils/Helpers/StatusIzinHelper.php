@@ -29,7 +29,7 @@ if (!function_exists('getStatusIzinProcessClasses')) {
     function getStatusIzinProcessClasses($status)
     {
         $statusClass = [
-            BackOfficeStatusEnum::BELUM_ENTRI => 'muted',
+            BackOfficeStatusEnum::BELUM_ENTRI => 'dark',
             BackOfficeStatusEnum::SEDANG_ENTRI => 'dark',
             BackOfficeStatusEnum::SUDAH_ENTRI => 'info',
             BackOfficeStatusEnum::PERUBAHAN_ENTRI => 'warning',

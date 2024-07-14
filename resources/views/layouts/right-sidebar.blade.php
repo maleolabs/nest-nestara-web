@@ -20,7 +20,7 @@
                         <span>Dashboard</span>
                     </a>
                 @endrole
-                <a href="#" class="nav-link">
+                <a href="{{ route('profile') }}" class="nav-link{{ str_contains(Route::currentRouteName(), 'profile') ? ' active' : '' }}">
                     <i class="fa-solid fa-user"></i>
                     <span>Profil</span>
                 </a>

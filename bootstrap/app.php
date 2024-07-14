@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'dashboard' => \App\Http\Middleware\DashboardMiddleware::class,
             'show_izin' => \App\Http\Middleware\Izin\ShowIzinMiddleware::class,
             'revisi_izin' => \App\Http\Middleware\Izin\RevisiIzinMiddleware::class,
+            'profile' => \App\Http\Middleware\ProfileMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

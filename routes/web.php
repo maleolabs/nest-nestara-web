@@ -10,6 +10,7 @@ use App\Http\Controllers\BackOffice\DashboardController as BackOfficeDashboardCo
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Helper\FileController;
 use App\Http\Controllers\Layanan\DashboardController as LayananDashboardController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\PerizinanController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -75,9 +76,7 @@ Route::middleware('auth')->group(function() {
     });
 
     Route::middleware(['dashboard'])->group(function() {
-        Route::get('/dashboard', function() {
-            return 'dashboard';
-        })->name('dashboard');
+        Route::get('/dashboard', function() { return 'dashboard'; })->name('dashboard');
     });
 
     Route::middleware(['role:admin|pengelola_layanan|pegawai'])->group(function() {
@@ -87,4 +86,13 @@ Route::middleware('auth')->group(function() {
 
     Route::get('/files/download/{file_name}', [FileController::class, 'download'])->name('download-file');
     Route::get('/files/{file_name}', [FileController::class, 'render'])->name('render-file');
+
+    Route::middleware(['profile'])->group(function() {
+        Route::get('/profile', function () { return 'profile'; })->name('profile');
+        Route::get('/profile/admin', [ProfileController::class, 'admin'])->name('profile.admin');
+        Route::get('/profile/pengelola_layanan', [ProfileController::class, 'pengelola_layanan'])->name('profile.pengelola_layanan');
+        Route::get('/profile/pegawai', [ProfileController::class, 'pegawai'])->name('profile.pegawai');
+        Route::get('/profile/pemohon', [ProfileController::class, 'pemohon'])->name('profile.pemohon');
+    });
+
 });

@@ -58,7 +58,7 @@
                                 </div>
                             </div>
                         </div>
-                        @if($this->canAccess() && $preview_izin->lokasi_izin !== null)
+                        @if($this->canAccess() && $preview_izin->lokasi_izin !== null && $last_izin_status->nama !== App\utils\enums\StatusIzinEnum::REVISI_PERSYARATAN)
                             <div class="mt-4">
                                 <h6 class="text-bold">
                                     <i class="fa-regular fa-circle-right me-1"></i>
@@ -83,7 +83,7 @@
                             </div>
                         @endif
                         @role('pengelola_layanan')
-                            @if ($preview_izin->lokasi_izin === null)
+                            @if ($preview_izin->lokasi_izin === null || $last_izin_status->nama == App\utils\enums\StatusIzinEnum::REVISI_PERSYARATAN)
                                 <div class="mt-4">
                                     <ul class="nav nav-tabs nav-tabs-bordered">
                                         <li class="nav-item">
@@ -133,6 +133,13 @@
                                                         <button class="btn bg-gradient-primary{{ !$lokasi_izin || !$action_confirm || ($action_confirm == 'revisi-permohonan' && !$keterangan) ? ' disabled' : '' }}" {{ !$lokasi_izin || !$action_confirm || ($action_confirm == 'revisi-permohonan' && !$keterangan) ? 'disabled' : '' }} type="submit">Simpan</button>
                                                     </div>
                                                 </form>
+                                            @else
+                                                <div class="alert alert-light">
+                                                    <p class="mt-3 text-muted">
+                                                        <i class="fa-solid fa-circle-info me-1"></i>
+                                                        Proses perbaikan persyaratan oleh pasien
+                                                    </p>
+                                                </div>
                                             @endif
                                         </div>
                                     </div>

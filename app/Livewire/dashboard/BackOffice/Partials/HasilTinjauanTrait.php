@@ -15,8 +15,13 @@ trait HasilTinjauanTrait
     protected function setHasilTinjauanData()
     {
         $this->all_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::PROSES], [StatusIzinProgressEnum::PROCESSING], $this->start_date, $this->end_date);
-        $this->all_izin = array_filter($this->all_izin, function ($izin) {
-            return $izin->status_izin->last()->keterangan == BackOfficeStatusEnum::TIM_TEKNIS;
+
+        $timteknis_status = [
+            BackOfficeStatusEnum::BELUM_DIPERIKSA,
+            BackOfficeStatusEnum::SUDAH_DI_PERIKSA
+        ];
+        $this->all_izin = array_filter($this->all_izin, function ($izin) use ($timteknis_status) {
+            return in_array($izin->status_izin->last()->keterangan, $timteknis_status);
         });
     }
 

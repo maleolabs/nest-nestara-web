@@ -304,7 +304,7 @@ class PerizinanServiceImpl implements PerizinanService
         foreach ($semua_izin as $izin) {
             $izin_status = $izin->status_izin->last();
             if ($izin_status->nama == Status::PROSES && $izin->status_izin->last()->keterangan == OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN) {
-                $this->statusIzinService->updateStatusIzin($izin->id, Status::PROSES, Progres::PROCESSING, OfficeStatus::TIM_TEKNIS, $pegawai_id);
+                $this->statusIzinService->updateStatusIzin($izin->id, Status::PROSES, Progres::PROCESSING, OfficeStatus::BELUM_DIPERIKSA, $pegawai_id);
             }
         }
         

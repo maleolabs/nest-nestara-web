@@ -131,6 +131,12 @@ class Pendataan extends Component
         ];
     }
 
+    protected function getTanggalPermohonan(int $izin_id): string
+    {
+        $permohonan = $this->getStatusIzinService()->findByNamaAndIzin(StatusIzinEnum::DIDAFTARKAN, $izin_id);
+        return $permohonan ? $permohonan->created_at->translatedFormat('l, d F Y') : '-';
+    }
+
     private function getPerizinanService(): PerizinanService
     {
         return app(PerizinanService::class);

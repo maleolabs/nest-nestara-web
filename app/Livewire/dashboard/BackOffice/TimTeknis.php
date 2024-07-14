@@ -3,6 +3,8 @@
 namespace App\Livewire\Dashboard\BackOffice;
 
 use App\Livewire\Dashboard\BackOffice\Partials\HasilTinjauanTrait;
+use App\Services\DomainServices\StatusIzinService;
+use App\utils\enums\StatusIzinEnum;
 use Carbon\Carbon;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -64,6 +66,17 @@ class TimTeknis extends Component
             self::BERITA_ACARA,
             self::REKOMENDASI,
         ];
+    }
+
+    protected function getTanggalPermohonan(int $izin_id): string
+    {
+        $permohonan = $this->getStatusIzinService()->findByNamaAndIzin(StatusIzinEnum::DIDAFTARKAN, $izin_id);
+        return $permohonan ? $permohonan->created_at->translatedFormat('l, d F Y') : '-';
+    }
+
+    private function getStatusIzinService(): StatusIzinService
+    {
+        return app(StatusIzinService::class);
     }
     
 }

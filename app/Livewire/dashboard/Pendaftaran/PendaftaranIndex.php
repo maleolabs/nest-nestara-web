@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Dashboard\Pendaftaran;
 
+use App\Models\StatusIzin;
 use App\Services\APIClient\RegionAPIService;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
+use App\Services\DomainServices\StatusIzinService;
 use App\utils\enums\StatusIzinEnum;
 use Carbon\Carbon;
 use Livewire\Attributes\On;
@@ -125,6 +127,12 @@ class PendaftaranIndex extends Component
         $this->preview_izin_id = $id;
     }
 
+    protected function getTanggalPermohonan(int $izin_id): string
+    {
+        $permohonan = $this->getStatusIzinService()->findByNamaAndIzin(StatusIzinEnum::DIDAFTARKAN, $izin_id);
+        return $permohonan ? $permohonan->created_at->translatedFormat('l, d F Y') : '-';
+    }
+
     private function getPemohonService(): PemohonService
     {
         return app(PemohonService::class);
@@ -138,6 +146,11 @@ class PendaftaranIndex extends Component
     private function getRegionService(): RegionAPIService
     {
         return app(RegionAPIService::class);
+    }
+
+    private function getStatusIzinService(): StatusIzinService
+    {
+        return app(StatusIzinService::class);
     }
 
 }

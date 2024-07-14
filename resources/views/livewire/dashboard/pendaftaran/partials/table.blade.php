@@ -14,6 +14,7 @@
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID Pemohon</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pemohon</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis Izin</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tanggal Permohonan</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status Izin</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pegawai yang meninjau</th>
             @endif
@@ -80,6 +81,9 @@
                                 {{ str_capitalize($izin->jenis_perizinan->nama, true) }}
                             </p>
                         </td>
+                        <td class="text-center text-sm">
+                            {{ $this->getTanggalPermohonan($izin->id) }}
+                        </td>
                         <td class="d-flex flex-column align-items-center">
                             <span class="badge badge-dot">
                                 <i class="{{ $statusClasses['bgClass'] }}"></i>
@@ -97,7 +101,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td class="text-center text-sm text-muted py-3" colspan="7">tidak ada data</td>
+                        <td class="text-center text-sm text-muted py-3" colspan="8">tidak ada data</td>
                     </tr>
                 @endforelse
             @endif

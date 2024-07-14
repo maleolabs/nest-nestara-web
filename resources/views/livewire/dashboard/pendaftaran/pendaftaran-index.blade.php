@@ -36,39 +36,31 @@
         @if ($preview_data_izin)
             @livewire('dashboard.preview-izin.preview-data-izin', ['preview_izin_id' => $preview_izin_id])
         @else
-            <div class="row px-2">
-                <div class="col-md-9">
-                    <div class="card min-vh-50 p-3">
-                        <div class="d-flex align-items-end gap-3 mb-4">
-                            <div>
-                                <label for="start_date" class="form-label mb-0">Dari Tanggal</label>
-                                <div class="input-group input-group-outline">
-                                    <input type="date" class="form-control" id="start_date" name="start_date" wire:model.live='start_date'>
-                                </div>
-                            </div>
-                            <div>
-                                <label for="end_date" class="form-label mb-0">Sampai Tanggal</label>
-                                <div class="input-group input-group-outline">
-                                    <input type="date" class="form-control" id="end_date" name="end_date" wire:model.live='end_date'>
-                                </div>
-                            </div>
+            <div class="px-2">
+                <div class="card min-vh-50 p-3">
+                    <div class="d-flex align-items-end gap-3 mb-4">
+                        <div>
+                            <label for="start_date" class="form-label mb-0">Dari Tanggal</label>
                             <div class="input-group input-group-outline">
-                                <label class="form-label">Cari {{ $menu == self::DATA_PEMOHON ? 'ID atau nama pemohon...' : 'jenis izin, ID, atau nama pemohon...' }}</label>
-                                <input type="text" class="form-control" wire:model.live='search'>
+                                <input type="date" class="form-control" id="start_date" name="start_date" wire:model.live='start_date'>
                             </div>
                         </div>
-                        @if ($layout == 'grid')
-                            @include('livewire.dashboard.pendaftaran.partials.grid')
-                        @else
-                            @include('livewire.dashboard.pendaftaran.partials.table')
-                        @endif
+                        <div>
+                            <label for="end_date" class="form-label mb-0">Sampai Tanggal</label>
+                            <div class="input-group input-group-outline">
+                                <input type="date" class="form-control" id="end_date" name="end_date" wire:model.live='end_date'>
+                            </div>
+                        </div>
+                        <div class="input-group input-group-outline">
+                            <label class="form-label">Cari {{ $menu == self::DATA_PEMOHON ? 'ID atau nama pemohon...' : 'jenis izin, ID, atau nama pemohon...' }}</label>
+                            <input type="text" class="form-control" wire:model.live='search'>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3 order-md-last">
-                    <div class="card d-flex gap-2 flex-column align-items-center p-3">
-                        <img src="{{ asset('storage/web/layanan-icon.png') }}" class="img-fluid img-rounded img-rounded-md">
-                        <h5 class="text-center text-bold spacing-normal">Layanan</h5>
-                    </div>
+                    @if ($layout == 'grid')
+                        @include('livewire.dashboard.pendaftaran.partials.grid')
+                    @else
+                        @include('livewire.dashboard.pendaftaran.partials.table')
+                    @endif
                 </div>
             </div>
         @endif

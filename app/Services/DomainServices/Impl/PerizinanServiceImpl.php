@@ -53,7 +53,8 @@ class PerizinanServiceImpl implements PerizinanService
         array $filter_status_progress = [], 
         string $filter_start_date = null, 
         string $filter_end_date = null, 
-        string $sort = 'DESC'
+        string $sort = 'DESC',
+        ?int $limit = null
     ): array
     {
         $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
@@ -75,8 +76,10 @@ class PerizinanServiceImpl implements PerizinanService
             }
         })
         ->whereBetween('created_at', [$filter_start_date, $filter_end_date])
-        ->orderBy('created_at', $sort)
-        ->get();
+        ->orderBy('created_at', $sort);
+        if ($limit)
+            $semua_izin = $semua_izin->limit($limit);
+        $semua_izin = $semua_izin->get();
 
         return $semua_izin->all();
     }

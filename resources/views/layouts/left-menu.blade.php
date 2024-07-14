@@ -12,7 +12,7 @@
                     <img src="{{ asset('storage/web/layanan-icon.png') }}" width="35" height="35" class="img-fluid me-2">
                     <span class="text-sm">Layanan</span>
                 </li>
-                <div class="nav-devider">Pengelolaan izin</div>
+                <div class="nav-divider mt-3 mb-2">Pengelolaan izin</div>
                 <li class="nav-item">
                     <a href="{{ route('layanan.pendaftaran') }}" class="nav-link{{ Route::currentRouteName() == 'layanan.pendaftaran' ? ' active' : '' }}">
                         <i class="fa-solid fa-book-open"></i>
@@ -30,7 +30,7 @@
                     <img src="{{ asset('storage/web/employees.png') }}" width="35" height="35" class="img-fluid me-2">
                     <span class="text-sm">Back Office</span>
                 </li>
-                <div class="nav-devider">Pengelolaan izin</div>
+                <div class="nav-divider mt-3 mb-2">Pengelolaan izin</div>
                 <li class="nav-item">
                     <a href="{{ route('pegawai.pendataan') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.pendataan' ? ' active' : '' }}">
                         <i class="fa-solid fa-file-signature"></i>
@@ -50,6 +50,7 @@
                     </a>
                 </li>
             @endrole
+            @livewire('dashboard.component.left-menu-content')
         </ul>
     </aside>
 </div>

@@ -7,8 +7,9 @@ use App\Http\Controllers\Admin\PendaftaranController;
 use App\Http\Controllers\Admin\PenyerahanController;
 use App\Http\Controllers\Admin\ReportingController;
 use App\Http\Controllers\BackOffice\DashboardController as BackOfficeDashboardController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Helper\FileController;
-use App\Http\Controllers\Layanan\DashboardController;
+use App\Http\Controllers\Layanan\DashboardController as LayananDashboardController;
 use App\Http\Controllers\User\PerizinanController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -18,8 +19,6 @@ Route::get('/', function () {
 })->name('welcome');
 
 Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::get('/jenis-perizinan', [PerizinanController::class, 'jenisPerizinan'])->name('jenis-perizinan');
 
@@ -59,10 +58,10 @@ Route::middleware('auth')->group(function() {
 
     Route::middleware(['role:pengelola_layanan'])->group(function() {
         Route::prefix('layanan')->group(function() {
-            Route::get('/dashboard', [DashboardController::class, 'index'])->name('layanan.dashboard');
-            Route::get('/pendaftaran', [DashboardController::class, 'pendaftaran'])->name('layanan.pendaftaran');
-            Route::get('/pendaftaran/create', [DashboardController::class, 'pendaftaranCreate'])->name('layanan.pendaftaran.create');
-            Route::get('/penyerahan', [DashboardController::class, 'penyerahan'])->name('layanan.penyerahan');
+            Route::get('/dashboard', [LayananDashboardController::class, 'index'])->name('layanan.dashboard');
+            Route::get('/pendaftaran', [LayananDashboardController::class, 'pendaftaran'])->name('layanan.pendaftaran');
+            Route::get('/pendaftaran/create', [LayananDashboardController::class, 'pendaftaranCreate'])->name('layanan.pendaftaran.create');
+            Route::get('/penyerahan', [LayananDashboardController::class, 'penyerahan'])->name('layanan.penyerahan');
         });
     });
 
@@ -79,6 +78,10 @@ Route::middleware('auth')->group(function() {
         Route::get('/dashboard', function() {
             return 'dashboard';
         })->name('dashboard');
+    });
+
+    Route::middleware(['role:admin|pengelola_layanan|pegawai'])->group(function() {
+        Route::get('/izin/preview/{izin_id}', [DashboardController::class, 'previewIzin'])->name('preview-izin');
     });
     
 

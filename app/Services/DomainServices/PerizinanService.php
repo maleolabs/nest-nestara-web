@@ -40,6 +40,8 @@ interface PerizinanService
      * @param string $filter_end_date Filter tanggal akhir perizinan (opsional, default: hari ini). Jika tidak diberikan, akan menggunakan hari ini.
      *
      * @param string $sort Urutan pengurutan hasil (opsional, default: 'DESC').  Dapat berisi 'ASC' atau 'DESC'.
+     * 
+     * @param int|null $limit Jumlah data yang akan ditampilkan (opsional, default: semua).
      *
      * @return array Daftar perizinan yang sesuai dengan filter yang diberikan.
      */
@@ -49,7 +51,8 @@ interface PerizinanService
         array $filter_status_progress = [], 
         string $filter_start_date = null, 
         string $filter_end_date = null, 
-        string $sort = 'DESC'
+        string $sort = 'DESC',
+        ?int $limit = null
     ): array;
 
     /**

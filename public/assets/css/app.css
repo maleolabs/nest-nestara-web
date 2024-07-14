@@ -680,7 +680,7 @@ nav {
   margin: 0;
   list-style: none;
 }
-.sidebar-nav .nav-devider {
+.sidebar-nav .nav-divider {
   position: relative;
   font-size: .7rem;
   letter-spacing: 1px;
@@ -688,13 +688,12 @@ nav {
   align-items: center;
   padding: 0 15px;
 }
-.sidebar-nav .nav-devider::after {
+.sidebar-nav .nav-divider::after {
   content: '';
   flex-grow: 1;
   height: 1px;
   margin-left: 5px;
   background: var(--color-light);
-
 }
 .sidebar-nav .nav-item {
   margin-bottom: 15px;

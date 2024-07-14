@@ -70,7 +70,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6">
+                        <td colspan="7">
                             <div class="w-100 d-flex align-items-center justify-content-center gap-2 vh-30">
                                 Tidak ada data izin
                                 <i class="fa-regular fa-face-frown"></i>

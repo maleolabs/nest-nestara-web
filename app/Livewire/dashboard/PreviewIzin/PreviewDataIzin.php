@@ -25,6 +25,8 @@ class PreviewDataIzin extends Component
 
     use EntriDataTrait, TinjauanLapanganTrait, HasPermissionToAccess;
 
+    public $preview_page;
+
     public $preview_izin_id,
         $preview_izin,
         $preview_izin_dokumen = [],
@@ -47,18 +49,20 @@ class PreviewDataIzin extends Component
     
     public function mount()
     {
-        $this->setDataPreview();
-        if ($this->hasPermission(PreviewFeatureEnum::ENTRI_DATA)) {
-            $this->is_entri_changed = $this->last_izin_status && $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI;
-            $this->getPerizinanService()->updateIzinStatusWhenEntriDataHasChanged($this->preview_izin_id);
+        if (!$this->preview_page) {
+            $this->setDataPreview();
+            if ($this->hasPermission(PreviewFeatureEnum::ENTRI_DATA)) {
+                $this->is_entri_changed = $this->last_izin_status && $this->last_izin_status->keterangan == BackOfficeStatusEnum::PERUBAHAN_ENTRI;
+                $this->getPerizinanService()->updateIzinStatusWhenEntriDataHasChanged($this->preview_izin_id);
+            }
+            if ($this->hasPermission(PreviewFeatureEnum::TINJAUAN_LAPANGAN)) {
+                $this->setTinjauanLapanganFormData();
+            }
+            if ($this->hasPermission(PreviewFeatureEnum::TINJAUAN_PERMOHONAN)) {
+                $this->action_confirm = 'permohonan-selesai';
+            }
+            $this->dispatch('component-rendered');
         }
-        if ($this->hasPermission(PreviewFeatureEnum::TINJAUAN_LAPANGAN)) {
-            $this->setTinjauanLapanganFormData();
-        }
-        if ($this->hasPermission(PreviewFeatureEnum::TINJAUAN_PERMOHONAN)) {
-            $this->action_confirm = 'permohonan-selesai';
-        }
-        $this->dispatch('component-rendered');
     }
 
     public function updated($field)
@@ -82,10 +86,12 @@ class PreviewDataIzin extends Component
 
     public function render()
     {
-        $this->setDataPreview();
-        $this->canAccess();
-        if (!$this->edit_entri_data)
-            $this->setEntriData();
+        if (!$this->preview_page) {
+            $this->setDataPreview();
+            $this->canAccess();
+            if (!$this->edit_entri_data)
+                $this->setEntriData();
+        }
         return view('livewire.dashboard.preview-izin.preview-data-izin');
     }
 

@@ -26,7 +26,16 @@
     </div>
     <div class="content-wrap p-4">
         @if ($preview_izin_id)
-            @livewire('dashboard.preview-izin.preview-data-izin', ['preview_izin_id' => $preview_izin_id])
+            @if ($active_menu == self::HASIL_TINJAUAN)
+                @livewire('dashboard.preview-izin.preview-data-izin', [
+                    'preview_izin_id' => $preview_izin_id,
+                    'preview_page' => 'dashboard.back-office.verifikasi',
+                ])
+            @elseif($active_menu == self::BERITA_ACARA)
+                @livewire('dashboard.back-office.berita-acara')
+            @elseif($active_menu == self::REKOMENDASI)
+                @livewire('dashboard.back-office.rekomendasi')
+            @endif
         @else
             @include('livewire.dashboard.back-office.partials.pendataan-entri-data')
         @endif

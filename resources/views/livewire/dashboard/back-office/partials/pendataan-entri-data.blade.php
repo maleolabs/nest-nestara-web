@@ -28,6 +28,7 @@
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pemohon</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis Izin</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tanggal Permohonan</th>
+                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tim Pemeriksa</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                 </tr>
             </thead>
@@ -58,19 +59,30 @@
                         <td class="text-center text-sm">
                             {{ $this->getTanggalPermohonan($izin->id) }}
                         </td>
-                        <td class="d-flex flex-column align-items-center">
-                            <span class="badge badge-dot">
-                                <i class="{{ $statusClasses['bgClass'] }}"></i>
-                                <span class="text-sm {{ $statusClasses['textClass'] }}">
-                                    {{ Str::limit($status->keterangan, 20) }}
+                        <td>
+                            <ol class="list-group list-group-numbered">
+                                @foreach ($izin->timpemeriksa as $pemeriksa)
+                                    <li class="list-group-item text-xs text-bold border-0 bg-transparent">
+                                        {{ $pemeriksa->nama }}
+                                    </li>
+                                @endforeach
+                            </ol>
+                        </td>
+                        <td class="vertical-align-middle">
+                            <div class="d-flex flex-column align-items-center justify-content-center">
+                                <span class="badge badge-dot">
+                                    <i class="{{ $statusClasses['bgClass'] }}"></i>
+                                    <span class="text-sm {{ $statusClasses['textClass'] }}">
+                                        {{ Str::limit($status->keterangan, 20) }}
+                                    </span>
                                 </span>
-                            </span>
-                            <p class="text-xs text-muted mb-0">{{ $status->updated_at->diffForHumans() }}</p>
+                                <p class="text-xs text-muted mb-0">{{ $status->updated_at->diffForHumans() }}</p>
+                            </div>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7">
+                        <td colspan="8">
                             <div class="w-100 d-flex align-items-center justify-content-center gap-2 vh-30">
                                 Tidak ada data izin
                                 <i class="fa-regular fa-face-frown"></i>

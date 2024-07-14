@@ -46,4 +46,15 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService {
         })->get();
     }
 
+    public function hasEntriDataForm(?int $jenis_perizinan_id = null): bool
+    {
+        if (!$jenis_perizinan_id)
+            return false;
+        $jenis_perizinan = $this->find($jenis_perizinan_id);
+        if (!$jenis_perizinan)
+            return false;
+
+        return $jenis_perizinan->entri_data()->count() > 0;
+    }
+
 }

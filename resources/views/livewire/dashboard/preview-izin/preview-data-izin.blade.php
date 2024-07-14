@@ -175,28 +175,37 @@
 
             @role('pegawai')
                 <div class="col-12">
-                    @if ($this->isFormNotReady())
-                        <div class="card mb-4">
-                            @include('livewire.dashboard.preview-izin.button-entri-data')
-                        </div>
-                    @else
-                        @if ($this->isFormNotEntered())
-                            @if ($this->isFormFillAuthorized())
-                                <div class="card mb-4">
-                                    <div class="card-body">
-                                        <h6 class="text-bold mb-1">
-                                            <i class="fa-regular fa-circle-right me-1"></i>
-                                            Entri Data
-                                        </h6>
-                                        @include('livewire.dashboard.preview-izin.form-entri-data')
+                    @if ($this->hasEntriDataForm())
+                        @if ($this->isFormNotReady())
+                            <div class="card mb-4">
+                                @include('livewire.dashboard.preview-izin.button-entri-data')
+                            </div>
+                        @else
+                            @if ($this->isFormNotEntered())
+                                @if ($this->isFormFillAuthorized())
+                                    <div class="card mb-4">
+                                        <div class="card-body">
+                                            <h6 class="text-bold mb-1">
+                                                <i class="fa-regular fa-circle-right me-1"></i>
+                                                Entri Data
+                                            </h6>
+                                            @include('livewire.dashboard.preview-izin.form-entri-data')
+                                        </div>
                                     </div>
-                                </div>
-                            @else
-                                <div class="card mb-0">
-                                    @include('livewire.dashboard.preview-izin.filling-entri-form-not-authorized-alert')
-                                </div>
+                                @else
+                                    <div class="card mb-0">
+                                        @include('livewire.dashboard.preview-izin.filling-entri-form-not-authorized-alert')
+                                    </div>
+                                @endif
                             @endif
                         @endif
+                    @else
+                        <div class="alert alert-light">
+                            <p class="mt-3 text-muted">
+                                <i class="fa-solid fa-circle-info me-1"></i>
+                                Tidak ada formulir entri data untuk perizinan ini!
+                            </p>
+                        </div>
                     @endif
 
                     @if ($this->tinjauLapangan())

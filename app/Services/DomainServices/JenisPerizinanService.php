@@ -44,4 +44,12 @@ interface JenisPerizinanService {
      */
     function getPersyaratanByJenisAndPemohon(int $jenis_id, int $pemohon_id): array;
 
+    /**
+     * Memeriksa apakah formulir entir data untuk jenis perizinan yang ditentukan ada.
+     *
+     * @param int|null $jenis_perizinan_id ID dari jenis perizinan.
+     * @return bool True jika formulir data ada, false jika sebaliknya.
+     */
+    function hasEntriDataForm(?int $jenis_perizinan_id = null): bool;
+
 }

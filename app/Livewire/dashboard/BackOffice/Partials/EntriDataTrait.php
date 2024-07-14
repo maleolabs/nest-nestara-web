@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard\BackOffice\Partials;
 
 use App\Services\DomainServices\EntriDataService;
+use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\StatusIzinService;
 use App\utils\enums\BackOfficeStatusEnum;
@@ -157,6 +158,16 @@ trait EntriDataTrait
             BackOfficeStatusEnum::SUDAH_ENTRI_TINJAUAN_LAPANGAN
         ];
         return !in_array($this->last_izin_status->keterangan, $entering_status) && in_array($this->last_izin_status->keterangan, $editable_status);
+    }
+
+    protected function hasEntriDataForm(): bool
+    {
+        return $this->getJenisPerizinanService()->hasEntriDataForm($this->jenis_perizinan_id);
+    }
+
+    protected function getJenisPerizinanService(): JenisPerizinanService
+    {
+        return app(JenisPerizinanService::class);
     }
 
     protected function getEntriDataService(): EntriDataService

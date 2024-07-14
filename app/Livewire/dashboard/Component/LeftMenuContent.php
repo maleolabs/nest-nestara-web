@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Dashboard\Component;
 
+use App\Services\AppService\EncryptionService;
 use App\Services\DomainServices\PerizinanService;
 use Livewire\Component;
 
@@ -13,6 +14,16 @@ class LeftMenuContent extends Component
     {
         $this->all_izin = $this->getPerizinanService()->getAll('', [], [], null, null, 'DESC', 10);
         return view('livewire.dashboard.component.left-menu-content');
+    }
+
+    protected function encryptId($id): string
+    {
+        return $this->getEncryptionService()->encryptId($id);
+    }
+
+    private function getEncryptionService(): EncryptionService
+    {
+        return app(EncryptionService::class);
     }
 
     private function getPerizinanService(): PerizinanService

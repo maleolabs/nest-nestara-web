@@ -28,7 +28,6 @@
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pemohon</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis Izin</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tanggal Permohonan</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tim Pemeriksa</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                 </tr>
             </thead>
@@ -73,7 +72,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8">
+                        <td colspan="7">
                             <div class="w-100 d-flex align-items-center justify-content-center gap-2 vh-30">
                                 Tidak ada data izin
                                 <i class="fa-regular fa-face-frown"></i>

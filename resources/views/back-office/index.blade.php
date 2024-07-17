@@ -28,16 +28,18 @@
                                 <p class="text-sm text-bold mb-0">
                                     {{ str_capitalize($izin->pemohon->nama_pemohon, true) . ' (' . str_capitalize($izin->jenis_perizinan->nama, true) . ')' }}
                                 </p>
-                                @php
-                                    $status = $izin->status_izin->last();
-                                    $statusClasses = getStatusIzinProcessClasses($status);
-                                @endphp
-                                <span class="ps-0 badge badge-dot">
-                                    <i class="{{ $statusClasses['bgClass'] }}"></i>
-                                    <span class="text-sm {{ $statusClasses['textClass'] }}">
-                                        {{ $status->keterangan }}
+                                @if ($izin->status_izin->last()->keterangan != null)
+                                    @php
+                                        $status = $izin->status_izin->last();
+                                        $statusClasses = getStatusIzinProcessClasses($status);
+                                    @endphp
+                                    <span class="ps-0 badge badge-dot">
+                                        <i class="{{ $statusClasses['bgClass'] }}"></i>
+                                        <span class="text-sm {{ $statusClasses['textClass'] }}">
+                                            {{ $status->keterangan }}
+                                        </span>
                                     </span>
-                                </span>
+                                @endif
                             </a>
                         @endforeach
                     </div>

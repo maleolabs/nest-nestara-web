@@ -59,7 +59,10 @@ trait TinjauanLapanganTrait
         $this->validateTinjauanLapanganForm();
         $nomor_surat = $this->getCleanNoSurat() . $this->no_surat_format;
         $this->getPerizinanService()->savePeninjauanLapangan($this->preview_izin_id, $this->penandatangan,$nomor_surat);
-        return redirect()->route('pegawai.pendataan', ['preview_izin_id' => $this->preview_izin_id]);
+        return redirect()->route('pegawai.pendataan', [
+            'tab' => 'Penjadwalan Tim Teknis',
+            'preview_izin_id' => $this->preview_izin_id
+        ]);
     }
 
     protected function hasTinjauanLapangan(): bool

@@ -5,6 +5,7 @@ namespace App\Livewire\User\Izin;
 use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
+use Illuminate\Support\Collection;
 use Livewire\Component;
 
 class ShowIzin extends Component
@@ -13,14 +14,17 @@ class ShowIzin extends Component
     public $selectedPreview, 
         $selectedPreviewSyaratIzin = [];
 
+    private $semua_izin = [];
+
     public $to_confirm_delete = false,
         $delete_izin_id,
         $confirm_delete;
 
     public function render()
     {
+        $this->semua_izin = auth()->user()->pemohon ? auth()->user()->pemohon->izin()->paginate(10) : new Collection();
         return view('livewire.user.izin.show-izin', [
-            'semua_izin' => auth()->user()->pemohon->izin()->paginate(10)
+            'semua_izin' => $this->semua_izin,
         ]);
     }
 

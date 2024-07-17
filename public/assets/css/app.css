@@ -2614,7 +2614,7 @@ button.btn-app-tertiary-light:active {
 .sticky-top-nav {
   position: sticky;
   top: 72px;
-  z-index: 999;
+  z-index: 9;
 }
 
 .dash-menu::-webkit-scrollbar {

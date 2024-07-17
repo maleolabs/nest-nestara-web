@@ -31,7 +31,7 @@
             <a href="{{ route('create-izin') }}" class="btn bg-gradient-primary">buat izin baru</a>
         </div>
         <div class="row">
-            @foreach ($semua_izin->reverse() as $izin)
+            @forelse ($semua_izin->reverse() as $izin)
                 <div class="col-12 mb-3">
                     @php
                         $is_izin_new = $izin->created_at >= \Carbon\Carbon::now()->subMinutes(30);
@@ -68,8 +68,16 @@
                         @endif
                     </div>
                 </div>
-            @endforeach
-            {{ $semua_izin->links() }}
+            @empty
+                <div class="col-12">
+                    <div class="border rounded-3 p-4 d-flex align-items-center justify-content-center">
+                        Tidak ada permohonan izin
+                    </div>
+                </div>
+            @endforelse
+            @if (count($semua_izin) > 0)
+                {{ $semua_izin->links() }}
+            @endif
         </div>
         @include('livewire.helper.modal-right')
     @endif

@@ -50,6 +50,17 @@ interface StatusIzinService {
 	function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null, $updated_at = null, bool $new = false): void;
 
 	/**
+	 * Memperbarui status izin dengan detail keterangan tambahan.
+	 * @param int $izin_id ID izin yang terkait
+	 * @param string $status Status izin terbaru
+	 * @param string $progres Progres izin terbaru
+	 * @param string|null $keterangan Keterangan tambahan (opsional)
+	 * @param string $detail_keterangan Detail keterangan tambahan
+	 * @return void
+	 */
+	function updateStatusIzinWithDetailKeterangan(int $izin_id, string $status, string $progres, string $keterangan = null, string $detail_keterangan = null): void;
+
+	/**
 	 * Menghapus semua data status izin berdasarkan ID izin
 	 * @param int $izin_id ID izin yang terkait
 	 * @return void

@@ -99,11 +99,11 @@ interface PerizinanService
      * Menyimpan revisi atau perubahan pada data registrasi perizinan.
      *
      * @param int $izin_id ID perizinan yang akan direvisi.
-     * @param string|null $keterangan Keterangan atau alasan revisi perizinan (opsional).
+     * @param string|null $detail_keterangan Detail keterangan atau alasan revisi perizinan (opsional).
      *
      * @return void
      */
-    function saveRegistrationRevision(int $izin_id, string $keterangan = null): void;
+    function saveRegistrationRevision(int $izin_id, string $detail_keterangan = null): void;
 
     /**
      * Mendapatkan semua status perizinan yang dapat dibatalkan.

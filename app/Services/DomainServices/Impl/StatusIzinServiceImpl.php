@@ -65,6 +65,23 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		}
 	}
 
+	public function updateStatusIzinWithDetailKeterangan(int $izin_id, string $status, string $progres, ?string $keterangan = null, string $detail_keterangan = null): void
+	{
+		$status_izin = StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->first();
+		if ($status_izin) {
+			$status_izin->progres = $progres;
+			
+			if ($keterangan)
+				$status_izin->keterangan = $keterangan;
+
+			if ($detail_keterangan)
+				$status_izin->detail_keterangan = $detail_keterangan;
+			
+			$status_izin->updated_at = now();
+			$status_izin->save();
+		}
+	}
+
 	public function deleteAllByIzinId(int $izin_id): void
 	{
 		StatusIzin::where('izin_id', $izin_id)->delete();

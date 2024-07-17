@@ -118,7 +118,7 @@ class PerizinanServiceImpl implements PerizinanService
         DB::commit();
     }
 
-    public function saveRegistrationRevision(int $izin_id, string $keterangan = null): void
+    public function saveRegistrationRevision(int $izin_id, string $detail_keterangan = null): void
     {
         DB::beginTransaction();
         $izin = Izin::find($izin_id);
@@ -127,8 +127,7 @@ class PerizinanServiceImpl implements PerizinanService
             return;
         }
 
-        $revision_status = $this->statusIzinService->findByNamaAndIzin(Status::REVISI_PERSYARATAN, $izin_id);
-        $this->statusIzinService->updateStatusIzin($izin_id, Status::REVISI_PERSYARATAN, Progres::FINISHED, $keterangan, $revision_status->pegawai_id);
+        $this->statusIzinService->updateStatusIzinWithDetailKeterangan($izin_id, Status::REVISI_PERSYARATAN, Progres::FINISHED, null, $detail_keterangan);
 
         DB::commit();
     }

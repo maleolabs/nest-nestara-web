@@ -25,7 +25,7 @@ class RevisiIzin extends Component
         $persyaratan = [],
         $persyaratan_tmp = [],
         $persyarata_actual_tmp = [],
-        $keterangan;
+        $detail_keterangan;
 
     public function mount()
     {
@@ -33,7 +33,7 @@ class RevisiIzin extends Component
             $this->izin = $this->getPerizinanService()->find($this->izin_id);
             $this->status = $this->izin->status_izin->last();
             if ($this->status->progres == StatusIzinProgressEnum::FINISHED)
-                $this->keterangan = $this->status->keterangan;
+                $this->detail_keterangan = $this->status->detail_keterangan;
         }
         $this->setUpData();
         $this->syarat_tipe_pdf = $this->getSyaratIzinService()->getIdsTypePdfByJenisAndPemohon($this->izin->jenis_perizinan_id, $this->izin->pemohon_id);
@@ -75,7 +75,7 @@ class RevisiIzin extends Component
         if (count($this->persyaratan) > 0)
             $this->getDokumenPemohonService()->saveAllWithFile($this->izin->pemohon_id, $this->izin->id, $this->persyaratan, $this->persyarata_actual_tmp);
 
-        $this->getPerizinanService()->saveRegistrationRevision($this->izin_id, $this->keterangan);
+        $this->getPerizinanService()->saveRegistrationRevision($this->izin_id, $this->detail_keterangan);
 
         return redirect()->route('user.izin');
     }

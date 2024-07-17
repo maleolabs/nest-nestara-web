@@ -7,12 +7,12 @@
                     <div class="card-body">
                         <div class="input-group input-group-outline mb-3">
                             <label for="keterangan" class="form-label">Keterangan</label>
-                            <textarea name="keterangan" id="keterangan" rows="5" class="form-control @error('keterangan')in-invalid @enderror" wire:model.live='keterangan'></textarea>
-                            @error('keterangan')
+                            <textarea name="keterangan" id="keterangan" rows="5" class="form-control @error('detail_keterangan')in-invalid @enderror" wire:model.live='detail_keterangan'></textarea>
+                            @error('detail_keterangan')
                                 <div class="text-danger text-sm">{{ $message }}</div>
                             @enderror
                         </div>
-                        @if (count($persyaratan) > 0 || $keterangan)
+                        @if (count($persyaratan) > 0 || $detail_keterangan)
                             <button class="btn bg-gradient-primary text-nowrap" wire:loading.remove wire:target='save' wire:click='save'>Simpan</button>
                         @endif
                     </div>

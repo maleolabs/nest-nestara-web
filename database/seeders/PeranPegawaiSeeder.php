@@ -14,15 +14,11 @@ class PeranPegawaiSeeder extends Seeder
      */
     public function run(): void
     {
-        $peran_pegawai = [
-            'penandatangan',
-            'timpemeriksa',
-        ];
-        $all_pegawai = Pegawai::factory(5)->createMany();
+        $all_pegawai = Pegawai::factory(2)->createMany();
         foreach ($all_pegawai as $pegawai) {
             PeranPegawai::create([
                 'pegawai_id' => $pegawai->id,
-                'peran' => $peran_pegawai[rand(0,1)],
+                'peran' => 'penandatangan',
             ]);
         }
     }

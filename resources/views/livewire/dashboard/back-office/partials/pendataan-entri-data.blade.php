@@ -59,15 +59,6 @@
                         <td class="text-center text-sm">
                             {{ $this->getTanggalPermohonan($izin->id) }}
                         </td>
-                        <td>
-                            <ol class="list-group list-group-numbered">
-                                @foreach ($izin->timpemeriksa as $pemeriksa)
-                                    <li class="list-group-item text-xs text-bold border-0 bg-transparent">
-                                        {{ $pemeriksa->nama }}
-                                    </li>
-                                @endforeach
-                            </ol>
-                        </td>
                         <td class="vertical-align-middle">
                             <div class="d-flex flex-column align-items-center justify-content-center">
                                 <span class="badge badge-dot">

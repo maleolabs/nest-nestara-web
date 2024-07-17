@@ -18,10 +18,6 @@
     <h6 class="mb-3">{{ $saved_nosurat }}</h6>
     <p class="mb-1 text-muted text-sm">Penanda Tangan</p>
     <h6 class="mb-3">{{ $saved_penandatangan }}</h6>
-    <p class="mb-1 text-muted text-sm">Tim Pemeriksa</p>
-    @foreach ($saved_timpemeriksa as $pegawai_pemeriksa)
-        <h6 class="mb-1">{{ (count($saved_timpemeriksa) > 1 ? $loop->iteration . '. ' : '') . $pegawai_pemeriksa->nama }}</h6>
-    @endforeach
 @else
     <form wire:submit.prevent="saveTinjauanLapangan">
         <div class="row">
@@ -42,24 +38,11 @@
                 @error('penandatangan')
                     <div class="text-danger text-sm mb-3">{{ $message }}</div>
                 @enderror
-                <p class="mb-1 text-sm">Tim Pemeriksa</p>
-                @foreach ($semua_tim_pemeriksa as $timpemeriksa)
-                    <div class="form-check ps-0">
-                        <input type="checkbox" class="form-check-input" id="tim_pemeriksa-{{ $timpemeriksa->id }}" name="tim_pemeriksa" wire:model="tim_pemeriksa.{{ $timpemeriksa->id }}">
-                        <label for="tim_pemeriksa-{{ $timpemeriksa->id }}" class="form-check-label">{{ $timpemeriksa->nama }}</label>
-                    </div>
-                @endforeach
-                @error('tim_pemeriksa')
-                    <div class="text-danger text-sm">{{ $message }}</div>
-                @enderror
                 <div class="mt-3">
                     <button type="submit" class="btn bg-gradient-primary">
                         simpan
                     </button>
                 </div>
-            </div>
-            <div class="col-md-6">
-
             </div>
         </div>
     </form>

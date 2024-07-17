@@ -263,9 +263,9 @@ class PerizinanServiceImpl implements PerizinanService
         }
     }
 
-    public function savePeninjauanLapangan(int $izin_id, int $penandatangan_id, array $timteknis_ids, ?string $nomor_surat = null): void
+    public function savePeninjauanLapangan(int $izin_id, int $penandatangan_id, ?string $nomor_surat = null): void
     {
-        DB::transaction(function () use ($izin_id, $penandatangan_id, $timteknis_ids, $nomor_surat) {
+        DB::transaction(function () use ($izin_id, $penandatangan_id, $nomor_surat) {
             $izin = $this->find($izin_id);
             if (!$izin)
                 return;
@@ -276,7 +276,6 @@ class PerizinanServiceImpl implements PerizinanService
             $izin->no_surat = $nomor_surat;
             $izin->penandatangan_id = $penandatangan_id;
             $izin->save();
-            $izin->timpemeriksa()->sync(array_keys($timteknis_ids));
     
             $izin_status = $izin->status_izin->last();
             $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN, $izin_status->pegawai_id);

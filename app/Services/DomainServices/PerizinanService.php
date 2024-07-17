@@ -194,10 +194,9 @@ interface PerizinanService
      *
      * @param int $izin_id ID permohonan izin yang akan disimpan hasil tinjauannya.
      * @param int $penandatangan_id ID penandatangan yang akan menandatangani surat.
-     * @param array $timteknis Data ID tim teknis yang melakukan tinjauan lapangan.
      * @param string|null $nomor_surat Nomor surat yang akan disimpan (opsional).
      */
-    function savePeninjauanLapangan(int $izin_id, int $penandatangan_id, array $timteknis_ids, ?string $nomor_surat = null): void;
+    function savePeninjauanLapangan(int $izin_id, int $penandatangan_id, ?string $nomor_surat = null): void;
 
     /**
      * Memperbarui status semua izin jika hasil tinjauan lapangan sudah dimasukkan.

@@ -32,14 +32,6 @@ class PegawaiServiceImpl implements PegawaiService {
 		return $penandatangan->all();
 	}
 
-	public function getTimPemeriksa(): array
-	{
-		$tim_teknis = Pegawai::whereHas('peran_pegawai', function ($query) {
-			$query->where('peran', 'timpemeriksa');
-		})->get();
-		return $tim_teknis->all();
-	}
-
 	public function update(int $id, array $data_pegawai): ?Pegawai
 	{
 		$pegawai = $this->find($id);

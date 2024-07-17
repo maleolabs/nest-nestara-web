@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\Izin;
 
+use App\Services\AppService\EncryptionService;
 use App\Services\DomainServices\PerizinanService;
 use App\utils\enums\StatusIzinEnum;
 use Closure;
@@ -13,9 +14,14 @@ class RevisiIzinMiddleware
 
     protected PerizinanService $perizinanService;
 
-    public function __construct(PerizinanService $perizinanService)
-    {
+    protected EncryptionService $encryptionService;
+
+    public function __construct(
+        PerizinanService $perizinanService,
+        EncryptionService $encryptionService
+    ) {
         $this->perizinanService = $perizinanService;
+        $this->encryptionService = $encryptionService;
     }
     /**
      * Handle an incoming request.
@@ -24,7 +30,8 @@ class RevisiIzinMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $izin_id = $request->route()->parameter('izin_id');
+        $izin_id = $request->route('izin_id');
+        $izin_id = $this->encryptionService->decryptId($izin_id);
         $izin = $this->perizinanService->find($izin_id);
         $last_status = $izin->status_izin->last();
         if ($last_status->nama != StatusIzinEnum::REVISI_PERSYARATAN) {

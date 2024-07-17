@@ -137,7 +137,7 @@
                                                 <div class="alert alert-light">
                                                     <p class="mt-3 text-muted">
                                                         <i class="fa-solid fa-circle-info me-1"></i>
-                                                        Proses perbaikan persyaratan oleh pasien
+                                                        Proses perbaikan persyaratan oleh pemohon
                                                     </p>
                                                 </div>
                                             @endif

@@ -77,7 +77,7 @@ class RevisiIzin extends Component
 
         $this->getPerizinanService()->saveRegistrationRevision($this->izin_id, $this->keterangan);
 
-        $this->persyaratan = [];
+        return redirect()->route('user.izin');
     }
 
     #[On('set-pdf-img')]

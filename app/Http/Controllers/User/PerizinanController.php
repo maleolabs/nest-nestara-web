@@ -4,10 +4,18 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\JenisPerizinan;
+use App\Services\AppService\EncryptionService;
 use Illuminate\Http\Request;
 
 class PerizinanController extends Controller
 {
+
+    protected EncryptionService $encryptionService;
+
+    public function __construct(EncryptionService $encryptionService)
+    {
+        $this->encryptionService = $encryptionService;
+    }
     
     public function jenisPerizinan()
     {
@@ -28,8 +36,9 @@ class PerizinanController extends Controller
 
     public function revisiIzin(Request $request)
     {
+        $izin_id = $this->encryptionService->decryptId($request->route('izin_id'));
         return response()->view('user.revisi-izin', [
-            'izin_id' => $request->route('izin_id')
+            'izin_id' => $izin_id
         ]);
     }
 

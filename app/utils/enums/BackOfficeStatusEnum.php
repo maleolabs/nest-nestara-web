@@ -2,18 +2,77 @@
 
 namespace App\utils\enums;
 
+/**
+ * Enum yang merepresentasikan berbagai nilai status yang digunakan dalam sistem back office.
+ */
 class BackOfficeStatusEnum
 {
-
+    /**
+     * Status ketika entri belum dibuat.
+     */
     public const BELUM_ENTRI = 'belum di entri';
-    public const SEDANG_ENTRI = 'sedang di entri';
-    public const SUDAH_ENTRI = 'sudah di entri';
-    public const ENTRI_TINJAUAN_LAPANGAN = 'sedang di entri tinjauan lapangan';
-    public const SUDAH_ENTRI_TINJAUAN_LAPANGAN ='sudah di entri tinjauan lapangan';
-    public const PERUBAHAN_ENTRI = 'terjadi perubahan data. mohon untuk entri data kembali!';
-    public const BELUM_DIPERIKSA = 'belum diperiksa tim teknis';
-    public const SUDAH_DI_PERIKSA = 'sudah diperiksa tim teknis';
 
+    /**
+     * Status ketika entri sedang dibuat.
+     */
+    public const SEDANG_ENTRI = 'sedang di entri';
+
+    /**
+     * Status ketika entri sudah dibuat.
+     */
+    public const SUDAH_ENTRI = 'sudah di entri';
+
+    /**
+     * Status ketika entri sedang dibuat untuk tinjauan lapangan.
+     */
+    public const ENTRI_TINJAUAN_LAPANGAN = 'sedang di entri tinjauan lapangan';
+
+    /**
+     * Status ketika entri untuk tinjauan lapangan sudah dibuat.
+     */
+    public const SUDAH_ENTRI_TINJAUAN_LAPANGAN = 'sudah di entri tinjauan lapangan';
+
+    /**
+     * Status ketika terjadi perubahan pada entri, dan perlu dibuat kembali.
+     */
+    public const PERUBAHAN_ENTRI = 'terjadi perubahan data. mohon untuk entri data kembali!';
+
+    /**
+     * Status ketika permohonan izin direkomendasikan.
+     */
+    public const DIREKOM = 'direkomendasikan';
+
+    /**
+     * Status ketika permohonan izin tidak direkomendasikan.
+     */
+    public const TIDAK_DIREKOM = 'tidak direkomendasikan';
+
+    /**
+     * Status ketika permohonan izin direkomendasikan dengan catatan.
+     */
+    public const REKOM_CATATAN = 'direkomendasikan dengan catatan';
+
+    /**
+     * Status ketika permohonan izin memerlukan pembahasan lebih lanjut.
+     */
+    public const BAHAS_LANJUT = 'perlu pembahasan lebih lanjut';
+
+    /***
+    |------------------------------------------------------
+    | Jenis kegiatan yang dilakukan oleh pegawai.
+    |------------------------------------------------------
+    | status ini tidak akan di kembalikan pada fungsi all()
+    |
+    */
+    public const PERIKSA_BERKAS = 'pemeriksaan berkas';
+    public const SURVEY_LAPANGAN = 'survey lapangan';
+    public const RAPAT_TIM = 'rapat tim teknis';
+
+    /**
+     * Mengembalikan array dari semua nilai status.
+     *
+     * @return array
+     */
     public static function all(): array
     {
         return [
@@ -23,9 +82,10 @@ class BackOfficeStatusEnum
             self::ENTRI_TINJAUAN_LAPANGAN,
             self::SUDAH_ENTRI_TINJAUAN_LAPANGAN,
             self::PERUBAHAN_ENTRI,
-            self::BELUM_DIPERIKSA,
-            self::SUDAH_DI_PERIKSA,
+            self::DIREKOM,
+            self::TIDAK_DIREKOM,
+            self::REKOM_CATATAN,
+            self::BAHAS_LANJUT,
         ];
     }
-
 }

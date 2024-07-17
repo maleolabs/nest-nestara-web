@@ -14,11 +14,6 @@
 </div>
 @push('scripts')
     <script>
-        function switchTab(tab) {
-            let url = new URL(window.location)
-            url.searchParams.set('tab', tab)
-            window.history.pushState({}, '', url)
-        }
         $('.data-izin').each(function(index, elemen) {
             $(elemen).on('click', function() {
                 const izinId = $(this).attr('data-izin-id')

@@ -3,7 +3,7 @@
         <div>
             <h4 class="mb-4 spacing-md">Lihat pendaftaran izin</h4>
             @if ($selectedPreview)
-                <p class="mb-0 text-sm">Jenis perizinan</p>
+                <p class="mb-0 text-sm">Nama Izin</p>
                 <h3 class="spacing-md">{{ str_capitalize($selectedPreview->jenis_perizinan->nama, true) }}</h3>
                 <p class="mb-0 text-sm">Kelompok Izin</p>
                 <h6 class="text-capitalize">{{ $selectedPreview->jenis_perizinan->kelompok_izin }}</h6>

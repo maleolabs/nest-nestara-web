@@ -33,7 +33,7 @@
                     <div class="card w-100 p-4 mb-0">
                         <div class="d-flex flex-sm-row flex-column justify-content-sm-between align-items-sm-top align-items-between gap-3">
                             <div>
-                                <p class="mb-0 text-sm">Jenis perizinan</p>
+                                <p class="mb-0 text-sm">Nama Izin</p>
                                 <h3 class="spacing-md">{{ str_capitalize($preview_izin->jenis_perizinan->nama, true) }}</h3>
                                 <h6 class="mb-0 spacing-normal">
                                     <i class="fa-solid fa-layer-group"></i>

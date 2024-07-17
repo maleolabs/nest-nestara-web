@@ -305,19 +305,20 @@ class PerizinanServiceImpl implements PerizinanService
         foreach ($semua_izin as $izin) {
             $izin_status = $izin->status_izin->last();
             if ($izin_status->nama == Status::PROSES && $izin->status_izin->last()->keterangan == OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN) {
-                $this->statusIzinService->updateStatusIzin($izin->id, Status::PROSES, Progres::PROCESSING, OfficeStatus::BELUM_DIPERIKSA, $pegawai_id);
+                $this->statusIzinService->updateStatusIzin($izin->id, Status::PROSES, Progres::PROCESSING, OfficeStatus::TIDAK_DIREKOM, $pegawai_id);
             }
         }
     }
 
-    public function verifyPermohonanIzin(int $izin_id, int $pegawai_id): void
+    public function rekomendasiPermohonan(int $izin_id, int $pegawai_id, string $rekomendasi, string $jenis_kegiatan): void
     {
         $izin = $this->find($izin_id);
         if (!$izin)
             return;
         $izin_status = $izin->status_izin->last();
-        if ($izin_status->nama == Status::PROSES && $izin->status_izin->last()->keterangan == OfficeStatus::BELUM_DIPERIKSA) {
-            $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::SUDAH_DI_PERIKSA, $pegawai_id);
+        if ($izin_status->nama == Status::PROSES) {
+            $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, $rekomendasi, $pegawai_id);
+            $this->statusIzinService->updateStatusIzinWithDetailKeterangan($izin_id, Status::PROSES, Progres::PROCESSING, $rekomendasi, $jenis_kegiatan);
         }
     }
     

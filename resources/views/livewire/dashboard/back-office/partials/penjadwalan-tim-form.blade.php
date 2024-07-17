@@ -26,14 +26,11 @@
     <form wire:submit.prevent="saveTinjauanLapangan">
         <div class="row">
             <div class="col-md-6">
-                <div class="app-input-group mb-1">
-                    <input type="number" class="form-control @error('no_surat')is-invalid @enderror" id="no_surat" wire:model.live="no_surat">
-                    <span class="input-group-text">{{ $no_surat_format }}</span>
+                <label for="no_surat" class="form-label">Nomor Surat</label>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control disabled @error('no_surat')is-invalid @enderror" id="no_surat" wire:model.live="no_surat" disabled>
                 </div>
-                <div class="mt-1 text-sm @error('no_surat')mb-1 @else mb-3 @enderror">{{ "Nomor surat akan seperti ini: " . $this->getCleanNoSurat() . "{$no_surat_format}" }}</div>
-                @error('no_surat')
-                    <div class="text-danger text-sm mb-3">{{ $message }}</div>
-                @enderror
+                <label for="penandatangan" class="form-label">Penandatangan</label>
                 <div class="input-group @error('penandatangan')mb-1 @else mb-3 @enderror">
                     <select class="form-select px-2 @error('penandatangan')is-invalid @enderror" id="penandatangan" wire:model='penandatangan'>
                         <option selected>Pilih Penandatangan</option>

@@ -37,7 +37,7 @@ trait TinjauanLapanganTrait
                 $this->saved_penandatangan = $this->preview_izin->penandatangan->nama;
                 $this->saved_timpemeriksa = $this->preview_izin->timpemeriksa;
 
-                $this->no_surat = ltrim(explode('/', $this->preview_izin->no_surat)[0], '0');
+                $this->no_surat = $this->preview_izin->no_surat;
                 $this->penandatangan = $this->preview_izin->penandatangan_id;
                 $saved_timpemeriksa = $this->saved_timpemeriksa->all();
                 array_walk($saved_timpemeriksa, function ($pegawai) {
@@ -45,8 +45,9 @@ trait TinjauanLapanganTrait
                 });
             } else {
                 if (!$this->saved_nosurat)
-                    $this->no_surat = $this->getSuratService()->getNomor();
-                $this->no_surat_format = $this->getSuratService()->getFormat($this->jenis_perizinan_id);
+                    $this->no_surat = str_pad($this->getSuratService()->getNomor(), 3, '0', STR_PAD_LEFT) . $this->getSuratService()->getFormat($this->jenis_perizinan_id);
+                else
+                    $this->no_surat = $this->saved_nosurat;
             }
         }
     }
@@ -67,9 +68,9 @@ trait TinjauanLapanganTrait
         $this->validateTinjauanLapanganForm();
         $nomor_surat = $this->getCleanNoSurat() . $this->no_surat_format;
         $this->getPerizinanService()->savePeninjauanLapangan($this->preview_izin_id, $this->penandatangan, $this->tim_pemeriksa, $nomor_surat);
-        $this->setTinjauanLapanganFormData();
         if ($this->edit_tinjau_lapangan)
             $this->edit_tinjau_lapangan = false;
+        $this->setTinjauanLapanganFormData();
     }
 
     protected function hasTinjauanLapangan(): bool

@@ -30,9 +30,9 @@ class DashboardController extends Controller
         return response()->view('back-office.pendataan');
     }
 
-    public function timTeknis()
+    public function rekomendasi()
     {
-        return response()->view('back-office.tim-teknis');
+        return response()->view('back-office.rekomendasi');
     }
 
     public function penetapan()

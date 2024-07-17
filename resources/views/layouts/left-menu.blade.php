@@ -38,9 +38,9 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('pegawai.tim-teknis') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.tim-teknis' ? ' active' : '' }}">
-                        <i class="fa-solid fa-people-group"></i>
-                        <span>Tim Teknis</span>
+                    <a href="{{ route('pegawai.rekomendasi') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.rekomendasi' ? ' active' : '' }}">
+                        <i class="fa-solid fa-medal"></i>
+                        <span>Rekomendasi</span>
                     </a>
                 </li>
                 <li class="nav-item">

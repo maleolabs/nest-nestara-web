@@ -57,6 +57,7 @@ class StatusIzinServiceImpl implements StatusIzinService {
 
 		if ($status_izin->nama == StatusIzinEnum::PROSES) {
 			RiwayatProsesIzin::create([
+				'izin_id' => $izin_id,
 				'status_izin_id' => $status_izin->id,
 				'progres' => $status_izin->progres,
 				'keterangan' => $status_izin->keterangan,

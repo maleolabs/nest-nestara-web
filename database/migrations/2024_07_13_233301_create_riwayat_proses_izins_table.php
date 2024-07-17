@@ -15,10 +15,14 @@ return new class extends Migration
     {
         Schema::create('riwayat_proses_izin', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('izin_id');
             $table->unsignedBigInteger('status_izin_id');
             $table->enum('progres', StatusIzinProgressEnum::all());
-            $table->enum('keterangan', BackOfficeStatusEnum::all())->unique();
+            $table->enum('keterangan', BackOfficeStatusEnum::all());
             $table->timestamps();
+
+            $table->foreign('izin_id')->references('id')->on('izin')->onDelete('cascade');
+            $table->foreign('status_izin_id')->references('id')->on('status_izin')->onDelete('cascade');
         });
     }
 

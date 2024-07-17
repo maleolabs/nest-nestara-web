@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+use App\Services\AppService\EncryptionService;
 
 if (!function_exists('str_capitalize')) {
     function str_capitalize($string, $ls_remaining_char = false): string
@@ -31,5 +33,12 @@ if (!function_exists('pretty_address')) {
             $pretty_address .= str_capitalize($addr);
         }
         return rtrim($pretty_address);
+    }
+}
+
+if (!function_exists('encrypt_id')) {
+    function encrypt_id($id): string
+    {
+        return app(EncryptionService::class)->encryptId($id);
     }
 }

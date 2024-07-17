@@ -3,14 +3,24 @@
 namespace App\Http\Controllers\BackOffice;
 
 use App\Http\Controllers\Controller;
+use App\Services\DomainServices\PerizinanService;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+
+    protected PerizinanService $perizinanService;
+
+    public function __construct(PerizinanService $perizinanService)
+    {
+        $this->perizinanService = $perizinanService;
+    }
     
     public function index()
     {
-        return response()->view('back-office.index');
+        return response()->view('back-office.index', [
+            'all_izin' => $this->perizinanService->getAll('', [], [], null, null, 'DESC', 10)
+        ]);
     }
 
     public function pendataan()

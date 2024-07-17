@@ -4,6 +4,22 @@ namespace App\Services\DomainServices;
 
 use App\Models\Izin;
 
+/**
+ * Menyediakan antarmuka untuk mengelola perizinan dalam aplikasi.
+ *
+ * Antarmuka ini mendefinisikan metode-metode untuk menangani berbagai operasi terkait perizinan, seperti:
+ * - Menyimpan registrasi perizinan baru
+ * - Mencari perizinan berdasarkan ID
+ * - Mengambil daftar perizinan dengan berbagai filter
+ * - Menyimpan tindakan registrasi perizinanw
+ * - Mengembalikan atau merevisi perizinan yang terdaftar
+ * - Membatalkan perizinan yang terdaftar
+ * - Menghapus perizinan
+ * - Memperbarui status perizinan
+ * - Memeriksa entri data yang ada untuk suatu perizinan
+ * - Menyimpan hasil inspeksi lapangan untuk suatu perizinan
+ * - Memverifikasi aplikasi perizinan
+ */
 interface PerizinanService
 {
  

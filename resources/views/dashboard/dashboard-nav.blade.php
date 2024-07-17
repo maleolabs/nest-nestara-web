@@ -10,7 +10,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
                     <li class="breadcrumb-item text-capitalize">
-                        <a href="javascript:;">
+                        <a href="{{ route('profile') }}">
                             @auth
                                 {{ auth()->user()->name }}
                             @else
@@ -18,9 +18,11 @@
                             @endauth
                         </a>
                     </li>
-                    <li class="breadcrumb-item">
-                        <a href="{{ route('dashboard') }}">Dashboard</a>
-                    </li>
+                    @if (str_contains(Route::currentRouteName(), 'dashboard'))
+                        <li class="breadcrumb-item">
+                            <a href="{{ route('dashboard') }}">Dashboard</a>
+                        </li>
+                    @endif
                     @stack('breadcrumb-item')
                 </ol>
             </nav>

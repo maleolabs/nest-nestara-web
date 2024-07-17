@@ -3194,6 +3194,19 @@ button.btn-app-tertiary-light:active {
   width: 250px;
   height: 250px;
 }
+.img-rounded .loading {
+  position: absolute;
+  content: '';
+  left: 0;
+  top: 0;
+  height: 250px;
+  width: 250px;
+  background: rgba(206, 212, 218, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9;
+}
 
 .img-hover {
   cursor: pointer;

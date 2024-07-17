@@ -4,47 +4,42 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fc9b2e5a3fefc3a538aec5a12f888684",
+    "content-hash": "9f8cf3d9d96302cddaf47f1495a99cef",
     "packages": [
         {
-            "name": "akaunting/laravel-apexcharts",
-            "version": "3.1.0",
+            "name": "arielmejiadev/larapex-charts",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/akaunting/laravel-apexcharts.git",
-                "reference": "ffaf4de94414907f0698f8c6e4a48a52d50d3fb5"
+                "url": "https://github.com/ArielMejiaDev/larapex-charts.git",
+                "reference": "821f9a99c47e51f7306d04c2eeb7c6c3ee9f1e1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/akaunting/laravel-apexcharts/zipball/ffaf4de94414907f0698f8c6e4a48a52d50d3fb5",
-                "reference": "ffaf4de94414907f0698f8c6e4a48a52d50d3fb5",
+                "url": "https://api.github.com/repos/ArielMejiaDev/larapex-charts/zipball/821f9a99c47e51f7306d04c2eeb7c6c3ee9f1e1b",
+                "reference": "821f9a99c47e51f7306d04c2eeb7c6c3ee9f1e1b",
                 "shasum": ""
             },
             "require": {
-                "balping/json-raw-encoder": "^1.0",
-                "ext-json": "*",
-                "illuminate/support": "^9.0|^10.0|^11.0",
-                "php": "^8.0"
+                "ext-json": "*"
             },
             "require-dev": {
-                "mockery/mockery": "^1.5",
-                "orchestra/testbench": "^7.4|^8.0|^9.0",
-                "phpunit/phpunit": "^9.5|^10.0|^11.0"
+                "orchestra/testbench": "^4.4"
             },
             "type": "library",
             "extra": {
                 "laravel": {
                     "providers": [
-                        "Akaunting\\Apexcharts\\Provider"
+                        "ArielMejiaDev\\LarapexCharts\\LarapexChartsServiceProvider"
                     ],
                     "aliases": {
-                        "Apexcharts": "Akaunting\\Apexcharts\\Facade"
+                        "LarapexChart": "ArielMejiaDev\\LarapexCharts\\Facades\\LarapexChart"
                     }
                 }
             },
             "autoload": {
                 "psr-4": {
-                    "Akaunting\\Apexcharts\\": "src"
+                    "ArielMejiaDev\\LarapexCharts\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -53,70 +48,16 @@
             ],
             "authors": [
                 {
-                    "name": "Cüneyt Şentürk",
-                    "email": "info@akaunting.com",
-                    "homepage": "https://akaunting.com",
-                    "role": "Developer"
+                    "name": "ArielMejiaDev",
+                    "email": "arielmejiadev@gmail.com"
                 }
             ],
-            "description": "ApexCharts package for Laravel",
-            "keywords": [
-                "apexcharts",
-                "bar",
-                "charts",
-                "donut",
-                "laravel",
-                "line",
-                "pie"
-            ],
+            "description": "Package to provide easy api to build apex charts on Laravel",
             "support": {
-                "issues": "https://github.com/akaunting/laravel-apexcharts/issues",
-                "source": "https://github.com/akaunting/laravel-apexcharts/tree/3.1.0"
+                "issues": "https://github.com/ArielMejiaDev/larapex-charts/issues",
+                "source": "https://github.com/ArielMejiaDev/larapex-charts/tree/2.1.1"
             },
-            "time": "2024-04-01T22:38:56+00:00"
-        },
-        {
-            "name": "balping/json-raw-encoder",
-            "version": "v1.0.2",
-            "source": {
-                "type": "git",
-                "url": "git@gitlab.com:balping/json-raw-encoder.git",
-                "reference": "9338e193f84dbea33edcb1cb82baea328afadefb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://gitlab.com/api/v4/projects/balping%2Fjson-raw-encoder/repository/archive.zip?sha=9338e193f84dbea33edcb1cb82baea328afadefb",
-                "reference": "9338e193f84dbea33edcb1cb82baea328afadefb",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^7.1|^8.0|^9.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Balping\\JsonRaw\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0-only"
-            ],
-            "authors": [
-                {
-                    "name": "Balázs Dura-Kovács"
-                }
-            ],
-            "description": "Encode arrays to json with raw JS objects (eg. callbacks) in them",
-            "keywords": [
-                "callback",
-                "encode",
-                "json"
-            ],
-            "time": "2023-03-27T18:25:07+00:00"
+            "time": "2021-06-24T16:16:54+00:00"
         },
         {
             "name": "brick/math",

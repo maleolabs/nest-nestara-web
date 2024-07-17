@@ -10,7 +10,7 @@
                         </h4>
                     </div>
                     <div class="card-body">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Unde culpa assumenda doloribus quos. Dolorum iusto voluptas hic officia dicta ipsam nulla recusandae, quae harum impedit ipsa perferendis eum sunt reiciendis.
+                        {{ $statistikJenisPerizinan->container() }}
                     </div>
                 </div>
             </div>
@@ -46,3 +46,7 @@
         </div>
     </div>
 @endsection
+@push('scripts')
+    <script src="{{ $statistikJenisPerizinan->cdn() }}"></script>
+    {{ $statistikJenisPerizinan->script() }}    
+@endpush

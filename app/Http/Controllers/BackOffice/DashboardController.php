@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\BackOffice;
 
+use App\Charts\StatistikJenisPerizinan;
 use App\Http\Controllers\Controller;
 use App\Services\DomainServices\PerizinanService;
 use Illuminate\Http\Request;
@@ -16,10 +17,11 @@ class DashboardController extends Controller
         $this->perizinanService = $perizinanService;
     }
     
-    public function index()
+    public function index(StatistikJenisPerizinan $statistikJenisPerizinan)
     {
         return response()->view('back-office.index', [
-            'all_izin' => $this->perizinanService->getAll('', [], [], null, null, 'DESC', 10)
+            'all_izin' => $this->perizinanService->getAll('', [], [], null, null, 'DESC', 10),
+            'statistikJenisPerizinan' => $statistikJenisPerizinan->build(), 
         ]);
     }
 

@@ -6,6 +6,7 @@ use App\Services\AppService\EncryptionService;
 use App\Services\DomainServices\PerizinanService;
 use App\utils\enums\StatusIzinEnum;
 use Closure;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -31,7 +32,11 @@ class RevisiIzinMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         $izin_id = $request->route('izin_id');
-        $izin_id = $this->encryptionService->decryptId($izin_id);
+        try {
+            $izin_id = $this->encryptionService->decryptId($izin_id);
+        } catch (DecryptException $e) {
+            abort(404);
+        }
         $izin = $this->perizinanService->find($izin_id);
         $last_status = $izin->status_izin->last();
         if ($last_status->nama != StatusIzinEnum::REVISI_PERSYARATAN) {

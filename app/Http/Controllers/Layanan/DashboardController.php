@@ -2,15 +2,32 @@
 
 namespace App\Http\Controllers\Layanan;
 
+use App\Charts\StatistikJenisPerizinan;
 use App\Http\Controllers\Controller;
+use App\Services\DomainServices\PerizinanService;
+use App\utils\enums\StatusIzinEnum;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-    
-    public function index()
+    protected PerizinanService $perizinanService;
+
+    public function __construct(PerizinanService $perizinanService)
     {
-        return response()->view('layanan.index');
+        $this->perizinanService = $perizinanService;
+    }
+    
+    public function index(StatistikJenisPerizinan $statistikJenisPerizinan)
+    {
+        return response()->view('layanan.index', [
+            'all_izin' => $this->perizinanService->getAll('', [
+                StatusIzinEnum::DIDAFTARKAN,
+                StatusIzinEnum::DITINJAU,
+                StatusIzinEnum::PERUBAHAN,
+                StatusIzinEnum::PENYERAHAN
+            ], [], null, null, 'DESC', 10),
+            'statistikJenisPerizinan' => $statistikJenisPerizinan->build()
+        ]);
     }
 
     public function pendaftaran()

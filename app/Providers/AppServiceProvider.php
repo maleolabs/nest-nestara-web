@@ -6,8 +6,12 @@ use App\Services\APIClient\Impl\EmsifaAPIService;
 use App\Services\APIClient\RegionAPIService;
 use App\Services\AppService\EncryptionService;
 use App\Services\AppService\FileService;
+use App\Services\AppService\Helpers\FileManager;
+use App\Services\AppService\Helpers\Impl\LocalStorageFileManager;
 use App\Services\AppService\Impl\EncryptionServiceImpl;
 use App\Services\AppService\Impl\FileServiceImpl;
+use App\Services\AppService\Impl\PdfTemplateServiceImpl;
+use App\Services\AppService\PdfTemplateService;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\Impl\DokumenPemohonServiceImpl;
@@ -56,6 +60,8 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
             PengaturanService::class,
             SuratService::class,
             EncryptionService::class,
+            PdfTemplateService::class,
+            FileManager::class,
         ];
     }
 
@@ -79,6 +85,8 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(PengaturanService::class, PengaturanServiceImpl::class);
         $this->app->singleton(SuratService::class, SuratServiceImpl::class);
         $this->app->singleton(EncryptionService::class, EncryptionServiceImpl::class);
+        $this->app->singleton(PdfTemplateService::class, PdfTemplateServiceImpl::class);
+        $this->app->singleton(FileManager::class, LocalStorageFileManager::class);
     }
 
     /**

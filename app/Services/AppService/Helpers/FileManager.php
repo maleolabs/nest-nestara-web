@@ -16,8 +16,15 @@ interface FileManager
     /**
      * Memindahkan file dari satu lokasi ke lokasi lain.
      *
-     * @return MoveFile
+     * @return \App\Services\AppService\Helpers\MoveFile
      */
     function moveFile(): MoveFile;
+
+    /**
+     * Membuat file baru.
+     *
+     * @return \App\Services\AppService\Helpers\CreateFile
+     */
+    function createFile(): CreateFile;
 
 }

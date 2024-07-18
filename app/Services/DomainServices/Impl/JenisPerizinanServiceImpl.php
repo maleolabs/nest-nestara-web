@@ -3,9 +3,38 @@
 namespace App\Services\DomainServices\Impl;
 
 use App\Models\JenisPerizinan;
+use App\Services\AppService\PdfTemplateService;
 use App\Services\DomainServices\JenisPerizinanService;
 
-class JenisPerizinanServiceImpl implements JenisPerizinanService {
+class JenisPerizinanServiceImpl implements JenisPerizinanService 
+{
+
+    protected PdfTemplateService $pdfTemplateService;
+
+    public function __construct(PdfTemplateService $pdfTemplateService)
+    {
+        $this->pdfTemplateService = $pdfTemplateService;
+    }
+
+    public function save(array $data): ?JenisPerizinan
+    {
+        $jenis_perizinan = JenisPerizinan::create($data);
+
+        $jenis_stand = '';
+            $jenis_words = explode(' ', $jenis_perizinan->nama);
+            if (count($jenis_words) > 2) {
+                foreach ($jenis_words as $jenis_word) {
+                    $first_letter = substr($jenis_word, 0, 1);
+                    if (ctype_alpha($first_letter)) $jenis_stand .= strtoupper($first_letter);
+                }
+            } else
+                $jenis_stand = strtoupper(str_replace(' ', '-', $jenis_perizinan->nama));
+
+        $jenis_perizinan->template_folder = $this->pdfTemplateService->generatePdfTemplateFile($jenis_stand);
+        $jenis_perizinan->save();
+
+        return $jenis_perizinan;
+    }
 
     public function find(int $id): ?JenisPerizinan
     {

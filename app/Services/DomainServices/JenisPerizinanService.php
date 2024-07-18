@@ -7,6 +7,14 @@ use App\Models\JenisPerizinan;
 interface JenisPerizinanService {
 
     /**
+     * Menyimpan catatan JenisPerizinan baru dengan data yang diberikan.
+     *
+     * @param array $data Sebuah array asosiatif yang berisi data untuk disimpan untuk catatan JenisPerizinan baru.
+     * @return JenisPerizinan|null Catatan JenisPerizinan yang baru dibuat, atau null jika operasi penyimpanan gagal.
+     */
+    function save(array $data): ?JenisPerizinan;
+
+    /**
      * Mencari data jenis perizinan berdasarkan id
      * @param int $id
      * @return JenisPerizinan|null

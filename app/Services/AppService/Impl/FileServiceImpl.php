@@ -18,9 +18,16 @@ class FileServiceImpl implements FileService {
     private const PRIVATE_FOLDER_PATH = "private_files/dokumen_persyaratan_izin/";
     private const TEMP_FOLDER_PATH = "temp_files/";
 
+    protected FileManager $fileManager;
+
+    public function __construct(FileManager $fileManager)
+    {
+        $this->fileManager = $fileManager;
+    }
+
     public function fileManager(): FileManager
     {
-        return new LocalStorageFileManager();
+        return $this->fileManager;
     }
 
     public function save(string $path, mixed $data, bool $replace_if_exist = false)

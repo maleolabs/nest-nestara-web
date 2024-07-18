@@ -3,6 +3,8 @@
     <p class="fs-5 text-center text-decoration-underline mb-0">SURAT KETERANGAN PENELITIAN</p>
     <p class="fw-bold text-center normal-spacing"> Nomor : 503/DPMPTSP-BB/IPM/0225/VI/2024</p>
 
+    <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/free.png'))) }}" alt="free" class="free-watermark">
+
     <table>
         <tr>
             <td class="fs-6" style="width: 18%">Dasar</td>
@@ -130,7 +132,7 @@
     <table>
         <tr>
             <td style="width: 50%">
-                <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/dummy-qrcode.png'))) }}" alt="" class="mt-3">
+                <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/dummy-qrcode.png'))) }}" class="mt-3">
                 <p class="fs-85 mb-0 mt-5">
                     Tembusan Yth.
                 </p>

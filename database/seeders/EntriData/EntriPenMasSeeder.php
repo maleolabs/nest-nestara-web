@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\EntriData;
 
 use App\Models\EntriData;
 use App\Models\JenisPerizinan;

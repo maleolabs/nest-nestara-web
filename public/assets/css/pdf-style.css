@@ -96,7 +96,7 @@ li, p {
 .text-justify {
     text-align: justify;
 }
-.free-watermark {
+.free-watermark-right {
     width: 90px;
     height: 60px;
     opacity: .6;

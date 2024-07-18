@@ -3,7 +3,7 @@
     <p class="fs-5 text-center text-decoration-underline mb-0">SURAT KETERANGAN PENELITIAN</p>
     <p class="fw-bold text-center normal-spacing"> Nomor : 503/DPMPTSP-BB/IPM/0225/VI/2024</p>
 
-    <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/free.png'))) }}" alt="free" class="free-watermark">
+    <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/free.png'))) }}" alt="free" class="free-watermark-right">
 
     <table>
         <tr>

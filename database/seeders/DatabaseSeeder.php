@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Database\Seeders\EntriData\EntriPenMasSeeder;
+use Database\Seeders\EntriData\EntriPerekamMedisSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -17,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(PersyaratanIzinSeeder::class);
 
         $this->call(EntriPenMasSeeder::class);
+        $this->call(EntriPerekamMedisSeeder::class);
 
         $this->call(PengaturanSeeder::class);
     }

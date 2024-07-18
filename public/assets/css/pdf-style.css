@@ -104,3 +104,13 @@ li, p {
     top: 140px;
     right: 50px;
 }
+.free-watermark-right.straight-horizontal {
+    transform: rotate(13deg);
+}
+.free-watermark-right.top-n25 {
+    top: 125px;
+}
+.free-watermark-right.scale-n1 {
+    width: 75px;
+    height: 50px;
+}

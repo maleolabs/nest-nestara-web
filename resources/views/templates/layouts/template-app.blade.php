@@ -1,5 +1,5 @@
 @include('templates.layouts.header')
-<div class="pdf-body">
+<div class="pdf-body @stack('margin-paper')">
     @include('templates.layouts.cop')
     @yield('content')
 </div>

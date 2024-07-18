@@ -72,6 +72,8 @@ Route::middleware('auth')->group(function() {
             Route::get('/pendataan', [BackOfficeDashboardController::class, 'pendataan'])->name('pegawai.pendataan');
             Route::get('/rekomendasi', [BackOfficeDashboardController::class, 'rekomendasi'])->name('pegawai.rekomendasi');
             Route::get('/penetapan', [BackOfficeDashboardController::class, 'penetapan'])->name('pegawai.penetapan');
+
+            Route::post('download-surat', [BackOfficeDashboardController::class, 'downloadSurat'])->name('pegawai.download-surat');
         });
     });
 

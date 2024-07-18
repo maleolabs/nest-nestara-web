@@ -5,15 +5,21 @@ namespace App\Services\DomainServices\Impl;
 use App\Models\JenisPerizinan;
 use App\Services\AppService\PdfTemplateService;
 use App\Services\DomainServices\JenisPerizinanService;
+use App\Services\DomainServices\PengaturanService;
 
 class JenisPerizinanServiceImpl implements JenisPerizinanService 
 {
 
     protected PdfTemplateService $pdfTemplateService;
 
-    public function __construct(PdfTemplateService $pdfTemplateService)
-    {
+    protected PengaturanService $pengaturanService;
+
+    public function __construct(
+        PdfTemplateService $pdfTemplateService,
+        PengaturanService $pengaturanService
+    ) {
         $this->pdfTemplateService = $pdfTemplateService;
+        $this->pengaturanService = $pengaturanService;
     }
 
     public function save(array $data): ?JenisPerizinan
@@ -44,6 +50,23 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
     public function findByName(string $name): ?JenisPerizinan
     {
         return JenisPerizinan::with('syarat_izin')->where('nama', $name)->first();
+    }
+
+    public function getPdfTemplate(int $id): ?string
+    {
+        $jenis_perizinan = JenisPerizinan::find($id);
+        if (!$jenis_perizinan)
+            return null;
+
+        $savedTemplate = $this->pengaturanService->findByNamaAndGroup("TEMPLATE-SURAT-{$id}", 'surat-template');
+
+        if (!$savedTemplate)
+            return null;
+
+        $blade_template = str_replace('.blade.php', '', $savedTemplate->value);
+        $clean_view_template = str_replace("\\", '.', $blade_template);
+
+        return "{$jenis_perizinan->template_folder}\\{$clean_view_template}";
     }
 
     public function getAll(string $sorting_by = 'created_at', string $sort = 'DESC'): array

@@ -29,6 +29,14 @@ interface JenisPerizinanService {
     function findByName(string $name): ?JenisPerizinan;
 
     /**
+     * Mendapatkan template PDF untuk jenis perizinan tertentu.
+     *
+     * @param int $id ID dari jenis perizinan.
+     * @return string|null Jalur template PDF untuk jenis perizinan yang diberikan atau null jika template tidak ditemukan.
+     */
+    function getPdfTemplate(int $id): ?string;
+
+    /**
      * Mengambil semua catatan jenis perizinan, secara opsional diurutkan berdasarkan kolom dan arah tertentu.
      *
      * @param string $sorting_by Kolom untuk mengurutkan hasil. Default ke 'created_at'.

@@ -124,6 +124,7 @@
                 <p class="fs-55 mb-1 normal-spacing">Pada tanggal 10 Juli 2024</p>
                 <p class="fs-55 normal-spacing">KEPALA DINAS</p>
                 <p class="fs-55 mt-5 pt-2 normal-spacing text-decoration-underline mb-0">JUMAIDIL, AP, S.Sos,M.Ec.Dev</p>
+                <p class="fs-55 mb-0 normal-spacing">Pembina Utama Muda</p>
                 <p class="fs-55 normal-spacing">Nip. 19741018 199311 1 002</p>
             </td>
         </tr>

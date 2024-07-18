@@ -2,7 +2,7 @@
     <div class="row">
         @foreach ($entri_data as $entri)
             @if ($entri->tipe == 'textarea')
-                <div class="col-12 mb-3">
+                <div class="{{ $loop->iteration == 1 || $loop->iteration == count($entri_data) ? 'col-12' : 'col-md-6' }} mb-3">
                     <div class="input-group input-group-outline">
                         <label for="{{ $entri->id }}" class="form-label">
                             {{ $entri->nama }}

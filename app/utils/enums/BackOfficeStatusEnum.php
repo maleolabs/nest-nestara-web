@@ -69,6 +69,36 @@ class BackOfficeStatusEnum
     public const RAPAT_TIM = 'rapat tim teknis';
 
     /**
+     * Status ketika permohonan izin diizinkan.
+     */
+    public const DIIZINKAN = 'diizinkan';
+
+    /**
+     * Status ketika permohonan izin tidak diizinkan.
+     */
+    public const TIDAK_DIIZINKAN = 'tidak diizinkan';
+
+    /**
+     * Status ketika permohonan izin belum dicetak.
+     */
+    public const BELUM_DICETAK = 'belum dicetak';
+
+    /**
+     * Status ketika permohonan izin sudah dicetak.
+     */
+    public const DICETAK = 'dicetak';
+
+    /**
+     * Status ketika permohonan izin tidak dapat dilanjutkan.
+     */
+    public const LAYANAN_DITOLAK = 'layanan ditolak';
+
+    /**
+     * Status ketika permohonan izin sudah melebihi masa berlaku izin.
+     */
+    public const IZIN_DICABUT = 'izin dicabut';
+
+    /**
      * Mengembalikan array dari semua nilai status.
      *
      * @return array

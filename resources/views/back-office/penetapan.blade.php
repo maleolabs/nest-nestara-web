@@ -8,5 +8,13 @@
     <li class="breadcrumb-item active" id="penetapan-sub-breadcrumb"></li>
 @endpush
 @section('main')
-    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Vel, soluta cupiditate. Nostrum nisi porro aspernatur repudiandae! Iusto quos porro dolorem reprehenderit temporibus aliquid cupiditate et, ad neque iste nam consectetur?
+    @livewire('dashboard.back-office.penetapan')
 @endsection
+@push('scripts')
+    <script>
+        let penetapanSubBread = document.getElementById("penetapan-sub-breadcrumb")
+        Livewire.on('menu-selected', function (event) {
+            penetapanSubBread.textContent = event[0].menu
+        })
+    </script>
+@endpush

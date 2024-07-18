@@ -27,4 +27,11 @@ interface FileManager
      */
     function createFile(): CreateFile;
 
+    /**
+     * Mengambil sebuah file.
+     *
+     * @return \App\Services\AppService\Helpers\GetFile
+     */
+    function getFile(): GetFile;
+
 }

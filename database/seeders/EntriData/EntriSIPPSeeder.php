@@ -36,7 +36,7 @@ class EntriSIPPSeeder extends Seeder
         ]);
         EntriData::create([
             'jenis_perizinan_id' => $izin_sipp->id,
-            'nama' => 'nomor strb',
+            'nama' => 'nomor strp',
             'tipe' => 'text',
             'mandatori' => true,
             'max' => 100

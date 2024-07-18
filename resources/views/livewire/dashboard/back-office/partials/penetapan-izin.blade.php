@@ -61,6 +61,11 @@
                             Pastikan Anda memilih tindakan (izinkan atau tolak) untuk menyelesaikan proses permohonan izin ini.
                         </div>
                     </div>
+                @elseif ($selectedPreview->status_izin->last()->keterangan == App\utils\enums\BackOfficeStatusEnum::DIIZINKAN)
+                    <a href="{{ route('download-file', ['file_name' => 'test']) }}" target="blank" class="btn btn-sm bg-gradient-info">
+                        <i class="fa-solid fa-download me-1 fs-6"></i>
+                        Unduh Surat Izin
+                    </a>
                 @endif
                 <div class="p-3"></div>
             @endif

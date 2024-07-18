@@ -50,7 +50,7 @@ class EntriPerekamMedisSeeder extends Seeder
         ]);
         EntriData::create([
             'jenis_perizinan_id' => $izin_perekam_medis->id,
-            'nama' => 'alammat tempat praktik',
+            'nama' => 'alamat tempat praktik',
             'tipe' => 'textarea',
             'mandatori' => true,
             'max' => 255

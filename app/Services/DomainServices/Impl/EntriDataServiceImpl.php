@@ -86,9 +86,9 @@ class EntriDataServiceImpl implements EntriDataService {
 
 	public function isEntriDataIzinExistsByIzinAndJenis(int $izin_id, int $jenis_perizinan_id): bool
 	{
-		$entri_data = EntriData::select('id')->where('jenis_perizinan_id', $jenis_perizinan_id)->get();
+		$entri_data = EntriData::select('id')->where('jenis_perizinan_id', $jenis_perizinan_id)->where('mandatori', true)->get();
 		$entri_data_izin = EntriDataIzin::select('entri_data_id')->where('izin_id', $izin_id)->get();
-		return (count($entri_data_izin) == count($entri_data)) && ($entri_data->pluck('id') == $entri_data_izin->pluck('entri_data_id'));
+		return (count($entri_data_izin) >= count($entri_data)) && ($entri_data->pluck('id') == $entri_data_izin->pluck('entri_data_id'));
 	}
 
 	public function getOldEntriDataByIzin(\App\Models\Izin $izin): array
@@ -111,7 +111,14 @@ class EntriDataServiceImpl implements EntriDataService {
 
 	public function hasTrashedEntriDataIzin(int $izin_id): bool
 	{
-		return count($this->getTrashedEntriData($izin_id)) > 0;
+		return count($this->getTrashedOnlyEntriData($izin_id)) > 0;
+	}
+
+	private function getTrashedOnlyEntriData(int $izin_id): Collection
+	{
+		return EntriDataIzin::where('izin_id', $izin_id)->whereHas('entri_data', function($entri_data_query) {
+					$entri_data_query->onlyTrashed();
+				})->get();
 	}
 
 	private function getTrashedEntriData(int $izin_id): Collection

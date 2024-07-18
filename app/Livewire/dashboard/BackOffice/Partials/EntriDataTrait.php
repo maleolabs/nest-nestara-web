@@ -44,8 +44,8 @@ trait EntriDataTrait
         foreach ($this->entri_data as $entri) {
             $key_entri = "entri_data_izin.{$entri->id}";
             if ($entri->mandatori)
-                $this->entri_data_validate[$key_entri][] = "max:{$entri->max}";
-            $this->entri_data_validate[$key_entri][] = 'required';
+                $this->entri_data_validate[$key_entri][] = 'required';
+            $this->entri_data_validate[$key_entri][] = "max:{$entri->max}";
         }
     }
 

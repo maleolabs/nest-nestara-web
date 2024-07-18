@@ -60,7 +60,9 @@ class Penetapan extends Component
             throw ValidationException::withMessages([
                 'tindakan' => 'Tindakan tidak valid'
             ]);
-        
+        $auth_user = auth()->user();
+        $pegawai = $auth_user->pegawai ? $auth_user->pegawai->id : null;
+        $this->getPerizinanService()->penetapanIzin($this->selectedPreview->id, $pegawai, $this->tindakan);
     }
 
     public function selectMenu(string $menu)
@@ -73,6 +75,7 @@ class Penetapan extends Component
     {
         $this->selectedPreview = $this->getPerizinanService()->find($izin_id);
         $riwayat_proses_izin = $this->selectedPreview->riwayat_proses_izin->all();
+        $this->previewRiwayatProses = [];
         array_walk($riwayat_proses_izin, function($proses_izin) {
             if ($proses_izin->keterangan == BackOfficeStatusEnum::SUDAH_ENTRI) {
                 $this->previewRiwayatProses['Data Entri'] = [
@@ -91,6 +94,13 @@ class Penetapan extends Component
                     'tanggal' => $proses_izin->created_at->translatedFormat('l, d F Y H:i'),
                     'pegawai' => $proses_izin->pegawai ? $proses_izin->pegawai->nama : $proses_izin->status_izin->pegawai->nama,
                     'status' => $proses_izin->keterangan == BackOfficeStatusEnum::DIREKOM ?? false,
+                    'keterangan' => $proses_izin->keterangan,
+                ];
+            } else if (in_array($proses_izin->keterangan, [BackOfficeStatusEnum::DIIZINKAN, BackOfficeStatusEnum::LAYANAN_DITOLAK])) {
+                $this->previewRiwayatProses['Tindakan'] = [
+                    'tanggal' => $proses_izin->created_at->translatedFormat('l, d F Y H:i'),
+                    'pegawai' => $proses_izin->pegawai ? $proses_izin->pegawai->nama : $proses_izin->status_izin->pegawai->nama,
+                    'status' => $proses_izin->keterangan == BackOfficeStatusEnum::DIIZINKAN ?? false,
                     'keterangan' => $proses_izin->keterangan,
                 ];
             }

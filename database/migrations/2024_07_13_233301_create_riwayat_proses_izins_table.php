@@ -18,8 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('izin_id');
             $table->unsignedBigInteger('status_izin_id');
             $table->unsignedBigInteger('pegawai_id');
-            $table->enum('progres', StatusIzinProgressEnum::all());
-            $table->enum('keterangan', BackOfficeStatusEnum::all());
+            $table->string('progres');
+            $table->string('keterangan');
             $table->timestamps();
 
             $table->foreign('izin_id')->references('id')->on('izin')->onDelete('cascade');

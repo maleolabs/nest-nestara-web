@@ -321,5 +321,20 @@ class PerizinanServiceImpl implements PerizinanService
             $this->statusIzinService->updateStatusIzinWithDetailKeterangan($izin_id, Status::PROSES, Progres::PROCESSING, $rekomendasi, $jenis_kegiatan);
         }
     }
+
+    public function penetapanIzin(int $izin_id, int $pegawai_id, string $tindakan): void
+    {
+        DB::transaction(function () use ($izin_id, $pegawai_id, $tindakan) {
+            $izin = $this->find($izin_id);
+            if (!$izin)
+                return;
+            if (!in_array($tindakan, [OfficeStatus::DIIZINKAN, OfficeStatus::LAYANAN_DITOLAK]))
+                return;
+            $izin_status = $izin->status_izin->last();
+            if ($izin_status->nama == Status::PROSES) {
+                $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, $tindakan, $pegawai_id);
+            }
+        });
+    }
     
 }

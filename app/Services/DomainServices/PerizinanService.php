@@ -223,4 +223,17 @@ interface PerizinanService
      */
     function rekomendasiPermohonan(int $izin_id, int $pegawai_id, string $rekomendasi, string $jenis_kegiatan): void;
 
+    /**
+     * Penetapan izin.
+     *
+     * Fungsi ini melakukan penetapan izin dengan ID tertentu, dilakukan oleh pegawai dengan ID tertentu, dan dengan tindakan tertentu.
+     *
+     * @param int $izin_id ID izin yang akan ditetapkan.
+     * @param int $pegawai_id ID pegawai yang melakukan penetapan izin.
+     * @param string $tindakan Tindakan yang dilakukan dalam penetapan izin.
+     *
+     * @return void Fungsi ini tidak mengembalikan nilai apa pun.
+     */
+    function penetapanIzin(int $izin_id, int $pegawai_id, string $tindakan): void;
+
 }

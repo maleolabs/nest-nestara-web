@@ -36,38 +36,42 @@
                         <hr class="mx-2">
                     @endforeach
                 </div>
-                <div class="mb-4">
-                    <form wire:submit.prevent='save'>
-                        <p class="text-sm text-bold">Tindakan Izin</p>
-                        <div class="d-flex align-items-center">
-                            <div class="form-check ps-0">
-                                <input type="radio" class="form-check-input" name="tindakan" id="izinkan" value="{{ App\utils\enums\BackOfficeStatusEnum::DIIZINKAN }}" wire:model='tindakan'>
-                                <label class="form-check-label" for="izinkan">Izinkan</label>
-                            </div>
-                            <div class="form-check">
-                                <input type="radio" class="form-check-input" name="tindakan" id="tolak" value="{{ App\utils\enums\BackOfficeStatusEnum::LAYANAN_DITOLAK }}" wire:model='tindakan'>
-                                <label class="form-check-label" for="tolak">Tolak Layanan</label>
-                            </div>
+                @if (in_array($selectedPreview->status_izin->last()->keterangan, [App\utils\enums\BackOfficeStatusEnum::DIREKOM, App\utils\enums\BackOfficeStatusEnum::REKOM_CATATAN]))
+                    <div class="rounded-4 border p-4">
+                        <div class="mb-4">
+                            <form wire:submit.prevent='save'>
+                                <p class="text-sm text-bold">Tindakan Izin</p>
+                                <div class="d-flex align-items-center">
+                                    <div class="form-check ps-0">
+                                        <input type="radio" class="form-check-input" name="tindakan" id="izinkan" value="{{ App\utils\enums\BackOfficeStatusEnum::DIIZINKAN }}" wire:model='tindakan'>
+                                        <label class="form-check-label" for="izinkan">Izinkan</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input type="radio" class="form-check-input" name="tindakan" id="tolak" value="{{ App\utils\enums\BackOfficeStatusEnum::LAYANAN_DITOLAK }}" wire:model='tindakan'>
+                                        <label class="form-check-label" for="tolak">Tolak Layanan</label>
+                                    </div>
+                                </div>
+                                @error('tindakan')
+                                    <div class="text-sm text-danger">{{ $message }}</div>
+                                @enderror
+                                <button class="btn btn-sm bg-gradient-primary mt-3" type="submit">simpan</button>
+                            </form>
                         </div>
-                        @error('tindakan')
-                            <div class="text-sm text-danger">{{ $message }}</div>
-                        @enderror
-                        <button class="btn btn-sm bg-gradient-primary mt-3" type="submit">simpan</button>
-                    </form>
-                </div>
-                <div class="bg-app-primary-light rounded-4 p-4 text-sm">
-                    Pastikan Anda memilih tindakan (izinkan atau tolak) untuk menyelesaikan proses permohonan izin ini.
-                </div>
+                        <div class="bg-app-primary-light rounded-4 p-4 text-sm">
+                            Pastikan Anda memilih tindakan (izinkan atau tolak) untuk menyelesaikan proses permohonan izin ini.
+                        </div>
+                    </div>
+                @endif
                 <div class="p-3"></div>
             @endif
         </div>
         <button class="ms-auto text-md btn btn-transparent p-0 card-icon sticky-top-0" wire:click='closePreview' id="modalRightCloseBtn">
             <i class="fa-solid fa-xmark"></i>
         </button>
-    </div>
-    <div wire:loading wire:target='previewDataIzin, save'>
-        <div class="position-absolute top-0 end-0 bottom-0 bg-white opacity-75 d-flex align-items-center justify-content-center modal-right-loading">
-            <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
+        <div wire:loading wire:target='previewDataIzin, save'>
+            <div class="position-fixed top-0 end-0 bottom-0 bg-white opacity-75 d-flex align-items-center justify-content-center modal-right-loading">
+                <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
+            </div>
         </div>
     </div>
 </div>

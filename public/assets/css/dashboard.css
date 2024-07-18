@@ -691,6 +691,9 @@
 .modal-right-loading {
     width: 700px;
 }
+.modal-right-content-md .modal-right-loading {
+    width: 900px;
+}
 @media (max-width: 575px) {
     .modal-right-content, 
     .modal-right-content.modal-right-content-md {

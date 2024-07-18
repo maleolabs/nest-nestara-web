@@ -401,6 +401,7 @@
     border-radius: 0 10px 10px 0;
     background: var(--color-white);
     transition: left ease-in-out 0.5s;
+    overflow-y: scroll;
 }
 
 .sidebar-left {

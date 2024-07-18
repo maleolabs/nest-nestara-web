@@ -90,12 +90,10 @@
                 @endforelse
             </tbody>
         </table>
-        @if (!isset($preview_action))
-            <div wire:loading wire:target='previewDataIzin, start_date, end_date, search'>
-                <div class="position-absolute top-0 start-0 h-100 w-100 d-flex align-items-center justify-content-center bg-light opacity-75">
-                    <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
-                </div>
+        <div wire:loading wire:target='previewDataIzin, start_date, end_date, search'>
+            <div class="position-absolute top-0 start-0 h-100 w-100 d-flex align-items-center justify-content-center bg-light opacity-75">
+                <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
             </div>
-        @endif
+        </div>
     </div>
 </div>

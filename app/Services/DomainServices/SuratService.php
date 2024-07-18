@@ -54,4 +54,9 @@ interface SuratService {
      */
     function generateDefaultJenisPerizinanFormat(): void;
 
+    /**
+     * Menetapkan template default untuk jenis surat.
+     */
+    function setDefaultJenisSuratTemplate(): void;
+
 }

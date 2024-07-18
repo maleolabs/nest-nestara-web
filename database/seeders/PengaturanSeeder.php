@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Pengaturan;
 use App\Services\DomainServices\PengaturanService;
 use App\Services\DomainServices\SuratService;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -14,6 +15,7 @@ class PengaturanSeeder extends Seeder
      */
     public function run(): void
     {
+        Pengaturan::truncate();
         $this->createPengaturanSurat();   
     }
 
@@ -21,6 +23,7 @@ class PengaturanSeeder extends Seeder
     {
         $this->suratService()->generateDefaultFormatSurat();
         $this->suratService()->generateDefaultJenisPerizinanFormat();
+        $this->suratService()->setDefaultJenisSuratTemplate();
     }
 
     private function pengaturanService(): PengaturanService

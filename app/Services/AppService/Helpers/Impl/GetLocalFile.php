@@ -26,7 +26,7 @@ class GetLocalFile implements GetFile
     public function getFilesName(): array
     {
         $files_name = [];
-
+        
         $iterator = new DirectoryIterator($this->folders);
 
         foreach ($iterator as $fileinfo) {

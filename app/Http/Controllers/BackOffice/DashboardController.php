@@ -7,8 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Services\AppService\EncryptionService;
 use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PerizinanService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
+
+use function Spatie\LaravelPdf\Support\pdf;
 
 class DashboardController extends Controller
 {
@@ -71,9 +74,11 @@ class DashboardController extends Controller
 
         $title = "IZIN-{$izin->no_pendaftaran}";
 
-        return view($templateView, [
+        $pdf = Pdf::loadView($templateView, [
             'title' => $title
         ]);
+
+        return $pdf->stream("{$title}.pdf");
     }
     
 }

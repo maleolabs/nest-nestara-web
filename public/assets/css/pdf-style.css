@@ -1,13 +1,28 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif !important;
+}
+body, h1, h2, h3, h4, h5, h6 {
+    font-family: Arial, sans-serif !important;
+}
+body {
+    padding: 25px !important;
+    margin: 0 !important;
+}
+.clear-fix {
+    clear: both;
+}
 .page-break {
     page-break-after: always;
 }
 .garis-horizontal {
-    border-top: 5px solid black;
+    border-top: 3px solid black;
     margin-bottom: 3px;
-}
+}   
 .garis-horizontal-sm {
-    border-top: 2px solid black;
-    margin-bottom: 25px;
+    border-top: 1px solid black;
+    margin-bottom: 15px;
 }
 .pdf-body {
     position: relative;
@@ -16,11 +31,68 @@
     content: '';
     position: absolute;
     background-image: url('../../storage/pdf-assets/bg-logo.png');
-    background-size: cover;
+    background-size: 680px;
+    background-repeat: no-repeat;
     background-position: center;
-    inset: 0;
-    width: 100%;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 680px;
     height: 100%;
     opacity: .2;
     z-index: -1;
+    margin-top: 20px;
+}
+.fs-4 {
+    font-family: Arial, sans-serif !important;
+    font-size: 20px !important;
+    font-weight: 700;
+}
+.fs-5 {
+    font-family: Arial, sans-serif !important;
+    font-size: 18px !important;
+}
+.fs-55 {
+    font-family: Arial, sans-serif !important;
+    font-size: 16px !important;
+}
+.fs-6 {
+    font-family: Arial, sans-serif !important;
+    font-size: 14px !important;
+}
+.fs-7 {
+    font-family: Arial, sans-serif !important;
+    font-size: 13px !important;
+}
+.fs-8 {
+    font-family: Arial, sans-serif !important;
+    font-size: 12px !important;
+}
+.fs-85 {
+    font-family: Arial, sans-serif !important;
+    font-size: 11.5px !important;
+}
+.normal-spacing {
+    letter-spacing: normal !important;
+}
+.semi-tight-spacing {
+    letter-spacing: -0.1px !important;
+}
+.tight-spacing {
+    letter-spacing: -0.5px !important;
+}
+ table {
+    width: 100%;
+    border-collapse: collapse;
+}
+td {
+    vertical-align: top;
+    padding-bottom: 5px;
+}
+
+li, p {
+    letter-spacing: 0.5px;
+}
+.text-justify {
+    text-align: justify;
 }

@@ -12,7 +12,7 @@
         Berdasarkan Peraturan Menteri Kesehatan Nomor 17 Tahun 2013 tentang Perubahan atas Peraturan Menteri Kesehatan Nomor HK.02.02/MENKES/148/I/2010 tentang Izin dan Penyelenggaraan Praktik Perawat yang ditindaklajuti dengan Peraturan Bupati Bone Bolango No 6 Tahun 2022 Tentang Pendelegasian Wewenang Penerbitan dan Penandatanganan Perizinan dan Non Perizinan Kepada Peyelenggara Pelayanan Terpadu Satu Pintu, yang bertandatangan di bawah ini, Kepala Dinas Penanaman Modal, Pelayanan Terpadu Satu Pintu Kabupaten Bone Bolango memberikan Izin Praktik kepada :
     </p>
 
-    <p class="text-center text-decoration-underline text-uppercase fs-5">
+    <p class="text-center text-decoration-underline fs-5">
         Ma'rij Mokoginta
     </p>
 
@@ -107,7 +107,7 @@
                         Kepala Dinas Kesehatan Kabupaten Bone Bolango.
                     </li>
                     <li class="fs-6">
-                        Kepala Dinas Kesehatan Kabupaten Bone Bolango.
+                        Ketua Persatuan Perawat Nasional Indonesia Kabupaten Bone Bolango;
                     </li>
                     <li class="fs-6">
                         Pertinggal

@@ -12,7 +12,7 @@
         Berdasarkan Undang-undang No.36 Tahun 2014 Tentang Tenaga Kesehatan, Peraturan Menteri Kesehatan RI Nomor 55 Tahun 2013 tentang Penyelenggaraan Pekerjaan Perekam Medis danPeraturan Bupati Bone Bolango No 6 Tahun 2022 Tentang Pendelegasian Wewenang Penerbitan dan Penandatanganan Perizinan dan Non Dinas Penanaman Modal, Pelayanan Terpadu Satu Pintu Kabupaten Bone Bolango memberikan Izin Kerja Perekam Medis dan Informasi Kesehatan kepada :
     </p>
 
-    <p class="text-center text-decoration-underline text-uppercase fs-5">
+    <p class="text-center text-decoration-underline fs-5">
         Ma'rij Mokoginta
     </p>
 
@@ -112,7 +112,7 @@
                         Kepala Dinas Kesehatan Kabupaten Bone Bolango.
                     </li>
                     <li class="fs-6">
-                        Kepala Dinas Kesehatan Kabupaten Bone Bolango.
+                        Ketua Ikatan Ahli Kesehatan Masyarakat Indonesia
                     </li>
                     <li class="fs-6">
                         Pertinggal

@@ -4,6 +4,7 @@ namespace App\Livewire\Dashboard\BackOffice;
 
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\StatusIzinService;
+use App\utils\enums\BackOfficeStatusEnum;
 use App\utils\enums\StatusIzinEnum;
 use App\utils\enums\StatusIzinProgressEnum;
 use Carbon\Carbon;
@@ -46,7 +47,15 @@ class Rekomendasi extends Component
 
     private function setDataTable()
     {
-        $this->all_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::PROSES], [StatusIzinProgressEnum::PROCESSING], $this->start_date, $this->end_date);
+        $all_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::PROSES], [StatusIzinProgressEnum::PROCESSING], $this->start_date, $this->end_date);
+        $this->all_izin = array_filter($all_izin, function ($izin) {
+            return in_array($izin->status_izin->last()->keterangan, [
+                BackOfficeStatusEnum::DIREKOM,
+                BackOfficeStatusEnum::TIDAK_DIREKOM,
+                BackOfficeStatusEnum::REKOM_CATATAN,
+                BackOfficeStatusEnum::BAHAS_LANJUT,
+            ]);
+        });
     }
 
     protected function getTanggalPermohonan(int $izin_id): string

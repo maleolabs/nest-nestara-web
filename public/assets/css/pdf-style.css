@@ -1,0 +1,26 @@
+.page-break {
+    page-break-after: always;
+}
+.garis-horizontal {
+    border-top: 5px solid black;
+    margin-bottom: 3px;
+}
+.garis-horizontal-sm {
+    border-top: 2px solid black;
+    margin-bottom: 25px;
+}
+.pdf-body {
+    position: relative;
+}
+.pdf-body::before {
+    content: '';
+    position: absolute;
+    background-image: url('../../storage/pdf-assets/bg-logo.png');
+    background-size: cover;
+    background-position: center;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: .2;
+    z-index: -1;
+}

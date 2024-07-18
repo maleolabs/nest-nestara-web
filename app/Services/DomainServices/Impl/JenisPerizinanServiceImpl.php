@@ -66,7 +66,7 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
         $blade_template = str_replace('.blade.php', '', $savedTemplate->value);
         $clean_view_template = str_replace("\\", '.', $blade_template);
 
-        return "{$jenis_perizinan->template_folder}\\{$clean_view_template}";
+        return "{$jenis_perizinan->template_folder}.{$clean_view_template}";
     }
 
     public function getAll(string $sorting_by = 'created_at', string $sort = 'DESC'): array

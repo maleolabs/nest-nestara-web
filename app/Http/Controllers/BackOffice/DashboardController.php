@@ -69,7 +69,11 @@ class DashboardController extends Controller
         if (!$templateView)
             abort(404);
 
-        return view($templateView);
+        $title = "IZIN-{$izin->no_pendaftaran}";
+
+        return view($templateView, [
+            'title' => $title
+        ]);
     }
     
 }

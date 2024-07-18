@@ -136,7 +136,11 @@
     if (modalRightContent && !modalRightContent.contains(event.target) && modalRightShowBtn && !modalRightShowBtn.contains(event.target)) {
       if (modalRight && modalRightContent) {
         modalRight.classList.add('d-none')
-        modalRightContent.style.right = '-700px'
+        if (modalRightContent.classList.contains('modal-right-content-md')) {
+          modalRightContent.style.right = '-900px'
+        } else {
+          modalRightContent.style.right = '-700px'
+        }
       }
     }
   })
@@ -145,7 +149,11 @@
     modalRightCloseBtn.addEventListener('click', function() {
       if (modalRight && modalRightContent) {
         modalRight.classList.add('d-none')
-        modalRightContent.style.right = '-700px'
+        if (modalRightContent.classList.contains('modal-right-content-md')) {
+          modalRightContent.style.right = '-900px'
+        } else {
+          modalRightContent.style.right = '-700px'
+        }
       }
     })
   }

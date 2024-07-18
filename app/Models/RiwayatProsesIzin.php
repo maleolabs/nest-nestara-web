@@ -18,5 +18,15 @@ class RiwayatProsesIzin extends Model
     {
         return $this->belongsTo(StatusIzin::class);
     }
+
+    public function izin(): BelongsTo
+    {
+        return $this->belongsTo(Izin::class);
+    }
+
+    public function pegawai(): BelongsTo
+    {
+        return $this->belongsTo(Pegawai::class);
+    }
     
 }

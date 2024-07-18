@@ -32,15 +32,9 @@
     </div>
 
     <div class="content-wrap p-4">
-        @if ($preview_izin_id)
-            @livewire('dashboard.preview-izin.preview-data-izin', [
-                'preview_izin_id' => $preview_izin_id,
-                'preview_page' => 'dashboard.back-office.partials.rekom-form',
-            ])
-        @else
-            @include('livewire.dashboard.back-office.partials.pendataan-entri-data')
-        @endif
+        @include('livewire.dashboard.back-office.partials.pendataan-entri-data')
     </div>
+    @include('livewire.dashboard.back-office.partials.penetapan-izin')
 </div>
 @push('scripts')
     <script>
@@ -49,13 +43,5 @@
             url.searchParams.set('tab', tab)
             window.history.pushState({}, '', url)
         }
-        $('.data-izin').each(function(index, elemen) {
-            $(elemen).on('click', function() {
-                const izinId = $(this).attr('data-izin-id')
-                let url = new URL(window.location)
-                url.searchParams.set('preview_izin_id', izinId)
-                window.history.pushState({}, '', url)
-            })
-        });
     </script>
 @endpush

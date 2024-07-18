@@ -28,6 +28,9 @@
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pemohon</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis Izin</th>
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tanggal Permohonan</th>
+                    @if (isset($table_content))
+                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">{{ $table_content }}</th>
+                    @endif
                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                 </tr>
             </thead>
@@ -37,7 +40,7 @@
                         $status = $izin->status_izin->last();
                         $statusClasses = getStatusIzinProcessClasses($status)
                     @endphp
-                    <tr class="cursor-pointer data-izin" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})'>
+                    <tr class="cursor-pointer data-izin" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})' @if(isset($preview_action)) {{ $preview_action }} @endif>
                         <td class="align-middle text-center text-sm">{{ $loop->iteration }}</td>
                         <td class="text-sm">
                             <p class="text-xs font-weight-bold mb-0">{{ $izin->no_pendaftaran }}</p>
@@ -58,6 +61,11 @@
                         <td class="text-center text-sm">
                             {{ $this->getTanggalPermohonan($izin->id) }}
                         </td>
+                        @if (isset($table_content) && isset($izin->no_surat))
+                            <td class="text-center text-sm">
+                                {{ $izin->no_surat }}
+                            </td>
+                        @endif
                         <td class="vertical-align-middle">
                             <div class="d-flex flex-column align-items-center justify-content-center">
                                 <span class="badge badge-dot">
@@ -72,7 +80,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7">
+                        <td colspan="{{ isset($table_content) ? 8 : 7 }}">
                             <div class="w-100 d-flex align-items-center justify-content-center gap-2 vh-30">
                                 Tidak ada data izin
                                 <i class="fa-regular fa-face-frown"></i>
@@ -82,10 +90,12 @@
                 @endforelse
             </tbody>
         </table>
-        <div wire:loading wire:target='previewDataIzin, start_date, end_date, search'>
-            <div class="position-absolute top-0 start-0 h-100 w-100 d-flex align-items-center justify-content-center bg-light opacity-75">
-                <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
+        @if (!isset($preview_action))
+            <div wire:loading wire:target='previewDataIzin, start_date, end_date, search'>
+                <div class="position-absolute top-0 start-0 h-100 w-100 d-flex align-items-center justify-content-center bg-light opacity-75">
+                    <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
+                </div>
             </div>
-        </div>
+        @endif
     </div>
 </div>

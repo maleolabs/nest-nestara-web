@@ -69,6 +69,11 @@ Livewire.on('set-preview-img-modal', data => {
 Livewire.hook('morph.updated', ({el, component}) => {
     setInputsHandle()
     setIconLineHeight()
+
+    if ('selectedPreview' in component.snapshot.data && component.snapshot.data['selectedPreview'] !== null) {
+        document.querySelector('.modal-right').classList.remove('d-none')
+        document.querySelector('.modal-right-content').style.right = '0'
+    }
 })
 
 Livewire.on('component-rendered', ({el, component}) => {

@@ -676,12 +676,24 @@
     transition: right ease-in-out 0.5s;
     padding: 28px;
     overflow-y: scroll;
+    scrollbar-width: 0;
+}
+.modal-right-content::-webkit-scrollbar {
+    display: none;
+}
+.modal-right-content::-webkit-scrollbar-thumb {
+    display: none;
+}
+.modal-right-content.modal-right-content-md {
+    width: 900px;
+    right: -900px;
 }
 .modal-right-loading {
     width: 700px;
 }
 @media (max-width: 575px) {
-    .modal-right-content {
+    .modal-right-content, 
+    .modal-right-content.modal-right-content-md {
         inset: 0;
         width: 100%;
         height: 100%;

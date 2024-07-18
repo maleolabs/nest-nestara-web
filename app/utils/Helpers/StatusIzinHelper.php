@@ -39,6 +39,11 @@ if (!function_exists('getStatusIzinProcessClasses')) {
             BackOfficeStatusEnum::DIREKOM =>'success',
             BackOfficeStatusEnum::REKOM_CATATAN => 'warning',
             BackOfficeStatusEnum::BAHAS_LANJUT => 'warning',
+            BackOfficeStatusEnum::DIIZINKAN => 'success',
+            BackOfficeStatusEnum::TIDAK_DIIZINKAN => 'danger',
+            BackOfficeStatusEnum::LAYANAN_DITOLAK => 'danger',
+            BackOfficeStatusEnum::BELUM_DICETAK => 'dark',
+            BackOfficeStatusEnum::DICETAK => 'success',
         ];
 
         $textClass = "text-{$statusClass[$status->keterangan]}";

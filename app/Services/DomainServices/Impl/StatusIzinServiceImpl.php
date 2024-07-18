@@ -59,6 +59,7 @@ class StatusIzinServiceImpl implements StatusIzinService {
 			RiwayatProsesIzin::create([
 				'izin_id' => $izin_id,
 				'status_izin_id' => $status_izin->id,
+				'pegawai_id' => $pegawai_id,
 				'progres' => $status_izin->progres,
 				'keterangan' => $status_izin->keterangan,
 			]);

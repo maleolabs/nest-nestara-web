@@ -33,6 +33,11 @@ class Izin extends Model
         return $this->hasMany(StatusIzin::class);
     }
 
+    public function riwayat_proses_izin(): HasMany
+    {
+        return $this->hasMany(RiwayatProsesIzin::class);
+    }
+
     public function entri_data_izin(): HasMany
     {
         return $this->hasMany(EntriDataIzin::class);

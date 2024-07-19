@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\APIClient\RegionAPIService;
 use App\Services\AppService\EncryptionService;
 
 if (!function_exists('str_capitalize')) {
@@ -45,6 +46,41 @@ if (!function_exists('pretty_address')) {
             $pretty_address .= str_capitalize($addr);
         }
         return rtrim($pretty_address);
+    }
+}
+
+if (!function_exists('convert_address')) {
+    function convert_address($address): string
+    {
+        $regionService = app(RegionAPIService::class);
+        $converted_address = '';
+        $address = explode(',', $address);
+        foreach ($address as $index => $addr) {
+            if (is_numeric($addr) && intval($addr) == $addr) {
+                $addr_id = intval($addr);
+                $addr_value = '';
+                switch ($index) {
+                    case 1:
+                        $addr_value = 'desa/kelurahan ' . $regionService->getVillage($addr_id);
+                        break;
+                    case 2:
+                        $addr_value = 'kecamatan ' . $regionService->getDistrict($addr_id);
+                        break;
+                    case 3:
+                        $addr_value = 'kabupaten/kota ' . $regionService->getRegency($addr_id);
+                        break;
+                    case 4:
+                        $addr_value = 'provinsi ' . $regionService->getProvince($addr_id);
+                        break;
+                    default:
+                        break;
+                }
+                $converted_address .= str_capitalize($addr_value, true) . ($index <= count($address) ? ', ' : '');
+            } else {
+                $converted_address .= str_capitalize($addr, true) . ', ';
+            }
+        }
+        return $converted_address;
     }
 }
 

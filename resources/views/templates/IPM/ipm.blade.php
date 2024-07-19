@@ -63,7 +63,7 @@
             <td class="fs-6" style="width: 18%">b. Alamat Peneliti</td>
             <td class="text-uppercase" style="width: 82%">
                 <span style="float: left">:</span>
-                <p class="ms-2 mb-0 fs-8 tight-spacing">Jalan Rusli Datau II, Kelurahan Dulomo Utara, Kecamatan Kota Utara, Kota Gorontalo</p>
+                <p class="ms-2 mb-0 fs-8 tight-spacing">{{ convert_address($izin->pemohon->getAlamat()) }}</p>
             </td>
         </tr>
         <tr>

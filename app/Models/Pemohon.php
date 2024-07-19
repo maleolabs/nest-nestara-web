@@ -16,6 +16,16 @@ class Pemohon extends Model
 
     protected $table = 'pemohon';
 
+    public function getAlamat(): string
+    {
+        $detail_alamat = $this->attributes['detail_alamat'];
+        $kelurahan = $this->attributes['kelurahan'];
+        $kecamatan = $this->attributes['kecamatan'];
+        $kabupaten = $this->attributes['kabupaten'];
+        $provinsi = $this->attributes['provinsi'];
+        return "{$detail_alamat},{$kelurahan},{$kecamatan},{$kabupaten},{$provinsi}";
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

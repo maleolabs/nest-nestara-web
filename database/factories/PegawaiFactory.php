@@ -28,6 +28,7 @@ class PegawaiFactory extends Factory
         return [
             'nama' => fake()->name(),
             'jabatan' => fake()->jobTitle(),
+            'pangkat' => 'Pembina Utama Muda'
         ];
     }
 }

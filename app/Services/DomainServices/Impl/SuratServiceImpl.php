@@ -6,6 +6,7 @@ use App\Services\AppService\Helpers\FileManager;
 use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PengaturanService;
 use App\Services\DomainServices\SuratService;
+use App\utils\enums\SuratGroupsEnum;
 use Carbon\Carbon;
 
 class SuratServiceImpl implements SuratService {
@@ -15,14 +16,6 @@ class SuratServiceImpl implements SuratService {
     protected JenisPerizinanService $jenisPerizinanService;
 
     protected FileManager $fileManager;
-
-    private const JENIS_SURAT_GROUP = 'jenis-surat';
-
-    private const FORMAT_SURAT_GROUP = 'format-surat';
-
-    private const SURAT_TEMPLATE_GROUP = 'surat-template';
-
-    private const KOP_SURAT_GROUP = 'kop-surat';
 
     public function __construct(
         PengaturanService $pengaturanService,
@@ -91,7 +84,7 @@ class SuratServiceImpl implements SuratService {
 
     public function getActualFormat(): string
     {
-        $format = $this->pengaturanService->findByNamaAndGroup('format-surat', self::FORMAT_SURAT_GROUP);
+        $format = $this->pengaturanService->findByNamaAndGroup('format-surat', SuratGroupsEnum::FORMAT_SURAT_GROUP);
         if (!$format) {
             $this->generateDefaultFormatSurat();
             $this->getActualFormat();
@@ -116,26 +109,26 @@ class SuratServiceImpl implements SuratService {
         if (!$nomor_terakhir)
             $nomor_terakhir = (int) $nomor_surat->value + 1;
 
-        $this->pengaturanService->updateOrCreate('nomor-surat', $nomor_terakhir, self::FORMAT_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('nomor-surat', $nomor_terakhir, SuratGroupsEnum::FORMAT_SURAT_GROUP);
 
         $nomor_jenis_format = "NO-JENIS-{$jenis_perizinan_id}";
-        $nomor_jenis = $this->pengaturanService->findByNamaAndGroup($nomor_jenis_format, self::JENIS_SURAT_GROUP);
+        $nomor_jenis = $this->pengaturanService->findByNamaAndGroup($nomor_jenis_format, SuratGroupsEnum::JENIS_SURAT_GROUP);
         if (!$nomor_jenis) return;
         if (!$nomor_terakhir_jenis_perizinan)
             $nomor_terakhir_jenis_perizinan = (int) $nomor_jenis->value + 1;
 
-        $this->pengaturanService->updateOrCreate($nomor_jenis_format, $nomor_terakhir_jenis_perizinan, self::JENIS_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate($nomor_jenis_format, $nomor_terakhir_jenis_perizinan, SuratGroupsEnum::JENIS_SURAT_GROUP);
     }
 
     public function getKopSurat(): array
     {
         $kop_surat = [];
 
-        $logo_path = $this->pengaturanService->findByNamaAndGroup('logo-path', self::KOP_SURAT_GROUP);
-        $nama_pemerintah = $this->pengaturanService->findByNamaAndGroup('nama-pemerintah', self::KOP_SURAT_GROUP);
-        $nama_dinas = $this->pengaturanService->findByNamaAndGroup('nama-dinas', self::KOP_SURAT_GROUP);
-        $alamat = $this->pengaturanService->findByNamaAndGroup('alamat', self::KOP_SURAT_GROUP);
-        $website = $this->pengaturanService->findByNamaAndGroup('website', self::KOP_SURAT_GROUP);
+        $logo_path = $this->pengaturanService->findByNamaAndGroup('logo-path', SuratGroupsEnum::KOP_SURAT_GROUP);
+        $nama_pemerintah = $this->pengaturanService->findByNamaAndGroup('nama-pemerintah', SuratGroupsEnum::KOP_SURAT_GROUP);
+        $nama_dinas = $this->pengaturanService->findByNamaAndGroup('nama-dinas', SuratGroupsEnum::KOP_SURAT_GROUP);
+        $alamat = $this->pengaturanService->findByNamaAndGroup('alamat', SuratGroupsEnum::KOP_SURAT_GROUP);
+        $website = $this->pengaturanService->findByNamaAndGroup('website', SuratGroupsEnum::KOP_SURAT_GROUP);
 
         if (!$logo_path || !$nama_pemerintah || !$nama_dinas || !$alamat || !$website) {
             $this->generateDefaultKopSurat();
@@ -154,9 +147,9 @@ class SuratServiceImpl implements SuratService {
     public function generateDefaultFormatSurat(): void
     {
         $formatSurat = '{nomor}/{instansi}/{jenis-izin}/{no-jenis-izin}/{bulan-romawi}/{tahun}';
-        $this->pengaturanService->updateOrCreate('nomor-surat', 0, self::FORMAT_SURAT_GROUP);
-        $this->pengaturanService->updateOrCreate('instansi-surat', 'DPMPTSP-BB', self::FORMAT_SURAT_GROUP);
-        $this->pengaturanService->updateOrCreate('format-surat', $formatSurat, self::FORMAT_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('nomor-surat', 0, SuratGroupsEnum::FORMAT_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('instansi-surat', 'DPMPTSP-BB', SuratGroupsEnum::FORMAT_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('format-surat', $formatSurat, SuratGroupsEnum::FORMAT_SURAT_GROUP);
 
         $bagianFormatSurat = [
             'nomor' => '{nomor}',
@@ -170,16 +163,16 @@ class SuratServiceImpl implements SuratService {
             ],
             'tahun' => '{tahun}'
         ];
-        $this->pengaturanService->updateOrCreate('bagian-format-surat', $bagianFormatSurat, self::FORMAT_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('bagian-format-surat', $bagianFormatSurat, SuratGroupsEnum::FORMAT_SURAT_GROUP);
     }
 
     public function generateDefaultKopSurat(): void
     {
-        $this->pengaturanService->updateOrCreate('logo-path', 'storage/pdf-assets/cop-icon.png', self::KOP_SURAT_GROUP);
-        $this->pengaturanService->updateOrCreate('nama-pemerintah', 'PEMERINTAH KABUPATEN BONE BOLANGO', self::KOP_SURAT_GROUP);
-        $this->pengaturanService->updateOrCreate('nama-dinas', 'DINAS PENANAMAN MODAL PELAYANAN TERPADU SATU PINTU', self::KOP_SURAT_GROUP);
-        $this->pengaturanService->updateOrCreate('alamat', 'Pusat Pemerintahan Jl. Prof. Dr. Ing. B.J. Habibie Desa Ulanta Kecamatan Suwawa', self::KOP_SURAT_GROUP);
-        $this->pengaturanService->updateOrCreate('website', route('welcome'), self::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('logo-path', 'storage/pdf-assets/cop-icon.png', SuratGroupsEnum::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('nama-pemerintah', 'PEMERINTAH KABUPATEN BONE BOLANGO', SuratGroupsEnum::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('nama-dinas', 'DINAS PENANAMAN MODAL PELAYANAN TERPADU SATU PINTU', SuratGroupsEnum::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('alamat', 'Pusat Pemerintahan Jl. Prof. Dr. Ing. B.J. Habibie Desa Ulanta Kecamatan Suwawa', SuratGroupsEnum::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('website', route('welcome'), SuratGroupsEnum::KOP_SURAT_GROUP);
     }
 
     public function generateDefaultJenisPerizinanFormat(): void
@@ -198,14 +191,14 @@ class SuratServiceImpl implements SuratService {
                 $jenis_format = strtoupper(str_replace(' ', '-', $jenisPerizinan->nama));
             
             $setupdatajenis[] = [
-                'group' => self::JENIS_SURAT_GROUP,
+                'group' => SuratGroupsEnum::JENIS_SURAT_GROUP,
                 'nama' => "JENIS-{$jenisPerizinan->id}",
                 'value' => $jenis_format,
                 'created_at' => now(),
                 'updated_at' => now()
             ];
             $setupdatajenisnomor[] = [
-                'group' => self::JENIS_SURAT_GROUP,
+                'group' => SuratGroupsEnum::JENIS_SURAT_GROUP,
                 'nama' => "NO-JENIS-{$jenisPerizinan->id}",
                 'value' => 0,
                 'created_at' => now(),
@@ -233,7 +226,7 @@ class SuratServiceImpl implements SuratService {
             $value = $templates[0];
 
             $setup_jenis_templates[] = [
-                'group' => self::SURAT_TEMPLATE_GROUP,
+                'group' => SuratGroupsEnum::SURAT_TEMPLATE_GROUP,
                 'nama' => "TEMPLATE-SURAT-{$jenis->id}",
                 'value' => $value,
                 'created_at' => now(),

@@ -45,6 +45,12 @@ class PengaturanServiceImpl implements PengaturanService {
 		return $all_pengaturan->all();
 	}
 
+	public function getAllByGroup(string $group): array
+	{
+		$all_by_group = Pengaturan::where('group', $group)->get();
+		return $all_by_group->all();
+	}
+
 	public function delete(int $id): bool
 	{
 		$pengaturan = Pengaturan::find($id);

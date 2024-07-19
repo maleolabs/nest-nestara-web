@@ -52,6 +52,14 @@ interface PengaturanService {
     function getAllGroups(): array;
 
     /**
+     * Mendapatkan semua pengaturan berdasarkan kelompok.
+     *
+     * @param string $group Kelompok pengaturan yang akan diambil.
+     * @return array Daftar semua pengaturan dalam kelompok yang ditentukan.
+     */
+    function getAllByGroup(string $group): array;
+
+    /**
      * Menghapus pengaturan berdasarkan ID.
      *
      * @param int $id ID pengaturan.

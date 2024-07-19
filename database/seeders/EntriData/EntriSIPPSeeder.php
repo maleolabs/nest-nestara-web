@@ -22,6 +22,13 @@ class EntriSIPPSeeder extends Seeder
 
         EntriData::create([
             'jenis_perizinan_id' => $izin_sipp->id,
+            'nama' => 'nama pemilik',
+            'tipe' => 'text',
+            'mandatori' => true,
+            'max' => 100
+        ]);
+        EntriData::create([
+            'jenis_perizinan_id' => $izin_sipp->id,
             'nama' => 'tempat tanggal lahir',
             'tipe' => 'text',
             'mandatori' => true,
@@ -29,14 +36,21 @@ class EntriSIPPSeeder extends Seeder
         ]);
         EntriData::create([
             'jenis_perizinan_id' => $izin_sipp->id,
-            'nama' => 'berlaku s/d tanggal',
-            'tipe' => 'date',
-            'mandatori' => true,
+            'nama' => 'nomor rekomendasi',
+            'tipe' => 'text',
+            'mandatori' => false,
             'max' => 100
         ]);
         EntriData::create([
             'jenis_perizinan_id' => $izin_sipp->id,
-            'nama' => 'nomor strp',
+            'nama' => 'tanggal rekomendasi',
+            'tipe' => 'date',
+            'mandatori' => false,
+            'max' => 100
+        ]);
+        EntriData::create([
+            'jenis_perizinan_id' => $izin_sipp->id,
+            'nama' => 'nomor strb',
             'tipe' => 'text',
             'mandatori' => true,
             'max' => 100
@@ -57,17 +71,10 @@ class EntriSIPPSeeder extends Seeder
         ]);
         EntriData::create([
             'jenis_perizinan_id' => $izin_sipp->id,
-            'nama' => 'nomor rekomendasi op',
-            'tipe' => 'text',
+            'nama' => 'berlaku s/d tanggal',
+            'tipe' => 'date',
             'mandatori' => true,
             'max' => 100
-        ]);
-        EntriData::create([
-            'jenis_perizinan_id' => $izin_sipp->id,
-            'nama' => 'sebagai dokter',
-            'tipe' => 'text',
-            'mandatori' => true,
-            'max' => 10
         ]);
         EntriData::create([
             'jenis_perizinan_id' => $izin_sipp->id,

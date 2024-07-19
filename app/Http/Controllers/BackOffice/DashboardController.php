@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Services\AppService\EncryptionService;
 use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PerizinanService;
+use App\Services\DomainServices\SuratService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
@@ -22,14 +23,18 @@ class DashboardController extends Controller
 
     protected JenisPerizinanService $jenisPerizinanService;
 
+    protected SuratService $suratService;
+
     public function __construct(
         PerizinanService $perizinanService,
         EncryptionService $encryptionService,
-        JenisPerizinanService $jenisPerizinanService
+        JenisPerizinanService $jenisPerizinanService,
+        SuratService $suratService
     ) {
         $this->perizinanService = $perizinanService;
         $this->encryptionService = $encryptionService;
         $this->jenisPerizinanService = $jenisPerizinanService;
+        $this->suratService = $suratService;
     }
     
     public function index(StatistikJenisPerizinan $statistikJenisPerizinan)
@@ -80,7 +85,8 @@ class DashboardController extends Controller
 
         $pdf = Pdf::loadView($templateView, [
             'title' => $title,
-            'qrcode' => $qrcode_uri
+            'qrcode' => $qrcode_uri,
+            'kop_surat' => $this->suratService->getKopSurat(),
         ]);
 
         return $pdf->stream("{$title}.pdf");

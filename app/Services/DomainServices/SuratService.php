@@ -45,6 +45,13 @@ interface SuratService {
     function updateNomorSurat(?int $nomor_terakhir = null, ?int $jenis_perizinan_id = null, ?int $nomor_terakhir_jenis_perizinan = null): void;
 
     /**
+     * Mendapatkan format header untuk surat.
+     *
+     * @return array Format header untuk surat.
+     */
+    function getKopSurat(): array;
+
+    /**
      * Membuat format default untuk nomor surat.
      */
     function generateDefaultFormatSurat(): void;

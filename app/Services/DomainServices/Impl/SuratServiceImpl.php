@@ -127,6 +127,30 @@ class SuratServiceImpl implements SuratService {
         $this->pengaturanService->updateOrCreate($nomor_jenis_format, $nomor_terakhir_jenis_perizinan, self::JENIS_SURAT_GROUP);
     }
 
+    public function getKopSurat(): array
+    {
+        $kop_surat = [];
+
+        $logo_path = $this->pengaturanService->findByNamaAndGroup('logo-path', self::KOP_SURAT_GROUP);
+        $nama_pemerintah = $this->pengaturanService->findByNamaAndGroup('nama-pemerintah', self::KOP_SURAT_GROUP);
+        $nama_dinas = $this->pengaturanService->findByNamaAndGroup('nama-dinas', self::KOP_SURAT_GROUP);
+        $alamat = $this->pengaturanService->findByNamaAndGroup('alamat', self::KOP_SURAT_GROUP);
+        $website = $this->pengaturanService->findByNamaAndGroup('website', self::KOP_SURAT_GROUP);
+
+        if (!$logo_path || !$nama_pemerintah || !$nama_dinas || !$alamat || !$website) {
+            $this->generateDefaultKopSurat();
+            return $this->getKopSurat();
+        }
+
+        $kop_surat['logo_path'] = $logo_path->value;
+        $kop_surat['nama_pemerintah'] = $nama_pemerintah->value;
+        $kop_surat['nama_dinas'] = $nama_dinas->value;
+        $kop_surat['alamat'] = $alamat->value;
+        $kop_surat['website'] = $website->value;
+
+        return $kop_surat;
+    }
+
     public function generateDefaultFormatSurat(): void
     {
         $formatSurat = '{nomor}/{instansi}/{jenis-izin}/{no-jenis-izin}/{bulan-romawi}/{tahun}';

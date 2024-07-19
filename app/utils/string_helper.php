@@ -84,6 +84,50 @@ if (!function_exists('convert_address')) {
     }
 }
 
+if (!function_exists('isValidNameWithTitle')) {
+    function isValidNameWithTitle($name): bool
+    {
+        if (!is_string($name) || empty($name))
+            return false;
+
+        $name = strtolower(trim($name));
+
+        $titles = [
+            // Gelar Akademik Umum
+            'Dr', 'Prof', 'Mr', 'Mrs', 'Ms', 'Miss', 'Sir', 'Madam', 'Mx',
+
+            // Gelar Militer
+            'Capt', 'Col', 'Maj', 'Sgt', 'Lt', 'Gen', 'Cmdr',
+
+            // Gelar Profesional
+            'Eng', 'Ir', 'Ar', 'Arch', 'CPA', 'CA', 'Esq',
+
+            // Gelar Akademik (Indonesia)
+            'AP', 'S.E', 'S.Kom', 'S.T', 'S.H', 'S.Pd', 'S.Si', 'S.Farm', 'S.Kep', 'S.KG', 'S.IP',
+            'S.Psi', 'S.Sos', 'S.E.I', 'S.Ag', 'S.Th', 'S.Ars', 'S.Sn', 'S.Pt', 'S.Hut', 'S.KH', 'S.Pt',
+            'S.Pt', 'S.Mat', 'S.Stat', 'S.Han', 'S.PKP', 'S.Adm.Neg', 'S.Adm.Bis', 'S.Kes', 'S.Gz',
+            'S.KPM', 'S.Tr.Kes', 'S.Tr.T', 'S.Tr.Pi', 'S.Tr.S.T', 'S.Tr.M', 'S.Tr.Ak', 'S.Tr.Kom',
+            'M.Kom', 'MCE',
+
+            // Gelar Akademik (Luar Negeri)
+            'B.A', 'B.Sc', 'B.Eng', 'B.Arch', 'LL.B', 'M.A', 'M.Sc', 'M.Eng', 'M.Arch', 'LL.M',
+            'PhD', 'D.Sc', 'M.D', 'D.M.D', 'D.D.S', 'M.P.H', 'M.P.A', 'M.B.A', 'M.Fin', 'J.D', 'M.Div',
+            'Th.M', 'Th.D'
+        ];
+
+        $titlePattern = implode('|', array_map('preg_quote', $titles));
+
+        $titlePattern = implode('|', array_map('strtolower', $titles));
+
+        $pattern = "/^(($titlePattern)\\.? )*[a-zA-Z\\s]+((\\.?,? ($titlePattern)\\.?)+)$/";
+
+        if (!preg_match($pattern, $name))
+            return false;
+
+        return true;
+    }
+}
+
 if (!function_exists('encrypt_id')) {
     function encrypt_id($id): string
     {

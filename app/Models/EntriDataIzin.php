@@ -16,7 +16,7 @@ class EntriDataIzin extends Model
 
     public function getValueAttribute($value)
     {
-        return strtoupper($value);
+        return isValidNameWithTitle($value) ? $value : strtoupper($value);
     }
 
     public function entri_data(): BelongsTo

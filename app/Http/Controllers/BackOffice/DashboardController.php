@@ -13,8 +13,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 
-use function Spatie\LaravelPdf\Support\pdf;
-
 class DashboardController extends Controller
 {
 

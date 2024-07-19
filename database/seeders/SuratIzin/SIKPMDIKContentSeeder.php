@@ -17,7 +17,7 @@ class SIKPMDIKContentSeeder extends Seeder
     {
         $jenis_sikpmdik = $this->jenisPerizinanService()->findByName('Surat Izin Kerja Perekam Medis Dan Informasi Kesehatan');
         if (!$jenis_sikpmdik)
-            dd('ipm tidak ditemukam');
+            dd('sikpmdik tidak ditemukam');
         $content = [
             'judul' => 'SURAT IZIN KERJA PEREKAM MEDIS DAN INFORMASI KESEHATAN',
 

@@ -2,11 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Database\Seeders\EntriData\EntriPenMasSeeder;
 use Database\Seeders\EntriData\EntriPerekamMedisSeeder;
 use Database\Seeders\EntriData\EntriSIPATLMSeeder;
 use Database\Seeders\EntriData\EntriSIPPSeeder;
+use Database\Seeders\SuratIzin\IPMContentSeeder;
+use Database\Seeders\SuratIzin\SIKPMDIKContentSeeder;
+use Database\Seeders\SuratIzin\SIPPContentSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -26,5 +28,9 @@ class DatabaseSeeder extends Seeder
         $this->call(EntriSIPATLMSeeder::class);
 
         $this->call(PengaturanSeeder::class);
+
+        $this->call(IPMContentSeeder::class);
+        $this->call(SIKPMDIKContentSeeder::class);
+        $this->call(SIPPContentSeeder::class);
     }
 }

@@ -2,14 +2,14 @@
 @push('margin-paper')px-3 @endpush
 @section('content')
     <p class="fs-5 text-center text-decoration-underline mb-0 pt-3">
-        SURAT IZIN KERJA PEREKAM MEDIS DAN INFORMASI KESEHATAN
+        {{ $konten['judul'] ?? 'BELUM DI SET' }}
     </p>
     <p class="fw-bold text-center normal-spacing"> Nomor : {{ $izin->no_surat }}</p>
 
     <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/free.png'))) }}" alt="free" class="free-watermark-right">
 
     <p class="fs-6 text-justify">
-        Berdasarkan Undang-undang No.36 Tahun 2014 Tentang Tenaga Kesehatan, Peraturan Menteri Kesehatan RI Nomor 55 Tahun 2013 tentang Penyelenggaraan Pekerjaan Perekam Medis danPeraturan Bupati Bone Bolango No 6 Tahun 2022 Tentang Pendelegasian Wewenang Penerbitan dan Penandatanganan Perizinan dan Non Dinas Penanaman Modal, Pelayanan Terpadu Satu Pintu Kabupaten Bone Bolango memberikan Izin Kerja Perekam Medis dan Informasi Kesehatan kepada :
+        {{ $konten['dasar'] ?? 'BELUM DI SET' }}
     </p>
 
     <p class="text-center text-decoration-underline fs-5">
@@ -63,7 +63,7 @@
         </tr>
         <tr>
             <td colspan="2" class="py-4">
-                Diberikan izin kerja untuk melakukan pekerjaan Perekam Medis dan Informasi Kesehatan pada:
+                {{ $konten['keterangan'] ?? 'BELUM DI SET' }}
             </td>
         </tr>
         <tr>
@@ -107,17 +107,17 @@
                 <p class="fs-6 mb-0 mt-5">
                     Tembusan Yth.
                 </p>
-                <ol class="ps-3 mb-0">
-                    <li class="fs-6">
-                        Kepala Dinas Kesehatan Kabupaten Bone Bolango.
-                    </li>
-                    <li class="fs-6">
-                        Ketua Ikatan Ahli Kesehatan Masyarakat Indonesia
-                    </li>
-                    <li class="fs-6">
-                        Pertinggal
-                    </li>
-                </ol>
+                @isset($konten['tembusan'])
+                    <ol class="ps-3 mb-0">
+                        @if (is_array($konten['tembusan']))
+                            @foreach ($konten['tembusan'] as $tembusan)
+                                <li class="fs-6">
+                                    {{ $tembusan }}
+                                </li>
+                            @endforeach
+                        @endif
+                    </ol>
+                @endisset
             </td>
             <td style="width: 50%" class="pt-5 text-center">
                 <p class="fs-55 mb-1 normal-spacing">{{ $kop_surat['tempat_penetapan'] ?? 'BELUM DI SET' }}, {{ $data_izin['tanggal penetapan'] ?? 'BELUM DI SET' }}</p>

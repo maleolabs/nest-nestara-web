@@ -10,7 +10,7 @@
             <td class="fs-6" style="width: 18%">Dasar</td>
             <td style="width: 82%">
                 <span style="float: left">:</span>
-                @if (isset($konten['dasar']))
+                @isset($konten['dasar'])
                     <ol class="ps-4 mb-0">
                         @if (is_array($konten['dasar']) && count($konten['dasar']) > 0)
                             @foreach ($konten['dasar'] as $dasar)
@@ -20,7 +20,7 @@
                             @endforeach
                         @endif
                     </ol>
-                @endif
+                @endisset
             </td>
         </tr>
         <tr>
@@ -34,7 +34,7 @@
             <td class="fs-6" style="width: 18%">Menimbang</td>
             <td class="fs-6" style="width: 82%">
                 <span style="float: left">:</span>
-                <p class="ms-2 mb-0 text-justify">SURAT WAKIL DEKAN BIDANG AKADEMIK FAKULTAS TEKNIK UNIVERSITAS NEGERI GORONTALO NOMOR : B/1002/UN47.B5/PT.01.04/2024 TERTANGGAL 6 JUNI 2024 PERIHAL REKOMENDASI PENELITIAN</p>
+                <p class="ms-2 mb-0 text-justify">{{ $data_izin['menimbang'] ?? 'BELUM DI SET' }}</p>
             </td>
         </tr>
         <tr>
@@ -43,10 +43,20 @@
             </td>
         </tr>
         <tr>
-            <td class="fs-6" style="width: 18%">a. Nama</td>
+            <td class="fs-6" style="width: 18%">a. Nama/Nim</td>
             <td class="fs-6 text-uppercase" style="width: 82%">
                 <span style="float: left">:</span>
-                <p class="ms-2 mb-0">Ma'rij Mokoginta</p>
+                @isset($data_izin['anggota peneliti'])
+                    @if (is_array($data_izin['anggota peneliti']))
+                        <ol class="ps-4 mb-0">
+                            @foreach ($data_izin['anggota peneliti'] as $peneliti)
+                                <li>{{ $peneliti }}</li>
+                            @endforeach
+                        </ol>
+                    @else
+                        <p class="ms-2 mb-0">{{ $data_izin['anggota peneliti'] }}</p>
+                    @endif                    
+                @endisset
             </td>
         </tr>
         <tr>
@@ -60,56 +70,56 @@
             <td class="fs-6 pt-2" style="width: 18%">c. Judul Penelitian</td>
             <td class="fs-8 tight-spacing pt-2 text-uppercase" style="width: 82%">
                 <span style="float: left">:</span>
-                <p class="ms-2 mb-0 text-justify">SISTEM INFORMASI PERIZINAN DINAS PMPTSP</p>
+                <p class="ms-2 mb-0 text-justify">{{ $data_izin['judul penelitian'] ?? 'BELUM DI SET' }}</p>
             </td>
         </tr>
         <tr>
-            <td class="fs-6 pt-5" style="width: 18%">d. Tujuan Penelitian</td>
-            <td class="fs-8 pt-5 tight-spacing pt-4 text-uppercase" style="width: 82%">
+            <td class="fs-6 pt-4" style="width: 18%">d. Tujuan Penelitian</td>
+            <td class="fs-8 pt-4 tight-spacing pt-4 text-uppercase" style="width: 82%">
                 <span style="float: left">:</span>
-                <p class="ms-2 mb-0 text-justify">Penyusunan Skripsi</p>
+                <p class="ms-2 mb-0 text-justify">{{ $data_izin['tujuan penelitian'] ?? 'BELUM DI SET' }}</p>
             </td>
         </tr>
         <tr>
             <td class="fs-6" style="width: 18%">e. Tempat Penelitian</td>
             <td class="fs-8 tight-spacing text-uppercase" style="width: 82%">
                 <span style="float: left">:</span>
-                <p class="ms-2 mb-0 text-justify">Dinas Penanaman Modal Pelayanan Terpadu Satu Pintu</p>
+                <p class="ms-2 mb-0 text-justify">{{ $data_izin['tempat penelitian'] ?? 'BELUM DI SET' }}</p>
             </td>
         </tr>
         <tr>
-            <td class="fs-6 pt-5" style="width: 18%">f. Waktu Penelitian</td>
-            <td class="fs-6 pt-5 text-uppercase" style="width: 82%">
+            <td class="fs-6 pt-4" style="width: 18%">f. Waktu Penelitian</td>
+            <td class="fs-6 pt-4 text-uppercase" style="width: 82%">
                 <span style="float: left">:</span>
-                <p class="ms-2 mb-0 text-justify">Sejak Ditetapkan</p>
+                <p class="ms-2 mb-0 text-justify">{{ $data_izin['waktu penelitian'] ?? 'BELUM DI SET' }}</p>
             </td>
         </tr>
         <tr>
             <td class="fs-6" style="width: 18%">g. Bidang Penelitian</td>
             <td class="fs-6 text-uppercase" style="width: 82%">
                 <span style="float: left">:</span>
-                <p class="ms-2 mb-0 text-justify">Sistem Informasi</p>
+                <p class="ms-2 mb-0 text-justify">{{ $data_izin['bidang penelitian'] ?? 'BELUM DI SET' }}</p>
             </td>
         </tr>
         <tr>
             <td class="fs-6" style="width: 18%">h. Status Penelitian</td>
             <td class="fs-6 text-uppercase" style="width: 82%">
                 <span style="float: left">:</span>
-                <p class="ms-2 mb-0 text-justify">Baru</p>
+                <p class="ms-2 mb-0 text-justify">{{ $data_izin['status penelitian'] ?? 'BELUM DI SET' }}</p>
             </td>
         </tr>
         <tr>
             <td class="fs-6" style="width: 18%">i. Penanggungjawab</td>
             <td class="fs-6" style="width: 82%">
                 <span style="float: left">:</span>
-                <p class="ms-2 mb-0 text-justify">Ir. Joko Widodo</p>
+                <p class="ms-2 mb-0 text-justify">{{ $data_izin['penanggungjawab'] ?? 'BELUM DI SET' }}</p>
             </td>
         </tr>
         <tr>
             <td class="fs-6" style="width: 18%">k. Nama Lembaga</td>
             <td class="fs-6 text-uppercase" style="width: 82%">
                 <span style="float: left">:</span>
-                <p class="ms-2 mb-0 text-justify">Universitas Negeri Gorontalo</p>
+                <p class="ms-2 mb-0 text-justify">{{ $data_izin['nama lembaga'] ?? 'BELUM DI SET' }}</p>
             </td>
         </tr>
     </table>
@@ -117,7 +127,7 @@
     <p class="fs-7 mt-3 mb-2">
         {{ $konten['keterangan'] }}
     </p>
-    @if (isset($konten['ketentuan']))
+    @isset($konten['ketentuan'])
         <ol class="ps-3">
             @if (is_array($konten['ketentuan']))
                 @foreach ($konten['ketentuan'] as $ketentuan)
@@ -127,7 +137,7 @@
                 @endforeach
             @endif
         </ol>
-    @endif
+    @endisset
     <p class="mt-3 fs-6 normal-spacing">
         {{ $konten['penutup'] ?? 'BELUM DI SET' }}
     </p>
@@ -135,8 +145,8 @@
     <table>
         <tr>
             <td style="width: 50%">
-                <img src="{{ $qrcode }}">
-                <p class="fs-85 mb-0 mt-3">
+                <img src="{{ $qrcode }}" class="mt-2">
+                <p class="fs-85 mb-0 mt-4">
                     Tembusan Yth.
                 </p>
                 @isset($konten['tembusan'])

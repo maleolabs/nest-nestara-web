@@ -55,6 +55,23 @@ class EntriDataServiceImpl implements EntriDataService {
 		return $entri_data->all();
 	}
 
+	public function getDataIzinGroupByNama(int $izin_id): array
+	{
+		$data_izin = EntriDataIzin::join('entri_data', 'entri_data.id', '=', 'entri_data_izin.entri_data_id')
+			->where('entri_data_izin.izin_id', $izin_id)
+			->pluck('entri_data_izin.value', 'entri_data.nama');
+		$data_izin = $data_izin->all();
+
+		foreach ($data_izin as $data_nama => $data_value) {
+			if (str_contains($data_value, ';')) {
+				$value = explode(';', $data_value);
+				$data_izin[$data_nama] = $value;
+			}
+		}
+
+		return $data_izin;
+	}
+
 	public function saveEntriDataIzin($entri_data, int $izin_id, string $value = null): array
 	{
 		$entri_data_izin = null;

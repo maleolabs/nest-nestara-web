@@ -5,6 +5,7 @@ namespace App\Http\Controllers\BackOffice;
 use App\Charts\StatistikJenisPerizinan;
 use App\Http\Controllers\Controller;
 use App\Services\AppService\EncryptionService;
+use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SuratService;
@@ -23,17 +24,21 @@ class DashboardController extends Controller
 
     protected JenisPerizinanService $jenisPerizinanService;
 
+    protected EntriDataService $entriDataService;
+
     protected SuratService $suratService;
 
     public function __construct(
         PerizinanService $perizinanService,
         EncryptionService $encryptionService,
         JenisPerizinanService $jenisPerizinanService,
+        EntriDataService $entriDataService,
         SuratService $suratService
     ) {
         $this->perizinanService = $perizinanService;
         $this->encryptionService = $encryptionService;
         $this->jenisPerizinanService = $jenisPerizinanService;
+        $this->entriDataService = $entriDataService;
         $this->suratService = $suratService;
     }
     
@@ -77,6 +82,10 @@ class DashboardController extends Controller
         if (!$templateView)
             abort(404);
 
+        $data_izin = $this->entriDataService->getDataIzinGroupByNama($izin->id);
+        if (count($data_izin) == 0)
+            abort(404);
+
         $title = "IZIN-{$izin->no_pendaftaran}";
 
         $encrypt_id = $this->encryptionService->encryptId($id);
@@ -88,6 +97,7 @@ class DashboardController extends Controller
             'izin' => $izin,
             'qrcode' => $qrcode_uri,
             'kop_surat' => $this->suratService->getKopSurat(),
+            'data_izin' => $data_izin,
             'konten' => $this->suratService->getSuratContentByJenis($izin->jenis_perizinan_id)
         ]);
 

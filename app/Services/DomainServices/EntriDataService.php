@@ -90,6 +90,16 @@ interface EntriDataService {
 	function getByJenisPerizinanIdWithOldData(int $jenis_perizinan_id, int $izin_id): array;
 
 	/**
+	 * Mengambil data izin yang dikelompokkan berdasarkan nama.
+	 *
+	 * Fungsi ini mencari dan mengembalikan data izin yang dikelompokkan berdasarkan nama.
+	 *
+	 * @param int $izin_id ID izin yang akan diambil data izinnya.
+	 * @return array Mengembalikan array data izin yang dikelompokkan berdasarkan nama.
+	 */
+	function getDataIzinGroupByNama(int $izin_id): array;
+
+	/**
 	 * Menyimpan satu atau beberapa data entri izin.
 	 *
 	 * Fungsi ini menyimpan satu atau beberapa data entri izin yang diberikan.

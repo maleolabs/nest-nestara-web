@@ -2,18 +2,18 @@
 @push('margin-paper')px-3 @endpush
 @section('content')
     <p class="fs-5 text-center text-decoration-underline mb-0 pt-3">
-        SURAT IZIN PRAKTIK AHLI TEKNOLOGI LABORATORIUM MEDIK
+        {{ $konten['judul'] ?? 'BELUM DI SET' }}
     </p>
-    <p class="fw-bold text-center normal-spacing"> Nomor : 503/DPMPTSP-BB/IPM/0225/VI/2024</p>
+    <p class="fw-bold text-center normal-spacing"> Nomor : {{ $izin->no_surat }}</p>
 
     <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/free.png'))) }}" alt="free" class="free-watermark-right">
 
     <p class="fs-6 text-justify">
-        Berdasarkan Peraturan Menteri Kesehatan Nomor 42 Tahun 2015 tentang Izin dan Penyelenggaraan Praktik Ahli Teknologi Laboratorium Medik, dan Peraturan Bupati Bone Bolango Nomor 6 Tahun 2022 Tentang Pendelegasian Wewenang Penerbitan dan Penandatanganan Perizinan dan Non Perizinan Kepada Penyelenggara Pelayanan Terpadu Satu Pintu Kabupaten Bone Bolango, memberikan Izin Praktik Kepada :
+        {{ $konten['dasar'] ?? 'BELUM DI SET' }}
     </p>
 
     <p class="text-center text-decoration-underline fs-4 fw-bold">
-        Ma'rij Mokoginta
+        {{ $izin->pemohon->nama }}
     </p>
 
     <table>
@@ -24,7 +24,7 @@
             <td class="fs-6" style="width: 75%">
                 <span style="float: left">:</span>
                 <p class="ms-2 mb-0 text-uppercase">
-                    TELAGA KAB. GORONTALO, 21 MEI 1999
+                    {{ $data_izin['tempat tanggal lahir'] ?? 'BELUM DI SET' }}
                 </p>
             </td>
         </tr>
@@ -35,7 +35,7 @@
             <td class="fs-6" style="width: 75%">
                 <span style="float: left">:</span>
                 <p class="ms-2 mb-0 text-uppercase">
-                    DUSUN I KEL./DESA TULADENGGI KECAMATAN TELAGA BIRU KOTA/KAB. GORONTALO PROPINSI GORONTALO
+                    {{ convert_address($izin->pemohon->getAlamat()) }}
                 </p>
             </td>
         </tr>
@@ -46,13 +46,13 @@
             <td class="fs-6 pt-2" style="width: 75%">
                 <span style="float: left">:</span>
                 <p class="ms-2 mb-0 text-uppercase">
-                    CS00000906847411
+                    {{ $data_izin['nomor str atlm'] ?? 'BELUM DI SET' }}
                 </p>
             </td>
         </tr>
         <tr>
             <td colspan="2" class="py-4">
-                Untuk bekerja sebagai Ahli Teknologi Laboratorium Medik
+                {{ $konten['keterangan'] ?? 'BELUM DI SET' }}
             </td>
         </tr>
         <tr>
@@ -62,7 +62,7 @@
             <td class="fs-6" style="width: 75%">
                 <span style="float: left">:</span>
                 <p class="ms-2 mb-0 text-uppercase">
-                    PUSKESMAS SUWAWA TENGAH
+                    {{ $data_izin['tempat praktik'] ?? 'BELUM DI SET' }}
                 </p>
             </td>
         </tr>
@@ -73,13 +73,13 @@
             <td class="fs-6" style="width: 75%">
                 <span style="float: left">:</span>
                 <p class="ms-2 mb-0 text-uppercase">
-                    JL. LINGKAR KECAMATAN DESA DUANO KEC. SUWAWA TENGAH KAB. BONE BOLANGO
+                    {{ $data_izin['alamat tempat praktik'] ?? 'BELUM DI SET' }}
                 </p>
             </td>
         </tr>
         <tr>
             <td colspan="2" class="py-4">
-                Surat Izin Praktik Ahli Teknologi Laboratorium Medik ( SIP-ATLM ) ini berlaku sampai dengan tanggal 15 JULI 2029
+                {{ isset($konten['judul']) ? str_capitalize($konten['judul'], true) : 'BELUM DI SET' }} ini berlaku sampai dengan tanggal {{ $data_izin['masa berlaku str alm'] ?? 'BELUM DI SET' }}
             </td>
         </tr>
     </table>
@@ -90,22 +90,24 @@
                 <p class="fs-6 mb-0 mt-5">
                     Tembusan Yth.
                 </p>
-                <ol class="ps-3 mb-0">
-                    <li class="fs-6">
-                        Kepala Dinas Kesehatan Kabupaten Bone Bolango.
-                    </li>
-                    <li class="fs-6">
-                        Arsip.
-                    </li>
-                </ol>
+                @isset($konten['tembusan'])
+                    <ol class="ps-3 mb-0">
+                        @if (is_array($konten['tembusan']))
+                            @foreach ($konten['tembusan'] as $tembusan)
+                                <li class="fs-6">
+                                    {{ $tembusan }}
+                                </li>
+                            @endforeach
+                        @endif
+                    </ol>
+                @endisset
             </td>
             <td style="width: 50%" class="pt-5 text-center">
-                <p class="fs-55 mb-0 normal-spacing">Ditetapkan di Tilongkabila</p>
-                <p class="fs-55 mb-1 normal-spacing">Pada tanggal 10 Juli 2024</p>
-                <p class="fs-55 normal-spacing">KEPALA DINAS</p>
-                <p class="fs-55 mt-5 pt-2 normal-spacing text-decoration-underline mb-0">JUMAIDIL, AP, S.Sos,M.Ec.Dev</p>
-                <p class="fs-55 mb-0 normal-spacing">Pembina Utama Muda</p>
-                <p class="fs-55 normal-spacing">Nip. 19741018 199311 1 002</p>
+                <p class="fs-55 mb-1 normal-spacing">{{ $kop_surat['tempat_penetapan'] ?? 'BELUM DI SET' }}, {{ $data_izin['tanggal penetapan'] ?? 'BELUM DI SET' }}</p>
+                <p class="fs-55 normal-spacing text-uppercase">{{ $izin->penandatangan->jabatan }}</p>
+                <p class="fs-55 mt-5 pt-3 normal-spacing text-decoration-underline mb-0">{{ $izin->penandatangan->nama }}</p>
+                <p class="fs-55 mb-0 normal-spacing">{{ $izin->penandatangan->pangkat }}</p>
+                <p class="fs-55 normal-spacing">Nip. {{ $izin->penandatangan->nip }}</p>
             </td>
         </tr>
     </table>

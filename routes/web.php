@@ -23,6 +23,8 @@ Auth::routes();
 
 Route::get('/jenis-perizinan', [PerizinanController::class, 'jenisPerizinan'])->name('jenis-perizinan');
 
+Route::get('/konfirmasi-izin/{izin_id}', [DashboardController::class, 'confirmIzin'])->name('confirm.izin');
+
 Route::middleware('auth')->group(function() {
     Route::middleware(['role:pemohon'])->group(function() {
         Route::get('/buat-izin-baru', [PerizinanController::class, 'create'])->name('create-izin');

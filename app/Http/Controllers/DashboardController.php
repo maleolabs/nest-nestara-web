@@ -36,5 +36,20 @@ class DashboardController extends Controller
             'izin' => $izin
         ]);
     }
+
+    public function confirmIzin(Request $request)
+    {
+        $izin = null;
+        $message = null;
+        $izin_id = $request->izin_id;
+        try {
+            $izin_id = $this->encryptionService->decryptId($izin_id);
+            $izin = $this->perizinanService->find($izin_id);
+        } catch (DecryptException $e) {
+            $message = 'Izin tidak terdaftar';
+        }
+
+        return response()->view('confirm-izin', compact('izin', 'message'));
+    }
     
 }

@@ -49,12 +49,12 @@
                             <p class="text-xs font-weight-bold mb-0">{{ $izin->pemohon->nomor_id }}</p>
                         </td>
                         <td>
-                            <h6 class="mb-0 text-sm">
+                            <h6 class="mb-0 text-sm text-wrap">
                                 {{ str_capitalize($izin->pemohon->nama_pemohon, true) }}
                             </h6>
                         </td>
                         <td>
-                            <p class="text-sm text-secondary mb-0">
+                            <p class="text-sm text-secondary mb-0 text-wrap">
                                 {{ str_capitalize($izin->jenis_perizinan->nama, true) }}
                             </p>
                         </td>

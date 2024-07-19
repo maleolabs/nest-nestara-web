@@ -55,6 +55,7 @@ class PengaturanSuratGenerator
         $this->pengaturanService->updateOrCreate('nama-dinas', 'DINAS PENANAMAN MODAL PELAYANAN TERPADU SATU PINTU', SuratGroupsEnum::KOP_SURAT_GROUP);
         $this->pengaturanService->updateOrCreate('alamat', 'Pusat Pemerintahan Jl. Prof. Dr. Ing. B.J. Habibie Desa Ulanta Kecamatan Suwawa', SuratGroupsEnum::KOP_SURAT_GROUP);
         $this->pengaturanService->updateOrCreate('website', route('welcome'), SuratGroupsEnum::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('tempat-penetapan', 'Suwawa', SuratGroupsEnum::KOP_SURAT_GROUP);
     }
 
     public function generateDefaultJenisPerizinanFormat(): void

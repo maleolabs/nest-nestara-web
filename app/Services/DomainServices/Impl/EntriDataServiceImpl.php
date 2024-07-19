@@ -5,6 +5,8 @@ namespace App\Services\DomainServices\Impl;
 use App\Services\DomainServices\EntriDataService;
 use App\Models\EntriData;
 use App\Models\EntriDataIzin;
+use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -66,6 +68,12 @@ class EntriDataServiceImpl implements EntriDataService {
 			if (str_contains($data_value, ';')) {
 				$value = explode(';', $data_value);
 				$data_izin[$data_nama] = $value;
+			}
+			try {
+				$date_value = Carbon::parse($data_value)->translatedFormat('d F Y');
+				$data_izin[$data_nama] = $date_value;
+			} catch (InvalidFormatException $e) {
+				continue;
 			}
 		}
 

@@ -111,8 +111,9 @@ class SuratServiceImpl extends PengaturanSuratGenerator implements SuratService 
         $nama_dinas = $this->pengaturanService->findByNamaAndGroup('nama-dinas', SuratGroupsEnum::KOP_SURAT_GROUP);
         $alamat = $this->pengaturanService->findByNamaAndGroup('alamat', SuratGroupsEnum::KOP_SURAT_GROUP);
         $website = $this->pengaturanService->findByNamaAndGroup('website', SuratGroupsEnum::KOP_SURAT_GROUP);
+        $tempat_penetapan = $this->pengaturanService->findByNamaAndGroup('tempat-penetapan', SuratGroupsEnum::KOP_SURAT_GROUP);
 
-        if (!$logo_path || !$nama_pemerintah || !$nama_dinas || !$alamat || !$website) {
+        if (!$logo_path || !$nama_pemerintah || !$nama_dinas || !$alamat || !$website || !$tempat_penetapan) {
             $this->generateDefaultKopSurat();
             return $this->getKopSurat();
         }
@@ -122,6 +123,7 @@ class SuratServiceImpl extends PengaturanSuratGenerator implements SuratService 
         $kop_surat['nama_dinas'] = $nama_dinas->value;
         $kop_surat['alamat'] = $alamat->value;
         $kop_surat['website'] = $website->value;
+        $kop_surat['tempat_penetapan'] = $tempat_penetapan->value;
 
         return $kop_surat;
     }

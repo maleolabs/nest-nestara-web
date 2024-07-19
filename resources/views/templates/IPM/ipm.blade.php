@@ -162,7 +162,7 @@
                 @endisset
             </td>
             <td style="width: 50%" class="text-center">
-                <p class="fs-55 mb-1 normal-spacing">Suwawa, 6 JUNI 2024</p>
+                <p class="fs-55 mb-1 normal-spacing">{{ $kop_surat['tempat_penetapan'] ?? 'BELUM DI SET' }}, {{ $data_izin['tanggal penetapan'] ?? 'BELUM DI SET' }}</p>
                 <p class="fs-55 normal-spacing">KEPALA DINAS</p>
                 <p class="fs-55 mt-5 pt-2 normal-spacing text-decoration-underline mb-0">JUMAIDIL, AP, S.Sos,M.Ec.Dev</p>
                 <p class="fs-55 mb-0 normal-spacing">Pembina Utama Muda</p>

@@ -61,13 +61,13 @@
                             Pastikan Anda memilih tindakan (izinkan atau tolak) untuk menyelesaikan proses permohonan izin ini.
                         </div>
                     </div>
-                @elseif ($selectedPreview->status_izin->last()->keterangan == App\utils\enums\BackOfficeStatusEnum::DIIZINKAN)
+                @elseif ($selectedPreview->status_izin->last()->keterangan == App\utils\enums\BackOfficeStatusEnum::DIIZINKAN || !$this->isAlreadyPrinted())
                     <form action="{{ route('pegawai.download-surat') }}" method="POST">
                         @csrf
                         <input type="hidden" class="d-none" name="id" value="{{ encrypt_id($selectedPreview->id) }}">
                         <button class="btn btn-sm bg-gradient-info" type="submit">
-                            <i class="fa-solid fa-download me-1 fs-6"></i>
-                            Unduh Surat Izin
+                            <i class="fa-solid fa-print me-1 fs-6"></i>
+                            Cetak Surat Izin
                         </button>
                     </form>
                 @endif

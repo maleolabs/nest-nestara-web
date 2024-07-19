@@ -99,7 +99,11 @@ class DashboardController extends Controller
             'konten' => $this->suratService->getSuratContentByJenis($izin->jenis_perizinan_id)
         ]);
 
-        return $pdf->stream("{$title}.pdf");
+        $auth_user = auth()->user();
+        $pegawai_id = $auth_user->pegawai ? $auth_user->pegawai->id : null;
+        $this->perizinanService->updateCetakIzinStatus($izin->id, $pegawai_id);
+
+        return $pdf->download("{$title}.pdf");
     }
     
 }

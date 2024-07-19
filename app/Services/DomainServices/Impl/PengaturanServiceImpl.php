@@ -13,12 +13,13 @@ class PengaturanServiceImpl implements PengaturanService {
 		DB::table('pengaturan')->insert($pengaturan);
 	}
 
-    public function updateOrCreate(string $nama, $value, ?string $group = null, $user_id = null): ?Pengaturan
+    public function updateOrCreate(string $nama, $value, ?string $group = null, $user_id = null, bool $hidden = false): ?Pengaturan
 	{
 		$tipe = is_int($value) ? 'int' : (is_bool($value) ? 'boolean' : (is_array($value) ? 'json' : (strtotime($value) !== false ? 'datetime' : 'text')));
 		return Pengaturan::updateOrCreate(
 			['nama' => $nama, 'user_id' => $user_id, 'group' => $group], 
-			['value' => $value, 'tipe' => $tipe, 'group' => $group]);
+			['value' => $value, 'tipe' => $tipe, 'hidden' => $hidden]
+		);
 	}
 
 	public function find(string $nama, $user_id = null): ?Pengaturan

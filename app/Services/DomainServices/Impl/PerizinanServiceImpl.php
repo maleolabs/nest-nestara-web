@@ -4,12 +4,14 @@ namespace App\Services\DomainServices\Impl;
 
 use App\Models\Izin;
 use App\Services\DomainServices\EntriDataService;
+use App\Services\DomainServices\PengaturanService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\StatusIzinService;
 use App\Services\DomainServices\SuratService;
 use App\utils\enums\BackOfficeStatusEnum as OfficeStatus;
 use App\utils\enums\StatusIzinEnum as Status;
 use App\utils\enums\StatusIzinProgressEnum as Progres;
+use App\utils\enums\SuratGroupsEnum;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -22,14 +24,18 @@ class PerizinanServiceImpl implements PerizinanService
 
     protected SuratService $suratService;
 
+    protected PengaturanService $pengaturanService;
+
     public function __construct(
         StatusIzinService $statusIzinService, 
         EntriDataService $entriDataService,
-        SuratService $suratService)
+        SuratService $suratService,
+        PengaturanService $pengaturanService)
     {
         $this->statusIzinService = $statusIzinService;
         $this->entriDataService = $entriDataService;
         $this->suratService = $suratService;
+        $this->pengaturanService = $pengaturanService;
     }
     
     public function saveRegistration(int $jenis_izin_id, int $pemohon_id): ?Izin
@@ -335,6 +341,27 @@ class PerizinanServiceImpl implements PerizinanService
                 $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, $tindakan, $pegawai_id);
             }
         });
+    }
+
+    public function updateCetakIzinStatus(int $izin_id, ?int $pegawai_id = null): void
+    {
+        $izin = $this->find($izin_id);
+        if (!$izin)
+            return;
+
+        $izin_status = $izin->status_izin->last();
+        if ($izin_status->keterangan == OfficeStatus::DIIZINKAN || $izin_status->keterangan == OfficeStatus::DICETAK) {
+            $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::DICETAK, $pegawai_id);
+            
+            $nama_pengaturan = "IZIN-{$izin_id}-COUNTER";
+
+            $saved_sett = $this->pengaturanService->findByNamaAndGroup($nama_pengaturan, SuratGroupsEnum::DOWNLOADED_SURAT_COUNTER);
+            
+            $value = $saved_sett ? $saved_sett->value : 0;
+            $value = $value + 1;
+
+            $this->pengaturanService->updateOrCreate($nama_pengaturan, $value, SuratGroupsEnum::DOWNLOADED_SURAT_COUNTER, null, true);
+        }
     }
     
 }

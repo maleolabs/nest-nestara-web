@@ -103,6 +103,13 @@ class Penetapan extends Component
                     'status' => $proses_izin->keterangan == BackOfficeStatusEnum::DIIZINKAN ?? false,
                     'keterangan' => $proses_izin->keterangan,
                 ];
+            } else if ($proses_izin->keterangan == BackOfficeStatusEnum::DICETAK) {
+                $this->previewRiwayatProses['Cetak'] = [
+                    'tanggal' => $proses_izin->created_at->translatedFormat('l, d F Y H:i'),
+                    'pegawai' => $proses_izin->pegawai ? $proses_izin->pegawai->nama : $proses_izin->status_izin->pegawai->nama,
+                    'status' => true,
+                    'keterangan' => $proses_izin->keterangan,
+                ];
             }
         });
         $this->tindakan = BackOfficeStatusEnum::DIIZINKAN;
@@ -145,18 +152,26 @@ class Penetapan extends Component
                 break;
 
             case self::PEMBUATAN:
-                $filtered_data = array_filter($this->all_izin, function ($izin) use ($penetapan_status) {
-                    return $izin->status_izin->last()->keterangan == BackOfficeStatusEnum::DIIZINKAN;
+                $filtered_data = array_filter($this->all_izin, function ($izin) {
+                    $last_status = $izin->status_izin->last();
+                    return $last_status->keterangan == BackOfficeStatusEnum::DIIZINKAN || !$this->isAlreadyPrinted($last_status);
                 });
                 break;
 
             case self::LAYANAN_DITOLAK:
-                $filtered_data = array_filter($this->all_izin, function ($izin) use ($penetapan_status) {
+                $filtered_data = array_filter($this->all_izin, function ($izin) {
                     return $izin->status_izin->last()->keterangan == BackOfficeStatusEnum::LAYANAN_DITOLAK;
                 });
                 break;
         }
         return $filtered_data;
+    }
+
+    public function isAlreadyPrinted($last_status = null): bool
+    {
+        if (!$last_status)
+            $last_status = $this->selectedPreview->status_izin->last();
+        return $last_status->keterangan == BackOfficeStatusEnum::DICETAK && $last_status->updated_at->diffInDays(now()) > 1;
     }
 
     private function getPerizinanService(): PerizinanService

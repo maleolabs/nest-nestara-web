@@ -70,8 +70,14 @@
                             <div class="d-flex flex-column align-items-center justify-content-center">
                                 <span class="badge badge-dot">
                                     <i class="{{ $statusClasses['bgClass'] }}"></i>
+                                    @php
+                                        $keterangan = $status->keterangan;
+                                        if ($keterangan == App\utils\enums\BackOfficeStatusEnum::DICETAK) {
+                                            $keterangan .= ' ' . getCountDownloadedSurat($izin->id);
+                                        }
+                                    @endphp
                                     <span class="text-sm {{ $statusClasses['textClass'] }}">
-                                        {{ Str::limit($status->keterangan, 16) }}
+                                        {{ Str::limit($keterangan, 16) }}
                                     </span>
                                 </span>
                                 <p class="text-xs text-muted mb-0">{{ $status->updated_at->diffForHumans() }}</p>

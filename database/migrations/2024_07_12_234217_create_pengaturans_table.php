@@ -18,6 +18,7 @@ return new class extends Migration
             $table->text('value')->nullable();
             $table->enum('tipe', ['text', 'int', 'boolean', 'datetime', 'json'])->default('text');
             $table->unsignedBigInteger('user_id')->nullable();
+            $table->boolean('hidden')->default(false);
             $table->softDeletes();
             $table->timestamps();
 

@@ -8,17 +8,36 @@ use App\Models\Izin;
  * Menyediakan antarmuka untuk mengelola perizinan dalam aplikasi.
  *
  * Antarmuka ini mendefinisikan metode-metode untuk menangani berbagai operasi terkait perizinan, seperti:
- * - Menyimpan registrasi perizinan baru
- * - Mencari perizinan berdasarkan ID
- * - Mengambil daftar perizinan dengan berbagai filter
- * - Menyimpan tindakan registrasi perizinanw
- * - Mengembalikan atau merevisi perizinan yang terdaftar
- * - Membatalkan perizinan yang terdaftar
- * - Menghapus perizinan
- * - Memperbarui status perizinan
- * - Memeriksa entri data yang ada untuk suatu perizinan
- * - Menyimpan hasil inspeksi lapangan untuk suatu perizinan
- * - Memverifikasi aplikasi perizinan
+ * @method null|App\Models\Izin saveRegistration(int $jenis_izin_id, int $pemohon_id)
+ * @method null|App\Models\Izin find(int $id)
+ * @method array getAll(
+ *      string $search = '', 
+ *      array $filter_status = [], 
+ *      array $filter_status_progress = [], 
+ *      string $filter_start_date = null, 
+ *      string $filter_end_date = null, 
+ *      string $sort = 'DESC',
+ *      ?int $limit = null)
+ * @method bool saveRegistrationAction(int $izin_id,
+ *      string $lokasi_izin, 
+ *      string $keterangan = null, 
+ *      string $status_permohonan = 'permohonan-selesai', 
+ *      int $pegawai_id = null)
+ * @method void rollbackRegistration(int $izin_id, string $keterangan, int $pegawai_id)
+ * @method void saveRegistrationRevision(int $izin_id, string $detail_keterangan = null)
+ * @method array getAllStatusCancelable()
+ * @method void cancelRegistration(int $zin_id, string $keterangan = null)
+ * @method void delete(int $izin_id)
+ * @method void updateIzinStatusThatHaveBeenReviewed()
+ * @method void updateAllIzinStatusWhenEntriDataHasChanged()
+ * @method bool hasDataEntri(int $izin_id)
+ * @method void keepOldEntri(int $izin_id)
+ * @method void updateStatusIfEntriDataAlrearyEntered(int $izin_id, ?int $pegawai_id = null)
+ * @method void savePeninjauanLapangan(int $izin_id, int $penandatangan_id, ?string $nomor_surat = null)
+ * @method void updateStatusAllIfTinjauanLapanganAlreadyEntered(int $pegawai_id)
+ * @method void rekomendasiPermohonan(int $izin_id, int $pegawai_id, string $rekomendasi, string $jenis_kegiatan)
+ * @method void penetapanIzin(int $izin_id, int $pegawai_id, string $tindakan)
+ * @method void updateCetakIzinStatus(int $izin_id, int $pegawai_id)
  */
 interface PerizinanService
 {
@@ -235,5 +254,13 @@ interface PerizinanService
      * @return void Fungsi ini tidak mengembalikan nilai apa pun.
      */
     function penetapanIzin(int $izin_id, int $pegawai_id, string $tindakan): void;
+
+    /**
+     * Memperbarui status pencetakan izin untuk izin tertentu.
+     *
+     * @param int $izin_id ID izin yang akan diperbarui status pencetakannya.
+     * @param int|null $pegawai_id ID pegawai yang melakukan pembaruan status pencetakan izin.
+     */
+    function updateCetakIzinStatus(int $izin_id, ?int $pegawai_id = null): void;
 
 }

@@ -15,4 +15,6 @@ class SuratGroupsEnum
 
     public const KONTEN_SURAT_GROUP = 'konten-surat';
 
+    public const DOWNLOADED_SURAT_COUNTER = 'downloaded-surat-counter';
+
 }

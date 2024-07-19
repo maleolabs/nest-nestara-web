@@ -80,7 +80,7 @@ class DashboardController extends Controller
         if (!$templateView)
             abort(404);
 
-        $data_izin = $this->entriDataService->getDataIzinGroupByNama($izin->id);
+        $data_izin = $this->entriDataService->getDataIzinGroupByNama($izin->id, $izin->jenis_perizinan_id);
         if (count($data_izin) == 0)
             abort(404);
 

@@ -95,9 +95,10 @@ interface EntriDataService {
 	 * Fungsi ini mencari dan mengembalikan data izin yang dikelompokkan berdasarkan nama.
 	 *
 	 * @param int $izin_id ID izin yang akan diambil data izinnya.
+	 * @param int $jenis_perizinan_id ID jenis perizinan yang akan diambil data entrinya jika tidak ada data entri izin yang sesuai.
 	 * @return array Mengembalikan array data izin yang dikelompokkan berdasarkan nama.
 	 */
-	function getDataIzinGroupByNama(int $izin_id): array;
+	function getDataIzinGroupByNama(int $izin_id, int $jenis_perizinan_id): array;
 
 	/**
 	 * Menyimpan satu atau beberapa data entri izin.

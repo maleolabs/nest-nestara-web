@@ -57,10 +57,21 @@ class EntriDataServiceImpl implements EntriDataService {
 		return $entri_data->all();
 	}
 
-	public function getDataIzinGroupByNama(int $izin_id): array
+	public function getDataIzinGroupByNama(int $izin_id, int $jenis_perizinan_id): array
 	{
-		$data_izin = EntriDataIzin::join('entri_data', 'entri_data.id', '=', 'entri_data_izin.entri_data_id')
-			->where('entri_data_izin.izin_id', $izin_id)
+		$data_izin = EntriData::leftJoin('entri_data_izin', 'entri_data.id', '=', 'entri_data_izin.entri_data_id')
+			->where('entri_data.jenis_perizinan_id', $jenis_perizinan_id)
+			->where(function($query) use ($izin_id) {
+				$query->whereIn('entri_data.id', function ($sub_query) use ($izin_id) {
+					$sub_query->select('entri_data_izin.entri_data_id')
+						->from('entri_data_izin')
+						->where('entri_data_izin.izin_id', $izin_id);
+				})->orWhereNotIn('entri_data.id', function ($sub_query) use ($izin_id) {
+					$sub_query->select('entri_data_izin.entri_data_id')
+						->from('entri_data_izin')
+						->where('entri_data_izin.izin_id', $izin_id);
+				});
+			})
 			->pluck('entri_data_izin.value', 'entri_data.nama');
 		$data_izin = $data_izin->all();
 
@@ -69,11 +80,15 @@ class EntriDataServiceImpl implements EntriDataService {
 				$value = explode(';', $data_value);
 				$data_izin[$data_nama] = $value;
 			}
-			try {
-				$date_value = Carbon::parse($data_value)->translatedFormat('d F Y');
-				$data_izin[$data_nama] = $date_value;
-			} catch (InvalidFormatException $e) {
-				continue;
+			if ($data_value === null)
+				$data_izin[$data_nama] = '-';
+			else {
+				try {
+					$date_value = Carbon::parse($data_value)->translatedFormat('d F Y');
+					$data_izin[$data_nama] = $date_value;
+				} catch (InvalidFormatException $e) {
+					continue;
+				}
 			}
 		}
 

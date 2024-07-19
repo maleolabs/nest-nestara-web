@@ -24,6 +24,7 @@ class PengaturanSeeder extends Seeder
         $this->suratService()->generateDefaultFormatSurat();
         $this->suratService()->generateDefaultJenisPerizinanFormat();
         $this->suratService()->setDefaultJenisSuratTemplate();
+        $this->suratService()->generateDefaultKopSurat();
     }
 
     private function pengaturanService(): PengaturanService

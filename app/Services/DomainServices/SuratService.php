@@ -50,6 +50,11 @@ interface SuratService {
     function generateDefaultFormatSurat(): void;
 
     /**
+     * Menghasilkan format header default untuk surat.
+     */
+    function generateDefaultKopSurat(): void;
+
+    /**
      * Membuat format default untuk jenis perizinan.
      */
     function generateDefaultJenisPerizinanFormat(): void;

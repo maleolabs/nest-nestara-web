@@ -22,6 +22,8 @@ class SuratServiceImpl implements SuratService {
 
     private const SURAT_TEMPLATE_GROUP = 'surat-template';
 
+    private const KOP_SURAT_GROUP = 'kop-surat';
+
     public function __construct(
         PengaturanService $pengaturanService,
         JenisPerizinanService $jenisPerizinanService,
@@ -145,6 +147,15 @@ class SuratServiceImpl implements SuratService {
             'tahun' => '{tahun}'
         ];
         $this->pengaturanService->updateOrCreate('bagian-format-surat', $bagianFormatSurat, self::FORMAT_SURAT_GROUP);
+    }
+
+    public function generateDefaultKopSurat(): void
+    {
+        $this->pengaturanService->updateOrCreate('logo-path', 'storage/pdf-assets/cop-icon.png', self::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('nama-pemerintah', 'PEMERINTAH KABUPATEN BONE BOLANGO', self::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('nama-dinas', 'DINAS PENANAMAN MODAL PELAYANAN TERPADU SATU PINTU', self::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('alamat', 'Pusat Pemerintahan Jl. Prof. Dr. Ing. B.J. Habibie Desa Ulanta Kecamatan Suwawa', self::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('website', route('welcome'), self::KOP_SURAT_GROUP);
     }
 
     public function generateDefaultJenisPerizinanFormat(): void

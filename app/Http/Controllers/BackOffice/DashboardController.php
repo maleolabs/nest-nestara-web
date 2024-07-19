@@ -85,8 +85,10 @@ class DashboardController extends Controller
 
         $pdf = Pdf::loadView($templateView, [
             'title' => $title,
+            'izin' => $izin,
             'qrcode' => $qrcode_uri,
             'kop_surat' => $this->suratService->getKopSurat(),
+            'konten' => $this->suratService->getSuratContentByJenis($izin->jenis_perizinan_id)
         ]);
 
         return $pdf->stream("{$title}.pdf");

@@ -51,6 +51,8 @@ interface SuratService {
      */
     function getKopSurat(): array;
 
+    function getSuratContentByJenis(int $jenis_perizinan_id): array;
+
     /**
      * Membuat format default untuk nomor surat.
      */

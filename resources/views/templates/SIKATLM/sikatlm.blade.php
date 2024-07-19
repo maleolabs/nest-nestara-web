@@ -1,12 +1,12 @@
 @extends('templates.layouts.template-app')
 @push('margin-paper')px-3 @endpush
 @section('content')
-    <p class="fs-5 text-center text-decoration-underline mb-0 pt-4">
+    <p class="fs-5 text-center text-decoration-underline mb-0 pt-3">
         SURAT IZIN PRAKTIK AHLI TEKNOLOGI LABORATORIUM MEDIK
     </p>
     <p class="fw-bold text-center normal-spacing"> Nomor : 503/DPMPTSP-BB/IPM/0225/VI/2024</p>
 
-    <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/free.png'))) }}" alt="free" class="free-watermark-right straight-horizontal top-n25 scale-n1">
+    <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/free.png'))) }}" alt="free" class="free-watermark-right">
 
     <p class="fs-6 text-justify">
         Berdasarkan Peraturan Menteri Kesehatan Nomor 42 Tahun 2015 tentang Izin dan Penyelenggaraan Praktik Ahli Teknologi Laboratorium Medik, dan Peraturan Bupati Bone Bolango Nomor 6 Tahun 2022 Tentang Pendelegasian Wewenang Penerbitan dan Penandatanganan Perizinan dan Non Perizinan Kepada Penyelenggara Pelayanan Terpadu Satu Pintu Kabupaten Bone Bolango, memberikan Izin Praktik Kepada :
@@ -86,7 +86,7 @@
     <table>
         <tr>
             <td style="width: 50%" class="pt-5">
-                <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/dummy-qrcode.png'))) }}" class="mt-3">
+                <img src="{{ $qrcode }}" class="mt-3">
                 <p class="fs-6 mb-0 mt-5">
                     Tembusan Yth.
                 </p>

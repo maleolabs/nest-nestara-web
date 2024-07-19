@@ -6,7 +6,7 @@
     </p>
     <p class="fw-bold text-center normal-spacing"> Nomor : 503/DPMPTSP-BB/IPM/0225/VI/2024</p>
 
-    <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/free.png'))) }}" alt="free" class="free-watermark-right straight-horizontal top-n25 scale-n1">
+    <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/free.png'))) }}" alt="free" class="free-watermark-right">
 
     <p class="fs-6 text-justify">
         Berdasarkan Undang-undang No.36 Tahun 2014 Tentang Tenaga Kesehatan, Peraturan Menteri Kesehatan RI Nomor 55 Tahun 2013 tentang Penyelenggaraan Pekerjaan Perekam Medis danPeraturan Bupati Bone Bolango No 6 Tahun 2022 Tentang Pendelegasian Wewenang Penerbitan dan Penandatanganan Perizinan dan Non Dinas Penanaman Modal, Pelayanan Terpadu Satu Pintu Kabupaten Bone Bolango memberikan Izin Kerja Perekam Medis dan Informasi Kesehatan kepada :
@@ -103,7 +103,7 @@
     <table>
         <tr>
             <td style="width: 50%" class="pt-5">
-                <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/dummy-qrcode.png'))) }}" class="mt-3">
+                <img src="{{ $qrcode }}" class="mt-3">
                 <p class="fs-6 mb-0 mt-5">
                     Tembusan Yth.
                 </p>
@@ -123,7 +123,7 @@
                 <p class="fs-55 mb-0 normal-spacing">Ditetapkan di Tilongkabila</p>
                 <p class="fs-55 mb-1 normal-spacing">Pada tanggal 10 Juli 2024</p>
                 <p class="fs-55 normal-spacing">KEPALA DINAS</p>
-                <p class="fs-55 mt-5 pt-2 normal-spacing text-decoration-underline mb-0">JUMAIDIL, AP, S.Sos,M.Ec.Dev</p>
+                <p class="fs-55 mt-5 pt-3 normal-spacing text-decoration-underline mb-0">JUMAIDIL, AP, S.Sos,M.Ec.Dev</p>
                 <p class="fs-55 mb-0 normal-spacing">Pembina Utama Muda</p>
                 <p class="fs-55 normal-spacing">Nip. 19741018 199311 1 002</p>
             </td>

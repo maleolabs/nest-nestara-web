@@ -132,8 +132,8 @@
     <table>
         <tr>
             <td style="width: 50%">
-                <img src="data:image;base64,{{ base64_encode(file_get_contents(public_path('storage/pdf-assets/dummy-qrcode.png'))) }}" class="mt-3">
-                <p class="fs-85 mb-0 mt-5">
+                <img src="{{ $qrcode }}">
+                <p class="fs-85 mb-0 mt-3">
                     Tembusan Yth.
                 </p>
                 <ol class="ps-3 mb-0">

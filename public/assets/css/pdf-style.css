@@ -99,7 +99,7 @@ li, p {
 .free-watermark-right {
     width: 90px;
     height: 60px;
-    opacity: .6;
+    opacity: .3;
     position: fixed;
     top: 140px;
     right: 50px;

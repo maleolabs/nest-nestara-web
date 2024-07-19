@@ -8,6 +8,7 @@
         "php": "^8.2",
         "arielmejiadev/larapex-charts": "^2.1",
         "barryvdh/laravel-dompdf": "^2.2",
+        "endroid/qr-code": "^5.0",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.5",
@@ -33,7 +34,8 @@
             "app/utils/string_helper.php",
             "app/utils/property_helper.php",
             "app/utils/Helpers/StatusIzinHelper.php",
-            "app/utils/Helpers/PengaturanHelper.php"
+            "app/utils/Helpers/PengaturanHelper.php",
+            "app/utils/Helpers/QRCodeGenerator.php"
         ]
     },
     "autoload-dev": {

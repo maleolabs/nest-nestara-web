@@ -74,8 +74,13 @@ class DashboardController extends Controller
 
         $title = "IZIN-{$izin->no_pendaftaran}";
 
+        $encrypt_id = $this->encryptionService->encryptId($id);
+        $qrcode_data = route('confirm.izin', ['izin_id' => $encrypt_id]);
+        $qrcode_uri = generate_qrcode_as_uri($qrcode_data, 130);
+
         $pdf = Pdf::loadView($templateView, [
-            'title' => $title
+            'title' => $title,
+            'qrcode' => $qrcode_uri
         ]);
 
         return $pdf->stream("{$title}.pdf");

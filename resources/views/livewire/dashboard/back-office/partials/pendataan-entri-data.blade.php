@@ -62,7 +62,7 @@
                             {{ $this->getTanggalPermohonan($izin->id) }}
                         </td>
                         @if (isset($table_content) && isset($izin->no_surat))
-                            <td class="text-center text-sm">
+                            <td class="text-sm">
                                 {{ $izin->no_surat }}
                             </td>
                         @endif

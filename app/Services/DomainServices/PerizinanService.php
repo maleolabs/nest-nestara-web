@@ -48,6 +48,7 @@ use App\Models\Izin;
  * @method void penetapanIzin(int $izin_id, int $pegawai_id, string $tindakan)
  * @method void updateCetakIzinStatus(int $izin_id, int $pegawai_id)
  * @method void updateAllIzinStatusWhenAlreadyPrinted()
+ * @method void penerbitanFinished(int $izin_id, int $pegawai_id = null)
  */
 interface PerizinanService
 {
@@ -311,5 +312,16 @@ interface PerizinanService
      * @return void Fungsi ini tidak mengembalikan nilai apa pun.
      */
     function updateAllIzinStatusWhenAlreadyPrinted(): void;
+
+    /**
+     * Menandai izin yang diterbitkan sebagai selesai.
+     *
+     * @param int $izin_id ID dari izin yang akan ditandai sebagai selesai.
+     * 
+     * @param int|null $pegawai_id ID pegawai yang melakukan penandatanganan izin (Optional).
+     *
+     * @return void Fungsi ini tidak mengembalikan apa-apa.
+     */
+    function penerbitanFinished(int $izin_id, int $pegawai_id = null): void;
 
 }

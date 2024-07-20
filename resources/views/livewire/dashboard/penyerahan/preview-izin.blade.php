@@ -25,7 +25,9 @@
                     <div class="d-flex mt-4 gap-2 text-dark align-items-center">
                         <i class="fa-solid fa-circle-arrow-right"></i>
                         <span>Proses penandatanganan izin telah selesai?</span>
-                        <button class="btn btn-sm bg-gradient-info" type="button">ya, surat izin siap diserahkan</button>
+                        <button class="btn btn-sm bg-gradient-info" type="button" wire:click='penerbitanFinished({{ $selectedPreview->id }})'>
+                            ya, surat izin siap diserahkan
+                        </button>
                     </div>
 
                     <p class="text-sm mt-4">
@@ -41,7 +43,7 @@
         <button class="ms-auto text-md btn btn-transparent p-0 card-icon sticky-top-0" wire:click='closePreview' id="modalRightCloseBtn">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <div wire:loading wire:target='previewDataIzin, save'>
+        <div wire:loading wire:target='previewDataIzin, penerbitanFinished'>
             <div class="position-fixed top-0 end-0 bottom-0 bg-white opacity-75 d-flex align-items-center justify-content-center modal-right-loading">
                 <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
             </div>

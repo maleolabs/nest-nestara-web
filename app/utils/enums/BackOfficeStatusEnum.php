@@ -104,6 +104,11 @@ class BackOfficeStatusEnum
     public const IZIN_AKAN_DITERBITKAN = 'izin akan ditetbitkan';
 
     /**
+     * Status ketika permohonan izin telah diterbitkan.
+     */
+    public const IZIN_TELAH_DITERBITKAN = 'izin telah ditetbitkan';
+
+    /**
      * Mengembalikan array dari semua nilai status.
      *
      * @return array

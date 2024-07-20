@@ -137,9 +137,9 @@
       if (modalRight && modalRightContent) {
         modalRight.classList.add('d-none')
         if (modalRightContent.classList.contains('modal-right-content-md')) {
-          modalRightContent.style.right = '-900px'
+          modalRightContent.style.right = '-70%'
         } else {
-          modalRightContent.style.right = '-700px'
+          modalRightContent.style.right = '-50%'
         }
       }
     }
@@ -150,9 +150,9 @@
       if (modalRight && modalRightContent) {
         modalRight.classList.add('d-none')
         if (modalRightContent.classList.contains('modal-right-content-md')) {
-          modalRightContent.style.right = '-900px'
+          modalRightContent.style.right = '-70%'
         } else {
-          modalRightContent.style.right = '-700px'
+          modalRightContent.style.right = '-50%'
         }
       }
     })

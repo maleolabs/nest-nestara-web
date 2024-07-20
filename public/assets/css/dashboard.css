@@ -670,8 +670,8 @@
 .modal-right-content {
     position: absolute;
     top: 0;
-    right: -700px;
-    width: 700px;
+    right: -50%;
+    width: 50%;
     height: 100%;
     background: var(--color-white);
     transition: right ease-in-out 0.5s;
@@ -686,14 +686,14 @@
     display: none;
 }
 .modal-right-content.modal-right-content-md {
-    width: 900px;
-    right: -900px;
+    width: 70%;
+    right: -70%;
 }
 .modal-right-loading {
-    width: 700px;
+    width: 50%;
 }
 .modal-right-content-md .modal-right-loading {
-    width: 900px;
+    width: 70%;
 }
 @media (max-width: 575px) {
     .modal-right-content, 
@@ -706,13 +706,17 @@
     .modal-right-loading {
         width: 100%;
     }
+
+    .gif-modal-md {
+        width: 100%;
+    }
 }
 
 .gif-modal-md {
     position: fixed;
     right: 0;
     top: 0;
-    width: 900px;
+    width: 70%;
     height: 100%;
     z-index: 9999;
 }

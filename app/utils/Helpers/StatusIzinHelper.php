@@ -10,7 +10,7 @@ if (!function_exists('getStatusIzinClasses')) {
         $statusClass = [
             StatusIzinProgressEnum::FINISHED => $status->nama != StatusIzinEnum::BATAL ? 'success' : 'danger',
             StatusIzinProgressEnum::UNPROCESSED => 'muted',
-            StatusIzinProgressEnum::PROCESSING => 'dark',
+            StatusIzinProgressEnum::PROCESSING => 'info',
             StatusIzinProgressEnum::CANCELED => 'danger',
             StatusIzinProgressEnum::ERROR => 'warning',
         ];

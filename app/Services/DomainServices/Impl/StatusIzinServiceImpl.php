@@ -36,14 +36,17 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		DB::table('status_izin')->insert($status_izin_data);
 	}
 
-	public function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null, $updated_at = null, bool $new = false): void
+	public function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null, $updated_at = null, bool $new = false, bool $keep_pegawai = false): void
 	{
 		$status_izin = StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->first();
 		if ($status_izin && !$new) {
 			$status_izin->progres = $progres;
 			$status_izin->keterangan = $ket;
-			$status_izin->pegawai_id = $pegawai_id;
 			$status_izin->updated_at = $updated_at ?? now();
+
+			if (!$keep_pegawai)
+				$status_izin->pegawai_id = $pegawai_id;
+
 			$status_izin->save();
 		} else {
 			$status_izin = StatusIzin::create([
@@ -59,7 +62,7 @@ class StatusIzinServiceImpl implements StatusIzinService {
 			RiwayatProsesIzin::create([
 				'izin_id' => $izin_id,
 				'status_izin_id' => $status_izin->id,
-				'pegawai_id' => $pegawai_id,
+				'pegawai_id' => $keep_pegawai ? $status_izin->pegawai_id : $pegawai_id,
 				'progres' => $status_izin->progres,
 				'keterangan' => $status_izin->keterangan,
 			]);

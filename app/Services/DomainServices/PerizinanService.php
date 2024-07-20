@@ -18,6 +18,15 @@ use App\Models\Izin;
  *      string $filter_end_date = null, 
  *      string $sort = 'DESC',
  *      ?int $limit = null)
+ * @method array getAllBySprecificFilter(
+ *      string $search = '',
+ *      array $filter_status = [],
+ *      array $filter_status_progress = [],
+ *       array $filter_keterangan = [],
+ *       string $filter_start_date = null,
+ *       string $filter_end_date = null,
+ *       string $sort = 'DESC',
+ *       ?int $limit = null)
  * @method bool saveRegistrationAction(int $izin_id,
  *      string $lokasi_izin, 
  *      string $keterangan = null, 
@@ -38,6 +47,7 @@ use App\Models\Izin;
  * @method void rekomendasiPermohonan(int $izin_id, int $pegawai_id, string $rekomendasi, string $jenis_kegiatan)
  * @method void penetapanIzin(int $izin_id, int $pegawai_id, string $tindakan)
  * @method void updateCetakIzinStatus(int $izin_id, int $pegawai_id)
+ * @method void updateAllIzinStatusWhenAlreadyPrinted()
  */
 interface PerizinanService
 {
@@ -86,6 +96,38 @@ interface PerizinanService
         array $filter_status_progress = [], 
         string $filter_start_date = null, 
         string $filter_end_date = null, 
+        string $sort = 'DESC',
+        ?int $limit = null
+    ): array;
+
+    /**
+     * Mengambil daftar perizinan dengan filter tertentu.
+     *
+     * @param string $search Kata kunci pencarian (opsional, default: kosong). Jika tidak diberikan, akan mengembalikan semua perizinan.
+     *
+     * @param array $filter_status Filter berdasarkan status perizinan (opsional, default: kosong). Jika tidak diberikan, akan mengembalikan semua status.
+     *
+     * @param array $filter_status_progress Filter berdasarkan status progres perizinan (opsional, default: kosong). Jika tidak diberikan, akan mengembalikan semua status progres.
+     * 
+     * @param array $filter_keterangan Filter berdasarkan keterangan proses perizinan (opsional, default: kosong). Jika tidak diberikan, akan mengembalikan semua keterangan.
+     *
+     * @param string $filter_start_date Filter tanggal mulai perizinan (opsional, default: satu bulan sebelum hari ini). Jika tidak diberikan, akan menggunakan satu bulan sebelum hari ini.
+     *
+     * @param string $filter_end_date Filter tanggal akhir perizinan (opsional, default: hari ini). Jika tidak diberikan, akan menggunakan hari ini.
+     *
+     * @param string $sort Urutan pengurutan hasil (opsional, default: 'DESC').  Dapat berisi 'ASC' atau 'DESC'.
+     * 
+     * @param int|null $limit Jumlah data yang akan ditampilkan (opsional, default: semua).
+     *
+     * @return array Daftar perizinan yang sesuai dengan filter yang diberikan.
+     */
+    function getAllBySprecificFilter(
+        string $search = '',
+        array $filter_status = [],
+        array $filter_status_progress = [],
+        array $filter_keterangan = [],
+        string $filter_start_date = null,
+        string $filter_end_date = null,
         string $sort = 'DESC',
         ?int $limit = null
     ): array;
@@ -262,5 +304,12 @@ interface PerizinanService
      * @param int|null $pegawai_id ID pegawai yang melakukan pembaruan status pencetakan izin.
      */
     function updateCetakIzinStatus(int $izin_id, ?int $pegawai_id = null): void;
+
+    /**
+     * Memperbarui status semua izin jika surat izin sudah dicetak.
+     *
+     * @return void Fungsi ini tidak mengembalikan nilai apa pun.
+     */
+    function updateAllIzinStatusWhenAlreadyPrinted(): void;
 
 }

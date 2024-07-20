@@ -44,6 +44,7 @@ if (!function_exists('getStatusIzinProcessClasses')) {
             BackOfficeStatusEnum::LAYANAN_DITOLAK => 'danger',
             BackOfficeStatusEnum::BELUM_DICETAK => 'dark',
             BackOfficeStatusEnum::DICETAK => 'info',
+            BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN => 'info',
         ];
 
         $textClass = "text-{$statusClass[$status->keterangan]}";

@@ -45,9 +45,10 @@ interface StatusIzinService {
 	 * @param int|null $pegawai_id ID pegawai yang memperbarui (opsional)
 	 * @param mixed $updated_at Waktu pembaruan (opsional). Jika null, akan mengambil waktu sekarang
 	 * @param bool $new Apakah data baru atau pembaruan
+	 * @param bool $keep_pegawai Apakah pegawai harus tetap digunakan (opsional)
 	 * @return void
 	 */
-	function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null, $updated_at = null, bool $new = false): void;
+	function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null, $updated_at = null, bool $new = false, bool $keep_pegawai = false): void;
 
 	/**
 	 * Memperbarui status izin dengan detail keterangan tambahan.

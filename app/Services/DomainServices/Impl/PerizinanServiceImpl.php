@@ -76,13 +76,53 @@ class PerizinanServiceImpl implements PerizinanService
         })->whereHas('status_izin', function ($status_izin) use ($filter_status, $filter_status_progress) {
             if (!empty($filter_status)) {
                 $status_izin->whereIn('nama', $filter_status);
+                
                 if (!empty($filter_status_progress))
                     $status_izin->whereIn('progres', $filter_status_progress);
+                
                 $status_izin->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) FROM status_izin WHERE status_izin.izin_id = izin.id)'));   
             }
         })
         ->whereBetween('created_at', [$filter_start_date, $filter_end_date])
         ->orderBy('created_at', $sort);
+        if ($limit)
+            $semua_izin = $semua_izin->limit($limit);
+        $semua_izin = $semua_izin->get();
+
+        return $semua_izin->all();
+    }
+
+    public function getAllBySprecificFilter(
+        string $search = '',
+        array $filter_status = [],
+        array $filter_status_progress = [],
+        array $filter_keterangan = [],
+        string $filter_start_date = null,
+        string $filter_end_date = null,
+        string $sort = 'DESC',
+        ?int $limit = null
+    ): array {
+        $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
+        $filter_end_date = Carbon::parse($filter_end_date)->addDay()->ToDateTimeString();
+
+        $semua_izin = Izin::where(function ($query) use ($search) {
+            $query->whereHas('jenis_perizinan', function ($jenis_perizinan) use ($search) {
+                $jenis_perizinan->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($search) . '%']);
+            })->orWhereHas('pemohon', function ($pemohon) use ($search) {
+                $pemohon->whereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%'])
+                    ->orWhere('nomor_id', 'LIKE', '%' . $search . '%');
+            });
+        })->whereHas('status_izin', function (&$status_izin) use ($filter_status, $filter_status_progress, $filter_keterangan) {
+            if (!empty($filter_status)) {
+                $status_izin->whereIn('nama', $filter_status);
+                if (!empty($filter_status_progress))
+                    $status_izin->whereIn('progres', $filter_status_progress);
+                if (!empty($filter_keterangan))
+                    $status_izin->whereIn('keterangan', $filter_keterangan);
+            }
+        })
+            ->whereBetween('created_at', [$filter_start_date, $filter_end_date])
+            ->orderBy('created_at', $sort);
         if ($limit)
             $semua_izin = $semua_izin->limit($limit);
         $semua_izin = $semua_izin->get();
@@ -350,18 +390,43 @@ class PerizinanServiceImpl implements PerizinanService
             return;
 
         $izin_status = $izin->status_izin->last();
-        if ($izin_status->keterangan == OfficeStatus::DIIZINKAN || $izin_status->keterangan == OfficeStatus::DICETAK) {
+
+        if ($izin_status->keterangan == OfficeStatus::DIIZINKAN) {
             $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::DICETAK, $pegawai_id);
-            
-            $nama_pengaturan = "IZIN-{$izin_id}-COUNTER";
-
-            $saved_sett = $this->pengaturanService->findByNamaAndGroup($nama_pengaturan, SuratGroupsEnum::DOWNLOADED_SURAT_COUNTER);
-            
-            $value = $saved_sett ? $saved_sett->value : 0;
-            $value = $value + 1;
-
-            $this->pengaturanService->updateOrCreate($nama_pengaturan, $value, SuratGroupsEnum::DOWNLOADED_SURAT_COUNTER, null, true);
         }
+
+        if ($izin_status->keterangan == OfficeStatus::DICETAK)
+            $this->updateIzinStatusWhenAlreadyPrinted($izin_id);
+
+        $nama_pengaturan = "IZIN-{$izin_id}-COUNTER";
+
+        $saved_sett = $this->pengaturanService->findByNamaAndGroup($nama_pengaturan, SuratGroupsEnum::DOWNLOADED_SURAT_COUNTER);
+        
+        $value = $saved_sett ? $saved_sett->value : 0;
+        $value = $value + 1;
+
+        $this->pengaturanService->updateOrCreate($nama_pengaturan, $value, SuratGroupsEnum::DOWNLOADED_SURAT_COUNTER, null, true);
+    }
+
+    public function updateAllIzinStatusWhenAlreadyPrinted(): void
+    {
+        DB::transaction(function () {
+            $all_izin = Izin::select('izin.id', 'status_izin.keterangan')
+                ->join('status_izin', 'izin.id', '=', 'status_izin.izin_id')
+                ->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) from status_izin WHERE status_izin.izin_id = izin.id)'))
+                ->pluck('status_izin.keterangan', 'izin.id');
+            
+            foreach ($all_izin as $izin_id => $keterangan) {
+                if ($keterangan == OfficeStatus::DICETAK)
+                    $this->updateIzinStatusWhenAlreadyPrinted($izin_id);
+            }
+        });
+    }
+
+    private function updateIzinStatusWhenAlreadyPrinted($izin_id): void
+    {
+        $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::FINISHED, OfficeStatus::IZIN_AKAN_DITERBITKAN, null, null, false, true);
+        $this->statusIzinService->updateStatusIzin($izin_id, Status::PENERBITAN, Progres::PROCESSING, null, null);
     }
     
 }

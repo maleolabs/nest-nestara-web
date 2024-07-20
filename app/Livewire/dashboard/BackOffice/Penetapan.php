@@ -128,7 +128,9 @@ class Penetapan extends Component
 
     private function setDataTable()
     {
-        $this->all_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::PROSES], [StatusIzinProgressEnum::PROCESSING], $this->start_date, $this->end_date);
+        $this->all_izin = $this->getPerizinanService()->getAllBySprecificFilter($this->search, [StatusIzinEnum::PROSES], [StatusIzinProgressEnum::PROCESSING, StatusIzinProgressEnum::FINISHED], [BackOfficeStatusEnum::DIIZINKAN, BackOfficeStatusEnum::DICETAK, BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN], $this->start_date, $this->end_date);
+
+        dd($this->all_izin);
 
         $this->count_tabs[self::PENETAPAN] = count($this->getFilteredDataList(self::PENETAPAN));
         $this->count_tabs[self::PEMBUATAN] = count($this->getFilteredDataList(self::PEMBUATAN));
@@ -153,8 +155,9 @@ class Penetapan extends Component
 
             case self::PEMBUATAN:
                 $filtered_data = array_filter($this->all_izin, function ($izin) {
+                    $status_cetak = $this->getStatusCetak($izin);
                     $last_status = $izin->status_izin->last();
-                    return $last_status->keterangan == BackOfficeStatusEnum::DIIZINKAN || !$this->isAlreadyPrinted($last_status);
+                    return $last_status->keterangan == BackOfficeStatusEnum::DIIZINKAN || !$this->isAlreadyPrinted($status_cetak ?? $last_status);
                 });
                 break;
 
@@ -167,11 +170,18 @@ class Penetapan extends Component
         return $filtered_data;
     }
 
-    public function isAlreadyPrinted($last_status = null): bool
+    protected function isAlreadyPrinted($status = null): bool
     {
-        if (!$last_status)
-            $last_status = $this->selectedPreview->status_izin->last();
-        return $last_status->keterangan == BackOfficeStatusEnum::DICETAK && $last_status->updated_at->diffInDays(now()) > 1;
+        if (!$status)
+            $status = $this->selectedPreview->status_izin->last();
+        return $status->keterangan == BackOfficeStatusEnum::DICETAK && $status->updated_at->diffInDays(now()) > 1;
+    }
+
+    protected function getStatusCetak($izin): object|null
+    {
+        return $izin->status_izin->first(function ($status) {
+            return $status->keterangan == BackOfficeStatusEnum::DICETAK || $status->keterangan == BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN;
+        });
     }
 
     private function getPerizinanService(): PerizinanService

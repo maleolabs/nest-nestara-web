@@ -37,7 +37,7 @@
             <tbody>
                 @forelse ($all_izin as $izin)
                     @php
-                        $status = $izin->status_izin->last();
+                        $status = $this->getStatusCetak($izin) ?? $izin->status_izin->last();
                         $statusClasses = getStatusIzinProcessClasses($status)
                     @endphp
                     <tr class="cursor-pointer data-izin" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})' @if(isset($preview_action)) {{ $preview_action }} @endif>
@@ -72,8 +72,12 @@
                                     <i class="{{ $statusClasses['bgClass'] }}"></i>
                                     @php
                                         $keterangan = $status->keterangan;
-                                        if ($keterangan == App\utils\enums\BackOfficeStatusEnum::DICETAK) {
-                                            $keterangan .= ' ' . getCountDownloadedSurat($izin->id);
+                                        $statusEnum = App\utils\enums\BackOfficeStatusEnum::class;
+
+                                        if (in_array($keterangan, [$statusEnum::DICETAK, $statusEnum::IZIN_AKAN_DITERBITKAN])) {
+                                            $count = getCountDownloadedSurat($izin->id);
+                                            $keterangan = $keterangan == $statusEnum::IZIN_AKAN_DITERBITKAN ? 'dicetak' : $keterangan;
+                                            $keterangan .= ' ' . $count;
                                         }
                                     @endphp
                                     <span class="text-sm {{ $statusClasses['textClass'] }}">

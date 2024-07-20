@@ -47,8 +47,10 @@ if (!function_exists('getStatusIzinProcessClasses')) {
             BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN => 'info',
         ];
 
-        $textClass = "text-{$statusClass[$status->keterangan]}";
-        $bgClass = "bg-{$statusClass[$status->keterangan]}";
+        $statusClassKet = $statusClass[$status->keterangan] ?? 'dark';
+
+        $textClass = "text-{$statusClassKet}";
+        $bgClass = "bg-{$statusClassKet}";
 
         return [
             'textClass' => $textClass,

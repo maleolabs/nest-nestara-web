@@ -76,7 +76,7 @@ class PerizinanServiceImpl implements PerizinanService
         })->whereHas('status_izin', function ($status_izin) use ($filter_status, $filter_status_progress) {
             if (!empty($filter_status)) {
                 $status_izin->whereIn('nama', $filter_status);
-                
+
                 if (!empty($filter_status_progress))
                     $status_izin->whereIn('progres', $filter_status_progress);
                 
@@ -105,24 +105,28 @@ class PerizinanServiceImpl implements PerizinanService
         $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
         $filter_end_date = Carbon::parse($filter_end_date)->addDay()->ToDateTimeString();
 
-        $semua_izin = Izin::where(function ($query) use ($search) {
-            $query->whereHas('jenis_perizinan', function ($jenis_perizinan) use ($search) {
-                $jenis_perizinan->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($search) . '%']);
-            })->orWhereHas('pemohon', function ($pemohon) use ($search) {
-                $pemohon->whereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%'])
-                    ->orWhere('nomor_id', 'LIKE', '%' . $search . '%');
-            });
-        })->whereHas('status_izin', function (&$status_izin) use ($filter_status, $filter_status_progress, $filter_keterangan) {
-            if (!empty($filter_status)) {
-                $status_izin->whereIn('nama', $filter_status);
-                if (!empty($filter_status_progress))
-                    $status_izin->whereIn('progres', $filter_status_progress);
-                if (!empty($filter_keterangan))
-                    $status_izin->whereIn('keterangan', $filter_keterangan);
-            }
-        })
-            ->whereBetween('created_at', [$filter_start_date, $filter_end_date])
-            ->orderBy('created_at', $sort);
+        $semua_izin = Izin::whereHas('status_izin', function ($query) use ($filter_status, $filter_status_progress, $filter_keterangan) {
+                            if (!empty($filter_status)) {
+                                $query->whereIn('status_izin.nama', $filter_status);
+
+                                if (!empty($filter_status_progress))
+                                    $query->whereIn('progres', $filter_status_progress);
+
+                                if (!empty($filter_keterangan))
+                                    $query->whereIn('keterangan', $filter_keterangan);
+                            }
+                        })
+                        ->where(function ($query) use ($search) {
+                            $query->whereHas('jenis_perizinan', function ($jenis_perizinan) use ($search) {
+                                $jenis_perizinan->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($search) . '%']);
+                            })->orWhereHas('pemohon', function ($pemohon) use ($search) {
+                                $pemohon->whereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%'])
+                                    ->orWhere('nomor_id', 'LIKE', '%' . $search . '%');
+                            });
+                        })
+                        ->whereBetween('izin.created_at', [$filter_start_date, $filter_end_date])
+                        ->orderBy('izin.created_at', $sort);
+                        
         if ($limit)
             $semua_izin = $semua_izin->limit($limit);
         $semua_izin = $semua_izin->get();

@@ -3,6 +3,8 @@
         $statusIzin = \App\utils\enums\StatusIzinEnum::class;
         $statusProgres = \App\utils\enums\StatusIzinProgressEnum::class;
     @endphp
+
+    @include('livewire.dashboard.penyerahan.preview-izin')
     <div class="d-flex align-items-end gap-3 mb-4">
         <div>
             <label for="start_date" class="form-label mb-0">Dari Tanggal</label>
@@ -44,7 +46,7 @@
                         $status = $izin->status_izin->last();
                         $statusClasses = getStatusIzinClasses($status)
                     @endphp
-                    <tr class="cursor-pointer data-izin" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})' @if(isset($preview_action)) {{ $preview_action }} @endif>
+                    <tr class="cursor-pointer data-izin" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})' id="modalRightShowBtn">
                         <td class="align-middle text-center text-sm">{{ $loop->iteration }}</td>
                         <td class="text-sm">
                             <p class="text-xs font-weight-bold mb-0">{{ $izin->no_pendaftaran }}</p>
@@ -92,13 +94,13 @@
                 @endforelse
             </tbody>
         </table>
-        <div wire:loading wire:target='previewDataIzin, start_date, end_date, search'>
+        <div wire:loading wire:target='start_date, end_date, search'>
             <div class="position-absolute top-0 start-0 h-100 w-100 d-flex align-items-center justify-content-center bg-light opacity-75">
                 <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
             </div>
         </div>
     </div>
-
+    
     <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">

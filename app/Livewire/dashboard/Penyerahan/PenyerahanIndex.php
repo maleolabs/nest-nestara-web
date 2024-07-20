@@ -11,8 +11,9 @@ use Livewire\Component;
 
 class PenyerahanIndex extends Component
 {
-
-    public $all_izin = [];
+    public $all_izin = [],
+        $preview_izin_id,
+        $selectedPreview;
 
     public $search = '',
         $start_date,
@@ -44,6 +45,18 @@ class PenyerahanIndex extends Component
         ];
 
         $this->all_izin = $this->getPerizinanService()->getAll($this->search, $filter_status, $filter_progres, $this->start_date, $this->end_date);
+    }
+
+    public function previewDataIzin($izin_id)
+    {
+        $this->preview_izin_id = $izin_id;
+        $this->selectedPreview = $this->getPerizinanService()->find($izin_id);
+    }
+
+    public function closePreview()
+    {
+        $this->preview_izin_id = null;
+        $this->selectedPreview = null;
     }
 
     protected function getTanggalPermohonan($izin_id): string

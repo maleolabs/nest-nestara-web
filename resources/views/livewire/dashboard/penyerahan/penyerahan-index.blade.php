@@ -88,7 +88,7 @@
                                             {{ Str::limit($status->nama, 16) }}
                                         </span>
                                     </span>
-                                    <p class="text-xs text-muted mb-0">{{ $status->updated_at->diffForHumans() }}</p>
+                                    <p class="text-xs text-muted mb-0">{{ $izin->updated_at->diffForHumans() }}</p>
                                 </div>
                             </td>
                         </tr>

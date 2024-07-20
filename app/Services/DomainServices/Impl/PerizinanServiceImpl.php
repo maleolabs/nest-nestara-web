@@ -60,7 +60,8 @@ class PerizinanServiceImpl implements PerizinanService
         string $filter_start_date = null, 
         string $filter_end_date = null, 
         string $sort = 'DESC',
-        ?int $limit = null
+        ?int $limit = null,
+        string $order_by = 'created_at'
     ): array
     {
         $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
@@ -84,7 +85,7 @@ class PerizinanServiceImpl implements PerizinanService
             }
         })
         ->whereBetween('created_at', [$filter_start_date, $filter_end_date])
-        ->orderBy('created_at', $sort);
+        ->orderBy($order_by, $sort);
         if ($limit)
             $semua_izin = $semua_izin->limit($limit);
         $semua_izin = $semua_izin->get();
@@ -100,7 +101,8 @@ class PerizinanServiceImpl implements PerizinanService
         string $filter_start_date = null,
         string $filter_end_date = null,
         string $sort = 'DESC',
-        ?int $limit = null
+        ?int $limit = null,
+        string $order_by = 'created_at'
     ): array {
         $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
         $filter_end_date = Carbon::parse($filter_end_date)->addDay()->ToDateTimeString();
@@ -125,8 +127,7 @@ class PerizinanServiceImpl implements PerizinanService
                             });
                         })
                         ->whereBetween('izin.created_at', [$filter_start_date, $filter_end_date])
-                        ->orderBy('izin.created_at', $sort);
-                        
+                        ->orderBy($order_by, $sort);
         if ($limit)
             $semua_izin = $semua_izin->limit($limit);
         $semua_izin = $semua_izin->get();
@@ -399,7 +400,7 @@ class PerizinanServiceImpl implements PerizinanService
             $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::DICETAK, $pegawai_id);
         }
 
-        if ($izin_status->keterangan == OfficeStatus::DICETAK)
+        if (in_array($izin_status->keterangan, [OfficeStatus::DICETAK, OfficeStatus::DIIZINKAN]))
             $this->updateIzinStatusWhenAlreadyPrinted($izin_id);
 
         $nama_pengaturan = "IZIN-{$izin_id}-COUNTER";

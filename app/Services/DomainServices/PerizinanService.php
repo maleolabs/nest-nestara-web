@@ -17,16 +17,18 @@ use App\Models\Izin;
  *      string $filter_start_date = null, 
  *      string $filter_end_date = null, 
  *      string $sort = 'DESC',
- *      ?int $limit = null)
+ *      ?int $limit = null,
+ *      string $order_by = 'created_at')
  * @method array getAllBySprecificFilter(
  *      string $search = '',
  *      array $filter_status = [],
  *      array $filter_status_progress = [],
- *       array $filter_keterangan = [],
- *       string $filter_start_date = null,
- *       string $filter_end_date = null,
- *       string $sort = 'DESC',
- *       ?int $limit = null)
+*       array $filter_keterangan = [],
+*       string $filter_start_date = null,
+*       string $filter_end_date = null,
+*       string $sort = 'DESC',
+*       ?int $limit = null,
+*       string $order_by = 'created_at')
  * @method bool saveRegistrationAction(int $izin_id,
  *      string $lokasi_izin, 
  *      string $keterangan = null, 
@@ -88,6 +90,8 @@ interface PerizinanService
      * @param string $sort Urutan pengurutan hasil (opsional, default: 'DESC').  Dapat berisi 'ASC' atau 'DESC'.
      * 
      * @param int|null $limit Jumlah data yang akan ditampilkan (opsional, default: semua).
+     * 
+     * @param string $order_by Kolom yang akan diurutkan (opsional, default: 'created_at').
      *
      * @return array Daftar perizinan yang sesuai dengan filter yang diberikan.
      */
@@ -98,7 +102,8 @@ interface PerizinanService
         string $filter_start_date = null, 
         string $filter_end_date = null, 
         string $sort = 'DESC',
-        ?int $limit = null
+        ?int $limit = null,
+        string $order_by = 'created_at'
     ): array;
 
     /**
@@ -119,6 +124,8 @@ interface PerizinanService
      * @param string $sort Urutan pengurutan hasil (opsional, default: 'DESC').  Dapat berisi 'ASC' atau 'DESC'.
      * 
      * @param int|null $limit Jumlah data yang akan ditampilkan (opsional, default: semua).
+     * 
+     * @param string $order_by Kolom yang digunakan untuk mengurutkan hasil (opsional, default: 'created_at').
      *
      * @return array Daftar perizinan yang sesuai dengan filter yang diberikan.
      */
@@ -130,7 +137,8 @@ interface PerizinanService
         string $filter_start_date = null,
         string $filter_end_date = null,
         string $sort = 'DESC',
-        ?int $limit = null
+        ?int $limit = null,
+        string $order_by = 'created_at'
     ): array;
 
     /**

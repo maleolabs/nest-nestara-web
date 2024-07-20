@@ -11,7 +11,7 @@ use Livewire\Component;
 
 class LeftMenuContent extends Component
 {
-    public $all_izin;
+    public $all_izin = [];
 
     public function render()
     {
@@ -34,7 +34,8 @@ class LeftMenuContent extends Component
             BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN
         ];
 
-        $this->all_izin = $this->getPerizinanService()->getAllBySprecificFilter('', $allowed_status, $allowed_progres, $allowed_keterangan, null, null, 'DESC', 5);
+        $this->all_izin = $this->getPerizinanService()->getAllBySprecificFilter('', $allowed_status, $allowed_progres, $allowed_keterangan, null, null, 'DESC', 5, 'updated_at');
+        
         return view('livewire.dashboard.component.left-menu-content');
     }
 

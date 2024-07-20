@@ -2,6 +2,7 @@
 
 namespace App\Services\DomainServices\Impl;
 
+use App\Models\Izin;
 use App\Models\RiwayatProsesIzin;
 use App\Services\DomainServices\StatusIzinService;
 use App\Models\StatusIzin;
@@ -67,6 +68,10 @@ class StatusIzinServiceImpl implements StatusIzinService {
 				'keterangan' => $status_izin->keterangan,
 			]);
 		}
+
+		$izin = Izin::find($izin_id);
+		if ($izin)
+			$izin->touch();
 	}
 
 	public function updateStatusIzinWithDetailKeterangan(int $izin_id, string $status, string $progres, ?string $keterangan = null, string $detail_keterangan = null): void

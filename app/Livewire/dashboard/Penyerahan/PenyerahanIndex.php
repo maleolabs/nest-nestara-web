@@ -44,7 +44,7 @@ class PenyerahanIndex extends Component
             StatusIzinProgressEnum::CANCELED,
         ];
 
-        $this->all_izin = $this->getPerizinanService()->getAll($this->search, $filter_status, $filter_progres, $this->start_date, $this->end_date);
+        $this->all_izin = $this->getPerizinanService()->getAll($this->search, $filter_status, $filter_progres, $this->start_date, $this->end_date, 'DESC', null, 'updated_at');
     }
 
     public function previewDataIzin($izin_id)

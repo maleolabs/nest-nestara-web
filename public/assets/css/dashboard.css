@@ -225,12 +225,11 @@
 
 .welcome-nav .welcome-nav-link,
 .welcome-nav .welcome-nav-link:focus {
-    font-family: 'Kollektif-Bold' !important;
-    white-space: nowrap !important;
-    transition: 0.1s !important;
-    color: var(--color-primary) !important;
-    opacity: .6 !important;
-    text-decoration: none !important;
+    white-space: nowrap;
+    transition: 0.1s;
+    color: var(--color-dark);
+    text-decoration: none;
+    font-weight: 600;
 }
 
 @media (max-width: 575px) {
@@ -239,14 +238,9 @@
     }
 }
 
-.welcome-nav .welcome-nav-link:last-child
-.welcome-nav .welcome-nav-link:focus:last-child {
-    opacity: 1 !important;
-}
 .welcome-nav .welcome-nav-link:hover,
 .welcome-nav .welcome-nav-link.active {
-    border-bottom: solid 2px var(--color-primary) !important;
-    opacity: 1 !important;
+    color: var(--color-primary);
 }
 
 .fs-xs {

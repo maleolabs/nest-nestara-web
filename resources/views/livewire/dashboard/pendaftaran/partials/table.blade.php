@@ -52,8 +52,10 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-center text-muted text-sm">
-                            {{ $search != '' ? "'{$search}' tidak ditemukan" : 'Tidak ada data pemohon' }}
+                        <td colspan="5" class="text-muted text-sm">
+                            <div class="vh-30 d-flex align-items-center justify-content-center">
+                                {{ $search != '' ? "'{$search}' tidak ditemukan" : 'Tidak ada data pemohon' }}
+                            </div>
                         </td>
                     </tr>
                 @endforelse
@@ -101,7 +103,11 @@
                     </tr>
                 @empty
                     <tr>
-                        <td class="text-center text-sm text-muted py-3" colspan="8">tidak ada data</td>
+                        <td class="text-sm text-muted py-3" colspan="8">
+                            <div class="vh-30 d-flex align-items-center justify-content-center">
+                                tidak ada data
+                            </div>
+                        </td>
                     </tr>
                 @endforelse
             @endif

@@ -4,6 +4,8 @@ namespace App\Livewire\Dashboard\Component;
 
 use App\Services\AppService\EncryptionService;
 use App\Services\DomainServices\PerizinanService;
+use App\utils\enums\StatusIzinEnum;
+use App\utils\enums\StatusIzinProgressEnum;
 use Livewire\Component;
 
 class LeftMenuContent extends Component
@@ -12,7 +14,17 @@ class LeftMenuContent extends Component
 
     public function render()
     {
-        $this->all_izin = $this->getPerizinanService()->getAll('', [], [], null, null, 'DESC', 10);
+        $allowed_status = [
+            StatusIzinEnum::PROSES,
+            StatusIzinEnum::PENYERAHAN
+        ];
+        $allowed_progres = [
+            StatusIzinProgressEnum::CANCELED,
+            StatusIzinProgressEnum::PROCESSING,
+            StatusIzinProgressEnum::FINISHED,
+        ];
+
+        $this->all_izin = $this->getPerizinanService()->getAll('', $allowed_status, $allowed_progres, null, null, 'DESC', 5);
         return view('livewire.dashboard.component.left-menu-content');
     }
 

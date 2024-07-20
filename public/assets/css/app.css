@@ -753,11 +753,11 @@ nav {
   color: var(--color-primary);
 }
 .sidebar-nav .nav-link:hover {
-  color: var(--color-primary);
-  background: var(--color-primary-extra-light);
+  color: var(--color-primary) !important;
+  background: var(--color-primary-extra-light) !important;
 }
 .sidebar-nav .nav-link:hover i {
-  color: var(--color-primary);
+  color: var(--color-primary) !important;
 }
 
 .sidebar.small .sidebar-nav .nav-link span {

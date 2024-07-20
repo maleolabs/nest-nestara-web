@@ -60,39 +60,66 @@ if (!function_exists('getStatusIzinProcessClasses')) {
 }
 
 if (!function_exists('renderStatusIzinWithIcon')) {
-    function renderStatusIzinWithIcon($status)
+    function renderStatusIzinWithIcon($status, $font_size = '', $sorten = false, $use_dot = false)
     {
         $icon = '';
         $textColor = '';
 
         if ($status->progres == StatusIzinProgressEnum::FINISHED && $status->nama != StatusIzinEnum::BATAL) {
-            $icon = '<i class="fa-regular fa-circle-check mt-1 text-success"></i>';
-            $textColor = 'text-success';
+            $icon = '<i class="fa-regular fa-circle-check mt-1 success {$font_size}"></i>';
+            $textColor = 'success';
         } elseif ($status->progres == StatusIzinProgressEnum::UNPROCESSED) {
-            $icon = $status->nama == StatusIzinEnum::PROSES ? '<i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>' : '<i class="fa-solid fa-circle-minus mt-1"></i>';
-            $textColor = 'text-muted';
+            $icon = $status->nama == StatusIzinEnum::PROSES ? '<i class="fa-solid fa-hourglass-half mt-1 dark {$font_size}"></i>' : '<i class="fa-solid fa-circle-minus mt-1 {$font_size}"></i>';
+            $textColor = 'muted';
         } elseif ($status->progres == StatusIzinProgressEnum::PROCESSING) {
-            $icon = '<i class="fa-solid fa-hourglass-half mt-1 text-dark"></i>';
-            $textColor = 'text-dark';
+            $icon = '<i class="fa-solid fa-hourglass-half mt-1 dark {$font_size}"></i>';
+            $textColor = 'dark';
         } elseif ($status->progres == StatusIzinProgressEnum::CANCELED || $status->nama == StatusIzinEnum::BATAL) {
-            $icon = '<i class="fa-solid fa-circle-xmark mt-1 text-danger"></i>';
-            $textColor = 'text-danger';
+            $icon = '<i class="fa-solid fa-circle-xmark mt-1 danger {$font_size}"></i>';
+            $textColor = 'danger';
         } elseif ($status->progres == StatusIzinProgressEnum::ERROR) {
-            $icon = '<i class="fa-solid fa-triangle-exclamation mt-1 text-warning"></i>';
-            $textColor = 'text-warning';
+            $icon = '<i class="fa-solid fa-triangle-exclamation mt-1 warning {$font_size}"></i>';
+            $textColor = 'warning';
         }
 
-        $html = <<<HTML
-            <div class="d-flex align-items-top gap-2 my-3">
-                {$icon}
-                <div>
-                    <p class="mb-0 {$textColor}">
-                        {$status->nama}
-                    </p>
-                    <p class="mb-0">{$status->created_at->translatedFormat('l, d F Y H:i')} WITA</p>
+        $bgColor = "bg-{$textColor}";
+        $textColor = "text-{$textColor}";
+
+        $html = '';
+
+        if ($sorten) {
+            if ($use_dot) {
+                $html = <<<HTML
+                    <span class="badge badge-dot px-0">
+                        <i class="{$bgColor}"></i>
+                        <span class="text-sm {$textColor}">
+                            {$status->nama}
+                        </span>
+                    </span>
+                HTML;
+            } else {
+                $html = <<<HTML
+                    <div class="d-flex align-items-center gap-2 my-1">
+                        {$icon}
+                        <p class="mb-0 {$textColor} {$font_size}">
+                            {$status->nama}
+                        </p>
+                    </div>
+                HTML;
+            }
+        } else {
+            $html = <<<HTML
+                <div class="d-flex align-items-top gap-2 my-3">
+                    {$icon}
+                    <div>
+                        <p class="mb-0 {$textColor} {$font_size}">
+                            {$status->nama}
+                        </p>
+                        <p class="mb-0 {$font_size}">{$status->created_at->translatedFormat('l, d F Y H:i')} WITA</p>
+                    </div>
                 </div>
-            </div>
-        HTML;
+            HTML;
+        }
         return $html;
     }
 }

@@ -9,8 +9,8 @@
                         <small class="text-xs text-muted">{{ $izin->created_at->diffForHumans() }}</small>
                         <span class="text-sm text-bold d-block">{{ Str::limit(str_capitalize($izin->jenis_perizinan->nama, true), 30) }}</span>
                         <small class="text-xs d-block">{{ Str::limit($izin->pemohon->nama_pemohon, 30) }}</small>
+                        {!! renderStatusIzinWithIcon($izin->status_izin->last(), '', true, true) !!}
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </div>
             </a>
         </li>

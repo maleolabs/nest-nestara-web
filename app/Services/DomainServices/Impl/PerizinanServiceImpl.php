@@ -447,5 +447,18 @@ class PerizinanServiceImpl implements PerizinanService
             }
         });
     }
+
+    public function allDone($izin_id, $pegawai_id = null): void
+    {
+        DB::transaction(function () use ($izin_id, $pegawai_id) {
+            $izin = $this->find($izin_id);
+            if (!$izin)
+                return;
+            $izin_status = $izin->status_izin->last();
+            if ($izin_status->nama == Status::PENYERAHAN) {
+                $this->statusIzinService->updateStatusIzin($izin_id, Status::PENYERAHAN, Progres::FINISHED, OfficeStatus::IZIN_TELAH_DISERAHKAN, $pegawai_id);
+            }
+        });
+    }
     
 }

@@ -663,7 +663,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 9999;
+    z-index: 9998;
     background: rgba(0, 0, 0, 0.3);
     animation: fade-animation 0.3s forwards;
 }
@@ -706,6 +706,15 @@
     .modal-right-loading {
         width: 100%;
     }
+}
+
+.gif-modal-md {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 900px;
+    height: 100%;
+    z-index: 9999;
 }
 
 /* spacing */

@@ -19,6 +19,9 @@
     --color-primary-dark : #033232;
     --color-primary-dark-high : #011919;
     --color-primary-disable : #278080;
+    --color-info: #1265F2;
+    --color-info-light: #95BAF9;
+    --color-info-extra-light: #DBE8FD;
     --color-dark : #252424;
     --color-dark-disable : #676767;
     --color-white : #ffffff;
@@ -1031,6 +1034,10 @@ nav {
 .bg-app-primary-light {
   background: var(--color-primary-light) !important;
   color: var(--color-primary-dark) !important;
+}
+.bg-app-info-light {
+  background: var(--color-info-extra-light) !important;
+  color: var(--color-info) !important;
 }
 
 .front-bg {

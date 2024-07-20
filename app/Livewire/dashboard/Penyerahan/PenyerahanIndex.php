@@ -67,6 +67,14 @@ class PenyerahanIndex extends Component
         $this->setData();
     }
 
+    public function allDone($izin_id)
+    {
+        $auth_user = auth()->user();
+        $pegawai_id = $auth_user->pegawai ? $auth_user->pegawai->id : null;
+        $this->getPerizinanService()->allDone($izin_id, $pegawai_id);
+        $this->setData();
+    }
+
     protected function getTanggalPermohonan($izin_id): string
     {
         $permohonan = $this->getStatusIzinService()->findByNamaAndIzin(StatusIzinEnum::DIDAFTARKAN, $izin_id);

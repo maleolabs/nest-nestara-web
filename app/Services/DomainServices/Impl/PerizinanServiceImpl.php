@@ -3,6 +3,7 @@
 namespace App\Services\DomainServices\Impl;
 
 use App\Models\Izin;
+use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\PengaturanService;
 use App\Services\DomainServices\PerizinanService;
@@ -24,17 +25,21 @@ class PerizinanServiceImpl implements PerizinanService
 
     protected SuratService $suratService;
 
+    protected DokumenPemohonService $dokumenPemohonService;
+
     protected PengaturanService $pengaturanService;
 
     public function __construct(
         StatusIzinService $statusIzinService, 
         EntriDataService $entriDataService,
         SuratService $suratService,
+        DokumenPemohonService $dokumenPemohonService,
         PengaturanService $pengaturanService)
     {
         $this->statusIzinService = $statusIzinService;
         $this->entriDataService = $entriDataService;
         $this->suratService = $suratService;
+        $this->dokumenPemohonService = $dokumenPemohonService;
         $this->pengaturanService = $pengaturanService;
     }
     
@@ -486,6 +491,9 @@ class PerizinanServiceImpl implements PerizinanService
         }
 
         $details = $this->processStatusIzin($izin->status_izin->all());
+
+        $this->insertDetailsData($details, $izin);
+
         $proses_key = Status::PROSES;
 
         if (isset($details[$proses_key])) {
@@ -519,6 +527,68 @@ class PerizinanServiceImpl implements PerizinanService
         }
 
         return $details;
+    }
+
+    private function insertDetailsData(array &$details, Izin $izin): void
+    {
+        if (isset($details[Status::DIDAFTARKAN])) {
+            
+            $data_pemohon = $this->getDataPemohon($izin);
+            $dokumen_persyaratan = $this->getDokumenPersyaratan($izin);
+
+            $details[Status::DIDAFTARKAN]['data'] = [
+                'data pemohon' => [
+                    'tipe' => 'text',
+                    'value' => $data_pemohon
+                ],
+                'persyaratan' => [
+                    'tipe' => 'file',
+                    'value' => $dokumen_persyaratan
+                ]
+            ];
+        } elseif (isset($details[Status::REVISI_PERSYARATAN])) {
+
+        } elseif (isset($details[Status::DITINJAU])) {
+
+        }
+    }
+
+    private function getDokumenPersyaratan(Izin $izin): array
+    {
+        $pemohon_id = $izin->pemohon_id;
+        $jenis_perizinan_id = $izin->jenis_perizinan_id;
+        $izin_id = $izin->id;
+
+        $dokumen_persyaratan_pemohon = $this->dokumenPemohonService->getAllByPemohonAndSyaratAndIzin($pemohon_id, $jenis_perizinan_id, $izin_id);
+
+        $disallowed_field_dokumen = [
+            'id', 'pemohon_id', 'izin_id', 'created_at', 'updated_at', 'deleted_at'
+        ];
+
+        foreach ($dokumen_persyaratan_pemohon as $dokumen) {
+            $dokumen_ = array_diff_key($dokumen->toArray(), array_flip($disallowed_field_dokumen));
+            $dokumen_['syarat_izin'] = $dokumen->syarat_izin->nama;
+            unset($dokumen_['syarat_izin_id']);
+            $dokumen_persyaratan[] = $dokumen_;
+        }
+
+        return $dokumen_persyaratan;
+    }
+
+    private function getDataPemohon(Izin $izin): array
+    {
+        $data_pemohon = $izin->pemohon->toArray();
+
+        $disallowed_field_data_pemohon = [
+            'created_at', 'updated_at', 'deleted_at', 'id', 'user_id', 'deleted_at',
+            'provinsi', 'kabupaten', 'kecamatan', 'kelurahan', 'detail_alamat', 'alamat_luar_negeri'
+        ];
+
+        $data_pemohon = array_diff_key($data_pemohon, array_flip($disallowed_field_data_pemohon));
+
+        $data_pemohon['alamat'] = convert_address($izin->pemohon->getAlamat());
+
+        return $data_pemohon;
     }
 
     private function createMissingDetails(): array

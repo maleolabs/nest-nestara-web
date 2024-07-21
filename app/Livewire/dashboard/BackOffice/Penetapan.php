@@ -128,7 +128,7 @@ class Penetapan extends Component
 
     private function setDataTable()
     {
-        $this->all_izin = $this->getPerizinanService()->getAllBySprecificFilter($this->search, [StatusIzinEnum::PROSES], [StatusIzinProgressEnum::PROCESSING, StatusIzinProgressEnum::FINISHED], [BackOfficeStatusEnum::DIIZINKAN, BackOfficeStatusEnum::DICETAK, BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN], $this->start_date, $this->end_date);
+        $this->all_izin = $this->getPerizinanService()->getAllBySprecificFilter($this->search, [StatusIzinEnum::PROSES], [StatusIzinProgressEnum::PROCESSING, StatusIzinProgressEnum::FINISHED], [BackOfficeStatusEnum::DIREKOM, BackOfficeStatusEnum::REKOM_CATATAN, BackOfficeStatusEnum::LAYANAN_DITOLAK, BackOfficeStatusEnum::DIIZINKAN, BackOfficeStatusEnum::DICETAK, BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN], $this->start_date, $this->end_date);
 
         $this->count_tabs[self::PENETAPAN] = count($this->getFilteredDataList(self::PENETAPAN));
         $this->count_tabs[self::PEMBUATAN] = count($this->getFilteredDataList(self::PEMBUATAN));
@@ -152,10 +152,13 @@ class Penetapan extends Component
                 break;
 
             case self::PEMBUATAN:
-                $filtered_data = array_filter($this->all_izin, function ($izin) {
+                $filtered_data = array_filter($this->all_izin, function ($izin) use ($penetapan_status) {
+                    $disallowed_status = $penetapan_status;
+                    $disallowed_status[] = BackOfficeStatusEnum::LAYANAN_DITOLAK;
+
                     $status_cetak = $this->getStatusCetak($izin);
                     $last_status = $izin->status_izin->last();
-                    return $last_status->keterangan == BackOfficeStatusEnum::DIIZINKAN || !$this->isAlreadyPrinted($status_cetak ?? $last_status);
+                    return ($last_status->keterangan == BackOfficeStatusEnum::DIIZINKAN || !$this->isAlreadyPrinted($status_cetak ?? $last_status)) && !in_array($last_status->keterangan, $disallowed_status);
                 });
                 break;
 
@@ -172,7 +175,7 @@ class Penetapan extends Component
     {
         if (!$status)
             $status = $this->selectedPreview->status_izin->last();
-        return in_array($status->keterangan, [BackOfficeStatusEnum::DICETAK, BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN]) && $status->updated_at->diffInDays(now()) > 1;
+        return in_array($status->keterangan, [BackOfficeStatusEnum::DICETAK, BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN]) && $status->updated_at->diffInHours(now()) > 8;
     }
 
     protected function getStatusCetak($izin): object|null

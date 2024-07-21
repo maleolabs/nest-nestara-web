@@ -493,21 +493,11 @@ class PerizinanServiceImpl implements PerizinanService
         }
 
         if (!isset($details[Status::PENERBITAN])) {
-            $details[Status::PENYERAHAN] = [
-                'progres' => false,
-                'keterangan' => 'belum diproses',
-                'pegawai' => null,
-                'tanggal' => null
-            ];
+            $details[Status::PENYERAHAN] = $this->createMissingDetails();
         }
 
         if (!isset($details[Status::PENYERAHAN])) {
-            $details[Status::PENYERAHAN] = [
-                'progres' => false,
-                'keterangan' => 'belum diproses',
-                'pegawai' => null,
-                'tanggal' => null
-            ];
+            $details[Status::PENYERAHAN] = $this->createMissingDetails();
         }
 
         return $details;
@@ -529,6 +519,16 @@ class PerizinanServiceImpl implements PerizinanService
         }
 
         return $details;
+    }
+
+    private function createMissingDetails(): array
+    {
+        return [
+            'progres' => false,
+            'keterangan' => 'belum diproses',
+            'pegawai' => null,
+            'tanggal' => null
+        ];
     }
 
     private function insertProsesDetails(array $details, int $izin_id, string $proses_key): array

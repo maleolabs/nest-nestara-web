@@ -18,10 +18,10 @@
                 @foreach ($details as $key => $detail)
                     <li class="list-group-item">
                         <div class="row">
-                            <div class="col-md-5 text-capitalize">
+                            <div class="col-md-4 text-capitalize">
                                 {{ $key }}
                             </div>
-                            <div class="col-md-7">
+                            <div class="col-md-8">
                                 <p class="mb-1 text-sm text-muted">{{ $detail['tanggal'] }}</p>
                                 @isset($detail['pegawai'])
                                     <p class="mb-1 text-sm text-dark text-bold">

@@ -24,6 +24,11 @@ class DashboardController extends Controller
         $this->perizinanService = $perizinanService;
         $this->encryptionService = $encryptionService;
     }
+
+    public function semuaIzin()
+    {
+        return response()->view('dashboard.semua-izin');
+    }
     
     public function previewIzin(Request $request, $izin_id)
     {

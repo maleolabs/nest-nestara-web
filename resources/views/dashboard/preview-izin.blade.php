@@ -1,6 +1,9 @@
 @extends('dashboard.app')
 @push('breadcrumb-item')
     <li class="breadcrumb-item">
+        <a href="{{ route('izin.index') }}">Semua Izin</a>
+    </li>
+    <li class="breadcrumb-item">
         @php($current_izin = str_capitalize($izin->pemohon->nama_pemohon, true) . ' (' . str_capitalize(($izin->jenis_perizinan->nama), true) . ')')
         {{ $current_izin }}
     </li>

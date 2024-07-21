@@ -53,34 +53,27 @@ if (!function_exists('convert_address')) {
     function convert_address($address): string
     {
         $regionService = app(RegionAPIService::class);
-        $converted_address = '';
-        $address = explode(',', $address);
-        foreach ($address as $index => $addr) {
-            if (is_numeric($addr) && intval($addr) == $addr) {
-                $addr_id = intval($addr);
-                $addr_value = '';
-                switch ($index) {
-                    case 1:
-                        $addr_value = 'desa/kelurahan ' . $regionService->getVillage($addr_id);
-                        break;
-                    case 2:
-                        $addr_value = 'kecamatan ' . $regionService->getDistrict($addr_id);
-                        break;
-                    case 3:
-                        $addr_value = 'kabupaten/kota ' . $regionService->getRegency($addr_id);
-                        break;
-                    case 4:
-                        $addr_value = 'provinsi ' . $regionService->getProvince($addr_id);
-                        break;
-                    default:
-                        break;
-                }
-                $converted_address .= str_capitalize($addr_value, true) . ($index <= count($address) ? ', ' : '');
+        $addressParts = explode(',', $address);
+        $convertedParts = [];
+
+        foreach ($addressParts as $index => $part) {
+            $part = trim($part);
+            if (is_numeric($part) && ctype_digit($part)) {
+                $partId = (int) $part;
+                $partValue = match ($index) {
+                    1 => 'desa/kelurahan ' . $regionService->getVillage($partId),
+                    2 => 'kecamatan ' . $regionService->getDistrict($partId),
+                    3 => 'kabupaten/kota ' . $regionService->getRegency($partId),
+                    4 => 'provinsi ' . $regionService->getProvince($partId),
+                    default => '',
+                };
+                $convertedParts[] = $partValue ? str_capitalize($partValue, true) : '';
             } else {
-                $converted_address .= str_capitalize($addr, true) . ', ';
+                $convertedParts[] = str_capitalize($part, true);
             }
         }
-        return $converted_address;
+
+        return implode(', ', array_filter($convertedParts));
     }
 }
 

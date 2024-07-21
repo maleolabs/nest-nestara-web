@@ -486,10 +486,28 @@ class PerizinanServiceImpl implements PerizinanService
         }
 
         $details = $this->processStatusIzin($izin->status_izin->all());
-        $proses_key = 'diproses';
+        $proses_key = Status::PROSES;
 
         if (isset($details[$proses_key])) {
             $details = $this->insertProsesDetails($details, $izin_id, $proses_key);
+        }
+
+        if (!isset($details[Status::PENERBITAN])) {
+            $details[Status::PENYERAHAN] = [
+                'progres' => false,
+                'keterangan' => 'belum diproses',
+                'pegawai' => null,
+                'tanggal' => null
+            ];
+        }
+
+        if (!isset($details[Status::PENYERAHAN])) {
+            $details[Status::PENYERAHAN] = [
+                'progres' => false,
+                'keterangan' => 'belum diproses',
+                'pegawai' => null,
+                'tanggal' => null
+            ];
         }
 
         return $details;

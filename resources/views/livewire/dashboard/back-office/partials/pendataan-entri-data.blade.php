@@ -37,7 +37,7 @@
             <tbody>
                 @forelse ($all_izin as $izin)
                     @php
-                        $status = $this->getStatusCetak($izin) ?? $izin->status_izin->last();
+                        $status = isset($table_content) && $this->getStatusCetak($izin) ? $this->getStatusCetak($izin) : $izin->status_izin->last();
                         $statusClasses = getStatusIzinProcessClasses($status)
                     @endphp
                     <tr class="cursor-pointer data-izin" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})' @if(isset($preview_action)) {{ $preview_action }} @endif>

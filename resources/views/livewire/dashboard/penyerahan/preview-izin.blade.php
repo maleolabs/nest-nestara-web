@@ -73,7 +73,7 @@
         <button class="ms-auto text-md btn btn-transparent p-0 card-icon sticky-top-0" wire:click='closePreview' id="modalRightCloseBtn" style="z-index: 10001">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <div wire:loading wire:target='previewDataIzin, penerbitanFinished'>
+        <div wire:loading wire:target='previewDataIzin, penerbitanFinished, allDone'>
             <div class="position-fixed top-0 end-0 bottom-0 bg-white opacity-75 d-flex align-items-center justify-content-center modal-right-loading">
                 <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
             </div>

@@ -135,6 +135,23 @@ class PerizinanServiceImpl implements PerizinanService
         return $semua_izin->all();
     }
 
+    public function getCount(array $status, array $progres, array $keterangan): int
+    {
+        return Izin::whereHas('status_izin', function ($query) use ($status, $progres, $keterangan) {
+            if (!empty($status)) {
+                $query->whereIn('nama', $status);
+
+                if (!empty($progres))
+                    $query->whereIn('progres', $progres);
+
+                if (!empty($keterangan))
+                    $query->whereIn('keterangan', $keterangan);
+
+                $query->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) FROM status_izin WHERE status_izin.izin_id = izin.id)'));
+            }
+        })->count();
+    }
+
     public function saveRegistrationAction(int $izin_id, string $lokasi_izin, string $keterangan = null, string $status_permohonan = 'permohonan-selesai', int $pegawai_id = null): bool
     {
         DB::beginTransaction();

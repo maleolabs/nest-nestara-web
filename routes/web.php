@@ -85,6 +85,7 @@ Route::middleware('auth')->group(function() {
 
     Route::middleware(['role:admin|pengelola_layanan|pegawai'])->group(function() {
         Route::get('/izin/preview/{izin_id}', [DashboardController::class, 'previewIzin'])->name('preview-izin');
+        Route::get('/izin/count/{process}', [DashboardController::class, 'getCountByProcess'])->name('izin.count');
     });
     
 

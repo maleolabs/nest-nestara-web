@@ -34,3 +34,6 @@
 @section('main')
     @livewire('dashboard.pendaftaran.pendaftaran-create')
 @endsection
+@push('scripts')
+    <script src="{{ asset('assets/js/front-office.js') }}"></script>
+@endpush

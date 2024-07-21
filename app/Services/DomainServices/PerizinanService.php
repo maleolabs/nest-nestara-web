@@ -23,17 +23,18 @@ use App\Models\Izin;
  *      string $search = '',
  *      array $filter_status = [],
  *      array $filter_status_progress = [],
-*       array $filter_keterangan = [],
-*       string $filter_start_date = null,
-*       string $filter_end_date = null,
-*       string $sort = 'DESC',
-*       ?int $limit = null,
-*       string $order_by = 'created_at')
+ *       array $filter_keterangan = [],
+ *       string $filter_start_date = null,
+ *       string $filter_end_date = null,
+ *       string $sort = 'DESC',
+ *       ?int $limit = null,
+ *       string $order_by = 'created_at')
  * @method bool saveRegistrationAction(int $izin_id,
  *      string $lokasi_izin, 
  *      string $keterangan = null, 
  *      string $status_permohonan = 'permohonan-selesai', 
  *      int $pegawai_id = null)
+ * @method int getCount(array $status, array $progres, array $keterangan)
  * @method void rollbackRegistration(int $izin_id, string $keterangan, int $pegawai_id)
  * @method void saveRegistrationRevision(int $izin_id, string $detail_keterangan = null)
  * @method array getAllStatusCancelable()
@@ -141,6 +142,17 @@ interface PerizinanService
         ?int $limit = null,
         string $order_by = 'created_at'
     ): array;
+
+    /**
+     * Mendapatkan jumlah perizinan berdasarkan status, progres, dan keterangan.
+     *
+     * @param array $status Filter berdasarkan status perizinan.
+     * @param array $progres Filter berdasarkan progres perizinan.
+     * @param array $keterangan Filter berdasarkan keterangan perizinan.
+     *
+     * @return int Jumlah perizinan yang sesuai dengan filter yang diberikan.
+     */
+    function getCount(array $status, array $progres, array $keterangan): int;
 
     /**
      * Menyimpan data tindakan registrasi perizinan.

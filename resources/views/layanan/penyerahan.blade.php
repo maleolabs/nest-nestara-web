@@ -11,3 +11,6 @@
         @livewire('dashboard.penyerahan.penyerahan-index')
     </div>
 @endsection
+@push('scripts')
+    <script src="{{ asset('assets/js/front-office.js') }}"></script>
+@endpush

@@ -17,12 +17,14 @@
                     <a href="{{ route('layanan.pendaftaran') }}" class="nav-link{{ Route::currentRouteName() == 'layanan.pendaftaran' ? ' active' : '' }}">
                         <i class="fa-solid fa-book-open"></i>
                         <span>Pendaftaran</span>
+                        <span id="pendaftaranCount" class="ms-auto badge rounded-pill bg-app-primary-light"></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('layanan.penyerahan') }}" class="nav-link{{ Route::currentRouteName() == 'layanan.penyerahan' ? ' active' : '' }}">
                         <i class="fa-solid fa-file-export"></i>
                         <span>Penyerahan</span>
+                        <span id="penyerahanCount" class="ms-auto badge rounded-pill bg-app-primary-light"></span>
                     </a>
                 </li>
             @elserole('pegawai')

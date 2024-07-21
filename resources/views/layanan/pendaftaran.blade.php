@@ -33,7 +33,6 @@
     @livewire('dashboard.pendaftaran.pendaftaran-index')
 @endsection
 @push('scripts')
-    <script src="{{ asset('assets/js/front-office.js') }}"></script>
     <script>
         let pendaftaranSubBread = document.getElementById("pendaftaran-sub-breadcrumb")
         Livewire.on('menu-selected', function (event) {

@@ -1,33 +1,22 @@
-window.onload = 
-    setInterval(() => {
-        setPendaftaranCount()
-        setPenyerahanCount()
-    }, 1000)
+window.onload = setInterval(updateCounts, 1000)
 
-function setPendaftaranCount() {
-    const pendaftaranCount = $('#pendaftaranCount')
-    if (pendaftaranCount) {
-        $.ajax({
-            type: "GET",
-            url: "/izin/count/pendaftaran",
-            success: function (response) {
-                if (response > 0) {
-                    pendaftaranCount.text(response)
-                }
-            }
-        })
-    }
+function updateCounts() {
+    updateCount('pendaftaran')
+    updateCount('penyerahan')
+    updateCount('pendataan')
+    updateCount('rekomendasi')
+    updateCount('penetapan')
 }
 
-function setPenyerahanCount() {
-    const penyerahanCount = $('#penyerahanCount')
-    if (penyerahanCount) {
+function updateCount(type) {
+    const countElement = $(`#${type}Count`)
+    if (countElement.length) {
         $.ajax({
             type: "GET",
-            url: "/izin/count/penyerahan",
+            url: `/izin/count/${type}`,
             success: function (response) {
                 if (response > 0) {
-                    penyerahanCount.text(response)
+                    countElement.text(response)
                 }
             }
         })

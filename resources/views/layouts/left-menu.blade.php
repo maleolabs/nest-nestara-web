@@ -37,18 +37,21 @@
                     <a href="{{ route('pegawai.pendataan') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.pendataan' ? ' active' : '' }}">
                         <i class="fa-solid fa-file-signature"></i>
                         <span>Pendataan</span>
+                        <span id="pendataanCount" class="ms-auto badge rounded-pill bg-app-primary-light"></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('pegawai.rekomendasi') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.rekomendasi' ? ' active' : '' }}">
                         <i class="fa-solid fa-medal"></i>
                         <span>Rekomendasi</span>
+                        <span id="rekomendasiCount" class="ms-auto badge rounded-pill bg-app-primary-light"></span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('pegawai.penetapan') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.penetapan' ? ' active' : '' }}">
                         <i class="fa-solid fa-file-circle-check"></i>
                         <span>Penetapan</span>
+                        <span id="penetapanCount" class="ms-auto badge rounded-pill bg-app-primary-light"></span>
                     </a>
                 </li>
             @endrole
@@ -56,3 +59,6 @@
         </ul>
     </aside>
 </div>
+@push('scripts')
+    <script src="{{ asset('assets/js/front-office.js') }}"></script>
+@endpush

@@ -40,7 +40,6 @@
     </div>
 @endsection
 @push('scripts')
-    <script src="{{ asset('assets/js/front-office.js') }}"></script>
     <script src="{{ $statistikJenisPerizinan->cdn() }}"></script>
     {{ $statistikJenisPerizinan->script() }}
 @endpush

@@ -17,14 +17,14 @@
                     <a href="{{ route('layanan.pendaftaran') }}" class="nav-link{{ Route::currentRouteName() == 'layanan.pendaftaran' ? ' active' : '' }}">
                         <i class="fa-solid fa-book-open"></i>
                         <span>Pendaftaran</span>
-                        <span id="pendaftaranCount" class="ms-auto badge rounded-pill bg-app-primary-light"></span>
+                        <span id="pendaftaranCount" class="ms-auto badge rounded-pill bg-app-primary-light">{{ countByProcess('pendaftaran') }}</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('layanan.penyerahan') }}" class="nav-link{{ Route::currentRouteName() == 'layanan.penyerahan' ? ' active' : '' }}">
                         <i class="fa-solid fa-file-export"></i>
                         <span>Penyerahan</span>
-                        <span id="penyerahanCount" class="ms-auto badge rounded-pill bg-app-primary-light"></span>
+                        <span id="penyerahanCount" class="ms-auto badge rounded-pill bg-app-primary-light">{{ countByProcess('penyerahan') }}</span>
                     </a>
                 </li>
             @elserole('pegawai')
@@ -37,21 +37,21 @@
                     <a href="{{ route('pegawai.pendataan') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.pendataan' ? ' active' : '' }}">
                         <i class="fa-solid fa-file-signature"></i>
                         <span>Pendataan</span>
-                        <span id="pendataanCount" class="ms-auto badge rounded-pill bg-app-primary-light"></span>
+                        <span id="pendataanCount" class="ms-auto badge rounded-pill bg-app-primary-light">{{ countByProcess('pendataan') }}</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('pegawai.rekomendasi') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.rekomendasi' ? ' active' : '' }}">
                         <i class="fa-solid fa-medal"></i>
                         <span>Rekomendasi</span>
-                        <span id="rekomendasiCount" class="ms-auto badge rounded-pill bg-app-primary-light"></span>
+                        <span id="rekomendasiCount" class="ms-auto badge rounded-pill bg-app-primary-light">{{ countByProcess('rekomendasi') }}</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{ route('pegawai.penetapan') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.penetapan' ? ' active' : '' }}">
                         <i class="fa-solid fa-file-circle-check"></i>
                         <span>Penetapan</span>
-                        <span id="penetapanCount" class="ms-auto badge rounded-pill bg-app-primary-light"></span>
+                        <span id="penetapanCount" class="ms-auto badge rounded-pill bg-app-primary-light">{{ countByProcess('penetapan') }}</span>
                     </a>
                 </li>
             @endrole
@@ -60,5 +60,5 @@
     </aside>
 </div>
 @push('scripts')
-    <script src="{{ asset('assets/js/front-office.js') }}"></script>
+    <script src="{{ asset('assets/js/notif-count.js') }}"></script>
 @endpush

@@ -35,7 +35,8 @@
             "app/utils/property_helper.php",
             "app/utils/Helpers/StatusIzinHelper.php",
             "app/utils/Helpers/PengaturanHelper.php",
-            "app/utils/Helpers/QRCodeGenerator.php"
+            "app/utils/Helpers/QRCodeGenerator.php",
+            "app/utils/Helpers/NotifCountHelper.php"
         ]
     },
     "autoload-dev": {

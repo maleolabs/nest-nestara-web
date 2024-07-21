@@ -1,4 +1,4 @@
-window.onload = setInterval(updateCounts, 1000)
+window.onload = setInterval(updateCounts, 10000)
 
 function updateCounts() {
     updateCount('pendaftaran')

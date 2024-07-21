@@ -32,6 +32,18 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		return StatusIzin::where('izin_id', $izin_id)->latest('created_at')->first();
 	}
 
+	public function getRiwayatProses(int $status_id): array
+	{
+		$riwayat_proses = RiwayatProsesIzin::where('status_izin_id', $status_id)->get();
+		return $riwayat_proses->all();
+	}
+
+	public function getRiwayatProsesByIzin(int $izin_id): array
+	{
+		$riwayat_proses = RiwayatProsesIzin::where('izin_id', $izin_id)->get();
+		return $riwayat_proses->all();
+	}
+
 	public function saveAllStatusIzin(array $status_izin_data): void
 	{
 		DB::table('status_izin')->insert($status_izin_data);

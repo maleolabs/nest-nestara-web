@@ -53,6 +53,7 @@ use App\Models\Izin;
  * @method void updateAllIzinStatusWhenAlreadyPrinted()
  * @method void penerbitanFinished(int $izin_id, int $pegawai_id = null)
  * @method void allDone(int $izin_id, int $pegawai_id = null)
+ * @method array getIzinDetails(int $izin_id)
  */
 interface PerizinanService
 {
@@ -354,5 +355,13 @@ interface PerizinanService
      * @return void Fungsi ini tidak mengembalikan apa-apa.
      */
     function allDone(int $izin_id, int $pegawai_id = null): void;
+
+    /**
+     * Mengambil detail dari permohonan izin.
+     *
+     * @param int $izin_id ID dari permohonan izin yang akan diambil detailnya.
+     * @return array Detail dari permohonan izin.
+     */
+    function getIzinDetails(int $izin_id): array;
 
 }

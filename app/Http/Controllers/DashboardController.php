@@ -40,8 +40,12 @@ class DashboardController extends Controller
         $izin = $this->perizinanService->find($izin_id);
         if (!$izin)
             return redirect()->route('dashboard');
+
+        $details = $this->perizinanService->getIzinDetails($izin_id);
+
         return response()->view('dashboard.preview-izin', [
-            'izin' => $izin
+            'izin' => $izin,
+            'details' => $details
         ]);
     }
 

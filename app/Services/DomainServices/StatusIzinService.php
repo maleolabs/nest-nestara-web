@@ -30,6 +30,22 @@ interface StatusIzinService {
 	function findLastStatusByIzin(int $izin_id): ?StatusIzin;
 
 	/**
+	 * Mengambil riwayat proses untuk ID status tertentu.
+	 *
+	 * @param int $status_id ID status untuk mengambil riwayat proses.
+	 * @return array Array yang berisi riwayat proses untuk ID status yang diberikan.
+	 */
+	function getRiwayatProses(int $status_id): array;
+
+	/**
+	 * Mengambil riwayat proses untuk ID izin tertentu.
+	 *
+	 * @param int $izin_id ID izin untuk mengambil riwayat proses.
+	 * @return array Array yang berisi riwayat proses untuk ID izin yang diberikan.
+	 */
+	function getRiwayatProsesByIzin(int $izin_id): array;
+
+	/**
 		* Menyimpan banyak data status izin sekaligus
 		* @param array $status_izin_data Array data status izin
 		* @return void

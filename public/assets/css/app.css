@@ -1911,16 +1911,6 @@ nav {
   border-radius: 6px;
 }
 
-@media (max-width: 991px) {
-  
-}
-
-.list-group-item {
-  cursor: pointer;
-  overflow: hidden;
-  max-height: 100px;
-}
-
 .list-group .list-group-item-action {
   background: var(--color-white) !important;
 }

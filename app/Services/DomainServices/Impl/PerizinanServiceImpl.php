@@ -477,5 +477,87 @@ class PerizinanServiceImpl implements PerizinanService
             }
         });
     }
+
+    public function getIzinDetails(int $izin_id): array
+    {
+        $izin = $this->find($izin_id);
+        if (!$izin) {
+            return [];
+        }
+
+        $details = $this->processStatusIzin($izin->status_izin->all());
+        $proses_key = 'diproses';
+
+        if (isset($details[$proses_key])) {
+            $details = $this->insertProsesDetails($details, $izin_id, $proses_key);
+        }
+
+        return $details;
+    }
+
+    private function processStatusIzin(array $status_izin): array
+    {
+        $date_format = 'l, d F Y \P\u\k\u\l H:i \W\I\T\A';
+        $details = [];
+
+        foreach ($status_izin as $status) {
+            $progres = $status->progres == Progres::FINISHED;
+            $details[$status->nama] = [
+                'progres' => $progres,
+                'keterangan' => $status->keterangan ?? ($progres ? 'selesai' : 'belum diproses'),
+                'pegawai' => $status->pegawai ? $status->pegawai->nama : null,
+                'tanggal' => $status->updated_at->translatedFormat($date_format)
+            ];
+        }
+
+        return $details;
+    }
+
+    private function insertProsesDetails(array $details, int $izin_id, string $proses_key): array
+    {
+        $proses_index = array_search($proses_key, array_keys($details));
+
+        $details_before_proses = array_slice($details, 0, $proses_index, true);
+        $details_after_proses = array_slice($details, $proses_index + 1, null, true);
+
+        $riwayat_proses = $this->statusIzinService->getRiwayatProsesByIzin($izin_id);
+        $proses_details = $this->processProsesDetails($riwayat_proses);
+
+        return $details_before_proses + $proses_details + $details_after_proses;
+    }
+
+    private function processProsesDetails(array $riwayat_proses): array
+    {
+        $date_format = 'l, d F Y \P\u\k\u\l H:i \W\I\T\A';
+        $proses_details = [];
+
+        foreach ($riwayat_proses as $proses) {
+            if (in_array($proses->keterangan, [OfficeStatus::BELUM_ENTRI, OfficeStatus::SUDAH_ENTRI, OfficeStatus::SEDANG_ENTRI])) {
+                $proses_details['entri data'] = $this->createProsesDetail($proses, OfficeStatus::SUDAH_ENTRI, $date_format);
+            } elseif (in_array($proses->keterangan, [OfficeStatus::ENTRI_TINJAUAN_LAPANGAN, OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN])) {
+                $proses_details['tinjauan lapangan'] = $this->createProsesDetail($proses, OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN, $date_format);
+            } else if (in_array($proses->keterangan, [OfficeStatus::TIDAK_DIREKOM, OfficeStatus::DIREKOM, OfficeStatus::REKOM_CATATAN, OfficeStatus::BAHAS_LANJUT])) {
+                $proses_details['rekomendasi izin'] = $this->createProsesDetail($proses, [OfficeStatus::DIREKOM, OfficeStatus::REKOM_CATATAN, OfficeStatus::BAHAS_LANJUT], $date_format);
+            } else if (in_array($proses->keterangan, [OfficeStatus::DIIZINKAN, OfficeStatus::LAYANAN_DITOLAK])) {
+                $proses_details['penetapan izin'] = $this->createProsesDetail($proses, OfficeStatus::DIIZINKAN, $date_format);
+            }
+        }
+
+        return $proses_details;
+    }
+
+    private function createProsesDetail($proses, $finishedStatus, $date_format): array
+    {
+        $progres = is_array($finishedStatus)
+            ? in_array($proses->keterangan, $finishedStatus)
+            : $proses->keterangan == $finishedStatus;
+
+        return [
+            'progres' => $progres,
+            'keterangan' => $proses->keterangan,
+            'pegawai' => $proses->pegawai?->nama,
+            'tanggal' => $proses->updated_at->translatedFormat($date_format)
+        ];
+    }
     
 }

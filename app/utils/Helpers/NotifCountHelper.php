@@ -68,10 +68,7 @@ if (!function_exists('getProcessKeterangan')) {
                 BackOfficeStatusEnum::SUDAH_ENTRI_TINJAUAN_LAPANGAN,
             ],
             'rekomendasi' => [
-                BackOfficeStatusEnum::TIDAK_DIREKOM,
-                BackOfficeStatusEnum::DIREKOM,
-                BackOfficeStatusEnum::REKOM_CATATAN,
-                BackOfficeStatusEnum::BAHAS_LANJUT
+                BackOfficeStatusEnum::TIDAK_DIREKOM
             ],
             'penetapan' => [
                 BackOfficeStatusEnum::DIREKOM,

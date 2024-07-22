@@ -492,8 +492,6 @@ class PerizinanServiceImpl implements PerizinanService
 
         $details = $this->processStatusIzin($izin->status_izin->all());
 
-        $this->insertDetailsData($details, $izin);
-
         $proses_key = Status::PROSES;
 
         if (isset($details[$proses_key])) {
@@ -507,6 +505,8 @@ class PerizinanServiceImpl implements PerizinanService
         if (!isset($details[Status::PENYERAHAN])) {
             $details[Status::PENYERAHAN] = $this->createMissingDetails();
         }
+
+        $this->insertDetailsData($details, $izin);
 
         return $details;
     }
@@ -546,11 +546,51 @@ class PerizinanServiceImpl implements PerizinanService
                     'value' => $dokumen_persyaratan
                 ]
             ];
-        } elseif (isset($details[Status::REVISI_PERSYARATAN])) {
-
-        } elseif (isset($details[Status::DITINJAU])) {
-
+        } 
+        
+        if (isset($details[Status::DITINJAU])) {
+            $details[Status::DITINJAU]['data'] = [
+                'detail pendaftaran' => [
+                    'tipe' => 'text',
+                    'value' => ['lokasi izin' => $izin->lokasi_izin]
+                ]
+            ];
         }
+
+        if (isset($details['entri data'])) {
+            $details['entri data']['data'] = [
+                'detail pendaftaran' => [
+                    'tipe' => 'text',
+                    'value' => $this->getEntriDataDetail($izin)
+                ]
+            ];
+        }
+
+        if (isset($details['tinjauan lapangan'])) {
+            $details['tinjauan lapangan']['data'] = [
+                'detail pendaftaran' => [
+                    'tipe' => 'text',
+                    'value' => [
+                        'nomor surat' => $izin->no_surat,
+                        'penandatangan' => $izin->penandatangan->nama
+                    ]
+                ]
+            ];
+        }
+    }
+
+    private function getEntriDataDetail(Izin $izin): array
+    {
+        $entri_data = [];
+
+        $entri_data_izin = $izin->entri_data_izin;
+
+        foreach ($entri_data_izin as $entri) {
+            $nama_entri = $entri->entri_data->nama;
+            $entri_data[$nama_entri] = $entri->value;
+        }
+
+        return $entri_data;
     }
 
     private function getDokumenPersyaratan(Izin $izin): array

@@ -3,6 +3,10 @@
 namespace App\Services\DomainServices;
 
 use App\Models\Izin;
+use App\Services\DomainServices\Helpers\GetIzin;
+use Illuminate\Pagination\CursorPaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 /**
  * Menyediakan antarmuka untuk mengelola perizinan dalam aplikasi.
@@ -10,6 +14,18 @@ use App\Models\Izin;
  * Antarmuka ini mendefinisikan metode-metode untuk menangani berbagai operasi terkait perizinan, seperti:
  * @method null|App\Models\Izin saveRegistration(int $jenis_izin_id, int $pemohon_id)
  * @method null|App\Models\Izin find(int $id)
+ * @method Collection get(
+ *        string $search = '',
+ *       array $filter_status = [],
+ *       array $filter_status_progress = [],
+ *       array $filter_keterangan = [],
+ *       string $filter_start_date = null,
+ *       string $filter_end_date = null,
+ *       string $sort = 'DESC',
+ *       ?int $limit = null,
+ *       string $order_by = 'created_at',
+ *       bool $paginate = false,
+ *       ?int $page = null)
  * @method array getAll(
  *      string $search = '', 
  *      array $filter_status = [], 
@@ -76,6 +92,36 @@ interface PerizinanService
      * @return \App\Models\Izin|null Objek perizinan jika ditemukan, atau null jika tidak ditemukan.
      */
     function find(int $id): ?Izin;
+
+    /**
+     * Mengambil koleksi perizinan berdasarkan filter yang diberikan.
+     *
+     * @param string $search Kata kunci pencarian opsional. Jika tidak diberikan, semua perizinan akan dikembalikan.
+     * @param array $filter_status Filter opsional berdasarkan status perizinan. Jika tidak diberikan, semua status akan dikembalikan.
+     * @param array $filter_status_progress Filter opsional berdasarkan status kemajuan perizinan. Jika tidak diberikan, semua status kemajuan akan dikembalikan.
+     * @param array $filter_keterangan Filter opsional berdasarkan deskripsi proses perizinan. Jika tidak diberikan, semua deskripsi akan dikembalikan.
+     * @param string|null $filter_start_date Filter opsional berdasarkan tanggal mulai. Jika tidak diberikan, akan menggunakan satu bulan sebelum tanggal saat ini.
+     * @param string|null $filter_end_date Filter opsional berdasarkan tanggal akhir. Jika tidak diberikan, akan menggunakan tanggal saat ini.
+     * @param string $sort Urutan pengurutan opsional, bisa 'ASC' atau 'DESC'. Default adalah 'DESC'.
+     * @param int|null $limit Batasan opsional pada jumlah hasil yang akan dikembalikan. Jika tidak diberikan, semua hasil akan dikembalikan.
+     * @param string $order_by Kolom opsional untuk mengurutkan hasil. Default adalah 'created_at'.
+     * @param bool $paginate Flag opsional untuk mengaktifkan paginasi. Default adalah false.
+     * @param int|null $page Nomor halaman opsional untuk paginasi. Diperlukan jika $paginate bernilai true.
+     * @return \Illuminate\Support\Collection|Illuminate\Pagination\LengthAwarePaginator|Illuminate\Pagination\CursorPaginator Koleksi model perizinan yang sesuai dengan filter yang diberikan.
+     */
+    function get(
+        string $search = '',
+        array $filter_status = [],
+        array $filter_status_progress = [],
+        array $filter_keterangan = [],
+        string $filter_start_date = null,
+        string $filter_end_date = null,
+        string $sort = 'DESC',
+        ?int $limit = null,
+        string $order_by = 'created_at',
+        bool $paginate = false,
+        ?int $page = null
+    ): Collection|LengthAwarePaginator|CursorPaginator;
 
     /**
      * Mengambil daftar perizinan dengan filter tertentu.

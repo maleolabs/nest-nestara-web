@@ -4,8 +4,8 @@
         <a href="{{ route('izin.index') }}">Semua Izin</a>
     </li>
     <li class="breadcrumb-item">
-        @php($current_izin = str_capitalize($izin->pemohon->nama_pemohon, true) . ' (' . Str::limit(str_capitalize(($izin->jenis_perizinan->nama), true), 70) . ')')
-        {{ $current_izin }}
+        @php($current_izin = str_capitalize($izin->pemohon->nama_pemohon, true) . ' (' . str_capitalize(($izin->jenis_perizinan->nama), true) . ')')
+        {{ Str::limit($current_izin, 70) }}
     </li>
 @endpush
 @section('main')
@@ -20,10 +20,12 @@
                         <h6 class="text-uppercase">
                             {{ $key }}
                         </h6>
-                        <p class="mb-1 text-sm text-muted">
-                            <i class="fa-regular fa-calendar-check me-1"></i>
-                            {{ $detail['tanggal'] }}
-                        </p>
+                        @isset($detail['tanggal'])
+                            <p class="mb-1 text-sm text-muted">
+                                <i class="fa-regular fa-calendar-check me-1"></i>
+                                {{ $detail['tanggal'] }}
+                            </p>
+                        @endisset
                         @isset($detail['pegawai'])
                             <p class="mb-1 text-sm text-dark text-bold">
                                 <i class="fa-solid fa-user-tie me-1"></i>

@@ -14,6 +14,7 @@ use App\Services\AppService\Impl\PdfTemplateServiceImpl;
 use App\Services\AppService\PdfTemplateService;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\EntriDataService;
+use App\Services\DomainServices\Helpers\GetIzin;
 use App\Services\DomainServices\Impl\DokumenPemohonServiceImpl;
 use App\Services\DomainServices\Impl\EntriDataServiceImpl;
 use App\Services\DomainServices\Impl\JenisPerizinanServiceImpl;
@@ -87,6 +88,10 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(EncryptionService::class, EncryptionServiceImpl::class);
         $this->app->singleton(PdfTemplateService::class, PdfTemplateServiceImpl::class);
         $this->app->singleton(FileManager::class, LocalStorageFileManager::class);
+
+        $this->app->singleton(GetIzin::class, function () {
+            return new GetIzin();
+        });
     }
 
     /**

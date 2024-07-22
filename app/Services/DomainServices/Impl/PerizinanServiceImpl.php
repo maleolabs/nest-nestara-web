@@ -14,6 +14,9 @@ use App\utils\enums\StatusIzinEnum as Status;
 use App\utils\enums\StatusIzinProgressEnum as Progres;
 use App\utils\enums\SuratGroupsEnum;
 use Carbon\Carbon;
+use Illuminate\Pagination\CursorPaginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class PerizinanServiceImpl implements PerizinanService
@@ -56,6 +59,55 @@ class PerizinanServiceImpl implements PerizinanService
     public function find(int $id): ?Izin
     {
         return Izin::find($id);
+    }
+
+    public function get(
+        string $search = '',
+        array $filter_status = [],
+        array $filter_status_progress = [],
+        array $filter_keterangan = [],
+        string $filter_start_date = null,
+        string $filter_end_date = null,
+        string $sort = 'DESC',
+        ?int $limit = null,
+        string $order_by = 'created_at',
+        bool $paginate = false,
+        ?int $page = null
+    ): Collection|LengthAwarePaginator|CursorPaginator {
+        $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
+        $filter_end_date = Carbon::parse($filter_end_date)->addDay()->ToDateTimeString();
+
+        $semua_izin = Izin::whereHas('status_izin', function ($query) use ($filter_status, $filter_status_progress, $filter_keterangan) {
+            if (!empty($filter_status)) {
+                $query->whereIn('status_izin.nama', $filter_status);
+
+                if (!empty($filter_status_progress))
+                    $query->whereIn('progres', $filter_status_progress);
+
+                if (!empty($filter_keterangan))
+                    $query->whereIn('keterangan', $filter_keterangan);
+            }
+        })
+            ->where(function ($query) use ($search) {
+                $query->whereHas('jenis_perizinan', function ($jenis_perizinan) use ($search) {
+                    $jenis_perizinan->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($search) . '%']);
+                })->orWhereHas('pemohon', function ($pemohon) use ($search) {
+                    $pemohon->whereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%'])
+                        ->orWhere('nomor_id', 'LIKE', '%' . $search . '%');
+                });
+            })
+            ->whereBetween('izin.created_at', [$filter_start_date, $filter_end_date])
+            ->orderBy($order_by, $sort);
+
+        if ($paginate) {
+            $semua_izin = $semua_izin->paginate($limit, ['*'], 'page', $page);
+        } else {
+            if ($limit)
+                $semua_izin = $semua_izin->limit($limit);
+            $semua_izin = $semua_izin->get();
+        }
+
+        return $semua_izin;
     }
 
     public function getAll(
@@ -109,35 +161,7 @@ class PerizinanServiceImpl implements PerizinanService
         ?int $limit = null,
         string $order_by = 'created_at'
     ): array {
-        $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
-        $filter_end_date = Carbon::parse($filter_end_date)->addDay()->ToDateTimeString();
-
-        $semua_izin = Izin::whereHas('status_izin', function ($query) use ($filter_status, $filter_status_progress, $filter_keterangan) {
-                            if (!empty($filter_status)) {
-                                $query->whereIn('status_izin.nama', $filter_status);
-
-                                if (!empty($filter_status_progress))
-                                    $query->whereIn('progres', $filter_status_progress);
-
-                                if (!empty($filter_keterangan))
-                                    $query->whereIn('keterangan', $filter_keterangan);
-                            }
-                        })
-                        ->where(function ($query) use ($search) {
-                            $query->whereHas('jenis_perizinan', function ($jenis_perizinan) use ($search) {
-                                $jenis_perizinan->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($search) . '%']);
-                            })->orWhereHas('pemohon', function ($pemohon) use ($search) {
-                                $pemohon->whereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%'])
-                                    ->orWhere('nomor_id', 'LIKE', '%' . $search . '%');
-                            });
-                        })
-                        ->whereBetween('izin.created_at', [$filter_start_date, $filter_end_date])
-                        ->orderBy($order_by, $sort);
-        if ($limit)
-            $semua_izin = $semua_izin->limit($limit);
-        $semua_izin = $semua_izin->get();
-
-        return $semua_izin->all();
+        return $this->get($search, $filter_status, $filter_status_progress, $filter_keterangan, $filter_start_date, $filter_end_date, $sort, $limit, $order_by)->all();
     }
 
     public function getCount(array $status, array $progres, array $keterangan): int

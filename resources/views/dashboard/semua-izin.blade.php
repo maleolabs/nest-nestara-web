@@ -5,12 +5,5 @@
     </li>
 @endpush
 @section('main')
-    <div class="card">
-        <div class="card-header border-bottom">
-            <h6 class="card-title mb-0">Izin</h6>
-        </div>
-        <div class="card-body">
-
-        </div>
-    </div>
+    @livewire('dashboard.component.all-izin')
 @endsection

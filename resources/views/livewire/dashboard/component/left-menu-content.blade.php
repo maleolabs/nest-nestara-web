@@ -16,6 +16,6 @@
         </li>
     @endforeach
     <li class="nav-item px-3">
-        <button class="btn btn-light btn-sm text-capitalize w-100">Lihat semua</button>
+        <a href="{{ 'izin.index' }}" class="btn btn-light btn-sm text-capitalize w-100">Lihat semua</a>
     </li>
 </div>

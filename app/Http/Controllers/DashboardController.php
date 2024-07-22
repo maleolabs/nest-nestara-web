@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Services\AppService\EncryptionService;
 use App\Services\DomainServices\PerizinanService;
-use App\utils\enums\BackOfficeStatusEnum;
-use App\utils\enums\StatusIzinEnum;
-use App\utils\enums\StatusIzinProgressEnum;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 

@@ -7,7 +7,7 @@
             </button>
         </div>
         <ul class="sidebar-nav">
-            @role('pengelola_layanan')
+            @role(FRONT_OFFICE_ROLE)
                 <li class="nav-item ps-2 mb-3">
                     <img src="{{ asset('storage/web/layanan-icon.png') }}" width="35" height="35" class="img-fluid me-2">
                     <span class="text-sm">Layanan</span>
@@ -27,7 +27,7 @@
                         <span id="penyerahanCount" class="ms-auto badge rounded-pill bg-danger text-white">{{ countByProcess('penyerahan') }}</span>
                     </a>
                 </li>
-            @elserole('pegawai')
+            @elserole(BACK_OFFICE_ROLE)
                 <li class="nav-item ps-2 mb-3">
                     <img src="{{ asset('storage/web/employees.png') }}" width="35" height="35" class="img-fluid me-2">
                     <span class="text-sm">Back Office</span>

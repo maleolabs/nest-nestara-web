@@ -6,7 +6,6 @@ use App\Services\DomainServices\PegawaiService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SuratService;
 use App\utils\enums\BackOfficeStatusEnum;
-use Illuminate\Validation\ValidationException;
 
 trait TinjauanLapanganTrait
 {

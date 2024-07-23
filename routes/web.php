@@ -15,6 +15,16 @@ use App\Http\Controllers\User\PerizinanController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+$role_placeholder = '{}';
+$role_middleware = 'role:{}';
+$pegawai_role = FRONT_OFFICE_ROLE . '|' . BACK_OFFICE_ROLE . '|' . ADMIN_ROLE;
+
+$pemohonMiddleware = str_replace($role_placeholder, PEMOHON_ROLE, $role_middleware);
+$adminMiddleware = str_replace($role_placeholder, ADMIN_ROLE, $role_middleware);
+$frontOfcMiddleware = str_replace($role_placeholder, FRONT_OFFICE_ROLE, $role_middleware);
+$backOfcMiddleware = str_replace($role_placeholder, BACK_OFFICE_ROLE, $role_middleware);
+$pegawaiMiddleware = str_replace($role_placeholder, $pegawai_role, $role_middleware);
+
 Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
@@ -25,14 +35,14 @@ Route::get('/jenis-perizinan', [PerizinanController::class, 'jenisPerizinan'])->
 
 Route::get('/konfirmasi-izin/{izin_id}', [DashboardController::class, 'confirmIzin'])->name('confirm.izin');
 
-Route::middleware('auth')->group(function() {
-    Route::middleware(['role:pemohon'])->group(function() {
+Route::middleware('auth')->group(function() use ($pemohonMiddleware, $adminMiddleware, $frontOfcMiddleware, $backOfcMiddleware, $pegawaiMiddleware) {
+    Route::middleware([$pemohonMiddleware])->group(function() {
         Route::get('/buat-izin-baru', [PerizinanController::class, 'create'])->name('create-izin');
         Route::get('/izin-saya', [PerizinanController::class, 'semuaIzin'])->name('user.izin');
         Route::middleware(['revisi_izin', 'show_izin'])->get('/revisi-izin/{izin_id}', [PerizinanController::class, 'revisiIzin'])->name('user.revisi-izin');
     });
 
-    Route::middleware(['role:admin'])->group(function() {
+    Route::middleware([$adminMiddleware])->group(function() {
         Route::prefix('admin')->group(function () {
             Route::get('/dashboard', [DashController::class, 'index'])->name('admin.dashboard');
             
@@ -59,7 +69,7 @@ Route::middleware('auth')->group(function() {
         });
     });
 
-    Route::middleware(['role:pengelola_layanan'])->group(function() {
+    Route::middleware([$frontOfcMiddleware])->group(function() {
         Route::prefix('layanan')->group(function() {
             Route::get('/dashboard', [LayananDashboardController::class, 'index'])->name('layanan.dashboard');
             Route::get('/pendaftaran', [LayananDashboardController::class, 'pendaftaran'])->name('layanan.pendaftaran');
@@ -68,7 +78,7 @@ Route::middleware('auth')->group(function() {
         });
     });
 
-    Route::middleware(['role:pegawai'])->group(function() {
+    Route::middleware([$backOfcMiddleware])->group(function() {
         Route::prefix('/back-office')->group(function() {
             Route::get('/dashboard', [BackOfficeDashboardController::class, 'index'])->name('pegawai.dashboard');
             Route::get('/pendataan', [BackOfficeDashboardController::class, 'pendataan'])->name('pegawai.pendataan');
@@ -83,7 +93,7 @@ Route::middleware('auth')->group(function() {
         Route::get('/dashboard', function() { return 'dashboard'; })->name('dashboard');
     });
 
-    Route::middleware(['role:admin|pengelola_layanan|pegawai'])->group(function() {
+    Route::middleware([$pegawaiMiddleware])->group(function() {
         Route::get('/semua-izin', [DashboardController::class, 'semuaIzin'])->name('izin.index');
         Route::get('/izin/preview/{izin_id}', [DashboardController::class, 'previewIzin'])->name('preview-izin');
         Route::get('/izin/count/{process}', [DashboardController::class, 'getCountByProcess'])->name('izin.count');

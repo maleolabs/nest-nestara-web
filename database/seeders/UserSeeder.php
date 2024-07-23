@@ -29,7 +29,7 @@ class UserSeeder extends Seeder
         $pengelola_layanan_foto = ImageGenerator::letterImage(substr($pengelola_layanan_name, 0, 1), 'public/users');
         $pengelola_layanan = User::create([
             'name' => $pengelola_layanan_name,
-            'email' => 'pengelola@pmptsp.com',
+            'email' => 'pegawai1@pmptsp.com',
             'password' => Hash::make('password'),
             'foto' => $pengelola_layanan_foto
         ]);
@@ -42,7 +42,7 @@ class UserSeeder extends Seeder
         $pegawai_foto = ImageGenerator::letterImage(substr($pegawai_name, 0, 1), 'public/users');
         $pegawai = User::create([
             'name' => $pegawai_name,
-            'email' => 'pegawai@pmptsp.com',
+            'email' => 'pegawai2@pmptsp.com',
             'password' => Hash::make('password'),
             'foto' => $pegawai_foto
         ]);
@@ -61,16 +61,19 @@ class UserSeeder extends Seeder
         ]);
         
         $admin_role = Role::create([
-            'name' => 'admin',
+            'name' => ADMIN_ROLE,
+        ]);
+        $kabid_role = Role::create([
+            'name' => KABID_ROLE
         ]);
         $pengelola_layanan_role = Role::create([
-            'name' => 'pengelola_layanan',
+            'name' => FRONT_OFFICE_ROLE,
         ]);
         $pegawai_role = Role::create([
-            'name' => 'pegawai',
+            'name' => BACK_OFFICE_ROLE,
         ]);
         $pemohon_role = Role::create([
-            'name' => 'pemohon',
+            'name' => PEMOHON_ROLE,
         ]);
 
         $admin->assignRole($admin_role);

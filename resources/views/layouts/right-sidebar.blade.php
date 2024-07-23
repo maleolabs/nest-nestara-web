@@ -14,7 +14,7 @@
         </div>
         <ul class="sidebar-nav">
             <li class="nav-item">
-                @unlessrole('pemohon')
+                @unlessrole(PEMOHON_ROLE)
                     <a href="{{ route('dashboard') }}" class="nav-link{{ str_contains(Route::currentRouteName(), 'dashboard') ? ' active' : '' }}">
                         <i class="fa-solid fa-table-columns"></i>
                         <span>Dashboard</span>

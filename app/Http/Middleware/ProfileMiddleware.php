@@ -20,13 +20,13 @@ class ProfileMiddleware
         $auth_user = auth()->user();
         $auth_user_role = $auth_user->getRoleNames()[0];
         switch ($auth_user_role) {
-            case 'admin':
+            case ADMIN_ROLE:
                 return $current_route == 'profile.admin' ? $next($request) : redirect()->route('profile.admin');
-            case 'pengelola_layanan':
+            case FRONT_OFFICE_ROLE:
                 return $current_route == 'profile.pengelola_layanan' ? $next($request) : redirect()->route('profile.pengelola_layanan');
-            case 'pegawai':
+            case BACK_OFFICE_ROLE:
                 return $current_route == 'profile.pegawai' ? $next($request) : redirect()->route('profile.pegawai');
-            case 'pemohon':
+            case PEMOHON_ROLE:
                 return $current_route == 'profile.pemohon' ? $next($request) : redirect()->route('profile.pemohon');
             default:
                 abort(403);

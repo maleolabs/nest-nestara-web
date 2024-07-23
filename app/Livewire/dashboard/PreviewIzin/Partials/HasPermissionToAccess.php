@@ -2,7 +2,6 @@
 
 namespace App\Livewire\Dashboard\PreviewIzin\Partials;
 
-use App\Models\StatusIzin;
 use App\utils\enums\PreviewFeatureEnum;
 use App\utils\enums\StatusIzinEnum;
 
@@ -33,10 +32,10 @@ trait HasPermissionToAccess
             return false;
         }
         $user = auth()->user();
-        if ($user->hasRole('pengelola_layanan') && !in_array($this->last_izin_status->nama, $this->statusIzinPermitted('pengelola_layanan'))) {
+        if ($user->hasRole(FRONT_OFFICE_ROLE) && !in_array($this->last_izin_status->nama, $this->statusIzinPermitted(FRONT_OFFICE_ROLE))) {
             $this->permission_message = 'Permohonan izin ini sedang diproses oleh back office, silahkan menunggu proses selesai.';
             return false;
-        } else if ($user->hasRole('pegawai') && !in_array($this->last_izin_status->nama, $this->statusIzinPermitted('pegawai'))) {
+        } else if ($user->hasRole(BACK_OFFICE_ROLE) && !in_array($this->last_izin_status->nama, $this->statusIzinPermitted(BACK_OFFICE_ROLE))) {
             $this->permission_message = 'Anda sudah tidak boleh mengubah data permohonan ini.';
         }
         return true;
@@ -50,31 +49,31 @@ trait HasPermissionToAccess
     private function rolesFeatures(): array
     {
         return [
-            'pengelola_layanan' => [
+            FRONT_OFFICE_ROLE => [
                 PreviewFeatureEnum::TINJAUAN_PERMOHONAN
             ],
-            'pegawai' => [
+            BACK_OFFICE_ROLE => [
                 PreviewFeatureEnum::ENTRI_DATA,
                 PreviewFeatureEnum::TINJAUAN_LAPANGAN
             ],
-            'admin' => PreviewFeatureEnum::all()
+            ADMIN_ROLE => PreviewFeatureEnum::all()
         ];
     }
 
     private function statusIzinPermitted($role): array
     {
         switch ($role) {
-            case 'pengelola_layanan':
+            case FRONT_OFFICE_ROLE:
                 return [
                     StatusIzinEnum::DIDAFTARKAN,
                     StatusIzinEnum::DITINJAU,
                     StatusIzinEnum::REVISI_PERSYARATAN,
                 ];
-            case 'pegawai':
+            case BACK_OFFICE_ROLE:
                 return [
                     StatusIzinEnum::PROSES
                 ];
-            case 'admin':
+            case ADMIN_ROLE:
                 return StatusIzinEnum::all();
         }
     }

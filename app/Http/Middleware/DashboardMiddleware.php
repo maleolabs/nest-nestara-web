@@ -17,11 +17,11 @@ class DashboardMiddleware
     {
         $auth_role = auth()->user()->getRoleNames()[0];
         switch ($auth_role) {
-            case 'admin':
+            case ADMIN_ROLE:
                 return redirect()->route('admin.dashboard');
-            case 'pengelola_layanan':
+            case FRONT_OFFICE_ROLE:
                 return redirect()->route('layanan.dashboard');
-            case 'pegawai':
+            case BACK_OFFICE_ROLE:
                 return redirect()->route('pegawai.dashboard');
             default:
                 abort(403, "You don't have permission to access this url");

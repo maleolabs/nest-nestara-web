@@ -82,7 +82,7 @@
                                 </div>
                             </div>
                         @endif
-                        @role('pengelola_layanan')
+                        @role(FRONT_OFFICE_ROLE)
                             @if ($preview_izin->lokasi_izin === null || $last_izin_status->nama == App\utils\enums\StatusIzinEnum::REVISI_PERSYARATAN)
                                 <div class="mt-4">
                                     <ul class="nav nav-tabs nav-tabs-bordered">
@@ -183,7 +183,7 @@
                     </div>
                 @endif
 
-                @role('pegawai')
+                @role(BACK_OFFICE_ROLE)
                     <div class="col-12">
                         @if ($this->hasEntriDataForm())
                             @if ($this->isFormNotReady())

@@ -1,6 +1,10 @@
 /.phpunit.cache
 /node_modules
 /public/storage
+/storage/app/livewire-tmp
+/storage/app/private_files/dokumen_persyaratan_izin
+/storage/app/public/dokumen_persyaratan
+/storage/app/public/users
 /vendor
 .env
 .env.backup

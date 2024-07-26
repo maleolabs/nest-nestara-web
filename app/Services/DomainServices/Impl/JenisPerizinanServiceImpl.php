@@ -6,6 +6,7 @@ use App\Models\JenisPerizinan;
 use App\Services\AppService\PdfTemplateService;
 use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PengaturanService;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class JenisPerizinanServiceImpl implements JenisPerizinanService 
 {
@@ -75,6 +76,12 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
         return $jenis_perizinan->all();
     }
 
+    public function getPaginateAll(int $page = 1, int $count = 10, string $sorting_by = 'created_at', $sort = 'DESC'): LengthAwarePaginator
+    {
+        return JenisPerizinan::orderBy($sorting_by, $sort)
+                ->paginate($count, ['*'], 'page', $page);
+    }
+
     public function getPersyaratan(int $jenis_id): array
     {
         $perizinan = JenisPerizinan::find($jenis_id);
@@ -96,6 +103,27 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
         return $perizinan->syarat_izin()->with('dokumen_pemohon', function ($dokumen_pemohon) use ($pemohon_id) {
             $dokumen_pemohon->where('pemohon_id', $pemohon_id);
         })->get();
+    }
+
+    public function getIdsWhereTemplateExists(): array
+    {
+        $ids = [];
+
+        $perizinan = JenisPerizinan::select('id', 'template_folder')->pluck('template_folder', 'id');
+
+        foreach ($perizinan as $id => $folder) {
+            $savedTemplate = $this->pengaturanService->findByNamaAndGroup("TEMPLATE-SURAT-{$id}", 'surat-template');
+
+            if (!$savedTemplate) continue;
+
+            $template_path = "{$folder}\\{$savedTemplate->value}";
+            $template_path = resource_path('views\\' . $template_path);
+
+            if (is_readable($template_path) && filesize($template_path) > 0)
+                $ids[] = $id;
+        }
+
+        return $ids;
     }
 
     public function hasEntriDataForm(?int $jenis_perizinan_id = null): bool

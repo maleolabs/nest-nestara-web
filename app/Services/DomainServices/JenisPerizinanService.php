@@ -3,6 +3,7 @@
 namespace App\Services\DomainServices;
 
 use App\Models\JenisPerizinan;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface JenisPerizinanService {
 
@@ -46,6 +47,18 @@ interface JenisPerizinanService {
     function getAll(string $sorting_by = 'created_at', string $sort = 'DESC'): array;
 
     /**
+     * Mengambil semua jenis perizinan dengan paginate
+     * 
+     * @param int $page Halaman yang akan diambil datanya. Default pada halaman pertama (1)
+     * @param int $count Jumlah data yang akan diambil. Default sebanyak 20 data
+     * @param string $sorting_by Kolom untuk mengurutkan hasil. Default ke 'created_at'
+     * @param string $sort Arah pengurutan, baik 'ASC' atau 'DESC'. Default ke 'DESC'
+     * 
+     * @return Illuminate\Pagination\LengthAwarePaginator
+     */
+    function getPaginateAll(int $page = 1, int $count = 10, string $sorting_by = 'created_at', $sort = 'DESC'): LengthAwarePaginator;
+
+    /**
      * Mendapatkan daftar persyaratan berdasarkan id jenis perizinan
      * @param int $jenis_id
      * @return array
@@ -59,6 +72,13 @@ interface JenisPerizinanService {
      * @return array
      */
     function getPersyaratanByJenisAndPemohon(int $jenis_id, int $pemohon_id): array;
+
+    /**
+     * Mengambil semua ID jenis perizinan yang memiliki template surat
+     * 
+     * @return array Semua ID
+     */
+    function getIdsWhereTemplateExists(): array;
 
     /**
      * Memeriksa apakah formulir entir data untuk jenis perizinan yang ditentukan ada.

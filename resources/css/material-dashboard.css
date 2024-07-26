@@ -4071,13 +4071,15 @@ textarea.form-control-lg {
   display: inline-block;
   padding: 0.55em 0.9em;
   font-size: 0.75em;
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1;
   color: #fff;
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
-  border-radius: 0.45rem; }
+  border-radius: 0.45rem; 
+  font-family: "Poppins" !important;
+}
   .badge:empty {
     display: none; }
 

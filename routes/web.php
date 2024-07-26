@@ -10,6 +10,8 @@ use App\Http\Controllers\Helper\FileController;
 use App\Http\Controllers\Layanan\DashboardController as LayananDashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\PerizinanController;
+use App\Livewire\Admin\JenisPerizinan\PerizinanIndex;
+use App\Models\JenisPerizinan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -45,6 +47,8 @@ Route::middleware('auth')->group(function() use ($pemohonMiddleware, $adminMiddl
             Route::get('/dashboard', [DashController::class, 'index'])->name('admin.dashboard');
 
             Route::get('/jenis-perizinan', [JenisPerizinanController::class, 'index'])->name('admin.jenis-perizinan.index');
+            Route::get('/load-data-perizinan', [JenisPerizinanController::class, 'loadDataPerizinan'])->name('load-data-perizinan');
+            Route::get('/jenis-perizinan/show/{id}', PerizinanIndex::class)->name('admin.jenis-perizinan.show');
         
             Route::prefix('/pemantauan')->group(function() {
                 Route::get('/', [PemantauanController::class, 'index'])->name('admin.pemantauan.index');

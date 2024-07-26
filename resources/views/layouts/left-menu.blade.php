@@ -54,8 +54,49 @@
                         <span id="penetapanCount" class="ms-auto badge rounded-pill bg-danger text-white">{{ countByProcess('penetapan') }}</span>
                     </a>
                 </li>
+            @elserole(ADMIN_ROLE)
+                <div class="nav-divider mt-3 mb-2">Menu</div>
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::currentRouteName() == 'admin.dashboard' ? 'active' : '  ' }}" href="{{ route('admin.dashboard') }}">
+                        <i class="fa-solid fa-table-columns"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ Str::contains(Route::currentRouteName(), 'jenis-perizinan') ? 'active' : '' }}" href="{{ route('admin.jenis-perizinan.index') }}">
+                        <i class="fa-solid fa-file-invoice"></i>
+                        <span>Jenis Perizinan</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::currentRouteName() == 'admin.pemantauan.index' ? 'active' : '' }}" href="{{ route('admin.pemantauan.index') }}">
+                        <i class="fa-solid fa-chart-simple"></i>
+                        <span>Pemantauan</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ Route::currentRouteName() == 'admin.reporting.index' ? 'active' : '' }}" href="{{ route('admin.reporting.index') }}">
+                        <i class="fa-solid fa-file-lines"></i>
+                        <span>Reporting</span>
+                    </a>
+                </li>
+                <div class="nav-divider mt-3 mb-2">Konfigurasi</div>
+                <li class="nav-item">
+                    <a class="nav-link {{ '' }}" href="#">
+                        <i class="fa-solid fa-network-wired"></i>
+                        <span>API</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ '' }}" href="#">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Pengaturan</span>
+                    </a>
+                </li>
             @endrole
-            @livewire('dashboard.component.left-menu-content')
+            @hasanyrole([FRONT_OFFICE_ROLE, BACK_OFFICE_ROLE])
+                @livewire('dashboard.component.left-menu-content')
+            @endhasanyrole
         </ul>
     </aside>
 </div>

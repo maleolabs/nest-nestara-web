@@ -10,7 +10,7 @@ class JenisPerizinanController extends Controller
     
     public function index()
     {
-        return response()->view('admin.index');
+        return response()->view('admin.perizinan.index');
     }
     
 }

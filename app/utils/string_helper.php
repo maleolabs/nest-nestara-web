@@ -127,3 +127,10 @@ if (!function_exists('encrypt_id')) {
         return app(EncryptionService::class)->encryptId($id);
     }
 }
+
+if (!function_exists('decrypt_id')) {
+    function decrypt_id($id): string
+    {
+        return app(EncryptionService::class)->decryptId($id);
+    }
+}

@@ -1,7 +1,8 @@
 @extends('dashboard.app')
+@push('nav-content-width')w-50 @endpush
 @push('breadcrumb-item')
     <li class="breadcrumb-item">
-        <a href="{{ route('admin.dashboard') }}">Jenis Perizinan</a>
+        Jenis Perizinan
     </li>
 @endpush
 @push('nav-dashboard-content')

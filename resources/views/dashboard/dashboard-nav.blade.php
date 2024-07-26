@@ -27,7 +27,7 @@
                 </ol>
             </nav>
         </div>
-        <div class="d-flex align-items-center flex-wrap gap-3 w-50 justify-content-end">
+        <div class="d-flex align-items-center flex-wrap gap-3 @stack('nav-content-width') justify-content-end">
             @stack('nav-dashboard-content')
             <a href="javascript:;" class="sidebar-btn-show position-relative">
                 <img src="{{ asset('storage/users/' . auth()->user()->foto) }}" alt="" class="profile-img">

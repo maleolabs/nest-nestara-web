@@ -44,17 +44,20 @@ class JenisPerizinanController extends Controller
 
             $id = encrypt_id($item->id);
             $show_url = route('admin.jenis-perizinan.show', ['id' => $id]);
+
+            $nama = Str::limit(str_capitalize($item->nama, true), 50);
+
             $data_html[] = <<<HTML
                 <div class="col-md-3 col-sm-4 mb-4 d-flex align-items-stretch">
                     <div class="card mb-0 min-vh-30 w-100">
                         <div class="card-body">
                             <h6 class="mb-1 text-bold">
-                                <a href="{$show_url}" class="text-decoration-underline">{$item->nama}</a>
+                                <a href="{$show_url}" class="text-decoration-underline">{$nama}</a>
                             </h6>
                             <div class="d-flex gap-2 align-items-center flex-wrap">
                                 <span class="badge bg-light border rounded-pill text-dark text-capitalize">{$item->kelompok_izin}</span>
-                                <span class="badge bg-light border rounded-pill text-dark text-capitalize">{$item->masa_berlaku}</span>
-                                <span class="badge bg-light border rounded-pill text-dark text-capitalize">{$item->durasi}</span>
+                                <span class="badge bg-light border rounded-pill text-dark text-capitalize">Berlaku {$item->masa_berlaku}</span>
+                                <span class="badge bg-light border rounded-pill text-dark text-capitalize">Durasi {$item->durasi}</span>
                                 <span class="badge {$avBg} border rounded-pill {$avTxt} text-capitalize">{$avMs}</span>
                             </div>
                         </div>

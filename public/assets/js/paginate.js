@@ -1,9 +1,13 @@
 $(document).ready(function() {
     const dataContainer = $('#data-perizinan-container')
+    const loadingEl = $('#loading-message')
+    const filterBtn = $('#filterBtn')
+    const url = dataContainer.data('load-url')
+    const dataRow = dataContainer.children('.row').eq(0)
 
     var page = 1
+    var filter = 'semua'
     var loading = false
-    var loadingEl = $('#loading-message')
 
     const documentHeigth = $(window).height()
     const documentWidth = $(window).width()
@@ -17,15 +21,13 @@ $(document).ready(function() {
         if (loading || !dataContainer) return
         showLoading()
 
-        const url = dataContainer.data('load-url')
-        const dataRow = dataContainer.children('.row').eq(0)
-
         $.ajax({
             url: url,
             type: 'GET',
             data: { 
                 page: page,
-                count: loadingCount
+                count: loadingCount,
+                filter: filter
              },
             success: function (response) {
                 if (response.length > 0) {
@@ -72,6 +74,26 @@ $(document).ready(function() {
         if ($(window).scrollTop() + $(window).height() == $(document).height()) {
             loadMoreData()
         }
+    })
+
+    function filterData(filterData) {
+        filter = filterData
+        filterText = filter.replace("_", " ")
+        filterHtml = `${filterText} <i class="fa-solid fa-filter ms-2 text-xs"></i>`
+        filterBtn.html(filterHtml)
+        dataRow.empty()
+        page = 1
+        loadMoreData()
+    }
+
+    $('#filterAll').on('click', function() {
+        filterData('semua')
+    })
+    $('#filterAvailable').on('click', function() {
+        filterData('tersedia')
+    })
+    $('#filterNotAvailable').on('click', function() {
+        filterData('tidak_tersedia')
     })
 
     loadMoreData()

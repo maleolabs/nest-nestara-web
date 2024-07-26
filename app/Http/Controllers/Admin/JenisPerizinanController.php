@@ -23,8 +23,9 @@ class JenisPerizinanController extends Controller
 
     public function loadDataPerizinan(Request $request)
     {
+        $filter = $request->input('filter', 'semua');
         $page = $request->input('page', 1);
-        $perPage = $request->input('count', 20);
+        $perPage = $filter == 'semua' ? $request->input('count', 20) : 180;
 
         $data = $this->jenisPerizinanService->getPaginateAll($page, $perPage);
         $idsAvailabele = $this->jenisPerizinanService->getIdsWhereTemplateExists();
@@ -32,6 +33,10 @@ class JenisPerizinanController extends Controller
         $data_html = [];
         foreach ($data as $item) {
             $available = in_array($item->id, $idsAvailabele);
+
+            if ($filter == 'tersedia' && !$available) continue;
+            else if ($filter == 'tidak_tersedia' && $available) continue;
+
             $avTxt = $available ? 'text-primary' : 'text-danger';
             $avBg = $available ? 'bg-app-primary-light': 'bg-danger-light';
             $avMs = $available ? 'tersedia' : 'tidak tersedia';

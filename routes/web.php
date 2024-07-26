@@ -47,7 +47,8 @@ Route::middleware('auth')->group(function() use ($pemohonMiddleware, $adminMiddl
             Route::get('/dashboard', [DashController::class, 'index'])->name('admin.dashboard');
 
             Route::get('/jenis-perizinan', [JenisPerizinanController::class, 'index'])->name('admin.jenis-perizinan.index');
-            Route::get('/load-data-perizinan', [JenisPerizinanController::class, 'loadDataPerizinan'])->name('load-data-perizinan');
+            Route::get('/load-data-perizinan', [JenisPerizinanController::class, 'loadDataPerizinan'])->name('admin.jenis-perizinan.load-data');
+            Route::get('/search', [JenisPerizinanController::class, 'searchJenisPerizinan'])->name('admin.jenis-perizinan.search-data');
             Route::get('/jenis-perizinan/show/{id}', PerizinanIndex::class)->name('admin.jenis-perizinan.show');
         
             Route::prefix('/pemantauan')->group(function() {

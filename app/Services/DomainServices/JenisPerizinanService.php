@@ -59,6 +59,15 @@ interface JenisPerizinanService {
     function getPaginateAll(int $page = 1, int $count = 10, string $sorting_by = 'created_at', $sort = 'DESC'): LengthAwarePaginator;
 
     /**
+     * Mencari jenis perizinan berdasarkan nama
+     * 
+     * @param string $nama Nama dari jenis perizinan yang akan dicari
+     * @param int|null $limit Batas jumlah data yang akan diambil
+     * @return array Semua nama yang mirip dari nama jenis perizinan yang dicari
+     */
+    function searchByName(string $nama, ?int $limit = null): array;
+
+    /**
      * Mendapatkan daftar persyaratan berdasarkan id jenis perizinan
      * @param int $jenis_id
      * @return array

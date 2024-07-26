@@ -4,10 +4,15 @@ $(document).ready(function() {
     const filterBtn = $('#filterBtn')
     const url = dataContainer.data('load-url')
     const dataRow = dataContainer.children('.row').eq(0)
+    
+    const searchInput = $('#searchInput')
+    const searchPreview = $('#searchPreview')
+    const searchUrl = searchInput.data('search-url')
 
     var page = 1
     var filter = 'semua'
     var loading = false
+    var searchLoading = false
 
     const documentHeigth = $(window).height()
     const documentWidth = $(window).width()
@@ -97,4 +102,55 @@ $(document).ready(function() {
     })
 
     loadMoreData()
+
+    $(document).on('click', function (event) {
+        if (!searchPreview.is(event.target) && searchPreview.has(event.target).length === 0) {
+            searchPreview.addClass('d-none')
+        }
+    })
+
+    searchInput.on('input', function () {
+        var value = $(this).val()
+        if (value.trim() !== '') {
+            showSearchLoading()
+            searchData(value)
+        } else {
+            searchPreview.addClass('d-none')
+        }
+    })
+
+    function showSearchLoading() {
+        if (searchLoading) return
+        searchPreview.removeClass('d-none')
+        searchPreview.addClass('d-flex flex-column align-items-center justify-content-center vh-30 p-3')
+
+        const searchLoadingEl = `<div class="spinner-border text-secondary" role="status"></div>`
+        searchPreview.html(searchLoadingEl)
+    }
+
+    function searchData(query) {
+        searchLoading = true
+        $.ajax({
+            url: searchUrl,
+            type: 'GET',
+            data: { q: query },
+            success: function (response) {
+                if (response.length > 0) {
+                    searchPreview.removeClass('d-flex d-none flex-column align-items-center justify-content-center vh-30')
+                    searchPreview.empty()
+                    searchPreview.append(response)
+                } else {
+                    searchPreview.addClass('d-flex flex-column align-items-center justify-content-center vh-30 p-3')
+                    var emptyMessage = `<i class="fa-solid fa-circle-xmark text-danger mb-3"></i>
+                                        <p class="text-sm mb-0 text-center">Tidak ada jenis perizinan dengan nama '${query}'</p>`
+                    searchPreview.html(emptyMessage)
+                }
+                searchLoading = false
+            },
+            error: function (err) {
+                searchPreview.addClass('d-none')
+                searchLoading = false
+            }
+        })
+    }
 })

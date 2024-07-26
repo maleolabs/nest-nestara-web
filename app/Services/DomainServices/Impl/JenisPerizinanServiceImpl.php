@@ -82,6 +82,15 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
                 ->paginate($count, ['*'], 'page', $page);
     }
 
+    public function searchByName(string $nama, ?int $limit = null): array
+    {
+        $perizinan = JenisPerizinan::select('id', 'nama')->where('nama', 'like', '%' . $nama . '%');
+        if ($limit)
+            $perizinan = $perizinan->limit($limit);
+        $perizinan = $perizinan->get();
+        return $perizinan->all();
+    }
+
     public function getPersyaratan(int $jenis_id): array
     {
         $perizinan = JenisPerizinan::find($jenis_id);

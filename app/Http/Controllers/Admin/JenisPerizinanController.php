@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Services\DomainServices\JenisPerizinanService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class JenisPerizinanController extends Controller
 {
@@ -63,6 +64,36 @@ class JenisPerizinanController extends Controller
         }
 
         return response()->json($data_html);
+    }
+
+    public function searchJenisPerizinan(Request $request)
+    {
+        $q = $request->input('q', '');
+        $result = $this->jenisPerizinanService->searchByName($q, 10);
+        $idsAvailabele = $this->jenisPerizinanService->getIdsWhereTemplateExists();
+        
+        $data = [];
+
+        foreach ($result as $item) {
+            $id = encrypt_id($item->id);
+            $show_url = route('admin.jenis-perizinan.show', ['id' => $id]);
+            $nama = Str::limit(str_capitalize($item->nama, true), 50);
+
+            $available = in_array($item->id, $idsAvailabele);
+
+            $avTxt = $available ? 'text-primary' : 'text-danger';
+            $avBg = $available ? 'bg-app-primary-light': 'bg-danger-light';
+            $avMs = $available ? 'tersedia' : 'tidak tersedia';
+
+            $data[] = <<<HTML
+                <a href="{$show_url}" class="btn-edit text-bold pm-2 border-bottom mb-2 d-block">
+                    {$nama}
+                    <span class="badge {$avBg} {$avTxt} rounded-pill border ms-2 text-capitalize mb-2">{$avMs}</span>
+                </a>
+            HTML;
+        }
+
+        return response()->json($data);
     }
     
 }

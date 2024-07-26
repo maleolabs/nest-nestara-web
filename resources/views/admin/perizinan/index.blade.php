@@ -1,4 +1,4 @@
 @extends('admin.layouts.dashboard-app')
 @section('main')
-    <h1>Penyerahan</h1>
+    <h1>dasboard</h1>
 @endsection

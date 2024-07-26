@@ -19,23 +19,9 @@
                 </a>
             </li>
             <li class="nav-item-grid">
-                <a class="nav-link-grid {{ Str::contains(Route::currentRouteName(), 'pendaftaran') ? 'active' : '' }}" href="{{ route('admin.pendaftaran.index') }}">
-                    <i class="fa-solid fa-clipboard position-relative">
-                        <span class="position-absolute top-0 start-100 translate-middle badge bg-gradient-danger text-white rounded-circle p-2 text-xs opacity-100"></span>
-                    </i>
-                    <span>Pendaftaran</span>
-                </a>
-            </li>
-            <li class="nav-item-grid">
-                <a class="nav-link-grid {{ Route::currentRouteName() == 'admin.back-office.index' ? 'active' : '' }}" href="{{ route('admin.back-office.index') }}">
-                    <i class="fa-solid fa-computer"></i>
-                    <span>Back Office</span>
-                </a>
-            </li>
-            <li class="nav-item-grid">
-                <a class="nav-link-grid {{ Route::currentRouteName() == 'admin.penyerahan.index' ? 'active' : '' }}" href="{{ route('admin.penyerahan.index') }}">
-                    <i class="fa-solid fa-file-circle-check"></i>
-                    <span>Penyerahan Izin</span>
+                <a class="nav-link-grid {{ Str::contains(Route::currentRouteName(), 'jenis-perizinan') ? 'active' : '' }}" href="{{ route('admin.jenis-perizinan.index') }}">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span>Jenis Perizinan</span>
                 </a>
             </li>
             <li class="nav-item-grid">

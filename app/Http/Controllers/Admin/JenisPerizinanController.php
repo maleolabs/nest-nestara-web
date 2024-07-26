@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class BackOfficeController extends Controller
+class JenisPerizinanController extends Controller
 {
     
     public function index()
     {
-        return response()->view('admin.back-office.index');
+        return response()->view('admin.index');
     }
-
+    
 }

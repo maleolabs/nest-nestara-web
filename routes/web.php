@@ -1,10 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\BackOfficeController;
 use App\Http\Controllers\Admin\DashController;
+use App\Http\Controllers\Admin\JenisPerizinanController;
 use App\Http\Controllers\Admin\PemantauanController;
-use App\Http\Controllers\Admin\PendaftaranController;
-use App\Http\Controllers\Admin\PenyerahanController;
 use App\Http\Controllers\Admin\ReportingController;
 use App\Http\Controllers\BackOffice\DashboardController as BackOfficeDashboardController;
 use App\Http\Controllers\DashboardController;
@@ -45,19 +43,8 @@ Route::middleware('auth')->group(function() use ($pemohonMiddleware, $adminMiddl
     Route::middleware([$adminMiddleware])->group(function() {
         Route::prefix('admin')->group(function () {
             Route::get('/dashboard', [DashController::class, 'index'])->name('admin.dashboard');
-            
-            Route::prefix('/pendaftaran')->group(function() {
-                Route::get('/', [PendaftaranController::class, 'index'])->name('admin.pendaftaran.index');
-                Route::get('/create', [PendaftaranController::class, 'create'])->name('admin.pendaftaran.create');
-            });
 
-            Route::prefix('/back-office')->group(function() {
-                Route::get('/', [BackOfficeController::class, 'index'])->name('admin.back-office.index');
-            });
-        
-            Route::prefix('/penyerahan-izin')->group(function() {
-                Route::get('/', [PenyerahanController::class, 'index'])->name('admin.penyerahan.index');
-            });
+            Route::get('/jenis-perizinan', [JenisPerizinanController::class, 'index'])->name('admin.jenis-perizinan.index');
         
             Route::prefix('/pemantauan')->group(function() {
                 Route::get('/', [PemantauanController::class, 'index'])->name('admin.pemantauan.index');

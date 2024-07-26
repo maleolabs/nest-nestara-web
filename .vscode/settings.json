@@ -1,5 +1,5 @@
 {
-    "workbench.colorTheme": "Dracula Theme",
+    "workbench.colorTheme": "Beautiful Dracula Darker",
 
     "plantuml.exportOutDir": "docs/diagrams/out",
     "plantuml.exportIncludeFolderHeirarchy": false,

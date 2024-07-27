@@ -16,6 +16,16 @@ interface JenisPerizinanService {
     function save(array $data): ?JenisPerizinan;
 
     /**
+     * Menyimpan data perizinan untuk field tertentu
+     * 
+     * @param int $id ID dari jenis perizinan yang akan disimpan
+     * @param string $field Nama field untuk disimpan
+     * @param string $value Value dari field untuk disimpan
+     * @return App\Models\JenisPerizinan Model yang sudah diupdate
+     */
+    function saveField(int $id, string $field, string $value): ?JenisPerizinan;
+
+    /**
      * Mencari data jenis perizinan berdasarkan id
      * @param int $id
      * @return JenisPerizinan|null

@@ -43,6 +43,16 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
         return $jenis_perizinan;
     }
 
+    public function saveField(int $id, string $field, string $value): ?JenisPerizinan
+    {
+        $perizinan = JenisPerizinan::find($id);
+        if (!$perizinan) return null;
+
+        $perizinan->update([$field => $value]);
+
+        return JenisPerizinan::find($id);
+    }
+
     public function find(int $id): ?JenisPerizinan
     {
         return JenisPerizinan::with('syarat_izin')->where('id', $id)->first();

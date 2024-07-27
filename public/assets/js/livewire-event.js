@@ -74,6 +74,16 @@ Livewire.hook('morph.updated', ({el, component}) => {
         document.querySelector('.modal-right').classList.remove('d-none')
         document.querySelector('.modal-right-content').style.right = '0'
     }
+
+    setTimeout(() => {
+        var messageSuccessTip = $('.message-success-tip')
+        console.log(messageSuccessTip);
+        if (messageSuccessTip) {
+            messageSuccessTip.each(function() {
+                this.remove()
+            })
+        }
+    }, 5000);
 })
 
 Livewire.on('component-rendered', ({el, component}) => {

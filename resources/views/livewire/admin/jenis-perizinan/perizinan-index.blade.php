@@ -155,14 +155,28 @@
             <button class="btn btn-sm mt-3 text-capitalize w-fit {{ count($new_syarat) == 0 ? 'disabled bg-gradient-light' : 'bg-gradient-primary' }}" wire:click='saveNewSyarat'>simpan</button>
         </div>
 
-        <p class="text-xs text-muted mb-3 pb-1 border-bottom mt-5">Pengaturan Perizinan</p>
+        <p class="text-xs text-muted mb-3 pb-1 border-bottom mt-5">Pengaturan Surat</p>
         <div class="row">
             <div class="col-3 mb-3">
                 <p class="fw-semibold mb-0 text-sm text-dark">Format Surat</p>
             </div>
             <div class="col-9 mb-3">
+                <p class="mb-0 text-sm fw-semibold text-dark">{{ $full_format_surat }}</p>
+            </div>
+            <div class="col-3 mb-3">
+                <p class="fw-semibold mb-0 text-sm text-dark">Format Jenis Surat</p>
+            </div>
+            <div class="col-9 mb-3">
                 <div class="input-group input-group-sm rounded-3 border w-fit">
-                    <input type="text" class="form-control border-0">
+                    <input type="text" class="form-control border-0" wire:model='format_surat'>
+                </div>
+            </div>
+            <div class="col-3 mb-3">
+                <p class="fw-semibold mb-0 text-sm text-dark">Nomor Terakhir Jenis Surat</p>
+            </div>
+            <div class="col-9 mb-3">
+                <div class="input-group input-group-sm rounded-3 border w-fit">
+                    <input type="number" class="form-control border-0" wire:model='nomor_jenis_surat'>
                 </div>
             </div>
             <div class="col-3">
@@ -170,10 +184,21 @@
             </div>
             <div class="col-9">
                 <div class="input-group input-group-sm border rounded-3 w-50">
-                    <select class="form-select border-0">
-
+                    <select class="form-select border-0" wire:model='selected_format_surat'>
+                        @foreach ($template_surat as $template)
+                            <option value="{{ $template }}">
+                                {{ $template }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
+                <p class="mb-0 text-xs fw-semibold mt-2">
+                    <span class="badge rounded-pill border bg-light text-capitalize text-dark">default</span>
+                    {{ $selected_template }}
+                    @if (!$can_use_template)
+                        <span class="ms-1 text-danger">(Template pdf ini tidak bisa digunakan)</span>
+                    @endif
+                </p>
             </div>
         </div>
 

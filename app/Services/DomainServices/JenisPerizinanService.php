@@ -93,11 +93,51 @@ interface JenisPerizinanService {
     function getPersyaratanByJenisAndPemohon(int $jenis_id, int $pemohon_id): array;
 
     /**
+     * Mendapatkan semua file template pdf berdasarkan ID dari jenis perizinan tertentu
+     * 
+     * @param int $jenis_id ID dari jenis perizinan yang akan diambil semua file template pdfnya
+     * @return array Semua file pdf
+     */
+    function getAllTemplateById(int $jenis_id): array;
+
+    /**
+     * Mengecek apakah template pdf bisa digunakan atau tidak berdasarkan ID dari jenis perizinan tertentu
+     * 
+     * @param int $jenis_id ID dari jenis perizinan yang akan dicek
+     * @return bool True jika template bisa digunakan, dan False jika template tidak bisa digunakan atau kosong.
+     */
+    function canUseTemplateById(int $jenis_id): bool;
+
+    /**
      * Mengambil semua ID jenis perizinan yang memiliki template surat
      * 
      * @return array Semua ID
      */
     function getIdsWhereTemplateExists(): array;
+
+    /**
+     * Mengambil format surat untuk jenis perizinan dengan ID tertentu
+     * 
+     * @param int $jenis_id ID dari jenis perizinan
+     * @return string|null Format surat atau null
+     */
+    function getJenisFormatSuratById(int $jenis_id): ?string;
+
+    /**
+     * Mengambil nomor surat untuk jenis perizinan dengan ID tertentu
+     * 
+     * @param int $jenis_id ID dari jenis perizinan
+     * @return int|null Nomor surat atau null
+     */
+    function getNomorSuratById(int $jenis_id): ?int;
+
+    /**
+     * Mengambil template surat untuk jenis perizinan dengan ID tertentu
+     * 
+     * @param int $jenis_id ID dari jenis perizinan
+     * @return string|null Template surat atau null
+     */
+    function getCurrentTemplateById(int $jenis_id): ?string;
 
     /**
      * Memeriksa apakah formulir entir data untuk jenis perizinan yang ditentukan ada.

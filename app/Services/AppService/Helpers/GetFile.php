@@ -34,5 +34,13 @@ interface GetFile
      * @return string|null Isi dari file, atau null jika file tidak dapat diambil.
      */
     function getFile(string $file_name): ?string;
+
+    /**
+     * Mengecek apakah file tidak kosong
+     * 
+     * @param string $file_name Nama file yang akan dicek.
+     * @return bool True jika file tidak kosong, dan False jika file kosong.
+     */
+    function isFileNotEmpty(string $file_name): bool;
     
 }

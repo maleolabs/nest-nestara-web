@@ -3,9 +3,11 @@
 namespace App\Services\DomainServices\Impl;
 
 use App\Models\JenisPerizinan;
+use App\Services\AppService\FileService;
 use App\Services\AppService\PdfTemplateService;
 use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PengaturanService;
+use App\utils\enums\SuratGroupsEnum;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class JenisPerizinanServiceImpl implements JenisPerizinanService 
@@ -15,12 +17,16 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
 
     protected PengaturanService $pengaturanService;
 
+    protected FileService $fileService;
+
     public function __construct(
         PdfTemplateService $pdfTemplateService,
-        PengaturanService $pengaturanService
+        PengaturanService $pengaturanService,
+        FileService $fileService
     ) {
         $this->pdfTemplateService = $pdfTemplateService;
         $this->pengaturanService = $pengaturanService;
+        $this->fileService = $fileService;
     }
 
     public function save(array $data): ?JenisPerizinan
@@ -69,7 +75,7 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
         if (!$jenis_perizinan)
             return null;
 
-        $savedTemplate = $this->pengaturanService->findByNamaAndGroup("TEMPLATE-SURAT-{$id}", 'surat-template');
+        $savedTemplate = $this->pengaturanService->findByNamaAndGroup("TEMPLATE-SURAT-{$id}", SuratGroupsEnum::SURAT_TEMPLATE_GROUP);
 
         if (!$savedTemplate)
             return null;
@@ -124,6 +130,37 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
         })->get();
     }
 
+    public function getAllTemplateById(int $jenis_id): array
+    {
+        $templates = [];
+
+        $perizinan = JenisPerizinan::find($jenis_id);
+        if (!$perizinan) return $templates;
+
+        $template_folder = $perizinan->template_folder;
+        $templates = $this->fileService->fileManager()
+                    ->getFile()
+                    ->folders($template_folder)
+                    ->getResourceFile()
+                    ->getFilesName();
+        return $templates;
+    }
+
+    public function canUseTemplateById(int $jenis_id): bool
+    {
+        $perizinan = JenisPerizinan::find($jenis_id);
+        if (!$perizinan) return false;
+
+        $savedTemplate = $this->pengaturanService->findByNamaAndGroup("TEMPLATE-SURAT-{$jenis_id}", 'surat-template');
+        if (!$savedTemplate) return false;
+
+        return $this->fileService->fileManager()
+                ->getFile()
+                ->folders($perizinan->template_folder)
+                ->getResourceFile()
+                ->isFileNotEmpty($savedTemplate->value);
+    }
+
     public function getIdsWhereTemplateExists(): array
     {
         $ids = [];
@@ -135,14 +172,47 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
 
             if (!$savedTemplate) continue;
 
-            $template_path = "{$folder}\\{$savedTemplate->value}";
-            $template_path = resource_path('views\\' . $template_path);
+            $file = $this->fileService->fileManager()
+                    ->getFile()
+                    ->folders($folder)
+                    ->getResourceFile()
+                    ->isFileNotEmpty($savedTemplate->value);
 
-            if (is_readable($template_path) && filesize($template_path) > 0)
+            if ($file)
                 $ids[] = $id;
         }
 
         return $ids;
+    }
+
+    public function getJenisFormatSuratById(int $jenis_id): ?string
+    {
+        $perizinan = JenisPerizinan::find($jenis_id);
+        if (!$perizinan) return null;
+
+        $nama_format = "JENIS-{$jenis_id}";
+        $format_surat = $this->pengaturanService->findByNamaAndGroup($nama_format, SuratGroupsEnum::JENIS_SURAT_GROUP);
+        return $format_surat->value ?? null;
+    }
+
+    public function getNomorSuratById(int $jenis_id): ?int
+    {
+        $perizinan = JenisPerizinan::find($jenis_id);
+        if (!$perizinan) return null;
+
+        $nama_nomor_surat = "NO-JENIS-{$jenis_id}";
+        $nomor_jenis_surat = $this->pengaturanService->findByNamaAndGroup($nama_nomor_surat, SuratGroupsEnum::JENIS_SURAT_GROUP);
+        return $nomor_jenis_surat->value ?? null;
+    }
+
+    public function getCurrentTemplateById(int $jenis_id): ?string
+    {
+        $perizinan = JenisPerizinan::find($jenis_id);
+        if (!$perizinan) return null;
+
+        $nama_template = "TEMPLATE-SURAT-{$jenis_id}";
+        $selected_template = $this->pengaturanService->findByNamaAndGroup($nama_template, SuratGroupsEnum::SURAT_TEMPLATE_GROUP);
+        return $selected_template->value ?? null;
     }
 
     public function hasEntriDataForm(?int $jenis_perizinan_id = null): bool

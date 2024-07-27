@@ -45,4 +45,10 @@ class GetLocalFile implements GetFile
         return File::get($file_path);
     }
 
+    public function isFileNotEmpty(string $file_name): bool
+    {
+        $file_path = "{$this->folders}\\$file_name";
+        return is_readable($file_path) && filesize($file_path) > 0;
+    }
+
 }

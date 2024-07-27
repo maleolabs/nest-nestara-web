@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\JenisPerizinan;
 
 use App\Livewire\Admin\JenisPerizinan\Partials\DetailForm;
+use App\Livewire\Admin\JenisPerizinan\Partials\PengaturanSurat;
 use App\Livewire\Admin\JenisPerizinan\Partials\PersyaratanForm;
 use App\Services\DomainServices\JenisPerizinanService;
 use Livewire\Attributes\Url;
@@ -10,7 +11,7 @@ use Livewire\Component;
 
 class PerizinanIndex extends Component
 {
-    use DetailForm, PersyaratanForm;
+    use DetailForm, PersyaratanForm, PengaturanSurat;
 
     #[Url()]
     public $id;
@@ -61,6 +62,7 @@ class PerizinanIndex extends Component
     {
         $this->setUpDetailForm();
         $this->setUpPersyaratanForm();
+        $this->setUpPengaturanSuratForm();
 
         return view('livewire.admin.jenis-perizinan.perizinan-index');
     }

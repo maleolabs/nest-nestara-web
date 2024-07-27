@@ -114,8 +114,9 @@
                     </div>
                 </div>
                 <div class="col-2 d-flex justify-content-center align-items-center">
-                    <button class="btn btn-sm btn-transparent btn-edit shadow-none" type="button">
-                        <i class="fa-solid fa-trash text-danger text-sm"></i>
+                    <button class="btn btn-sm btn-transparent btn-edit shadow-none" wire:click='deleteSyarat({{ $syarat->id }})' type="button">
+                        <i class="fa-solid fa-trash text-danger text-sm" wire:loading.remove wire:target='deleteSyarat({{ $syarat->id }})'></i>
+                        <span wire:loading wire:target='deleteSyarat({{ $syarat->id }})' class="fa-solid spinner-border spinner-border-sm"></span>
                     </button>
                 </div>
             </div>

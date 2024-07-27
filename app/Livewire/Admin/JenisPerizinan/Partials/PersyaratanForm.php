@@ -9,9 +9,7 @@ trait PersyaratanForm
 {
 
     public $tipe = [],
-        $tipe_old = [],
-        $pemasukan_berkas = [],
-        $pemasukan_berkas_old = [];
+        $pemasukan_berkas = [];
 
     protected function setUpPersyaratanForm()
     {
@@ -20,16 +18,6 @@ trait PersyaratanForm
         foreach ($this->preview_jenis->syarat_izin as $syarat) {
             $this->tipe[$syarat->id] = $syarat->tipe;
             $this->pemasukan_berkas[$syarat->id] = $syarat->online ? 'online' : 'offline';
-        }
-    }
-
-    protected function setUpOldPersyaratanForm()
-    {
-        if (!$this->preview_jenis) return;
-
-        foreach ($this->preview_jenis->syarat_izin as $syarat) {
-            $this->tipe_old[$syarat->id] = $syarat->tipe;
-            $this->pemasukan_berkas_old[$syarat->id] = $syarat->online ? 'online' : 'offline';
         }
     }
 
@@ -54,6 +42,11 @@ trait PersyaratanForm
 
         $value = $value == 'online' ?? false;
         $this->getSyaratIzinService()->saveField($syarat_id, 'online', $value);
+    }
+
+    public function deleteSyarat($syarat_id)
+    {
+
     }
 
     protected function getSyaratIzinService(): SyaratIzinService

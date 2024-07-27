@@ -24,7 +24,6 @@ class PerizinanIndex extends Component
         $this->preview_jenis = $this->getJenisPerizinanService()->find($this->preview_id);
 
         $this->setUpOldDetailForm();
-        $this->setUpOldPersyaratanForm();
     }
 
     public function updated($field)

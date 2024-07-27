@@ -21,7 +21,7 @@
             </div>
             <div class="col-9 mb-3 d-flex align-items-center">
                 <div class="input-group input-group-sm border rounded-3 w-50">
-                    <select class="form-select border-0" wire:model.live='detail_form.kelompok_izin'>
+                    <select class="form-select border-0" wire:model.lazy='detail_form.kelompok_izin'>
                         <option value="izin tanpa retribusi">Izin Tanpa Retribusi</option>
                         <option value="izin dengan retribusi">Izin Dengan Retribusi</option>
                     </select>
@@ -41,7 +41,7 @@
             </div>
             <div class="col-9 mb-3 d-flex gap-2 align-items-center">
                 <div class="input-group input-group-sm border rounded-3 w-fit">
-                    <input type="number" class="form-control border-0" wire:model.live='detail_form.durasi'>
+                    <input type="number" class="form-control border-0" wire:model.lazy='detail_form.durasi'>
                 </div>
                 <span class="text-sm">Hari</span>
                 <div class="ms-2">
@@ -59,7 +59,7 @@
             </div>
             <div class="col-9 d-flex gap-2 align-items-center">
                 <div class="input-group input-group-sm border rounded-3 w-fit">
-                    <input type="number" class="form-control border-0" wire:model.live='detail_form.masa_berlaku'>
+                    <input type="number" class="form-control border-0" wire:model.lazy='detail_form.masa_berlaku'>
                 </div>
                 <span class="text-sm">
                     Tahun
@@ -74,6 +74,11 @@
                         </span>
                     @endif
                 </div>
+            </div>
+            <div class="col-9 offset-3 mt-3">
+                <span class="text-xs">
+                    <i class="fa-solid fa-circle-info me-1"></i>
+                    untuk menyimpan tekan enter</span>
             </div>
         </div>
 
@@ -168,7 +173,7 @@
             </div>
             <div class="col-9 mb-3">
                 <div class="input-group input-group-sm rounded-3 border w-fit">
-                    <input type="text" class="form-control border-0" wire:model='format_surat'>
+                    <input type="text" class="form-control border-0" wire:model.lazy='format_surat'>
                 </div>
             </div>
             <div class="col-3 mb-3">
@@ -199,6 +204,11 @@
                         <span class="ms-1 text-danger">(Template pdf ini tidak bisa digunakan)</span>
                     @endif
                 </p>
+            </div>
+            <div class="col-9 offset-3 mt-3">
+                <span class="text-xs">
+                    <i class="fa-solid fa-circle-info me-1"></i>
+                    untuk menyimpan tekan enter</span>
             </div>
         </div>
 

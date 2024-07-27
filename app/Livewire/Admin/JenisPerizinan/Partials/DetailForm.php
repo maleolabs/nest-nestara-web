@@ -13,7 +13,10 @@ trait DetailForm
     protected function saveDetail($field, $value)
     {
         $saved_data = $this->getJenisPerizinanService()->saveField($this->preview_id, $field, $value);
-        if ($saved_data) $this->preview_jenis = $saved_data;
+        if ($saved_data) {
+            $this->preview_jenis = $saved_data;
+            $this->setUpOldDetailForm($field);
+        }
     }
 
     protected function setUpDetailForm()
@@ -23,11 +26,16 @@ trait DetailForm
         $this->detail_form->masa_berlaku = $this->preview_jenis->masa_berlaku == 'selamanya' ? 0 : explode(' ', $this->preview_jenis->masa_berlaku)[0];
     }
 
-    protected function setUpOldDetailForm()
+    protected function setUpOldDetailForm($skip = null)
     {
-        $this->old_detail_form->kelompok_izin = $this->preview_jenis->kelompok_izin;
-        $this->old_detail_form->durasi = explode(' ', $this->preview_jenis->durasi)[0];
-        $this->old_detail_form->masa_berlaku = $this->preview_jenis->masa_berlaku == 'selamanya' ? 0 : explode(' ', $this->preview_jenis->masa_berlaku)[0];
+        if ($skip != 'kelompok_izin')
+            $this->old_detail_form->kelompok_izin = $this->preview_jenis->kelompok_izin;
+
+        if ($skip != 'durasi')
+            $this->old_detail_form->durasi = explode(' ', $this->preview_jenis->durasi)[0];
+
+        if ($skip != 'masa_berlaku')
+            $this->old_detail_form->masa_berlaku = $this->preview_jenis->masa_berlaku == 'selamanya' ? 0 : explode(' ', $this->preview_jenis->masa_berlaku)[0];
     }
 
 }

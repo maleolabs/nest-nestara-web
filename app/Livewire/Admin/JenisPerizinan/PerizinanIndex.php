@@ -56,6 +56,8 @@ class PerizinanIndex extends Component
                 $this->searchNewSyarat();
             }
         }
+
+        if ($field == 'format_surat');
     }
 
     public function render()

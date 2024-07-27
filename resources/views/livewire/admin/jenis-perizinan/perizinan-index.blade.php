@@ -59,7 +59,7 @@
             </div>
         @endif
         @forelse ($preview_jenis->syarat_izin as $syarat)
-            <div class="row mb-3">
+            <div class="row align-items-center mb-3">
                 <div class="col-6">
                     <p class="fw-semibold mb-0 text-dark text-sm d-flex align-items-top gap-1">
                         <span>{{ $loop->iteration . '.' }}</span>
@@ -128,6 +128,36 @@
 
                     </select>
                 </div>
+            </div>
+        </div>
+
+        <p class="text-xs fw-semibold text-dark mb-1 mt-5">Tindakan</p>
+        <div class="border border rounded-3 p-4">
+            <div class="row align-items-center mb-3">
+                <div class="col-10">
+                    <p class="mb-0 text-sm fw-semibold">
+                        Ubah nama perizinan "{{ str_capitalize($preview_jenis->nama, true) }}"
+                    </p>
+                    <small>
+                        Perubahan pada nama jenis perizinan ini dapat memiliki dampak terhadap proses administrasi yang terkait. Oleh karena itu, harap berhati-hati dan pertimbangkan dengan matang sebelum melanjutkan.
+                    </small>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary text-capitalize text-nowrap col-2" type="button">
+                    ubah
+                </button>
+            </div>
+            <div class="row align-items-center">
+                <div class="col-10 text-danger">
+                    <p class="mb-0 text-sm fw-semibold">
+                        Hapus perizinan "{{ str_capitalize($preview_jenis->nama, true) }}"
+                    </p>
+                    <small>
+                        Tindakan ini bersifat permanen dan dapat mempengaruhi berbagai aspek operasional dan administratif. Harap berhati-hati dan pertimbangkan dengan matang sebelum melanjutkan.
+                    </small>
+                </div>
+                <button class="btn btn-sm btn-outline-danger text-capitalize text-nowrap col-2" type="button">
+                    hapus
+                </button>
             </div>
         </div>
     </div>

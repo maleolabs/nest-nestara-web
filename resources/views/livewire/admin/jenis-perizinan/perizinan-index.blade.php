@@ -107,9 +107,9 @@
                 </div>
                 <div class="col-2 d-flex justify-content-center">
                     <div class="input-group input-group-sm rounded-3 border w-fit">
-                        <select wire:model.live='pemasukan_berkas.{{ $syarat->id }}' id="pemasukan_berkas-{{ $syarat->id }}" class="form-select px-2 border-0">
-                            <option {{ $pemasukan_berkas[$syarat->id] ? 'selected' : '' }} value="online">Online</option>
-                            <option {{ !$pemasukan_berkas[$syarat->id] ? 'selected' : '' }} value="offline">Offline</option>
+                        <select wire:model.live='pemasukan_berkas.{{ $syarat->id }}' id="pemasukan_berkas-{{ $syarat->id }}" class="form-select px-2 border-0 {{ $pemasukan_berkas[$syarat->id] == 'online' ? 'bg-app-primary-light text-primary' : 'bg-secondary-light text-dark' }}">
+                            <option value="online">Online</option>
+                            <option value="offline">Offline</option>
                         </select>
                     </div>
                 </div>

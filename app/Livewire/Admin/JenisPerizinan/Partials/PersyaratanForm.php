@@ -19,7 +19,7 @@ trait PersyaratanForm
 
         foreach ($this->preview_jenis->syarat_izin as $syarat) {
             $this->tipe[$syarat->id] = $syarat->tipe;
-            $this->pemasukan_berkas[$syarat->id] = $syarat->online;
+            $this->pemasukan_berkas[$syarat->id] = $syarat->online ? 'online' : 'offline';
         }
     }
 
@@ -29,7 +29,7 @@ trait PersyaratanForm
 
         foreach ($this->preview_jenis->syarat_izin as $syarat) {
             $this->tipe_old[$syarat->id] = $syarat->tipe;
-            $this->pemasukan_berkas_old[$syarat->id] = $syarat->online;
+            $this->pemasukan_berkas_old[$syarat->id] = $syarat->online ? 'online' : 'offline';
         }
     }
 
@@ -42,6 +42,18 @@ trait PersyaratanForm
             ]);
 
         $this->getSyaratIzinService()->saveField($syarat_id, 'tipe', $value);
+    }
+
+    protected function savePemasukanBerkas($syarat_id, $value)
+    {
+        $value = strtolower($value);
+        if (!in_array($value, ['online', 'offline']))
+            throw ValidationException::withMessages([
+                "pemasukan_berkas.{$syarat_id}" => 'Pilihan tidak sesuai'
+            ]);
+
+        $value = $value == 'online' ?? false;
+        $this->getSyaratIzinService()->saveField($syarat_id, 'online', $value);
     }
 
     protected function getSyaratIzinService(): SyaratIzinService

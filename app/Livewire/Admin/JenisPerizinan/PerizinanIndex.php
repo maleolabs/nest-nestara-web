@@ -40,12 +40,13 @@ class PerizinanIndex extends Component
         }
 
         if (str_starts_with($field, 'tipe')) {
-            $tipe_id = explode('.', $field)[1];
-            $this->saveTipeSyarat($tipe_id, $this->tipe[$tipe_id]);
+            $syarat_id = intval(explode('.', $field)[1]);
+            $this->saveTipeSyarat($syarat_id, $this->tipe[$syarat_id]);
         }
 
         if (str_starts_with($field, 'pemasukan_berkas')) {
-
+            $syarat_id = intval(explode('.', $field)[1]);
+            $this->savePemasukanBerkas($syarat_id, $this->pemasukan_berkas[$syarat_id]);
         }
     }
 

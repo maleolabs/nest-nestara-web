@@ -49,7 +49,7 @@ trait PersyaratanForm
 
     public function deleteSyarat($syarat_id)
     {
-
+        $this->getSyaratIzinService()->detachSyarat($syarat_id, $this->preview_id);
     }
 
     protected function searchNewSyarat()

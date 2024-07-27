@@ -5,6 +5,7 @@ namespace App\Services\DomainServices\Impl;
 use App\Models\JenisPerizinan;
 use App\Services\DomainServices\SyaratIzinService;
 use App\Models\SyaratIzin;
+use Illuminate\Support\Facades\DB;
 
 class SyaratIzinServiceImpl implements SyaratIzinService
 {
@@ -55,6 +56,16 @@ class SyaratIzinServiceImpl implements SyaratIzinService
 		if (!$jenis_izin) return;
 
 		$jenis_izin->syarat_izin()->attach(array_keys($syarat));
+	}
+
+	public function detachSyarat(int $syarat_id, int $jenis_izin_id): void
+	{
+		$data = DB::table('jenis_perizinan_syarat_izin')
+				->where('jenis_perizinan_id', $jenis_izin_id)
+				->where('syarat_izin_id', $syarat_id);
+		if (!$data) return;
+
+		$data->delete();
 	}
 
 	public function getByJenisAndPemohon(int $jenis_izin_id, int $pemohon_id): array

@@ -49,6 +49,15 @@ interface SyaratIzinService
 	function assignAllSyaratToJenisByName(array $syarat, int $id_jenis): void;
 
 	/**
+	 * Menghapus relasi syarat izin dan perizinan berdasarkan ID syarat dan ID jenis perizinan tertentu
+	 * 
+	 * @param int $syarat_id ID dari syarat yang akan di hapus relasinya
+	 * @param int $jenis_izin_id ID dari jenis izin yang akan di hapus relasinya
+	 * @return void Tidak mengembalikan nilai apa-apa
+	 */
+	function detachSyarat(int $syarat_id, int $jenis_izin_id): void;
+
+	/**
 	* Mendapatkan daftar syarat izin berdasarkan jenis izin dan pemohon
 	* @param int $jenis_izin_id ID jenis izin
 	* @param int $pemohon_id ID pemohon

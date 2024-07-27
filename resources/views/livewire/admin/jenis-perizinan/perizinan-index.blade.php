@@ -7,12 +7,14 @@
     </li>
 @endpush
 <div class="card">
+    <md-linear-progress wire:loading wire:target='saveNewSyarat' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
+
     <div class="card-body">
         <div class="d-flex align-items-center gap-2">
             <h4>{{ str_capitalize($preview_jenis->nama, true) }}</h4>
             <div class="badge bg-light text-dark rounded-pill border text-capitalize">tersedia</div>
         </div>
-        <p class="text-xs text-muted mb-1">Detail Perizinan</p>
+        <p class="text-xs text-muted mb-3 pb-1 border-bottom">Detail Perizinan</p>
         <div class="row">
             <div class="col-3 mb-3">
                 <p class="fw-semibold mb-0 text-sm text-dark">Kelompok Izin</p>
@@ -75,7 +77,7 @@
             </div>
         </div>
 
-        <p class="text-xs text-muted mb-2 mt-4">Persyaratan</p>
+        <p class="text-xs text-muted mb-3 pb-1 border-bottom mt-4">Persyaratan</p>
         @if (count($preview_jenis->syarat_izin) > 0)
             <div class="row mb-3">
                 <div class="col-6">
@@ -127,20 +129,33 @@
         @endforelse
         <div class="mt-3 d-flex flex-column w-50">
             <p class="fw-medium mb-1">Tambah Persyaratan Baru</p>
-            <span class="border rounded-pill px-3 py-2 bg-info-light border-info text-info d-inline w-fit text-sm fw-medium">
-                Pas Foto 3x4
-                <i class="fa-solid fa-x text-sm ms-2 btn-edit"></i>
-            </span>
-            <div class="input-group input-group-sm border rounded-3 mt-3 position-relative">
-                <input type="text" class="form-control border-0" placeholder="cari atau buat syarat baru..">
-                <div class="position-absolute top-100 start-0 w-100 p-3 bg-white z-2 rounded-bottom-3 border border-top-0 d-none">
-
+            <div class="d-flex align-items-center flex-wrap gap-2">
+                @foreach ($new_syarat as $id_new => $new)
+                    <span class="border rounded-pill px-3 py-2 mb-2 bg-info-light border-info text-info d-inline w-fit text-sm fw-medium text-wrap">
+                        {{ $new }}
+                        <i class="fa-solid fa-x text-sm ms-2 btn-edit" wire:click="unsetNewSyarat('{{ $id_new }}')" ></i>
+                    </span>
+                @endforeach
+            </div>
+            <div class="input-group input-group-sm border rounded-3 mt-2 position-relative">
+                <input type="search" class="form-control border-0" wire:model.lazy='search_new_syarat' placeholder="cari atau buat syarat baru..">
+                <div class="position-relative end-0 top-0 z-1 me-3 mt-auto" wire:loading wire:target='search_new_syarat'>
+                    <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+                </div>
+                <div class="position-absolute top-100 start-0 w-100 p-3 bg-white z-2 rounded-bottom-3 border border-top-0{{ count($search_syarat) <=0 ? ' d-none' : '' }}">
+                    <ul class="list-group" wire:loading.class='disabled' wire:target='addNewSyarat'>
+                        @foreach ($search_syarat as $id_search => $search_result)
+                            <li class="list-group-item list-group-item-action cursor-pointer border-0" wire:click="addNewSyarat('{{ $id_search }}', '{{ $search_result }}')">
+                                {{ $search_result }}
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
             </div>
-            <button class="btn btn-sm mt-3 text-capitalize bg-gradient-primary w-fit">simpan</button>
+            <button class="btn btn-sm mt-3 text-capitalize w-fit {{ count($new_syarat) == 0 ? 'disabled bg-gradient-light' : 'bg-gradient-primary' }}" wire:click='saveNewSyarat'>simpan</button>
         </div>
 
-        <p class="text-xs text-muted mb-1 mt-5">Pengaturan Perizinan</p>
+        <p class="text-xs text-muted mb-3 pb-1 border-bottom mt-5">Pengaturan Perizinan</p>
         <div class="row">
             <div class="col-3 mb-3">
                 <p class="fw-semibold mb-0 text-sm text-dark">Format Surat</p>
@@ -162,7 +177,7 @@
             </div>
         </div>
 
-        <p class="text-xs fw-semibold text-dark mb-1 mt-5">Tindakan</p>
+        <p class="text-xs text-muted mb-3 pb-1 border-bottom mt-5">Tindakan</p>
         <div class="border border rounded-3 p-4">
             <div class="row align-items-center mb-3">
                 <div class="col-10">

@@ -9,7 +9,10 @@ trait PersyaratanForm
 {
 
     public $tipe = [],
-        $pemasukan_berkas = [];
+        $pemasukan_berkas = [],
+        $new_syarat = [],
+        $search_syarat = [],
+        $search_new_syarat = '';
 
     protected function setUpPersyaratanForm()
     {
@@ -47,6 +50,39 @@ trait PersyaratanForm
     public function deleteSyarat($syarat_id)
     {
 
+    }
+
+    protected function searchNewSyarat()
+    {
+        $this->search_syarat = $this->getSyaratIzinService()->getAllWhereNotInJenisPerizinan($this->preview_id, $this->search_new_syarat);
+        if (count($this->search_syarat) == 0 && !empty($this->search_new_syarat)) {
+            $new_id = str_pad(count($this->new_syarat), 2, '0', STR_PAD_LEFT);
+            $this->search_syarat[$new_id] = strtoupper($this->search_new_syarat); 
+        }
+    }
+
+    public function addNewSyarat($syarat_id, $nama_syarat)
+    {
+        $this->new_syarat[$syarat_id] = $nama_syarat;
+        $this->search_new_syarat = '';
+        $this->search_syarat = [];
+    }
+
+    public function unsetNewSyarat($id_new)
+    {
+        if (isset($this->new_syarat[$id_new]))
+            unset($this->new_syarat[$id_new]);
+    }
+
+    public function saveNewSyarat()
+    {
+        if (count($this->new_syarat) == 0) return;
+
+        $this->getSyaratIzinService()->assignAllSyaratToJenisByName($this->new_syarat, $this->preview_id);
+
+        $this->search_new_syarat = '';
+        $this->search_syarat = [];
+        $this->new_syarat = [];
     }
 
     protected function getSyaratIzinService(): SyaratIzinService

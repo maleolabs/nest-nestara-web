@@ -47,6 +47,14 @@ class PerizinanIndex extends Component
             $syarat_id = intval(explode('.', $field)[1]);
             $this->savePemasukanBerkas($syarat_id, $this->pemasukan_berkas[$syarat_id]);
         }
+
+        if ($field == 'search_new_syarat') {
+            if (empty($this->search_new_syarat)) {
+                $this->search_syarat = [];
+            } else {
+                $this->searchNewSyarat();
+            }
+        }
     }
 
     public function render()

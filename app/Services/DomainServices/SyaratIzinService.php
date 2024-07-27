@@ -8,13 +8,6 @@ interface SyaratIzinService
 {
 
 	/**
-	* Menyimpan data syarat izin baru
-	* @param array $data_syaratizin Data syarat izin yang akan disimpan
-	* @return SyaratIzin|null Objek SyaratIzin yang baru disimpan atau null jika gagal
-	*/
-	function save(array $data_syaratizin): ?SyaratIzin;
-
-	/**
 	 * Menyimpan field syarat tertentu
 	 * 
 	 * @param int $syarat_id ID dari syarat izin yang akan disimpan
@@ -33,14 +26,6 @@ interface SyaratIzinService
 	function find(int $id): ?SyaratIzin;
 
 	/**
-	* Memperbarui data syarat izin
-	* @param int $id ID syarat izin yang akan diperbarui
-	* @param array $data_syaratizin Data syarat izin yang baru
-	* @return SyaratIzin|null Objek SyaratIzin yang baru diperbarui atau null jika gagal
-	*/
-	function update(int $id, array $data_syaratizin): ?SyaratIzin;
-
-	/**
 	* Menghapus data syarat izin
 	* @param int $id ID syarat izin yang akan dihapus
 	* @return bool True jika berhasil dihapus, false jika gagal
@@ -56,6 +41,14 @@ interface SyaratIzinService
 	function assignSyaratToJenisByName(string $nama_syarat, string $nama_jenis): void;
 
 	/**
+	* Menghubungkan beberapa syarat izin dengan jenis izin berdasarkan nama
+	* @param array $syarat Semua syarat dengan format array 'id' => 'value'
+	* @param int $id_jenis ID jenis izin
+	* @return void
+	*/
+	function assignAllSyaratToJenisByName(array $syarat, int $id_jenis): void;
+
+	/**
 	* Mendapatkan daftar syarat izin berdasarkan jenis izin dan pemohon
 	* @param int $jenis_izin_id ID jenis izin
 	* @param int $pemohon_id ID pemohon
@@ -69,6 +62,16 @@ interface SyaratIzinService
 	* @param int $pemohon_id ID pemohon
 	* @return array Daftar tipe PDF syarat izin
 	*/
-	function getIdsTypePdfByJenisAndPemohon(int $jenis_izin_id, int $pemohon_id): array;	
+	function getIdsTypePdfByJenisAndPemohon(int $jenis_izin_id, int $pemohon_id): array;
+	
+	/**
+	 * Mengambil semua persyaratan izin yang tidak terkait dengan jenis perizinan tertentu
+	 * 
+	 * @param int $jenis_izin_id ID dari jenis izin yang akan dikecualikan untuk pengambilan data persyartan
+	* @param string $search Nama syarat yang ingin dicari. Default ''
+	 * @param int $limit Batas jumlah data yang akan dimuat. Default 10
+	 * @return array Semua persyaratan izin kecuali yang tidak terkait dengan jenis perizinan tertentu 
+	 */
+	function getAllWhereNotInJenisPerizinan(int $jenis_izin_id, string $search = '', int $limit = 10): array;
 
 }

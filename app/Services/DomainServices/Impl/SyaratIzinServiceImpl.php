@@ -9,11 +9,6 @@ use App\Models\SyaratIzin;
 class SyaratIzinServiceImpl implements SyaratIzinService
 {
 
-    public function save(array $data_syaratizin): ?SyaratIzin
-	{
-		return null;
-	}
-
 	public function saveField(int $syarat_id, string $field, $value): void
 	{
 		$syarat = $this->find($syarat_id);
@@ -27,11 +22,6 @@ class SyaratIzinServiceImpl implements SyaratIzinService
 		return SyaratIzin::find($id);
 	}
 
-	public function update(int $id, array $data_syaratizin): ?SyaratIzin
-	{
-		return null;
-	}
-
 	public function delete(int $id): bool
 	{
 		return false;
@@ -41,13 +31,30 @@ class SyaratIzinServiceImpl implements SyaratIzinService
 	{
 		$syarat_izin = SyaratIzin::where('nama', $nama_syarat)->first();
 		if (!$syarat_izin)
-			// throw new ItemNotFoundException('syarat izin tidak ditemukan');
-			return; // skip if data not found
+			return;
 		$jenis_izin = JenisPerizinan::where('nama', $nama_jenis)->first();
 		if (!$jenis_izin)
-			// throw new ItemNotFoundException('jenis perizinan tidak ditemukan: ' . $nama_jenis);
-			return; // skip if data not found
+			return;
 		$syarat_izin->jenis_perizinan()->attach($jenis_izin);
+	}
+
+	public function assignAllSyaratToJenisByName(array $syarat, int $id_jenis): void
+	{
+		foreach ($syarat as $id => $nama_syarat) {
+			if (str_starts_with($id, '0') && is_string($id)) {
+				$new_syarat = SyaratIzin::create([
+					'nama' => $nama_syarat,
+					'tipe' => 'img'
+				]);
+				unset($syarat[$id]);
+				$syarat[$new_syarat->id] = $nama_syarat;
+			}
+		}
+
+		$jenis_izin = JenisPerizinan::find($id_jenis);
+		if (!$jenis_izin) return;
+
+		$jenis_izin->syarat_izin()->attach(array_keys($syarat));
 	}
 
 	public function getByJenisAndPemohon(int $jenis_izin_id, int $pemohon_id): array
@@ -77,6 +84,19 @@ class SyaratIzinServiceImpl implements SyaratIzinService
 		}])
 		->pluck('syarat_izin.id');
 		return $persyaratan->all();
+	}
+
+	public function getAllWhereNotInJenisPerizinan(int $jenis_izin_id, string $search = '', int $limit = 10): array
+	{
+		$syarat = SyaratIzin::join('jenis_perizinan_syarat_izin', 'syarat_izin.id', '=', 'jenis_perizinan_syarat_izin.syarat_izin_id')
+					->whereNotIn('jenis_perizinan_syarat_izin.jenis_perizinan_id', [$jenis_izin_id])
+					->where('syarat_izin.nama', 'like', '%' . $search . '%')
+					->select('syarat_izin.id', 'syarat_izin.nama')
+					->distinct()
+					->take($limit)
+					->pluck('syarat_izin.nama', 'syarat_izin.id');
+
+		return $syarat->all();
 	}
 	
 }

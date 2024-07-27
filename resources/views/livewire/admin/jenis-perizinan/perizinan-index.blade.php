@@ -99,7 +99,7 @@
                 </div>
                 <div class="col-2 d-flex justify-content-center">
                     <div class="input-group input-group-sm rounded-3 border w-fit">
-                        <select wire:model='tipe.{{ $syarat->id }}' id="tipe-{{ $syarat->id }}" class="form-select px-2 border-0">
+                        <select wire:model.live='tipe.{{ $syarat->id }}' id="tipe-{{ $syarat->id }}" class="form-select px-2 border-0">
                             <option value="img">Gambar</option>
                             <option value="pdf">PDF</option>
                         </select>
@@ -107,10 +107,9 @@
                 </div>
                 <div class="col-2 d-flex justify-content-center">
                     <div class="input-group input-group-sm rounded-3 border w-fit">
-                        <select wire:model='pemasukan_berkas.{{ $syarat->id }}' id="pemasukan_berkas-{{ $syarat->id }}" class="form-select px-2 border-0">
-                            <option value="online">Online</option>
-                            <option value="offline">Offline</option>
-                            <option value="online_dan_offline">Online dan Offline</option>
+                        <select wire:model.live='pemasukan_berkas.{{ $syarat->id }}' id="pemasukan_berkas-{{ $syarat->id }}" class="form-select px-2 border-0">
+                            <option {{ $pemasukan_berkas[$syarat->id] ? 'selected' : '' }} value="online">Online</option>
+                            <option {{ !$pemasukan_berkas[$syarat->id] ? 'selected' : '' }} value="offline">Offline</option>
                         </select>
                     </div>
                 </div>

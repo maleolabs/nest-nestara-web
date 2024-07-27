@@ -14,6 +14,14 @@ class SyaratIzinServiceImpl implements SyaratIzinService
 		return null;
 	}
 
+	public function saveField(int $syarat_id, string $field, $value): void
+	{
+		$syarat = $this->find($syarat_id);
+		if (!$syarat) return;
+
+		$syarat->update([$field => $value]);
+	}
+
 	public function find(int $id): ?SyaratIzin
 	{
 		return SyaratIzin::find($id);

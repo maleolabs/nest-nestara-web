@@ -15,6 +15,17 @@ interface SyaratIzinService
 	function save(array $data_syaratizin): ?SyaratIzin;
 
 	/**
+	 * Menyimpan field syarat tertentu
+	 * 
+	 * @param int $syarat_id ID dari syarat izin yang akan disimpan
+	 * @param string $field Nama field dari syarat izin yang akan disimpan
+	 * @param mixed $value Value dari field syarat izin yang akan disimpan
+	 * 
+	 * @return void Tidak mengembalikan apa-apa
+	 */
+	function saveField(int $syarat_id, string $field, $value): void;
+
+	/**
 	* Mencari data syarat izin berdasarkan ID
 	* @param int $id ID syarat izin yang dicari
 	* @return SyaratIzin|null Objek SyaratIzin yang ditemukan atau null jika tidak ditemukan

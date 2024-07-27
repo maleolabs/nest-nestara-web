@@ -12,7 +12,7 @@
     <div class="card-body">
         <div class="d-flex align-items-center gap-2">
             <h4>{{ str_capitalize($preview_jenis->nama, true) }}</h4>
-            <div class="badge bg-light text-dark rounded-pill border text-capitalize">tersedia</div>
+            <div class="badge {{ $can_use_template ? 'bg-app-primary-light text-primary' : 'bg-danger-light text-danger' }} rounded-pill border text-capitalize">{{ $can_use_template ? 'tersedia' : 'tidak tersedia' }}</div>
         </div>
         <p class="text-xs text-muted mb-3 pb-1 border-bottom">Detail Perizinan</p>
         <div class="row">
@@ -202,7 +202,7 @@
             </div>
         </div>
 
-        <p class="text-xs text-muted mb-3 pb-1 border-bottom mt-5">Tindakan</p>
+        <p class="text-xs text-muted mb-3 pb-1 border-bottom mt-4">Tindakan</p>
         <div class="border border rounded-3 p-4">
             <div class="row align-items-center mb-3">
                 <div class="col-10">

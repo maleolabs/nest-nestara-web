@@ -28,7 +28,7 @@ class PerizinanIndex extends Component
         $this->preview_id = decrypt_id($this->id);
         $this->preview_jenis = $this->getJenisPerizinanService()->find($this->preview_id);
 
-        $this->current_tab = $this->selectTab($this->tab ?? self::DETAIL_TAB);
+        $this->selectTab($this->tab);
     }
 
     public function render()

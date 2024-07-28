@@ -81,6 +81,7 @@ Livewire.hook('morph.updated', ({el, component}) => {
             messageSuccessTip.each(function() {
                 this.remove()
             })
+            Livewire.dispatch('refresh-old-data')
         }
     }, 5000);
 })

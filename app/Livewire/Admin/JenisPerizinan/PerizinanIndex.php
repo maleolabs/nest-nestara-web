@@ -6,6 +6,7 @@ use App\Livewire\Admin\JenisPerizinan\Partials\DetailForm;
 use App\Livewire\Admin\JenisPerizinan\Partials\PengaturanSurat;
 use App\Livewire\Admin\JenisPerizinan\Partials\PersyaratanForm;
 use App\Services\DomainServices\JenisPerizinanService;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -69,6 +70,13 @@ class PerizinanIndex extends Component
         $this->setUpPengaturanSuratForm();
 
         return view('livewire.admin.jenis-perizinan.perizinan-index');
+    }
+
+    #[On('refresh-old-data')]
+    public function refreshOldData()
+    {
+        $this->setUpOldDetailForm();
+        $this->setUpOldPengaturanForm();
     }
 
     private function getJenisPerizinanService(): JenisPerizinanService

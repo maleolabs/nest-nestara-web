@@ -279,17 +279,31 @@
                 @endif
             </div>
             <div class="row align-items-center">
-                <div class="col-10 text-danger">
-                    <p class="mb-0 text-sm fw-semibold">
-                        Hapus perizinan "{{ str_capitalize($preview_jenis->nama, true) }}"
-                    </p>
-                    <small>
-                        Tindakan ini bersifat permanen dan dapat mempengaruhi berbagai aspek operasional dan administratif. Harap berhati-hati dan pertimbangkan dengan matang sebelum melanjutkan.
-                    </small>
-                </div>
-                <button class="btn btn-sm btn-outline-danger text-capitalize text-nowrap col-2" type="button">
-                    hapus
-                </button>
+                @if ($deleting)
+                    <div class="border rounded p-4 d-flex align-items-center justify-content-center gap-2">
+                        <button class="btn btn-sm bg-gradient-light text-capitalize" type="button" wire:click='deleteJenis'>
+                            <span wire:loading.remove wire:target='deleteJenis'>batal</span>
+                            <span class="spinner-border spinner-border-sm" wire:loading wire:target='deleteJenis'></span>
+                        </button>
+                        <button class="btn btn-sm bg-gradient-danger text-capitalize" type="button" wire:click='confirmDelete'>
+                            <span wire:loading.remove wire:target='confirmDelete'>hapus</span>
+                            <span class="spinner-border spinner-border-sm" wire:loading wire:target='confirmDelete'></span>
+                        </button>
+                    </div>
+                @else
+                    <div class="col-10 text-danger">
+                        <p class="mb-0 text-sm fw-semibold">
+                            Hapus perizinan "{{ str_capitalize($preview_jenis->nama, true) }}"
+                        </p>
+                        <small>
+                            Tindakan ini bersifat permanen dan dapat mempengaruhi berbagai aspek operasional dan administratif. Harap berhati-hati dan pertimbangkan dengan matang sebelum melanjutkan.
+                        </small>
+                    </div>
+                    <button class="btn btn-sm btn-outline-danger text-capitalize text-nowrap col-2" type="button" wire:click='deleteJenis'>
+                        <span wire:loading.remove wire:target='deleteJenis'>hapus</span>
+                        <span class="spinner-border spinner-border-sm" wire:loading wire:target='deleteJenis'></span>
+                    </button>
+                @endif
             </div>
         </div>
     </div>

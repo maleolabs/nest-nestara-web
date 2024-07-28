@@ -59,6 +59,29 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
         return JenisPerizinan::find($id);
     }
 
+    public function savePengaturanSurat(string $pengaturan, string $value, int $jenis_id): void
+    {
+        $nama_pengaturan = '';
+        $group = '';
+        switch ($pengaturan) {
+            case 'format_surat':
+                $nama_pengaturan = "JENIS-{$jenis_id}";
+                $group = SuratGroupsEnum::JENIS_SURAT_GROUP;
+                break;
+
+            case 'nomor_jenis_surat':
+                $nama_pengaturan = "NO-JENIS-{$jenis_id}";
+                $group = SuratGroupsEnum::JENIS_SURAT_GROUP;
+                break;
+
+            case 'selected_template':
+                $nama_pengaturan = "TEMPLATE-SURAT-{$jenis_id}";
+                $group = SuratGroupsEnum::SURAT_TEMPLATE_GROUP;
+                break;
+        }
+        $this->pengaturanService->updateOrCreate($nama_pengaturan, $value, $group);
+    }
+
     public function find(int $id): ?JenisPerizinan
     {
         return JenisPerizinan::with('syarat_izin')->where('id', $id)->first();

@@ -25,6 +25,7 @@ class PerizinanIndex extends Component
         $this->preview_jenis = $this->getJenisPerizinanService()->find($this->preview_id);
 
         $this->setUpOldDetailForm();
+        $this->setUpOldPengaturanForm();
     }
 
     public function updated($field)
@@ -57,7 +58,8 @@ class PerizinanIndex extends Component
             }
         }
 
-        if ($field == 'format_surat');
+        if (in_array($field, ['format_surat', 'nomor_jenis_surat', 'selected_template_surat']))
+            $this->savePengaturanSurat($field);
     }
 
     public function render()

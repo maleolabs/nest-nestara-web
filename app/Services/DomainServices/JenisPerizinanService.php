@@ -26,6 +26,17 @@ interface JenisPerizinanService {
     function saveField(int $id, string $field, string $value): ?JenisPerizinan;
 
     /**
+     * Menyimpan pengaturan surat berdasarkan ID dari jenis perizinan tertentu
+     * 
+     * @param string $pengaturan Nama pengaturan yang akan disimpan
+     * @param string $value Isi dari pengaturan yang akan disimpan
+     * @param int $jenid_id ID dari jenis perizinan
+     * 
+     * @return void Tidak mengembalikan apa-apa
+     */
+    function savePengaturanSurat(string $pengaturan, string $value, int $jenis_id): void;
+
+    /**
      * Mencari data jenis perizinan berdasarkan id
      * @param int $id
      * @return JenisPerizinan|null

@@ -12,7 +12,14 @@ trait PengaturanSurat
         $nomor_jenis_surat,
         $template_surat = [],
         $selected_template,
-        $can_use_template = false;
+        $can_use_template = false,
+        $old_pengaturan_form = [];
+
+    protected function savePengaturanSurat($field)
+    {
+        $this->getJenisPerizinanService()->savePengaturanSurat($field, $this->$field, $this->preview_id);
+        $this->setUpOldPengaturanForm($field);
+    }
 
     protected function setUpPengaturanSuratForm()
     {
@@ -29,6 +36,18 @@ trait PengaturanSurat
         $this->can_use_template = $this->getJenisPerizinanService()->canUseTemplateById($this->preview_id);
 
         $this->template_surat = $this->getJenisPerizinanService()->getAllTemplateById($this->preview_id);
+    }
+
+    protected function setUpOldPengaturanForm($skip = null)
+    {
+        if ($skip != 'format_surat')
+            $this->old_pengaturan_form['format_surat'] = $this->getJenisPerizinanService()->getJenisFormatSuratById($this->preview_id);
+
+        if ($skip != 'nomor_jenis_surat')
+            $this->old_pengaturan_form['nomor_jenis_surat'] = $this->getJenisPerizinanService()->getNomorSuratById($this->preview_id);
+
+        if ($skip != 'selected_template')
+            $this->old_pengaturan_form['selected_template'] = $this->getJenisPerizinanService()->getCurrentTemplateById($this->preview_id);
     }
 
     protected function getSuratService(): SuratService

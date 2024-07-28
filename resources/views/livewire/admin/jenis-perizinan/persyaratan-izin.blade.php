@@ -1,4 +1,6 @@
 <div>
+    <md-linear-progress wire:loading wire:target='saveTipeSyarat, savePemasukanBerkas, addNewSyarat,saveNewSyarat' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
+
     <p class="text-xs text-muted mb-3 pb-1 border-bottom">Persyaratan</p>
     @if (count($preview_jenis->syarat_izin) > 0)
         <div class="row mb-3">

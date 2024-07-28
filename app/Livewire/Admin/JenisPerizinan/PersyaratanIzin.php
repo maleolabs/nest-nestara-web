@@ -14,11 +14,6 @@ class PersyaratanIzin extends Component
     public $preview_id,
         $preview_jenis;
 
-    public function mount()
-    {
-        $this->setUpPersyaratanForm();
-    }
-
     public function updated($field)
     {
         if (str_starts_with($field, 'tipe')) {
@@ -42,6 +37,7 @@ class PersyaratanIzin extends Component
 
     public function render()
     {
+        $this->setUpPersyaratanForm();
         return view('livewire.admin.jenis-perizinan.persyaratan-izin');
     }
 

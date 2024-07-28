@@ -75,15 +75,15 @@ Livewire.hook('morph.updated', ({el, component}) => {
         document.querySelector('.modal-right-content').style.right = '0'
     }
 
-    setTimeout(() => {
-        var messageSuccessTip = $('.message-success-tip')
-        if (messageSuccessTip) {
+    var messageSuccessTip = $('.message-success-tip')
+    if (messageSuccessTip) {
+        setTimeout(() => {
             messageSuccessTip.each(function() {
                 this.remove()
             })
             Livewire.dispatch('refresh-old-data')
-        }
-    }, 5000);
+        }, 5000)
+    }
 })
 
 Livewire.on('component-rendered', ({el, component}) => {

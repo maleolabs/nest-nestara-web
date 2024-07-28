@@ -22,58 +22,47 @@ class PerizinanIndex extends Component
     public $preview_id,
         $preview_jenis;
 
+    public $current_tab;
+
+    protected const DETAIL_TAB = 'detail';
+    protected const PERSYARATAN_TAB = 'persyaratan';
+    protected const DATA_ENTRI_TAB = 'properti-data-entri';
+    protected const PENGATURAN_SURAT_TAB = 'pengaturan-surat';
+    protected const TINDAKAN_TAB = 'tindakan';
+
     public function mount()
     {
         $this->preview_id = decrypt_id($this->id);
         $this->preview_jenis = $this->getJenisPerizinanService()->find($this->preview_id);
 
-        $this->setUpOldDetailForm();
-        $this->setUpOldPengaturanForm();
-        $this->setUpTindakanForm();
+        $this->current_tab = self::DETAIL_TAB;
+
+        
+        
     }
 
     public function updated($field)
     {
-        $detail_form = [];
-        if (str_starts_with($field, 'detail_form')) {
-            $field = explode('.', $field)[1];
-            $detail_form = $this->detail_form->all();
-        }
-        if (count($detail_form) > 0 && in_array($field, array_keys($detail_form))) {
-            $this->detail_form->validateOnly($field);
-            $this->saveDetail($field, $detail_form[$field]);
-        }
+        
 
-        if (str_starts_with($field, 'tipe')) {
-            $syarat_id = intval(explode('.', $field)[1]);
-            $this->saveTipeSyarat($syarat_id, $this->tipe[$syarat_id]);
-        }
+        
 
-        if (str_starts_with($field, 'pemasukan_berkas')) {
-            $syarat_id = intval(explode('.', $field)[1]);
-            $this->savePemasukanBerkas($syarat_id, $this->pemasukan_berkas[$syarat_id]);
-        }
-
-        if ($field == 'search_new_syarat') {
-            if (empty($this->search_new_syarat)) {
-                $this->search_syarat = [];
-            } else {
-                $this->searchNewSyarat();
-            }
-        }
-
-        if (in_array($field, ['format_surat', 'nomor_jenis_surat', 'selected_template_surat']))
-            $this->savePengaturanSurat($field);
+        
     }
 
     public function render()
     {
-        $this->setUpDetailForm();
-        $this->setUpPersyaratanForm();
-        $this->setUpPengaturanSuratForm();
-        $this->setUpPropertiDataEntri();
+        
+        
+        
+        
 
         return view('livewire.admin.jenis-perizinan.perizinan-index');
+    }
+
+    public function selectTab($tab)
+    {
+        $this->current_tab = $tab;
     }
 
     #[On('refresh-old-data')]

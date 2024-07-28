@@ -6,362 +6,75 @@
         {{ Str::limit(str_capitalize($preview_jenis->nama, true), 70) }}
     </li>
 @endpush
-<div class="card">
-    <md-linear-progress wire:loading wire:target='saveNewSyarat, saveNamaJenis' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
+<div class="row">
+    <md-linear-progress wire:loading wire:target='selectTab' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
 
-    <div class="card-body">
-        <div class="d-flex align-items-center gap-2">
-            <h4>{{ str_capitalize($preview_jenis->nama, true) }}</h4>
-            <div class="badge {{ $can_use_template ? 'bg-app-primary-light text-primary' : 'bg-danger-light text-danger' }} rounded-pill border text-capitalize">{{ $can_use_template ? 'tersedia' : 'tidak tersedia' }}</div>
-        </div>
-        <p class="text-xs text-muted mb-3 pb-1 border-bottom">Detail Perizinan</p>
-        <div class="row">
-            <div class="col-3 mb-3">
-                <p class="fw-semibold mb-0 text-sm text-dark">Kelompok Izin</p>
-            </div>
-            <div class="col-9 mb-3 d-flex align-items-center">
-                <div class="input-group input-group-sm border rounded-3 w-50">
-                    <select class="form-select border-0" wire:model.lazy='detail_form.kelompok_izin'>
-                        <option value="izin tanpa retribusi">Izin Tanpa Retribusi</option>
-                        <option value="izin dengan retribusi">Izin Dengan Retribusi</option>
-                    </select>
-                </div>
-                <div class="ms-2">
-                    <i class="fa-solid fa-spinner fa-spin-pulse" wire:loading wire:target='detail_form.kelompok_izin'></i>
-                    @if ($detail_form->kelompok_izin != $old_detail_form->kelompok_izin)
-                        <span class="text-success message-success-tip text-sm">
-                            <i class="fa-solid fa-circle-check me-1"></i>
-                            <span class="text-capitalize">berhasil disimpan!</span>
-                        </span>
-                    @endif
-                </div>
-            </div>
-            <div class="col-3 mb-3">
-                <p class="fw-semibold mb-0 text-sm text-dark">Durasi Pengerjaan</p>
-            </div>
-            <div class="col-9 mb-3 d-flex gap-2 align-items-center">
-                <div class="input-group input-group-sm border rounded-3 w-fit">
-                    <input type="number" class="form-control border-0" wire:model.lazy='detail_form.durasi'>
-                </div>
-                <span class="text-sm">Hari</span>
-                <div class="ms-2">
-                    <i class="fa-solid fa-spinner fa-spin-pulse" wire:loading wire:target='detail_form.durasi'></i>
-                    @if ($detail_form->durasi != $old_detail_form->durasi)
-                        <span class="text-success message-success-tip text-sm">
-                            <i class="fa-solid fa-circle-check me-1"></i>
-                            <span class="text-capitalize">berhasil disimpan!</span>
-                        </span>
-                    @endif
-                </div>
-            </div>
-            <div class="col-3">
-                <p class="fw-semibold mb-0 text-sm text-dark">Masa Berlaku Izin</p>
-            </div>
-            <div class="col-9 d-flex gap-2 align-items-center">
-                <div class="input-group input-group-sm border rounded-3 w-fit">
-                    <input type="number" class="form-control border-0" wire:model.lazy='detail_form.masa_berlaku'>
-                </div>
-                <span class="text-sm">
-                    Tahun
-                    {{ $detail_form->masa_berlaku === 0 ? ' (0 artinya berlaku selamanya)' : '' }}
-                </span>
-                <div class="ms-2">
-                    <i class="fa-solid fa-spinner fa-spin-pulse" wire:loading wire:target='detail_form.masa_berlaku'></i>
-                    @if ($detail_form->masa_berlaku != $old_detail_form->masa_berlaku)
-                        <span class="text-success message-success-tip text-sm">
-                            <i class="fa-solid fa-circle-check me-1"></i>
-                            <span class="text-capitalize">berhasil disimpan!</span>
-                        </span>
-                    @endif
-                </div>
-            </div>
-            <div class="col-9 offset-3 mt-3">
-                <span class="text-xs">
-                    <i class="fa-solid fa-circle-info me-1"></i>
-                    untuk menyimpan tekan enter</span>
+    <div class="col-3 d-flex align-items-stretch">
+        <div class="card w-100">
+            <div class="card-body">
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::DETAIL_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::DETAIL_TAB }}')">
+                        Detail Perizinan
+                    </li>
+                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::PERSYARATAN_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::PERSYARATAN_TAB }}')">
+                        Persyaratan
+                    </li>
+                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::DATA_ENTRI_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::DATA_ENTRI_TAB }}')">
+                        Properti Data Entri
+                    </li>
+                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::PENGATURAN_SURAT_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::PENGATURAN_SURAT_TAB }}')">
+                        Pengaturan Surat
+                    </li>
+                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::TINDAKAN_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::TINDAKAN_TAB }}')">
+                        Tindakan Perizinan
+                    </li>
+                </ul>
             </div>
         </div>
-
-        <p class="text-xs text-muted mb-3 pb-1 border-bottom mt-4">Persyaratan</p>
-        @if (count($preview_jenis->syarat_izin) > 0)
-            <div class="row mb-3">
-                <div class="col-6">
-                    <p class="text-bold text-xs mb-0">Nama Syarat</p>
-                </div>
-                <div class="col-2 d-flex justify-content-center">
-                    <p class="text-bold text-xs mb-0">Tipe</p>
-                </div>
-                <div class="col-2 d-flex justify-content-center">
-                    <p class="text-bold text-xs mb-0">Pemasukan Berkas</p>
-                </div>
-            </div>
-        @endif
-        @forelse ($preview_jenis->syarat_izin as $syarat)
-            <div class="row align-items-center mb-3">
-                <div class="col-6">
-                    <p class="fw-semibold mb-0 text-dark text-sm d-flex align-items-top gap-1">
-                        <span>{{ $loop->iteration . '.' }}</span>
-                        {{ str_capitalize($syarat->nama, true) }}
-                    </p>
-                </div>
-                <div class="col-2 d-flex justify-content-center">
-                    <div class="input-group input-group-sm rounded-3 border w-fit">
-                        <select wire:model.live='tipe.{{ $syarat->id }}' id="tipe-{{ $syarat->id }}" class="form-select px-2 border-0">
-                            <option value="img">Gambar</option>
-                            <option value="pdf">PDF</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-2 d-flex justify-content-center">
-                    <div class="input-group input-group-sm rounded-3 border w-fit">
-                        <select wire:model.live='pemasukan_berkas.{{ $syarat->id }}' id="pemasukan_berkas-{{ $syarat->id }}" class="form-select px-2 border-0 {{ $pemasukan_berkas[$syarat->id] == 'online' ? 'bg-app-primary-light text-primary' : 'bg-secondary-light text-dark' }}">
-                            <option value="online">Online</option>
-                            <option value="offline">Offline</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-2 d-flex justify-content-center align-items-center">
-                    <button class="btn btn-sm btn-transparent btn-edit shadow-none" wire:click='deleteSyarat({{ $syarat->id }})' type="button">
-                        <i class="fa-solid fa-trash text-danger text-sm" wire:loading.remove wire:target='deleteSyarat({{ $syarat->id }})'></i>
-                        <span wire:loading wire:target='deleteSyarat({{ $syarat->id }})' class="fa-solid spinner-border spinner-border-sm"></span>
-                    </button>
-                </div>
-            </div>
-        @empty
-            <div class="border rounded-3 p-3 text-capitalize text-medium bg-warning-light border-warning text-warning">
-                perizinan ini tidak memiliki persyaratan
-            </div>
-        @endforelse
-        <div class="mt-3 d-flex flex-column w-50">
-            <p class="fw-medium mb-1">Tambah Persyaratan Baru</p>
-            <div class="d-flex align-items-center flex-wrap gap-2">
-                @foreach ($new_syarat as $id_new => $new)
-                    <span class="border rounded-pill px-3 py-2 mb-2 bg-info-light border-info text-info d-inline w-fit text-sm fw-medium text-wrap">
-                        {{ $new }}
-                        <i class="fa-solid fa-x text-sm ms-2 btn-edit" wire:click="unsetNewSyarat('{{ $id_new }}')" ></i>
-                    </span>
-                @endforeach
-            </div>
-            <div class="input-group input-group-sm border rounded-3 mt-2 position-relative">
-                <input type="search" class="form-control border-0" wire:model.lazy='search_new_syarat' placeholder="cari atau buat syarat baru..">
-                <div class="position-relative end-0 top-0 z-1 me-3 mt-auto" wire:loading wire:target='search_new_syarat'>
-                    <i class="fa-solid fa-spinner fa-spin-pulse"></i>
-                </div>
-                <div class="position-absolute top-100 start-0 w-100 p-3 bg-white z-2 rounded-bottom-3 border border-top-0{{ count($search_syarat) <=0 ? ' d-none' : '' }}">
-                    <ul class="list-group" wire:loading.class='disabled' wire:target='addNewSyarat'>
-                        @foreach ($search_syarat as $id_search => $search_result)
-                            <li class="list-group-item list-group-item-action cursor-pointer border-0" wire:click="addNewSyarat('{{ $id_search }}', '{{ $search_result }}')">
-                                {{ $search_result }}
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-            <button class="btn btn-sm mt-3 text-capitalize w-fit {{ count($new_syarat) == 0 ? 'disabled bg-gradient-light' : 'bg-gradient-primary' }}" wire:click='saveNewSyarat'>simpan</button>
-        </div>
-
-        <p class="text-xs text-muted mb-3 pb-1 border-bottom mt-5">Properti Data Entri</p>
-        @if (count($properti_data_entri) > 0)
-            <div class="row align-items-bottom mb-3">
-                <div class="col-6">
-                    <p class="mb-0 text-xs fw-semibold text-capitalize">nama</p>
-                </div>
-                <div class="col-2 d-flex justify-content-center">
-                    <p class="mb-0 text-xs fw-semibold text-capitalize">tipe</p>
-                </div>
-                <div class="col-2 d-flex justify-content-center">
-                    <p class="mb-0 text-xs fw-semibold text-capitalize">maksimal</p>
-                </div>
-                <div class="col-2 d-flex justify-content-center">
-                    <p class="mb-0 text-xs fw-semibold text-capitalize">mandatori</p>
-                </div>
-            </div>
-        @endif
-        @forelse ($properti_data_entri as $data_entri)
-            <div class="row align-items-center mb-3">
-                <div class="col-6">
-                    <div class="input-group input-group-sm border rounded-3">
-                        <input type="text" class="form-control border-0 rounded-3" wire:model.lazy='properti_form.{{ $data_entri->id }}'>
-                    </div>
-                </div>
-                <div class="col-2 d-flex justify-content-center">
-                    <div class="input-group input-group-sm rounded-3 border w-fit">
-                        <select wire:model.lazy='properti_entri_tipe.{{ $data_entri->id }}' id="tipe-entri-{{ $data_entri->id }}" class="form-select border-0 text-center px-1">
-                            <option value="text">Text</option>
-                            <option value="textarea">Textarea</option>
-                            <option value="number">Number</option>
-                            <option value="date">Date</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-2 d-flex justify-content-center">
-                    <div class="input-group input-group-sm rounded-3 border w-50">
-                        <input type="number" class="form-control border-0 rounded-3" wire:model.lazy='properti_entri_max.{{ $data_entri->id }}'>
-                    </div>
-                </div>
-                <div class="col-2 d-flex justify-content-center">
-                    <div class="form-check">
-                        <input type="checkbox" {{ $properti_entri_mandatori ? 'checked' : '' }} class="form-check-input" wire:model.lazy='properti_entri_mandatori.{{ $data_entri->id }}'>
-                    </div>
-                </div>
-            </div>
-        @empty
-            <div class="border rounded-3 p-4 w-50">
-                <p class="mb-2 text-sm fw-medium">Tidak ada data entri</p>
-                <button class="btn btn-sm bg-gradient-light text-capitalize" type="button">buat baru</button>
-            </div>
-        @endforelse
-        @if (count($properti_data_entri) > 0)
-            <span class="text-xs">
-                <i class="fa-solid fa-circle-info me-1"></i>
-                untuk menyimpan tekan enter
-            </span>
-        @endif
-
-        <p class="text-xs text-muted mb-3 pb-1 border-bottom mt-5">Pengaturan Surat</p>
-        <div class="row">
-            <div class="col-3 mb-3">
-                <p class="fw-semibold mb-0 text-sm text-dark">Format Surat</p>
-            </div>
-            <div class="col-9 mb-3">
-                <p class="mb-0 text-sm fw-semibold text-dark">{{ $full_format_surat }}</p>
-            </div>
-            <div class="col-3 mb-3">
-                <p class="fw-semibold mb-0 text-sm text-dark">Format Jenis Surat</p>
-            </div>
-            <div class="col-9 mb-3 d-flex gap-2 align-items-center">
-                <div class="input-group input-group-sm rounded-3 border w-fit">
-                    <input type="text" class="form-control border-0" wire:model.lazy='format_surat'>
-                </div>
-                <div class="ms-2">
-                    <i class="fa-solid fa-spinner fa-spin-pulse" wire:loading wire:target='format_surat'></i>
-                    @if ($format_surat != $old_pengaturan_form['format_surat'])
-                        <span class="text-success message-success-tip text-sm">
-                            <i class="fa-solid fa-circle-check me-1"></i>
-                            <span class="text-capitalize">berhasil disimpan!</span>
-                        </span>
-                    @endif
-                </div>
-            </div>
-            <div class="col-3 mb-3">
-                <p class="fw-semibold mb-0 text-sm text-dark">Nomor Terakhir Jenis Surat</p>
-            </div>
-            <div class="col-9 mb-3 d-flex gap-2 align-items-center">
-                <div class="input-group input-group-sm rounded-3 border w-fit">
-                    <input type="number" class="form-control border-0" wire:model.lazy='nomor_jenis_surat'>
-                </div>
-                <div class="ms-2">
-                    <i class="fa-solid fa-spinner fa-spin-pulse" wire:loading wire:target='nomor_jenis_surat'></i>
-                    @if ($nomor_jenis_surat != $old_pengaturan_form['nomor_jenis_surat'])
-                        <span class="text-success message-success-tip text-sm">
-                            <i class="fa-solid fa-circle-check me-1"></i>
-                            <span class="text-capitalize">berhasil disimpan!</span>
-                        </span>
-                    @endif
-                </div>
-            </div>
-            <div class="col-3">
-                <p class="fw-semibold mb-0 text-sm text-dark">Template Surat</p>
-            </div>
-            <div class="col-9 d-flex gap-2 align-items-center">
-                <div class="input-group input-group-sm border rounded-3 w-50">
-                    <select class="form-select border-0" wire:model.lazy='selected_format'>
-                        @foreach ($template_surat as $template)
-                            <option value="{{ $template }}">
-                                {{ $template }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="ms-2">
-                    <i class="fa-solid fa-spinner fa-spin-pulse" wire:loading wire:target='selected_template'></i>
-                    @if ($selected_template != $old_pengaturan_form['selected_template'])
-                        <span class="text-success message-success-tip text-sm">
-                            <i class="fa-solid fa-circle-check me-1"></i>
-                            <span class="text-capitalize">berhasil disimpan!</span>
-                        </span>
-                    @endif
-                </div>
-            </div>
-            <div class="col-9 offset-3 mt-2">
-                <p class="mb-0 text-xs fw-semibold mb-3">
-                    <span class="badge rounded-pill border bg-light text-capitalize text-dark">default</span>
-                    {{ $selected_template }}
-                    @if (!$can_use_template)
-                        <span class="ms-1 text-danger">(Template pdf ini tidak bisa digunakan)</span>
-                    @endif
-                </p>
-                <span class="text-xs">
-                    <i class="fa-solid fa-circle-info me-1"></i>
-                    untuk menyimpan tekan enter</span>
-            </div>
-        </div>
-
-        <p class="text-xs text-muted mb-3 pb-1 border-bottom mt-4">Tindakan</p>
-        <div class="border border rounded-3 p-4">
-            <div class="row align-items-center mb-3">
-                @if ($editing_name)
-                    <div class="col-12">
-                        <div class="border rounded p-4">
-                            <form wire:submit.prevent='saveNamaJenis'>
-                                <p class="mb-1 text-sm text-medium">Ganti Nama Jenis Perizinan</p>
-                                <div class="input-group input-group-sm w-50 border rounded-3 mb-3">
-                                    <input type="text" class="form-control border-0" placeholder="masukkan nama jenis perizinan" wire:model.lazy='nama_jenis'>
-                                </div>
-                                <div class="d-flex gap-2 align-items-center">
-                                    <button class="btn btn-sm bg-gradient-light text-capitalize" type="button" wire:click='editNamaJenis'>
-                                        <span wire:loading.remove wire:target='editNamaJenis'>batal</span>
-                                        <span class="spinner-border spinner-border-sm" wire:loading wire:target='editNamaJenis'></span>
-                                    </button>
-                                    <button class="btn btn-sm bg-gradient-primary text-capitalize" type="submit">
-                                        <span wire:loading.remove wire:target='saveNamaJenis'>simpan</span>
-                                        <span class="spinner-border spinner-border-sm" wire:loading wire:target='saveNamaJenis'></span>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                @else
-                    <div class="col-10">
-                        <p class="mb-0 text-sm fw-semibold">
-                            Ubah nama perizinan "{{ str_capitalize($preview_jenis->nama, true) }}"
-                        </p>
-                        <small>
-                            Perubahan pada nama jenis perizinan ini dapat memiliki dampak terhadap proses administrasi yang terkait. Oleh karena itu, harap berhati-hati dan pertimbangkan dengan matang sebelum melanjutkan.
-                        </small>
-                    </div>
-                    <button class="btn btn-sm btn-outline-secondary text-capitalize text-nowrap col-2" type="button" wire:click='editNamaJenis'>
-                        <span wire:loading.remove wire:target='editNamaJenis'>ubah</span>
-                        <span wire:loading wire:target='editNamaJenis' class="spinner-border spinner-border-sm"></span>
-                    </button>
-                @endif
-            </div>
-            <div class="row align-items-center">
-                @if ($deleting)
-                    <div class="border rounded p-4 d-flex align-items-center justify-content-center gap-2">
-                        <button class="btn btn-sm bg-gradient-light text-capitalize" type="button" wire:click='deleteJenis'>
-                            <span wire:loading.remove wire:target='deleteJenis'>batal</span>
-                            <span class="spinner-border spinner-border-sm" wire:loading wire:target='deleteJenis'></span>
-                        </button>
-                        <button class="btn btn-sm bg-gradient-danger text-capitalize" type="button" wire:click='confirmDelete'>
-                            <span wire:loading.remove wire:target='confirmDelete'>hapus</span>
-                            <span class="spinner-border spinner-border-sm" wire:loading wire:target='confirmDelete'></span>
-                        </button>
-                    </div>
-                @else
-                    <div class="col-10 text-danger">
-                        <p class="mb-0 text-sm fw-semibold">
-                            Hapus perizinan "{{ str_capitalize($preview_jenis->nama, true) }}"
-                        </p>
-                        <small>
-                            Tindakan ini bersifat permanen dan dapat mempengaruhi berbagai aspek operasional dan administratif. Harap berhati-hati dan pertimbangkan dengan matang sebelum melanjutkan.
-                        </small>
-                    </div>
-                    <button class="btn btn-sm btn-outline-danger text-capitalize text-nowrap col-2" type="button" wire:click='deleteJenis'>
-                        <span wire:loading.remove wire:target='deleteJenis'>hapus</span>
-                        <span class="spinner-border spinner-border-sm" wire:loading wire:target='deleteJenis'></span>
-                    </button>
-                @endif
+    </div>
+    <div class="col-9 d-flex align-items-stretch">
+        <div class="card w-100 min-vh-50">
+            <div class="card-body">
+                @switch($current_tab)
+                    @case(self::DETAIL_TAB)
+                        @livewire('admin.jenis-perizinan.detail-perizinan', [
+                            'preview_id' => $preview_id, 
+                            'preview_jenis' => $preview_jenis,
+                            'can_use_template' => $can_use_template
+                        ])
+                        @break
+                    @case(self::PERSYARATAN_TAB)
+                        @livewire('admin.jenis-perizinan.persyaratan-izin', [
+                            'preview_id' => $preview_id, 
+                            'preview_jenis' => $preview_jenis,
+                            'can_use_template' => $can_use_template
+                        ])
+                        @break
+                    @case(self::DATA_ENTRI_TAB)
+                        @livewire('admin.jenis-perizinan.properti-data-entri', [
+                            'preview_id' => $preview_id, 
+                            'preview_jenis' => $preview_jenis,
+                            'can_use_template' => $can_use_template
+                        ])
+                        @break
+                    @case(self::PENGATURAN_SURAT_TAB)
+                        @livewire('admin.jenis-perizinan.pengaturan-surat', [
+                            'preview_id' => $preview_id, 
+                            'preview_jenis' => $preview_jenis,
+                            'can_use_template' => $can_use_template
+                        ])
+                        @break
+                    @case(self::TINDAKAN_TAB)
+                        @livewire('admin.jenis-perizinan.tindakan-perizinan', [
+                            'preview_id' => $preview_id, 
+                            'preview_jenis' => $preview_jenis,
+                            'can_use_template' => $can_use_template
+                        ])
+                        @break
+                    @default
+                        
+                @endswitch      
+                
             </div>
         </div>
     </div>

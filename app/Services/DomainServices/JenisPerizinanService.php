@@ -158,4 +158,12 @@ interface JenisPerizinanService {
      */
     function hasEntriDataForm(?int $jenis_perizinan_id = null): bool;
 
+    /**
+     * Menghapus jenis perizinan berdasarkan ID tertentu
+     * 
+     * @param int $jenis_id ID dari jenis perizinan yang akan dihapus
+     * @return void
+     */
+    function delete(int $jenis_id): void;
+
 }

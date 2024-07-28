@@ -249,4 +249,12 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
         return $jenis_perizinan->entri_data()->count() > 0;
     }
 
+    public function delete(int $jenis_id): void
+    {
+        $perizinan = JenisPerizinan::find($jenis_id);
+        if (!$perizinan) return;
+
+        $perizinan->delete();
+    }
+
 }

@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\JenisPerizinan;
 use App\Livewire\Admin\JenisPerizinan\Partials\DetailForm;
 use App\Livewire\Admin\JenisPerizinan\Partials\PengaturanSurat;
 use App\Livewire\Admin\JenisPerizinan\Partials\PersyaratanForm;
+use App\Livewire\Admin\JenisPerizinan\Partials\TindakanForm;
 use App\Services\DomainServices\JenisPerizinanService;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -12,7 +13,7 @@ use Livewire\Component;
 
 class PerizinanIndex extends Component
 {
-    use DetailForm, PersyaratanForm, PengaturanSurat;
+    use DetailForm, PersyaratanForm, PengaturanSurat, TindakanForm;
 
     #[Url()]
     public $id;
@@ -27,6 +28,7 @@ class PerizinanIndex extends Component
 
         $this->setUpOldDetailForm();
         $this->setUpOldPengaturanForm();
+        $this->setUpTindakanForm();
     }
 
     public function updated($field)

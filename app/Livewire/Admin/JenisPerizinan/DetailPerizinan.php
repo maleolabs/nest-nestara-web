@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\JenisPerizinan;
 
 use App\Livewire\Admin\JenisPerizinan\Partials\DetailForm;
 use App\Services\DomainServices\JenisPerizinanService;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class DetailPerizinan extends Component
@@ -37,6 +38,12 @@ class DetailPerizinan extends Component
         $this->setUpDetailForm();
 
         return view('livewire.admin.jenis-perizinan.detail-perizinan');
+    }
+
+    #[On('refresh-old-data')]
+    public function refreshOldData()
+    {
+        $this->setUpOldDetailForm();
     }
 
     private function getJenisPerizinanService(): JenisPerizinanService

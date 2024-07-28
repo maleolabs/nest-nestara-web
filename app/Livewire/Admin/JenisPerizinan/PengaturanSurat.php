@@ -4,6 +4,7 @@ namespace App\Livewire\Admin\JenisPerizinan;
 
 use App\Livewire\Admin\JenisPerizinan\Partials\PengaturanSurat as PartialsPengaturanSurat;
 use App\Services\DomainServices\JenisPerizinanService;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class PengaturanSurat extends Component
@@ -30,6 +31,12 @@ class PengaturanSurat extends Component
         $this->setUpPengaturanSuratForm();
         
         return view('livewire.admin.jenis-perizinan.pengaturan-surat');
+    }
+
+    #[On('refresh-old-data')]
+    public function refreshOldData()
+    {
+        $this->setUpOldPengaturanForm();
     }
 
     private function getJenisPerizinanService(): JenisPerizinanService

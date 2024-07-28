@@ -13,19 +13,19 @@
         <div class="card w-100">
             <div class="card-body">
                 <ul class="list-group">
-                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::DETAIL_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::DETAIL_TAB }}')">
+                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::DETAIL_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::DETAIL_TAB }}')" onclick="switchTab('{{ self::DETAIL_TAB }}')">
                         Detail Perizinan
                     </li>
-                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::PERSYARATAN_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::PERSYARATAN_TAB }}')">
+                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::PERSYARATAN_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::PERSYARATAN_TAB }}')" onclick="switchTab('{{ self::PERSYARATAN_TAB }}')">
                         Persyaratan
                     </li>
-                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::DATA_ENTRI_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::DATA_ENTRI_TAB }}')">
+                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::DATA_ENTRI_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::DATA_ENTRI_TAB }}')" onclick="switchTab('{{ self::DATA_ENTRI_TAB }}')">
                         Properti Data Entri
                     </li>
-                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::PENGATURAN_SURAT_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::PENGATURAN_SURAT_TAB }}')">
+                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::PENGATURAN_SURAT_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::PENGATURAN_SURAT_TAB }}')" onclick="switchTab('{{ self::PENGATURAN_SURAT_TAB }}')">
                         Pengaturan Surat
                     </li>
-                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::TINDAKAN_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::TINDAKAN_TAB }}')">
+                    <li class="list-group-item list-group-item-action cursor-pointer text-sm fw-medium{{ $current_tab == self::TINDAKAN_TAB ? ' active' : '' }}" wire:click="selectTab('{{ self::TINDAKAN_TAB }}')" onclick="switchTab('{{ self::TINDAKAN_TAB }}')">
                         Tindakan Perizinan
                     </li>
                 </ul>
@@ -74,3 +74,12 @@
         </div>
     </div>
 </div>
+@push('scripts')
+    <script>
+        function switchTab(tab) {
+            let url = new URL(window.location)
+            url.searchParams.set('tab', tab)
+            window.history.pushState({}, '', url)
+        }
+    </script>
+@endpush

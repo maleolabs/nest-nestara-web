@@ -10,7 +10,7 @@ class PerizinanIndex extends Component
 {
 
     #[Url()]
-    public $id;
+    public $id, $tab;
 
     public $preview_id,
         $preview_jenis;
@@ -28,7 +28,7 @@ class PerizinanIndex extends Component
         $this->preview_id = decrypt_id($this->id);
         $this->preview_jenis = $this->getJenisPerizinanService()->find($this->preview_id);
 
-        $this->current_tab = self::DETAIL_TAB;
+        $this->current_tab = $this->tab ?? self::DETAIL_TAB;
     }
 
     public function render()
@@ -38,7 +38,17 @@ class PerizinanIndex extends Component
 
     public function selectTab($tab)
     {
-        $this->current_tab = $tab;
+        $tabs = [
+            self::DETAIL_TAB,
+            self::PERSYARATAN_TAB,
+            self::DATA_ENTRI_TAB,
+            self::PENGATURAN_SURAT_TAB,
+            self::TINDAKAN_TAB
+        ];
+        if (in_array($tab, $tabs))
+            $this->current_tab = $tab;
+        else
+            $this->current_tab = self::DETAIL_TAB;
     }
 
     private function getJenisPerizinanService(): JenisPerizinanService

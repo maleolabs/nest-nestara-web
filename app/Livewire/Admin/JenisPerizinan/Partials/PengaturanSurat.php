@@ -17,6 +17,10 @@ trait PengaturanSurat
 
     protected function savePengaturanSurat($field)
     {
+        $this->validate([
+            $field => ['required']
+        ]);
+
         $this->getJenisPerizinanService()->savePengaturanSurat($field, $this->$field, $this->preview_id);
         $this->setUpOldPengaturanForm($field);
     }

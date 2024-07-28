@@ -12,8 +12,7 @@ class DetailPerizinan extends Component
     use DetailForm;
 
     public $preview_id,
-        $preview_jenis,
-        $can_use_template;
+        $preview_jenis;
 
     public function mount()
     {

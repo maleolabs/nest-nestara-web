@@ -12,8 +12,7 @@ class PropertiDataEntri extends Component
     use PropertiDataEntriForm;
 
     public $preview_id,
-        $preview_jenis,
-        $can_use_template;
+        $preview_jenis;
 
     public function mount()
     {

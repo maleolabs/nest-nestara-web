@@ -39,36 +39,31 @@
                     @case(self::DETAIL_TAB)
                         @livewire('admin.jenis-perizinan.detail-perizinan', [
                             'preview_id' => $preview_id, 
-                            'preview_jenis' => $preview_jenis,
-                            'can_use_template' => $can_use_template
+                            'preview_jenis' => $preview_jenis
                         ])
                         @break
                     @case(self::PERSYARATAN_TAB)
                         @livewire('admin.jenis-perizinan.persyaratan-izin', [
                             'preview_id' => $preview_id, 
-                            'preview_jenis' => $preview_jenis,
-                            'can_use_template' => $can_use_template
+                            'preview_jenis' => $preview_jenis
                         ])
                         @break
                     @case(self::DATA_ENTRI_TAB)
                         @livewire('admin.jenis-perizinan.properti-data-entri', [
                             'preview_id' => $preview_id, 
-                            'preview_jenis' => $preview_jenis,
-                            'can_use_template' => $can_use_template
+                            'preview_jenis' => $preview_jenis
                         ])
                         @break
                     @case(self::PENGATURAN_SURAT_TAB)
                         @livewire('admin.jenis-perizinan.pengaturan-surat', [
                             'preview_id' => $preview_id, 
-                            'preview_jenis' => $preview_jenis,
-                            'can_use_template' => $can_use_template
+                            'preview_jenis' => $preview_jenis
                         ])
                         @break
                     @case(self::TINDAKAN_TAB)
                         @livewire('admin.jenis-perizinan.tindakan-perizinan', [
                             'preview_id' => $preview_id, 
-                            'preview_jenis' => $preview_jenis,
-                            'can_use_template' => $can_use_template
+                            'preview_jenis' => $preview_jenis
                         ])
                         @break
                     @default

@@ -1,7 +1,6 @@
 <div>
     <div class="d-flex align-items-center gap-2">
         <h4>{{ str_capitalize($preview_jenis->nama, true) }}</h4>
-        <div class="badge {{ $can_use_template ? 'bg-app-primary-light text-primary' : 'bg-danger-light text-danger' }} rounded-pill border text-capitalize">{{ $can_use_template ? 'tersedia' : 'tidak tersedia' }}</div>
     </div>
     <p class="text-xs text-muted mb-3 pb-1 border-bottom">Detail Perizinan</p>
     <div class="row">

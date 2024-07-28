@@ -12,8 +12,7 @@ class PersyaratanIzin extends Component
     use PersyaratanForm;
 
     public $preview_id,
-        $preview_jenis,
-        $can_use_template;
+        $preview_jenis;
 
     public function mount()
     {

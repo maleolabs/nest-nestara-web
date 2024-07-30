@@ -19,6 +19,17 @@ interface EntriDataService {
 	function save(array $data_entridata): ?EntriData;
 
 	/**
+	 * Menyimpan (Update) field data entri berdasarkan id tertentu
+	 * 
+	 * @param int $id Id dari data entri
+	 * @param string $field Nama field atau kolom
+	 * @param string $value Value dari field
+	 * 
+	 * @return void
+	 */
+	function saveFieldById(int $id, string $field, string $value): void;
+
+	/**
 	 * Menemukan data entri berdasarkan ID.
 	 *
 	 * Fungsi ini mencari dan mengembalikan data entri yang sesuai dengan ID yang diberikan.

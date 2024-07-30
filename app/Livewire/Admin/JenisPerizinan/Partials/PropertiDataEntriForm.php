@@ -21,8 +21,50 @@ trait PropertiDataEntriForm
             $this->properti_form[$data_entri->id] = $data_entri->nama;
             $this->properti_entri_tipe[$data_entri->id] = $data_entri->tipe;
             $this->properti_entri_max[$data_entri->id] = $data_entri->max;
-            $this->properti_entri_mandatori[$data_entri->id] = $data_entri->mandatori;
+            $this->properti_entri_mandatori[$data_entri->id] = $data_entri->mandatori === 1 ?? false;
         }
+    }
+
+    protected function saveProperti($entri_id, $field)
+    {
+        $value = '';
+        switch ($field) {
+            case 'nama':
+                if (!isset($this->properti_form[$entri_id])) return;
+                $this->validate([
+                    "properti_form.{$entri_id}" => ['required']
+                ]);
+                $value = $this->properti_form[$entri_id];
+                break;
+            
+            case 'max':
+                if (!isset($this->properti_entri_max[$entri_id]) || intval($this->properti_entri_max[$entri_id]) != $this->properti_entri_max[$entri_id]) return;
+                $this->validate([
+                    "properti_entri_max.{$entri_id}" => ['required']
+                ]);
+                $value = intval($this->properti_entri_max[$entri_id]);
+                break;
+
+            case 'tipe':
+                if (!isset($this->properti_entri_tipe[$entri_id])) return;
+                $this->validate([
+                    "properti_entri_tipe.{$entri_id}" => ['required']
+                ]);
+                $value = $this->properti_entri_tipe[$entri_id];
+                break;
+
+            case 'mandatori':
+                if (!isset($this->properti_entri_mandatori[$entri_id])) return;
+                $this->validate([
+                    "properti_entri_mandatori.{$entri_id}" => ['required']
+                ]);
+                $value = $this->properti_entri_mandatori[$entri_id] === true ? 1 : 0;
+                break;
+            
+            default:
+                return;
+        }
+        $this->getEntriDataService()->saveFieldById($entri_id, $field, $value);
     }
 
     protected function getEntriDataService(): EntriDataService

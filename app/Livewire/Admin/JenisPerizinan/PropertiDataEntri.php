@@ -14,14 +14,15 @@ class PropertiDataEntri extends Component
     public $preview_id,
         $preview_jenis;
 
-    public function mount()
-    {
-
-    }
-
     public function updated($field)
     {
-
+        $kolom = '';
+        if (str_starts_with($field, 'properti_form')) {$field = str_replace('properti_form.', '', $field); $kolom = 'nama';}
+        else if (str_starts_with($field, 'properti_entri_tipe')) {$field = str_replace('properti_entri_tipe.', '', $field); $kolom = 'tipe';}
+        else if (str_starts_with($field, 'properti_entri_max')) {$field = str_replace('properti_entri_max.', '', $field); $kolom = 'max';}
+        else if (str_starts_with($field, 'properti_entri_mandatori')) {$field = str_replace('properti_entri_mandatori.', '', $field); $kolom = 'mandatori';}
+        
+        $this->saveProperti($field, $kolom);
     }
 
     public function render()

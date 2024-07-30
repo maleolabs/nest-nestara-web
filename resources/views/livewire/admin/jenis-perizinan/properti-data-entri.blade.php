@@ -18,10 +18,11 @@
     @endif
     @forelse ($properti_data_entri as $data_entri)
         <div class="row align-items-center mb-3">
-            <div class="col-6">
+            <div class="col-6 d-flex align-items-center gap-2">
                 <div class="input-group input-group-sm border rounded-3">
                     <input type="text" class="form-control border-0 rounded-3" wire:model.lazy='properti_form.{{ $data_entri->id }}'>
                 </div>
+                <i class="fa-solid fa-spinner fa-spin-pulse" wire:loading wire:target='properti_form.{{ $data_entri->id }}'></i>
             </div>
             <div class="col-2 d-flex justify-content-center">
                 <div class="input-group input-group-sm rounded-3 border w-fit">
@@ -40,7 +41,7 @@
             </div>
             <div class="col-2 d-flex justify-content-center">
                 <div class="form-check">
-                    <input type="checkbox" {{ $properti_entri_mandatori ? 'checked' : '' }} class="form-check-input" wire:model.lazy='properti_entri_mandatori.{{ $data_entri->id }}'>
+                    <input type="checkbox" {{ $properti_entri_mandatori ? 'checked' : '' }} class="form-check-input" wire:model.live='properti_entri_mandatori.{{ $data_entri->id }}'>
                 </div>
             </div>
         </div>

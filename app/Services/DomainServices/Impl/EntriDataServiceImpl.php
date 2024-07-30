@@ -17,6 +17,15 @@ class EntriDataServiceImpl implements EntriDataService {
 		return null;
 	}
 
+	public function saveFieldById(int $id, string $field, string $value): void
+	{
+		$entri = EntriData::find($id);
+		if (!$entri) return;
+
+		$entri->$field = $value;
+		$entri->save();
+	}
+
 	public function find(int $id): ?EntriData
 	{
 		return null;

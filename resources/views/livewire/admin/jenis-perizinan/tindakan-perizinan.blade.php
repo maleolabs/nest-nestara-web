@@ -7,7 +7,7 @@
                     <div class="border rounded p-4">
                         <form wire:submit.prevent='saveNamaJenis'>
                             <p class="mb-1 text-sm text-medium">Ganti Nama Jenis Perizinan</p>
-                            <div class="input-group input-group-sm w-50 border rounded-3 mb-3">
+                            <div class="input-group input-group-sm border rounded-3 mb-3">
                                 <input type="text" class="form-control border-0" placeholder="masukkan nama jenis perizinan" wire:model.lazy='nama_jenis'>
                             </div>
                             <div class="d-flex gap-2 align-items-center">

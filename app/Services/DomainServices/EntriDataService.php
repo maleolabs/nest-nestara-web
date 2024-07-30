@@ -12,11 +12,12 @@ interface EntriDataService {
 	 *
 	 * Fungsi ini menyimpan data entri yang diberikan dalam bentuk array.
 	 *
+	 * @param int $jenis_perizinan_id ID dari jenis perizinan
 	 * @param array $data_entridata Data entri yang akan disimpan.
 	 * 
 	 * @return EntriData|null Mengembalikan objek EntriData jika penyimpanan berhasil, atau null jika gagal.
 	 */
-	function save(array $data_entridata): ?EntriData;
+	function save(int $jenis_perizinan_id, array $data_entridata): ?EntriData;
 
 	/**
 	 * Menyimpan (Update) field data entri berdasarkan id tertentu

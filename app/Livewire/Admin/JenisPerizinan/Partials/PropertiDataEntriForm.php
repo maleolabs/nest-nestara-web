@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\JenisPerizinan\Partials;
 
+use App\Livewire\Forms\PropertiDataForm;
 use App\Services\DomainServices\EntriDataService;
 
 trait PropertiDataEntriForm
@@ -11,7 +12,10 @@ trait PropertiDataEntriForm
         $properti_form = [],
         $properti_entri_tipe = [],
         $properti_entri_max = [],
-        $properti_entri_mandatori = [];
+        $properti_entri_mandatori = [],
+        $new_form_active = false;
+
+    public PropertiDataForm $properti_data_form;
 
     protected function setUpPropertiDataEntri()
     {
@@ -65,6 +69,24 @@ trait PropertiDataEntriForm
                 return;
         }
         $this->getEntriDataService()->saveFieldById($entri_id, $field, $value);
+    }
+
+    public function addNewDataProperti()
+    {
+        $this->new_form_active = !$this->new_form_active;
+        $this->properti_data_form->nama = '';
+    }
+
+    public function saveNewDataProperti()
+    {
+        $this->properti_data_form->validate();
+
+        $saved = $this->getEntriDataService()->save($this->preview_id, $this->properti_data_form->all());
+
+        if ($saved) {
+            $this->addNewDataProperti();
+            $this->setUpPropertiDataEntri();
+        }
     }
 
     protected function getEntriDataService(): EntriDataService

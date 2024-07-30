@@ -12,9 +12,12 @@ use Illuminate\Support\Facades\DB;
 
 class EntriDataServiceImpl implements EntriDataService {
 
-    public function save(array $data_entridata): ?EntriData
+    public function save(int $jenis_perizinan_id, array $data_entridata): ?EntriData
 	{
-		return null;
+		$data_entridata['jenis_perizinan_id'] = $jenis_perizinan_id;
+		$entri_data = EntriData::create($data_entridata);
+
+		return $entri_data;
 	}
 
 	public function saveFieldById(int $id, string $field, string $value): void
@@ -28,7 +31,7 @@ class EntriDataServiceImpl implements EntriDataService {
 
 	public function find(int $id): ?EntriData
 	{
-		return null;
+		return EntriData::find($id);
 	}
 
 	public function findFirstEntriIzinByDataId(int $data_id, int $izin_id): ?EntriDataIzin

@@ -82,4 +82,13 @@ class UserServiceImpl implements UserService {
         return $users->all();
     }
 
+    public function deleteFoto(int $user_id): void
+    {
+        $user = User::find($user_id);
+        if (!$user) return;
+
+        $user->foto = $user->default_foto;
+        $user->save();
+    }
+
 }

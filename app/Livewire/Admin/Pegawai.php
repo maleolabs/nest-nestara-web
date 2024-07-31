@@ -12,7 +12,7 @@ use Livewire\Features\SupportFileUploads\WithFileUploads;
 class Pegawai extends Component
 {
 
-    use PegawaiDetail, UserDetail, WithFileUploads;
+    use PegawaiDetail, WithFileUploads;
 
     #[Url()]
     public $tab;

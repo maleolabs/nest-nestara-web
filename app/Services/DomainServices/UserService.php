@@ -56,4 +56,11 @@ interface UserService {
      */
     function getAllByRole(string $role_name): array;
 
+    /**
+     * Menghapus foto dari user dan menggantinya dengan foto default berdasarkan ID user tertentu
+     * 
+     * @param int $user_id ID dari user
+     */
+    function deleteFoto(int $user_id): void;
+
 }

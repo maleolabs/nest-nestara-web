@@ -51,4 +51,13 @@ class UserServiceImpl implements UserService {
         $user->assignRole($roles);
     }
 
+    public function getAllByRole(string $role_name): array
+    {
+        $users = User::whereHas('roles', function ($roles) use ($role_name) {
+            $roles->where('name', $role_name);
+        })->orderBy('created_at', 'DESC')->get();
+
+        return $users->all();
+    }
+
 }

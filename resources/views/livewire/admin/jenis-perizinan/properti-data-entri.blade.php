@@ -84,7 +84,7 @@
                         <p class="text-xs text-capitalize mb-0 fw-semibold text-center">tipe</p>
                     </div>
                     <div class="col-2 mb-1">
-                        <p class="text-xs text-capitalize mb-0 fw-semibold text-center">maximal</p>
+                        <p class="text-xs text-capitalize mb-0 fw-semibold text-center">maksimal</p>
                     </div>
                     <div class="col-2 mb-1">
                         <p class="text-xs text-capitalize mb-0 fw-semibold text-center">mandatori</p>

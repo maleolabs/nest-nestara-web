@@ -15,6 +15,17 @@ interface PegawaiService {
     function save(array $data_pegawai, ?string $peran_pegawai = null): ?Pegawai;
 
     /**
+     * Menyimpan data pegawai untuk field atau kolom tertentu
+     * 
+     * @param int $pegawai_id ID pegawai
+     * @param string $field Nama field atau kolom yang akan diperbaharui
+     * @param mixed $value Value dari field
+     * 
+     * @return void Tidak mengembalikan apa-apa
+     */
+    function saveField(int $pegawai_id, string $field, $value): void;
+
+    /**
      * Mencari pegawai berdasarkan ID.
      *
      * @param int $id ID pegawai yang akan dicari.

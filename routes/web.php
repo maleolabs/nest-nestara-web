@@ -11,6 +11,8 @@ use App\Http\Controllers\Layanan\DashboardController as LayananDashboardControll
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\PerizinanController;
 use App\Livewire\Admin\JenisPerizinan\PerizinanIndex;
+use App\Livewire\Admin\Pegawai;
+use App\Livewire\Admin\Pengaturan;
 use App\Models\JenisPerizinan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -58,6 +60,10 @@ Route::middleware('auth')->group(function() use ($pemohonMiddleware, $adminMiddl
             Route::prefix('/reporting')->group(function() {
                 Route::get('/', [ReportingController::class, 'index'])->name('admin.reporting.index');
             });
+
+            Route::get('/pegawai', Pegawai::class)->name('admin.pegawai');
+
+            Route::get('/pengaturan', Pengaturan::class)->name('admin.pengaturan');
         });
     });
 

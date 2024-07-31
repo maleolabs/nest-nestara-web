@@ -82,13 +82,13 @@
                 </li>
                 <div class="nav-divider mt-3 mb-2">Konfigurasi</div>
                 <li class="nav-item">
-                    <a class="nav-link {{ '' }}" href="#">
-                        <i class="fa-solid fa-network-wired"></i>
-                        <span>API</span>
+                    <a class="nav-link {{ Route::currentRouteName() == 'admin.pegawai' ? 'active' : '' }}" href="{{ route('admin.pegawai') }}">
+                        <i class="fa-solid fa-users-line"></i>
+                        <span>Pegawai</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ '' }}" href="#">
+                    <a class="nav-link {{ Route::currentRouteName() == 'admin.pengaturan' ? 'active' : '' }}" href="{{ route('admin.pengaturan') }}">
                         <i class="fa-solid fa-gear"></i>
                         <span>Pengaturan</span>
                     </a>

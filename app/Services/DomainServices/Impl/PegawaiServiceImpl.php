@@ -19,6 +19,16 @@ class PegawaiServiceImpl implements PegawaiService {
 		return $pegawai;
 	}
 
+	public function saveField(int $pegawai_id, string $field, $value): void
+	{
+		$pegawai = Pegawai::find($pegawai_id);
+		if (!$pegawai) return;
+
+
+		$pegawai->$field = $value;
+		$pegawai->save();
+	}
+
 	public function find(int $id): ?Pegawai
 	{
 		return Pegawai::find($id);

@@ -8,7 +8,7 @@
         <img src="{{ $user_foto ? $user_foto->temporaryUrl() : asset('storage/users/' . $user_detail->foto) }}" alt="{{ $user_detail->pegawai->nama }}" class="img-rounded img-rounded-md shadow-sm">
 
         <div class="d-flex align-items-center gap-2 justify-content-center mt-3">
-            <button class="btn btn-sm text-capitalize {{ $user_foto ? 'bg-gradient-primary' : 'bg-gradient-light' }}" type="button" @if($user_foto) wire:click='saveNewFoto' @else onclick="document.getElementById('userFoto').click()" @endif wire:loading.class='disabled'>
+            <button class="btn btn-sm text-capitalize {{ $user_foto ? 'bg-gradient-primary' : 'bg-gradient-light' }}" type="button" @if($user_foto) wire:click='saveNewFoto' @else onclick="document.getElementById('userFoto').click()" @endif wire:loading.class='disabled' wire:target='saveNewFoto, user_foto'>
                 <span class="spinner-border spinner-border-sm" wire:loading wire:target='user_foto, saveNewFoto'></span>
                 <i class="fa-solid {{ $user_foto ? 'fa-upload' : 'fa-pencil' }} text-sm" wire:loading.remove wire:target='user_foto'></i>
                 <span class="ms-1">{{ $user_foto ? 'simpan' : 'ubah foto' }}</span>
@@ -123,6 +123,11 @@
 
         <p class="text-xs text-medium mb-0 mt-5">Password</p>
         <hr>
+        @if ($password_saved)
+            <div class="message-success-tip text-success bg-app-primary-light border-success rounded-3 p-3 mb-3 text-sm">
+                Password berhasil diperbaharui!
+            </div>
+        @endif
         <form wire:submit.prevent='savePassword'>
             <p class="text-sm fw-medium mb-1">Password Baru</p>
             <div class="input-group input-group-sm border rounded-3">

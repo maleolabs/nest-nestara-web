@@ -5,6 +5,7 @@ namespace App\Livewire\Admin\Partials;
 use App\Livewire\Forms\PasswordForm;
 use App\Livewire\Forms\UserForm;
 use App\Services\DomainServices\UserService;
+use Livewire\Attributes\On;
 
 trait UserDetail
 {
@@ -16,7 +17,8 @@ trait UserDetail
     public $user_foto,
         $user_detail,
         $user_detail_id,
-        $foto_is_default = true;
+        $foto_is_default = true,
+        $password_saved = false;
 
     public function saveNewFoto()
     {
@@ -50,6 +52,8 @@ trait UserDetail
         $this->user_form->name = $this->user_detail->name;
         $this->user_form->username = $this->user_detail->username;
         $this->user_form->email = $this->user_detail->email;
+
+        $this->password_saved = false;
     }
 
     public function savePassword()
@@ -60,6 +64,14 @@ trait UserDetail
         $this->getUserService()->savePassword($this->user_detail_id, $this->password_form->password_baru);
 
         $this->password_form->reset();
+
+        $this->password_saved = true;
+    }
+
+    #[On('refresh-old-data')]
+    public function refreshOldData()
+    {
+        $this->setUpUserDetail($this->user_detail_id);
     }
 
     protected function getUserService(): UserService

@@ -9,10 +9,11 @@
             </a>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item text-capitalize">
+                    <li class="breadcrumb-item">
                         <a href="{{ route('profile') }}">
+                            <i class="fa-solid fa-at"></i>
                             @auth
-                                {{ auth()->user()->name }}
+                                {{ auth()->user()->username }}
                             @else
                                 Guest
                             @endauth

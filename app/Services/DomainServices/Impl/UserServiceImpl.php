@@ -45,6 +45,26 @@ class UserServiceImpl implements UserService {
         return $user;
     }
 
+    public function saveField(int $user_id, string $field, $value): ?User
+    {
+        $user = User::find($user_id);
+        if (!$user) return null;
+
+        $user->$field = $value;
+        $user->save();
+
+        return User::find($user_id);
+    }
+
+    public function savePassword(int $user_id, string $password): void
+    {
+        $user = User::find($user_id);
+        if (!$user) return;
+
+        $user->password = Hash::make($password);
+        $user->save();
+    }
+
     public function saveFotoFromLivewire(int $user_id, string $original_path): void
     {
         $user = User::find($user_id);

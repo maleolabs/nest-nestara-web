@@ -3,8 +3,6 @@
 namespace App\Livewire\Admin;
 
 use App\Livewire\Admin\Partials\PegawaiDetail;
-use App\Livewire\Admin\Partials\UserDetail;
-use App\Services\DomainServices\UserService;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
@@ -36,6 +34,11 @@ class Pegawai extends Component
             $field = str_replace('pegawai_form.', '', $field);
             $this->savePegawaiField($field, $this->pegawai_form->$field);
         }
+
+        if (str_starts_with($field, 'user_form')) {
+            $field = str_replace('user_form.', '', $field);
+            $this->saveUserField($field, $this->user_form->$field);
+        }
     }
 
     public function render()
@@ -66,11 +69,6 @@ class Pegawai extends Component
     {
         $role = $this->current_tab == self::FRONT_OFFICE_TAB ? FRONT_OFFICE_ROLE : ($this->current_tab == self::BACK_OFFICE_TAB ? BACK_OFFICE_ROLE : '');
         $this->users = $this->getUserService()->getAllByRole($role);
-    }
-
-    private function getUserService(): UserService
-    {
-        return app(UserService::class);
     }
     
 }

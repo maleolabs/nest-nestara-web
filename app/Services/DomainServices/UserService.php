@@ -22,6 +22,27 @@ interface UserService {
     function save(int $user_id = null, array $user_data, string $role_name = null): ?User;
 
     /**
+     * Menyimpan field atau kolom dari user tertentu
+     * 
+     * @param int $user_id ID dari user
+     * @param string $field Field atau kolom yang akan disimpan
+     * @param mixed $value Value dari field atau kolom yang akan disimpan
+     * 
+     * @return \App\Models\User|null Model User atau null jika gagal disimpan
+     */
+    function saveField(int $user_id, string $field, $value): ?User;
+
+    /**
+     * Menyimpan password untuk user tertentu
+     * 
+     * @param int $user_id ID dari user
+     * @param string $password Password
+     * 
+     * @return void
+     */
+    function savePassword(int $user_id, string $password): void;
+
+    /**
      * Menyimpan foto dari komponen Livewire
      * 
      * @param int $user_id ID dari user

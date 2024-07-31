@@ -25,7 +25,7 @@
     <div class="col-9">
         <p class="text-xs text-medium mb-0">Data Pegawai</p>
         <hr>
-        <p class="text-sm text-semibold mb-1">Nama Pegawai</p>
+        <p class="text-sm fw-medium mb-1">Nama Pegawai</p>
         <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
             <div class="w-100">
                 <div class="input-group input-group-sm border rounded-3">
@@ -37,7 +37,7 @@
             </div>
             <i class="fa-solid fa-spinner fa-spin-pulse" wire:loading wire:target='pegawai_form.nama'></i>
         </div>
-        <p class="text-sm text-semibold mb-1">Jabatan</p>
+        <p class="text-sm fw-medium mb-1">Jabatan</p>
         <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
             <div class="w-100">
                 <div class="input-group input-group-sm border rounded-3">
@@ -49,7 +49,7 @@
             </div>
             <i class="fa-solid fa-spinner fa-spin-pulse" wire:loading wire:target='pegawai_form.jabatan'></i>
         </div>
-        <p class="text-sm text-semibold mb-1">Pangkat</p>
+        <p class="text-sm fw-medium mb-1">Pangkat</p>
         <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
             <div class="w-100">
                 <div class="input-group input-group-sm border rounded-3">
@@ -61,7 +61,7 @@
             </div>
             <i class="fa-solid fa-spinner fa-spin-pulse" wire:loading wire:target='pegawai_form.pangkat'></i>
         </div>
-        <p class="text-sm text-semibold mb-1">NIP</p>
+        <p class="text-sm fw-medium mb-1">NIP</p>
         <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
             <div class="w-100">
                 <div class="input-group input-group-sm border rounded-3">
@@ -77,5 +77,74 @@
             <i class="fa-solid fa-info-circle me-1"></i>
             untuk menyimpan perubahan tekan enter
         </p>
+
+        <p class="text-xs text-medium mb-0 mt-5">Data Pengguna</p>
+        <hr>
+        <p class="text-sm fw-medium mb-1">Nama</p>
+        <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+            <div class="w-100">
+                <div class="input-group input-group-sm border rounded-3">
+                    <input type="text" class="form-control border-0 rounded-3" wire:model.lazy='user_form.name' placeholder="masukkan nama">
+                </div>
+                @error('user_form.name')
+                    <div class="text-danger text-sm fw-medium mt-1">{{ $message }}</div>
+                @enderror
+            </div>
+            <i class="fa-solid fa-spinner fa-spin-pulse" wire:loading wire:target='user_form.name'></i>
+        </div>
+        <p class="text-sm fw-medium mb-1">Username</p>
+        <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+            <div class="w-100">
+                <div class="input-group input-group-sm border rounded-3">
+                    <input type="text" class="form-control border-0 rounded-3" wire:model.lazy='user_form.username' placeholder="masukkan username">
+                </div>
+                @error('user_form.username')
+                    <div class="text-danger text-sm fw-medium mt-1">{{ $message }}</div>
+                @enderror
+            </div>
+            <i class="fa-solid fa-spinner fa-spin pulse" wire:loading wire:target='user_form.username'></i>
+        </div>
+        <p class="text-sm fw-medium mb-1">Email</p>
+        <div class="d-flex align-items-center justify-content-between gap-2 mb-3">
+            <div class="w-100">
+                <div class="input-group input-group-sm border rounded-3">
+                    <input type="text" class="form-control border-0 rounded-3" wire:model.lazy='user_form.email' placeholder="masukkan email">
+                </div>
+                @error('user_form.email')
+                    <div class="text-danger text-sm fw-medium mt-1">{{ $message }}</div>
+                @enderror
+            </div>
+            <i class="fa-solid fa-spinner fa-spin pulse" wire:loading wire:target='user_form.email'></i>
+        </div>
+        <p class="text-xs">
+            <i class="fa-solid fa-info-circle me-1"></i>
+            untuk menyimpan perubahan tekan enter
+        </p>
+
+        <p class="text-xs text-medium mb-0 mt-5">Password</p>
+        <hr>
+        <form wire:submit.prevent='savePassword'>
+            <p class="text-sm fw-medium mb-1">Password Baru</p>
+            <div class="input-group input-group-sm border rounded-3">
+                <input type="password" class="form-control border-0 rounded-3" wire:model.live='password_form.password_baru' placeholder="masukkan password baru">
+            </div>
+            @error('password_form.password_baru')
+                <div class="text-danger text-sm fw-medium mt-1">{{ $message }}</div>
+            @enderror
+            <p class="text-sm fw-medium mb-1 mt-3">Konfirmasi Password Baru</p>
+            <div class="input-group input-group-sm border rounded-3">
+                <input type="password" class="form-control border-0 rounded-3" wire:model.live='password_form.konfirmasi_password_baru' placeholder="konfirmasi password baru">
+            </div>
+            @error('password_form.konfirmasi_password_baru')
+                <div class="text-danger text-sm fw-medium mt-1">{{ $message }}</div>
+            @enderror
+    
+            @if ($password_form->password_baru && $password_form->konfirmasi_password_baru)
+                <button class="btn btn-sm bg-gradient-primary text-capitalize mt-3" type="submit" wire:loading.class='disabled' wire:target='savePassword'>
+                    <span wire:loading.remove wire:target='savePassword'>simpan</span>
+                    <span class="spinner-border spinner-border-sm" wire:loading wire:target='savePassword'></span>
+                </button>
+            @endif
+        </form>
     </div>
 </div>

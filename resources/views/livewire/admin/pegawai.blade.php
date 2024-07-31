@@ -19,6 +19,9 @@
                     <li class="list-group-item list-group-item-action btn-edit text-sm fw-medium text-capitalize {{ $current_tab == self::PENANDATANGAN_TAB ? 'active' : '' }}" wire:click="selectTab('{{ self::PENANDATANGAN_TAB }}')" onclick="switchTab('{{ self::PENANDATANGAN_TAB }}')">
                         penandatangan
                     </li>
+                    <li class="list-group-item list-group-item-action btn-edit text-sm fw-medium text-capitalize {{ $current_tab == self::NEW_PEGAWAI_TAB ? 'active' : '' }}" wire:click="selectTab('{{ self::NEW_PEGAWAI_TAB }}')" onclick="switchTab('{{ self::NEW_PEGAWAI_TAB }}')">
+                        buat pegawai baru
+                    </li>
                 </ul>
             </div>
         </div>
@@ -48,6 +51,9 @@
                                 </div>
                             @endforeach
                         </div>
+                    @elseif ($current_tab == self::PENANDATANGAN_TAB)
+                    @elseif ($current_tab == self::NEW_PEGAWAI_TAB)
+                        
                     @endif
                 @endif
             </div>

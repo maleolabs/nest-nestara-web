@@ -76,7 +76,7 @@ Livewire.hook('morph.updated', ({el, component}) => {
     }
 
     var messageSuccessTip = $('.message-success-tip')
-    if (messageSuccessTip) {
+    if (messageSuccessTip && messageSuccessTip.length > 0) {
         setTimeout(() => {
             messageSuccessTip.each(function() {
                 this.remove()

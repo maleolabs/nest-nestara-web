@@ -15,7 +15,7 @@
                 <div class="card card-plain">
                     <div class="card-header">
                         <h4 class="font-weight-bolder">Daftar</h4>
-                        <p class="mb-0">Masukkan email dan password anda untuk mendaftar</p>
+                        <p class="mb-0">Masukkan username dan password anda untuk mendaftar</p>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('register') }}" method="POST">
@@ -32,10 +32,10 @@
                                     </div>
                                 @enderror
                             </div>
-                            <div class="input-group input-group-outline mb-3 @error('email') mb-5 is-invalid @elseif(old('email')) is-valid @enderror">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" value="{{ old('email') }}" required>
-                                @error('email')
+                            <div class="input-group input-group-outline mb-3 @error('username') mb-5 is-invalid @elseif(old('username')) is-valid @enderror">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" name="username" value="{{ old('username') }}" required>
+                                @error('username')
                                     <div class="position-absolute top-100 ms-2">
                                         <small class="text-danger">
                                             <i class="fa-solid fa-circle-info me-2"></i>

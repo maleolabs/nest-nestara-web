@@ -3,11 +3,8 @@
 namespace Database\Seeders;
 
 use App\Models\Pegawai;
-use App\Models\User;
-use App\utils\libs\ImageGenerator;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Services\DomainServices\UserService;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
@@ -18,47 +15,26 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $admin_name = fake()->name();
-        $admin_foto = ImageGenerator::letterImage(substr($admin_name, 0, 1), 'public/users');
-        $admin = User::create([
-            'name' => $admin_name,
-            'email' => 'admin@pmptsp.com',
-            'password' => Hash::make('password'),
-            'foto' => $admin_foto
-        ]);
+        $admin = $this->userService()->save(null, ['name' => $admin_name, 'username' => 'administrator', 'password' => 'password']);
+
         $pengelola_layanan_name = fake()->name();
-        $pengelola_layanan_foto = ImageGenerator::letterImage(substr($pengelola_layanan_name, 0, 1), 'public/users');
-        $pengelola_layanan = User::create([
-            'name' => $pengelola_layanan_name,
-            'email' => 'pegawai1@pmptsp.com',
-            'password' => Hash::make('password'),
-            'foto' => $pengelola_layanan_foto
-        ]);
+        $pengelola_layanan = $this->userService()->save(null, ['name' => $pengelola_layanan_name, 'username' => 'pegawai1', 'password' => 'password']);
         Pegawai::create([
             'user_id' => $pengelola_layanan->id,
             'nama' => $pengelola_layanan_name,
             'jabatan' => 'pegawai'
         ]);
+
         $pegawai_name = fake()->name();
-        $pegawai_foto = ImageGenerator::letterImage(substr($pegawai_name, 0, 1), 'public/users');
-        $pegawai = User::create([
-            'name' => $pegawai_name,
-            'email' => 'pegawai2@pmptsp.com',
-            'password' => Hash::make('password'),
-            'foto' => $pegawai_foto
-        ]);
+        $pegawai = $this->userService()->save(null, ['name' => $pegawai_name, 'username' => 'pegawai2', 'password' => 'password']);
         Pegawai::create([
             'user_id' => $pegawai->id,
             'nama' => $pegawai_name,
             'jabatan' => 'pegawai'
         ]);
+
         $pemohon_name = fake()->name();
-        $pemohon_foto = ImageGenerator::letterImage(substr($pemohon_name, 0, 1), 'public/users');
-        $pemohon = User::create([
-            'name' => $pemohon_name,
-            'email' => 'pemohon@pmptsp.com',
-            'password' => Hash::make('password'),
-            'foto' => $pemohon_foto
-        ]);
+        $pemohon = $this->userService()->save(null, ['name' => $pemohon_name, 'username' => 'pemohon', 'password' => 'password']);
         
         $admin_role = Role::create([
             'name' => ADMIN_ROLE,
@@ -80,6 +56,11 @@ class UserSeeder extends Seeder
         $pengelola_layanan->assignRole($pengelola_layanan_role);
         $pegawai->assignRole($pegawai_role);
         $pemohon->assignRole($pemohon_role);
+    }
+
+    private function userService(): UserService
+    {
+        return app(UserService::class);
     }
    
 }

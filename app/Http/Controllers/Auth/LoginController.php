@@ -62,5 +62,10 @@ class LoginController extends Controller implements HasMiddleware
                 return redirect()->route('welcome');
         }
     }
+
+    public function username(): string
+    {
+        return 'username';
+    }
     
 }

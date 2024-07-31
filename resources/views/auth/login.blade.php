@@ -18,9 +18,9 @@
                     <div class="card-body">
                         <form role="form" class="text-start" action="{{ route('login') }}" method="POST">
                             @csrf
-                            <div class="input-group input-group-outline my-3 @error('email') is-invalid @enderror">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" required>
+                            <div class="input-group input-group-outline my-3 @error('username') is-invalid @enderror">
+                                <label class="form-label">Username</label>
+                                <input type="text" class="form-control" name="username" required>
                             </div>
                             <div class="input-group input-group-outline mb-3">
                                 <label class="form-label">Password</label>
@@ -35,7 +35,6 @@
                                     class="text-primary text-gradient font-weight-bold">Daftar</a>
                             </p>
                         </form>
-                        {{-- <p class="text-xs text-bold fst-italic text-center">{!! $quote !!}</p> --}}
                     </div>
                 </div>
             </div>

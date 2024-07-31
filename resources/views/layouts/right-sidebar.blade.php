@@ -5,7 +5,7 @@
             <div class="ms-2 me-auto">
                 <h6 class="text-sm spacing-normal mb-0">{{ Str::limit(auth()->user()->name, 17) }}</h6>
                 <p class="text-muted m-0 text-sm">
-                    {{ Str::limit(auth()->user()->email, 20) }}
+                    {{ Str::limit(auth()->user()->email ?? auth()->user()->username, 20) }}
                 </p>
             </div>
             <button class="btn btn-transparent rounded-3 sidebar-btn-close px-3 py-1">

@@ -54,4 +54,11 @@ interface MoveFile
      */
     function move(): ?string;
 
+    /**
+     * Memindahkan file dengan nama file yang baru
+     * 
+     * @return string|null Nama file atau null
+     */
+    function moveWithNewName(): ?string;
+
 }

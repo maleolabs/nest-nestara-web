@@ -3,6 +3,7 @@
 namespace App\Services\DomainServices\Impl;
 
 use App\Models\User;
+use App\Services\AppService\FileService;
 use App\Services\DomainServices\RoleService;
 use App\Services\DomainServices\UserService;
 use App\utils\libs\ImageGenerator;
@@ -14,9 +15,14 @@ class UserServiceImpl implements UserService {
 
     protected RoleService $roleService;
 
-    public function __construct(RoleService $roleService)
-    {
+    protected FileService $fileService;
+
+    public function __construct(
+        RoleService $roleService,
+        FileService $fileService
+    ) {
         $this->roleService = $roleService;
+        $this->fileService = $fileService;
     }
 
     public function save(?int $user_id = null, array $user_data, ?string $role_name = null): ?User
@@ -25,7 +31,7 @@ class UserServiceImpl implements UserService {
         if ($user_id) {
             $user = $this->find($user_id);
             if (!$user)
-                return null;
+                return $user;
             $user->update($user_data);
             $user = $this->find($user_id);
         } else {
@@ -35,6 +41,20 @@ class UserServiceImpl implements UserService {
         }
         $this->assignRoles($user->id, [$role_name]);
         return $user;
+    }
+
+    public function saveFotoFromLivewire(int $user_id, string $original_path): void
+    {
+        $user = User::find($user_id);
+        if (!$user) return;
+
+        $file_name = $this->fileService->fileManager()->moveFile()
+                    ->from($original_path)
+                    ->toPublic('users')
+                    ->moveWithNewName();
+
+        $user->foto = $file_name;
+        $user->save();
     }
 
     public function find(int $user_id): ?User

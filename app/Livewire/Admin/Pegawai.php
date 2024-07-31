@@ -3,14 +3,16 @@
 namespace App\Livewire\Admin;
 
 use App\Livewire\Admin\Partials\PegawaiDetail;
+use App\Livewire\Admin\Partials\UserDetail;
 use App\Services\DomainServices\UserService;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 
 class Pegawai extends Component
 {
 
-    use PegawaiDetail;
+    use PegawaiDetail, UserDetail, WithFileUploads;
 
     #[Url()]
     public $tab;
@@ -57,6 +59,7 @@ class Pegawai extends Component
         }
 
         $this->to_detail = false;
+        $this->user_foto = null;
     }
 
     private function setUsersData()

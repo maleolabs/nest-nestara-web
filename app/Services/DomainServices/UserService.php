@@ -22,6 +22,14 @@ interface UserService {
     function save(int $user_id = null, array $user_data, string $role_name = null): ?User;
 
     /**
+     * Menyimpan foto dari komponen Livewire
+     * 
+     * @param int $user_id ID dari user
+     * @param string $original_path Path original dari file
+     */
+    function saveFotoFromLivewire(int $user_id, string $original_path): void;
+
+    /**
      * find user by id
      * 
      * @param int $user_id

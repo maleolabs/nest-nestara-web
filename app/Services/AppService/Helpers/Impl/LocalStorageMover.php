@@ -3,6 +3,7 @@
 namespace App\Services\AppService\Helpers\Impl;
 
 use App\Services\AppService\Helpers\MoveFile;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 
@@ -59,9 +60,20 @@ class LocalStorageMover implements MoveFile
 
     public function move(): ?string
     {
+        return $this->moveFile();
+    }
+
+    public function moveWithNewName(): ?string
+    {
+        $file_name = base64_encode(Carbon::now()->timestamp) . '.png';
+        return $this->moveFile($file_name);
+    }
+
+    private function moveFile(string $new_file_name = null): ?string
+    {
         if (!Storage::exists($this->from_path))
             return null;
-        $file_name = basename($this->from_path);
+        $file_name = $new_file_name ?? basename($this->from_path);
         $file_to_move = Storage::get($this->from_path);
         $moved_path = ($this->to_path ?? $this->public_folder) . '/' . $file_name;
 
@@ -74,9 +86,9 @@ class LocalStorageMover implements MoveFile
         $is_moved = Storage::put($moved_path, $file_to_move);
         if ($is_moved) {
             Storage::delete($this->from_path);
-            return $moved_path;
+            return $new_file_name ?? $moved_path;
         }
-        return null;
+        return null;   
     }
 
 }

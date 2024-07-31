@@ -5,7 +5,13 @@
 </button>
 <div class="row mt-3">
     <div class="col-3 text-center">
-        <img src="{{ asset('storage/users/' . $user_detail->foto) }}" alt="{{ $user_detail->pegawai->nama }}" class="img-rounded img-rounded-md">
+        <img src="{{ $user_foto ? $user_foto->temporaryUrl() : asset('storage/users/' . $user_detail->foto) }}" alt="{{ $user_detail->pegawai->nama }}" class="img-rounded img-rounded-md">
+        <button class="btn btn-sm mt-3 text-capitalize {{ $user_foto ? 'bg-gradient-primary' : 'bg-gradient-light' }}" type="button" @if($user_foto) wire:click='saveNewFoto' @else onclick="document.getElementById('userFoto').click()" @endif wire:loading.class='disabled'>
+            <span class="spinner-border spinner-border-sm" wire:loading wire:target='user_foto, saveNewFoto'></span>
+            <i class="fa-solid {{ $user_foto ? 'fa-upload' : 'fa-pencil' }} text-sm" wire:loading.remove wire:target='user_foto'></i>
+            <span class="ms-1">{{ $user_foto ? 'simpan' : 'ubah foto' }}</span>
+        </button>
+        <input type="file" hidden id="userFoto" wire:model='user_foto'>
     </div>
     <div class="col-9">
         <p class="text-xs text-medium mb-0">Data Pegawai</p>

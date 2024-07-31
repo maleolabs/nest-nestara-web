@@ -12,12 +12,14 @@ trait PegawaiDetail
 
     public $to_detail = false,
         $user_detail,
+        $user_detail_id,
         $pegawai_id;
 
     public function userDetail($user_id = null) { 
         $this->to_detail = true; 
 
         $this->user_detail = $this->getUserService()->find($user_id);
+        $this->user_detail_id = $user_id;
 
         $this->setDataPegawai();
     }

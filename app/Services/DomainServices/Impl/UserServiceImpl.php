@@ -36,9 +36,14 @@ class UserServiceImpl implements UserService {
             $user = $this->find($user_id);
         } else {
             $user_data['password'] = Hash::make($user_data['password']);
-            $user_foto = ImageGenerator::letterImage(substr($user_data['name'], 0, 1), self::USER_PHOTO_FOLDER_PATH);
+
+            $name = $user_data['name'] ?? $user_data['username'];
+            $first_letter = strtoupper(substr($name, 0,1));
+            $user_foto = ImageGenerator::letterImage($first_letter, self::USER_PHOTO_FOLDER_PATH);
+
             $user_data['foto'] = $user_foto;
             $user_data['default_foto'] = $user_foto;
+
             $user = User::create($user_data);
         }
         $this->assignRoles($user->id, [$role_name]);

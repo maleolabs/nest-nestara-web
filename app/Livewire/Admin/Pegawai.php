@@ -31,16 +31,16 @@ class Pegawai extends Component
 
     public function updated($field)
     {
-        if (str_starts_with($field, 'pegawai_form')) {
-            $field = str_replace('pegawai_form.', '', $field);
-            if (!$this->new_pegawai)
+        if ($this->tab != self::NEW_PEGAWAI_TAB) {
+            if (str_starts_with($field, 'pegawai_form')) {
+                $field = str_replace('pegawai_form.', '', $field);
                 $this->savePegawaiField($field, $this->pegawai_form->$field);
-        }
-
-        if (str_starts_with($field, 'user_form')) {
-            $field = str_replace('user_form.', '', $field);
-            if (!$this->new_pegawai)
+            }
+    
+            if (str_starts_with($field, 'user_form')) {
+                $field = str_replace('user_form.', '', $field);
                 $this->saveUserField($field, $this->user_form->$field);
+            }
         }
     }
 

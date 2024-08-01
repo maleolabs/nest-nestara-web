@@ -14,7 +14,7 @@ class UserForm extends Form
     #[Rule('required|max:100|unique:users')]
     public $username;
 
-    #[Rule('required|email|max:100|unique:users')]
+    #[Rule('email|max:100|unique:users')]
     public $email;
     
 }

@@ -683,6 +683,13 @@
     width: 70%;
     right: -70%;
 }
+.modal-right-content.modal-right-content-minimalist {
+    width: calc(40% + 20px);
+    right: -40%;
+    height: calc(100% - 40px);
+    margin: 20px 20px 20px 0;
+    border-radius: 14px;
+}
 .modal-right-loading {
     width: 50%;
 }

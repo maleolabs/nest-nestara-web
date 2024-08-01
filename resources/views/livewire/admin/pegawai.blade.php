@@ -52,6 +52,29 @@
                             @endforeach
                         </div>
                     @elseif ($current_tab == self::PENANDATANGAN_TAB)
+                        <div class="row">
+                            @foreach ($penandatangan as $atasan)
+                                <div class="col-12 mb-4">
+                                    <div class="py-3 border-bottom d-flex align-items-top gap-3">
+                                        <img src="{{ asset('storage/web/male.png') }}" alt="{{ $atasan->nama }}" class="img-rounded bg-app-primary-light">
+                                        <div>
+                                            <h6 class="fw-medium btn-edit text-decoration-underline mb-0" id="modalRightShowBtn">
+                                                {{ $atasan->nama }}
+                                            </h6>
+                                            <p class="mb-0 text-sm fw-medium">
+                                                {{ $atasan->jabatan }}
+                                                <span class="text-lg mx-1">&bull;</span>
+                                                {{ $atasan->pangkat }}
+                                            </p>
+                                            <p class="mb-0 text-xs fw-medium">{{ $atasan->nip }}</p>
+                                        </div>
+                                        <button class="btn btn-transparent p-0 d-flex align-items-center justify-content-center rounded-circle text-danger shadow-none align-self-center ms-auto card-icon text-sm btn-edit">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
                     @elseif ($current_tab == self::NEW_PEGAWAI_TAB)
                         @livewire('admin.partials.pegawai-create')
                     @endif
@@ -65,6 +88,18 @@
             </div>
         </div>
     </div>
+
+    <div class="modal-right d-none">
+        <div class="modal-right-content modal-right-content-minimalist d-flex">
+            <div>
+                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Harum, beatae tenetur modi exercitationem excepturi at aperiam adipisci esse dignissimos ipsam, ea voluptas dolore voluptatem ex omnis? Eum minima at exercitationem?
+            </div>
+            <button class="ms-auto text-md btn btn-transparent p-0 card-icon sticky-top-0 shadow-none" id="modalRightCloseBtn">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </div>
+
 </div>
 @push('scripts')
     <script>

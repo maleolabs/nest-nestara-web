@@ -52,6 +52,8 @@ class PegawaiCreate extends Component
 
         $pegawai = $this->getPegawaiService()->save($this->new_pegawai_form->all(), $peran);
 
+        if ($pegawai) $this->result_message = 'Berhasil membuat data pegawai penandatangan';
+
         if (!$peran && $pegawai) {
             $user_data = $this->new_user_form->all();
             $user_data['password'] = $this->new_password_form->password_baru;

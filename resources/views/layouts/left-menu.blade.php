@@ -57,18 +57,11 @@
             @elserole(ADMIN_ROLE)
                 <div class="nav-divider mt-3 mb-2">Menu</div>
                 <li class="nav-item">
-                    <a class="nav-link {{ Route::currentRouteName() == 'admin.dashboard' ? 'active' : '  ' }}" href="{{ route('admin.dashboard') }}">
-                        <i class="fa-solid fa-table-columns"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link {{ Str::contains(Route::currentRouteName(), 'jenis-perizinan') ? 'active' : '' }}" href="{{ route('admin.jenis-perizinan.index') }}">
                         <i class="fa-solid fa-file-invoice"></i>
                         <span>Jenis Perizinan</span>
                     </a>
                 </li>
-                <div class="nav-divider mt-3 mb-2">Konfigurasi</div>
                 <li class="nav-item">
                     <a class="nav-link {{ Route::currentRouteName() == 'admin.pegawai' ? 'active' : '' }}" href="{{ route('admin.pegawai') }}">
                         <i class="fa-solid fa-users-line"></i>

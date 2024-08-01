@@ -131,9 +131,13 @@
 
   const modalRight = select('.modal-right')
   const modalRightContent = select('.modal-right-content')
-  const modalRightShowBtn = select('#modalRightShowBtn')
+  const modalRightShowBtn = select('#modalRightShowBtn', true)
   document.addEventListener('click', function(event) {
-    if (modalRightContent && !modalRightContent.contains(event.target) && modalRightShowBtn && !modalRightShowBtn.contains(event.target)) {
+    const isModalRightShowBtnClicked = Array.isArray(modalRightShowBtn) 
+        ? modalRightShowBtn.some(btn => btn.contains(event.target))
+        : modalRightShowBtn && modalRightShowBtn.contains(event.target)
+
+    if (modalRightContent && !modalRightContent.contains(event.target) && !isModalRightShowBtnClicked) {
       if (modalRight && modalRightContent) {
         modalRight.classList.add('d-none')
         if (modalRightContent.classList.contains('modal-right-content-md')) {
@@ -158,11 +162,21 @@
     })
   }
   if (modalRightShowBtn) {
-    modalRightShowBtn.addEventListener('click', function() {
-      if (modalRight && modalRightContent) {
-        showRightModal()
-      }
-    })
+    if (Array.isArray(modalRightShowBtn)) {
+      modalRightShowBtn.forEach(btn => {
+        btn.addEventListener('click', function() {
+          if (modalRight && modalRightContent) {
+            showRightModal()
+          }
+        })
+      })
+    } else {
+      modalRightShowBtn.addEventListener('click', function() {
+        if (modalRight && modalRightContent) {
+          showRightModal()
+        }
+      })
+    }
   }
 
   function showRightModal() {

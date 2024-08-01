@@ -22,7 +22,8 @@ class Pegawai extends Component
 
     public $current_tab;
 
-    public $users = [];
+    public $users = [],
+        $penandatangan = [];
 
     public function mount()
     {
@@ -31,7 +32,7 @@ class Pegawai extends Component
 
     public function updated($field)
     {
-        if ($this->tab != self::NEW_PEGAWAI_TAB) {
+        if (in_array($this->current_tab, $this->pegawaiTabs())) {
             if (str_starts_with($field, 'pegawai_form')) {
                 $field = str_replace('pegawai_form.', '', $field);
                 $this->savePegawaiField($field, $this->pegawai_form->$field);
@@ -46,7 +47,12 @@ class Pegawai extends Component
 
     public function render()
     {
-        $this->setUsersData();
+        if (in_array($this->current_tab, $this->pegawaiTabs())) {
+            $this->setUsersData();
+        } else if ($this->current_tab == self::PENANDATANGAN_TAB) {
+            $this->setPenandatanganData();
+        }
+        
         return view('livewire.admin.pegawai');
     }
 
@@ -81,6 +87,19 @@ class Pegawai extends Component
     {
         $role = $this->current_tab == self::FRONT_OFFICE_TAB ? FRONT_OFFICE_ROLE : ($this->current_tab == self::BACK_OFFICE_TAB ? BACK_OFFICE_ROLE : '');
         $this->users = $this->getUserService()->getAllByRole($role);
+    }
+
+    private function setPenandatanganData()
+    {
+        $this->penandatangan = $this->getPegawaiService()->getAllPenandaTangan();
+    }
+
+    private function pegawaiTabs(): array
+    {
+        return [
+            self::FRONT_OFFICE_TAB,
+            self::BACK_OFFICE_TAB
+        ];
     }
     
 }

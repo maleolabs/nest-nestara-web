@@ -68,18 +68,6 @@
                         <span>Jenis Perizinan</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::currentRouteName() == 'admin.pemantauan.index' ? 'active' : '' }}" href="{{ route('admin.pemantauan.index') }}">
-                        <i class="fa-solid fa-chart-simple"></i>
-                        <span>Pemantauan</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::currentRouteName() == 'admin.reporting.index' ? 'active' : '' }}" href="{{ route('admin.reporting.index') }}">
-                        <i class="fa-solid fa-file-lines"></i>
-                        <span>Reporting</span>
-                    </a>
-                </li>
                 <div class="nav-divider mt-3 mb-2">Konfigurasi</div>
                 <li class="nav-item">
                     <a class="nav-link {{ Route::currentRouteName() == 'admin.pegawai' ? 'active' : '' }}" href="{{ route('admin.pegawai') }}">

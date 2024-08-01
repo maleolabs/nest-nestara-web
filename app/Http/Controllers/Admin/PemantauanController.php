@@ -10,6 +10,7 @@ class PemantauanController extends Controller
     
     public function index()
     {
+        return back();
         return response()->view('admin.pemantauan.index');
     }
 

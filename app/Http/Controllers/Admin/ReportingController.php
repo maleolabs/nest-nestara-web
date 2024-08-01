@@ -10,6 +10,7 @@ class ReportingController extends Controller
  
     public function index()
     {
+        return back();
         return response()->view('admin.reporting.index');
     }
 

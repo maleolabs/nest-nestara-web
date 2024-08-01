@@ -39,7 +39,7 @@
                         <hr>
                         <div class="row">
                             @foreach ($users as $user)
-                                <div class="col-4">
+                                <div class="col-4 mb-4">
                                     <div class="dash-card-mono p-0 border">
                                         <img src="{{ asset('storage/users/' . $user->foto) }}" alt="{{ $user->name }}" class="card-mono-img">
                                         <div class="p-3">

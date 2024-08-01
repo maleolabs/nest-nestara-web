@@ -53,7 +53,7 @@
                         </div>
                     @elseif ($current_tab == self::PENANDATANGAN_TAB)
                     @elseif ($current_tab == self::NEW_PEGAWAI_TAB)
-                        
+                        @livewire('admin.partials.pegawai-create')
                     @endif
                 @endif
             </div>

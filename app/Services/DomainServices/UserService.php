@@ -70,6 +70,13 @@ interface UserService {
     function assignRoles(int $user_id, array $role_names): void;
 
     /**
+     * Mengambil semua pengguna
+     * 
+     * @return arrray Semua pengguna
+     */
+    function getAll(): array;
+
+    /**
      * Mengambil semua pengguna berdasarkan role tertentu
      * 
      * @param string $role_name Nama role

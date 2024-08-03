@@ -3166,6 +3166,10 @@ button.btn-app-tertiary-light:active {
   border-radius: 50%;
   object-fit: cover;
 }
+.img-circle.img-circle-xs {
+  width: 25px;
+  height: 25px;
+}
 .img-circle.img-circle-sm {
   width: 40px;
   height: 40px;

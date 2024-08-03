@@ -32,7 +32,7 @@
                             @foreach ($syarat_izin as $syarat)
                                 <div class="img-preview-container ipc-md">
                                     @php($img_preview_url = $persyaratan_tmp[$syarat->id] ?? null)
-                                    @php($file_path = $syarat->tipe == 'img' ? $syarat->dokumen_pemohon[0]->nama_file : $syarat->dokumen_pemohon[0]->nama_file_alternatif)
+                                    @php($file_path = $syarat->tipe == 'img' ? $syarat->dokumen_pemohon->where('izin_id', $izin->id)->first()->nama_file : $syarat->dokumen_pemohon->where('izin_id', $izin->id)->first()->nama_file_alternatif)
                                     <img src="{{ $img_preview_url ??  route('render-file', ['file_name' => base64_encode($file_path)]) }}" class="img-preview">
                                     <div class="img-preview-content">
                                         <h5 class="img-title">{{ "{$syarat->nama} ({$syarat->tipe})" }}</h5>
@@ -52,17 +52,11 @@
                                             <div class="text-md text-bold text-danger mb-3 text-lowercase">{{ str_replace("persyaratan.{$syarat->id}", $syarat->nama, $message) }}</div>
                                         @enderror
                                         <div class="d-flex justify-content-start align-items-center gap-1 mb-3">
-                                            <button class="btn btn-sm bg-gradient-danger" type="button" title="hapus">
-                                                <i class="fa-solid fa-trash text-sm"></i>
-                                            </button>
                                             @if (!isset($persyaratan[$syarat->id]))
-                                                <button class="btn btn-sm bg-gradient-info" type="button" title="download">
+                                                <a href="{{ route('download-file', ['file_name' => base64_encode($syarat->dokumen_pemohon->where('izin_id', $izin->id)->first()->nama_file)]) }}" class="btn btn-sm bg-gradient-info" title="download">
                                                     <i class="fa-solid fa-download text-sm"></i>
-                                                </button>
+                                                </a>
                                             @endif
-                                            <button class="btn btn-sm bg-gradient-info" type="button" title="lihat">
-                                                <i class="fa-solid fa-eye text-sm"></i>
-                                            </button>
                                             <button class="btn btn-sm bg-gradient-secondary" onclick="document.getElementById('{{ 'syarat-' . $syarat->id }}').click()" type="button" title="ganti">
                                                 <i class="fa-solid fa-upload text-sm"></i>
                                             </button>

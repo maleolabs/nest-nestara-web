@@ -23,6 +23,8 @@
     <div class="content-wrap py-3">
         @if ($preview_data_izin)
             @livewire('dashboard.preview-izin.preview-data-izin', ['preview_izin_id' => $preview_izin_id])
+        @elseif ($preview_pemohon)
+            @livewire('dashboard.pendaftaran.partials.preview-pemohon', ['pemohon_id' => $preview_pemohon_id])
         @else
             <div class="px-2">
                 <div class="card min-vh-50 p-3">
@@ -44,11 +46,7 @@
                             <input type="text" class="form-control" wire:model.live='search'>
                         </div>
                     </div>
-                    @if ($layout == 'grid')
-                        @include('livewire.dashboard.pendaftaran.partials.grid')
-                    @else
-                        @include('livewire.dashboard.pendaftaran.partials.table')
-                    @endif
+                    @include('livewire.dashboard.pendaftaran.partials.table')
                 </div>
             </div>
         @endif
@@ -66,6 +64,15 @@
                 const izinId = $(this).attr('data-izin-id')
                 let url = new URL(window.location)
                 url.searchParams.set('preview_izin_id', izinId)
+                window.history.pushState({}, '', url)
+            })
+        });
+
+        $('.data-pemohon').each(function(index, elemen) {
+            $(elemen).on('click', function() {
+                const pemohonId = $(this).attr('data-pemohon-id')
+                let url = new URL(window.location)
+                url.searchParams.set('preview_pemohon_id', pemohonId)
                 window.history.pushState({}, '', url)
             })
         });

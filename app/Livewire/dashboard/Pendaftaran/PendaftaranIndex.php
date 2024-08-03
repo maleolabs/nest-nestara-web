@@ -15,14 +15,14 @@ use Livewire\Component;
 class PendaftaranIndex extends Component
 {
     #[Url()]
-    public $layout, $tab, $preview_izin_id;
+    public $layout, $tab, $preview_izin_id, $preview_pemohon_id;
     public $menu;
     public $preview_data_izin = false;
 
+    public $preview_pemohon = false;
+
     private const DATA_PEMOHON = 'Data Pemohon';
     private const DATA_IZIN_BARU = 'Permohonan Izin Baru';
-    private const DATA_PERPANJANGAN_IZIN = 'Perpanjangan Izin';
-    private const DATA_PERUBAHAN_IZIN = 'Perubahan Izin';
 
     public $semua_pemohon = [],
         $semua_izin = [],
@@ -37,9 +37,7 @@ class PendaftaranIndex extends Component
     {
         $tabs = [
             self::DATA_PEMOHON,
-            self::DATA_IZIN_BARU,
-            self::DATA_PERPANJANGAN_IZIN,
-            self::DATA_PERUBAHAN_IZIN
+            self::DATA_IZIN_BARU
         ];
 
         $defaultMenu = self::DATA_PEMOHON;
@@ -55,6 +53,10 @@ class PendaftaranIndex extends Component
         
         if ($this->preview_izin_id) {
             $this->preview_data_izin = true;
+        }
+
+        if ($this->preview_pemohon_id) {
+            $this->preview_pemohon = true;
         }
 
         $this->start_date = Carbon::today()->subMonth()->toDateString();
@@ -74,6 +76,8 @@ class PendaftaranIndex extends Component
         $this->search = '';
         $this->preview_data_izin = false;
         $this->preview_izin_id = $reset_url ? null : $this->preview_izin_id;
+        $this->preview_pemohon = false;
+        $this->preview_pemohon_id = $reset_url ? null : $this->preview_pemohon_id;
     }
 
     private function setDataList()
@@ -94,7 +98,7 @@ class PendaftaranIndex extends Component
         $this->selectMenu(self::DATA_IZIN_BARU);
     }
 
-    private function getAlamat($pemohon_id)
+    protected function getAlamat($pemohon_id)
     {
         $pemohon = $this->getPemohonService()->find($pemohon_id);
         return "{$pemohon->detail_alamat}, " . $this->getRegionValue('kelurahan', $pemohon->kelurahan) . ', ' . $this->getRegionValue('kecamatan', $pemohon->kecamatan) . ', ' . $this->getRegionValue('kabupaten', $pemohon->kabupaten) . ', ' . $this->getRegionValue('provinsi', $pemohon->provinsi);
@@ -124,6 +128,12 @@ class PendaftaranIndex extends Component
     {
         $this->preview_data_izin = true;
         $this->preview_izin_id = $id;
+    }
+
+    public function previewPemohon($id)
+    {
+        $this->preview_pemohon = true;
+        $this->preview_pemohon_id = $id;
     }
 
     protected function getTanggalPermohonan(int $izin_id): string

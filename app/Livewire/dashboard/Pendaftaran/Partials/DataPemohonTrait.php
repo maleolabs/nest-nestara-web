@@ -43,16 +43,7 @@ trait DataPemohonTrait
         $this->allKabupaten = [];
         $this->allKecamatan = [];
         $this->allKelurahan = [];
-        $this->form_data_pemohon->sumber_identitas = null;
-        $this->form_data_pemohon->nomor_id = null;
-        $this->form_data_pemohon->nama_pemohon = null;
-        $this->form_data_pemohon->no_telepon = null;
-        $this->form_data_pemohon->provinsi = null;
-        $this->form_data_pemohon->kabupaten = null;
-        $this->form_data_pemohon->kecamatan = null;
-        $this->form_data_pemohon->kelurahan = null;
-        $this->form_data_pemohon->detail_alamat = null;
-        $this->form_data_pemohon->alamat_luar_negeri = null;
+        $this->form_data_pemohon->reset();
     }
 
     public function saveDataPemohon($user_id = null)

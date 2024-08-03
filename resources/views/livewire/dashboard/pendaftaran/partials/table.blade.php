@@ -7,7 +7,6 @@
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Alamat</th>
-                <th class="text-secondary opacity-7"></th>
             @elseif ($menu == self::DATA_IZIN_BARU)
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No Pendaftraran</th>
@@ -23,16 +22,15 @@
         <tbody>
             @if ($menu == self::DATA_PEMOHON)
                 @forelse ($semua_pemohon as $pemohon)
-                    <tr>
-                        <td class="align-middle text-center text-sm">{{ $loop->iteration }}</td>
+                    <tr class="cursor-pointer data-pemohon" data-pemohon-id="{{ $pemohon->id }}" wire:click='previewPemohon({{ $pemohon->id }})'>
+                        <td class="align-middle ps-4 text-sm">{{ $loop->iteration }}</td>
                         <td class="text-sm">
                             <p class="text-xs font-weight-bold mb-0">{{ $pemohon->nomor_id }}</p>
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                                @if($pemohon->user != null)
-                                    <img src="{{ asset('storage/users/' . $pemohon->user->foto) }}" alt="{{ $pemohon->nama_pemohon }}" class="img-circle img-circle-sm">
-                                @endif
+                                <img src="{{ asset('storage/users/' . ($pemohon->user ? $pemohon->user->foto : 'profile.png')) }}" alt="{{ $pemohon->nama_pemohon }}" class="img-circle img-circle-xs">
+                                
                                 <h6 class="mb-0 text-sm">
                                     {{ str_capitalize($pemohon->nama_pemohon, true) }}
                                 </h6>
@@ -42,12 +40,6 @@
                             <p class="text-sm text-secondary mb-0 text-capitalize">
                                 {{ $this->getAlamat($pemohon->id) }}
                             </p>
-                        </td>
-                        <td>
-                            <a href="javascript:;" class="btn btn-sm btn-light">
-                                <i class="fa-solid fa-square-pen fs-6 me-1"></i>
-                                Edit Data
-                            </a>
                         </td>
                     </tr>
                 @empty
@@ -113,7 +105,7 @@
             @endif
         </tbody>
     </table>
-    <div wire:loading wire:target='previewDataIzin, start_date, end_date, search'>
+    <div wire:loading wire:target='previewDataIzin, previewPemohon, start_date, end_date, search'>
         <div class="position-absolute top-0 start-0 h-100 w-100 d-flex align-items-center justify-content-center bg-light opacity-75">
             <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
         </div>

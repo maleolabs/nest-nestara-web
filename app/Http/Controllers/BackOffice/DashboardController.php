@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Services\AppService\EncryptionService;
 use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\JenisPerizinanService;
+use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SuratService;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -26,25 +27,30 @@ class DashboardController extends Controller
 
     protected SuratService $suratService;
 
+    protected PemohonService $pemohonService;
+
     public function __construct(
         PerizinanService $perizinanService,
         EncryptionService $encryptionService,
         JenisPerizinanService $jenisPerizinanService,
         EntriDataService $entriDataService,
-        SuratService $suratService
+        SuratService $suratService,
+        PemohonService $pemohonService
     ) {
         $this->perizinanService = $perizinanService;
         $this->encryptionService = $encryptionService;
         $this->jenisPerizinanService = $jenisPerizinanService;
         $this->entriDataService = $entriDataService;
         $this->suratService = $suratService;
+        $this->pemohonService = $pemohonService;
     }
     
     public function index(StatistikJenisPerizinan $statistikJenisPerizinan)
     {
         return response()->view('back-office.index', [
             'all_izin' => $this->perizinanService->getAll('', [], [], null, null, 'DESC', 10),
-            'statistikJenisPerizinan' => $statistikJenisPerizinan->build(), 
+            'statistikJenisPerizinan' => $statistikJenisPerizinan->build(),
+            'all_pemohon' => $this->pemohonService->getAll('', 20)
         ]);
     }
 

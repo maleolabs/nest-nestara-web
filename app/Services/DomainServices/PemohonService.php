@@ -15,7 +15,7 @@ interface PemohonService
 
     function findByNomorIdOrNamaPemohon(string $cari): ?Pemohon;
 
-    function getAll($search = ''): array;
+    function getAll($search = '', ?int $limit = null): array;
 
     function getByNomorIdOrNamaPemohon(string $cari): array;
 

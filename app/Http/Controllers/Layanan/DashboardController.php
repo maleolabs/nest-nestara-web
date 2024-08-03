@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Layanan;
 
 use App\Charts\StatistikJenisPerizinan;
 use App\Http\Controllers\Controller;
+use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\utils\enums\StatusIzinEnum;
 use Illuminate\Http\Request;
@@ -12,9 +13,14 @@ class DashboardController extends Controller
 {
     protected PerizinanService $perizinanService;
 
-    public function __construct(PerizinanService $perizinanService)
+    protected PemohonService $pemohonService;
+
+    public function __construct(
+        PerizinanService $perizinanService,
+        PemohonService $pemohonService)
     {
         $this->perizinanService = $perizinanService;
+        $this->pemohonService = $pemohonService;
     }
     
     public function index(StatistikJenisPerizinan $statistikJenisPerizinan)
@@ -26,7 +32,8 @@ class DashboardController extends Controller
                 StatusIzinEnum::PERUBAHAN,
                 StatusIzinEnum::PENYERAHAN
             ], [], null, null, 'DESC', 10),
-            'statistikJenisPerizinan' => $statistikJenisPerizinan->build()
+            'statistikJenisPerizinan' => $statistikJenisPerizinan->build(),
+            'all_pemohon' => $this->pemohonService->getAll('', 20)
         ]);
     }
 

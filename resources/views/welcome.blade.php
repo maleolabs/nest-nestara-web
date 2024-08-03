@@ -16,10 +16,26 @@
     </section>
     <section class="bg-app-primary mt-4">
         <div class="container py-5">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium ab ad, quasi enim fuga facilis velit quidem obcaecati id dolorum pariatur debitis sequi optio numquam iste corporis minima delectus veritatis consectetur ullam. Sequi perferendis nam voluptatem impedit error excepturi ipsum quae recusandae delectus, incidunt aut cumque reiciendis quod dolore laborum minus quasi? Esse consequuntur nam nemo fugit ex dolor, iure possimus officia recusandae eligendi voluptas eaque suscipit ea expedita! Sapiente accusamus dolor facere doloribus beatae soluta, nemo saepe officia voluptatem iure, eum odit ea! Sunt, assumenda nobis quod, dignissimos nam culpa impedit, corrupti placeat odit beatae necessitatibus totam sapiente facilis.
+            
+            <div class="d-flex flex-column align-items-center">
+                <h5 class="fw-semibold mb-3">Sistem Informasi Perizinan Dinas PMPTSP Bone Bolango</h5>
+                <p class="text-center">
+                    Selamat datang di Sistem Informasi Perizinan PMPTSP. Kami berkomitmen untuk menyediakan layanan perizinan yang transparan, efisien, dan mudah diakses oleh masyarakat. Melalui platform ini, pemohon dapat mendaftar, mengunggah dokumen, memantau status permohonan, dan memperoleh informasi terkini mengenai proses perizinan.
+                </p>
+                <p class="text-center">
+                    Kami berupaya untuk terus meningkatkan kualitas layanan dan memberikan pengalaman terbaik bagi Anda. Jika Anda memiliki pertanyaan atau membutuhkan bantuan, jangan ragu untuk menghubungi kami.
+                </p>
+                <p class="text-center text-bold mb-1">Jam Operasional</p>
+                <p class="text-center">Senin - Jumat: 08.00 - 16.00 WITA</p>
+            </div>
+
             <hr class="border border-3">
-            <aside class="d-flex justify-content-center">
+            <aside class="d-flex flex-column align-items-center">
                 <h6 class="fw-bold text-uppercase">contact us</h6>
+                <p class="fw-semibold mb-1">Email: support@perizinanpmptsp.go.id</p>
+                <p class="fw-semibold mb-1">Telepon: (021) 123-4567</p>
+
+                <p class="text-sm fw-medium mt-3">Terima kasih telah menggunakan layanan kami.</p>
             </aside>
         </div>
     </section>

@@ -74,11 +74,23 @@ class SuratServiceImpl extends PengaturanSuratGenerator implements SuratService 
         return $format->value;
     }
 
+    public function getLastNomor(): int
+    {
+        $nomor_surat = $this->pengaturanService->find('nomor-surat');
+        
+        return $nomor_surat ? $nomor_surat->value : 0;
+    }
+
     public function getNomor(): int
     {
         $nomor_surat = $this->pengaturanService->find('nomor-surat');
         if (!$nomor_surat) return 1;
         return (int) $nomor_surat->value + 1;
+    }
+
+    public function saveNomor(int $nomor_terakhir): void
+    {
+        $this->pengaturanService->updateOrCreate('nomor-surat', $nomor_terakhir, SuratGroupsEnum::FORMAT_SURAT_GROUP);
     }
 
     public function updateNomorSurat(
@@ -126,6 +138,19 @@ class SuratServiceImpl extends PengaturanSuratGenerator implements SuratService 
         $kop_surat['tempat_penetapan'] = $tempat_penetapan->value;
 
         return $kop_surat;
+    }
+
+    public function saveKopSurat(array $kop_data): void
+    {
+        $this->pengaturanService->updateOrCreate('nama-pemerintah', $kop_data['nama_pemerintah'], SuratGroupsEnum::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('nama-dinas', $kop_data['nama_dinas'], SuratGroupsEnum::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('alamat', $kop_data['alamat'], SuratGroupsEnum::KOP_SURAT_GROUP);
+        $this->pengaturanService->updateOrCreate('website', $kop_data['website'], SuratGroupsEnum::KOP_SURAT_GROUP);
+    }
+
+    public function saveTempatPenetapan(string $tempat_penetapan): void
+    {
+        $this->pengaturanService->updateOrCreate('tempat-penetapan', $tempat_penetapan, SuratGroupsEnum::KOP_SURAT_GROUP);
     }
 
     public function getSuratContentByJenis(int $jenis_perizinan_id): array

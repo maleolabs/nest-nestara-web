@@ -29,11 +29,25 @@ interface SuratService {
     function getActualFormat(): string;
 
     /**
-     * Mendapatkan nomor surat saat ini berdasarkan jenis perizinan.
+     * Mendapatkan nomor surat terakhir.
+     * 
+     * @return int Nomor surat terakhir.
+     */
+    function getLastNomor(): int;
+
+    /**
+     * Mendapatkan nomor surat saat ini.
      *
-     * @return int Nomor surat saat ini untuk jenis perizinan yang ditentukan.
+     * @return int Nomor surat saat ini.
      */
     function getNomor(): int;
+
+    /**
+     * Menyimpan nomor surat
+     * 
+     * @param int $nomor_terakhir Nomor surat terakhir
+     */
+    function saveNomor(int $nomor_terakhir): void;
 
     /**
      * Memperbarui nomor surat untuk jenis perizinan yang ditentukan.
@@ -51,6 +65,27 @@ interface SuratService {
      */
     function getKopSurat(): array;
 
+    /**
+     * Menyimpan kop surat
+     * 
+     * @param array $kop_data Data dari kop surat yang akan disimpan
+     */
+    function saveKopSurat(array $kop_data): void;
+
+    /**
+     * Menyimpan tempat penetapan surat
+     * 
+     * @param string $tempat_penetapan Nama tempat penetapan surat
+     */
+    function saveTempatPenetapan(string $tempat_penetapan): void;
+
+    /**
+     * Mendapatkan konten surat berdasarkan Jenis Perizinan tertentu.
+     * 
+     * @param int $jenis_perizinan_id ID dari jenis perizinan.
+     * 
+     * @return array Kontent surat dari Jenis Perizinan tertentu.
+     */
     function getSuratContentByJenis(int $jenis_perizinan_id): array;
 
     /**

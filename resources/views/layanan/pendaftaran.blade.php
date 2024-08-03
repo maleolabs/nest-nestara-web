@@ -7,7 +7,7 @@
     </li>
     <li class="breadcrumb-item active" id="pendaftaran-sub-breadcrumb"></li>
 @endpush
-@push('nav-dashboard-content')
+@push('nav-dashboard-contents')
     <div class="dropdown">
         <a href="javasciprt:;" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 dropdown-toggle p-2" data-bs-toggle="dropdown" id="navbarDropdownMenuLink2">
             <i class="fa-solid fa-square-plus fs-5"></i>

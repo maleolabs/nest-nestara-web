@@ -19,18 +19,6 @@
                 @endif
             </span>
         </div>
-        <div class="dash-menu-item {{ $menu == self::DATA_PERPANJANGAN_IZIN ? 'active' : '' }}" wire:click="selectMenu('{{ self::DATA_PERPANJANGAN_IZIN }}')" onclick="switchTab('{{ self::DATA_PERPANJANGAN_IZIN }}')">
-            <span class="dash-menu-item-content">
-                <i class="fa-solid fa-file-arrow-up me-2"></i>
-                <span>{{ self::DATA_PERPANJANGAN_IZIN }}</span>
-            </span>
-        </div>
-        <div class="dash-menu-item {{ $menu == self::DATA_PERUBAHAN_IZIN ? 'active' : '' }}" wire:click="selectMenu('{{ self::DATA_PERUBAHAN_IZIN }}')" onclick="switchTab('{{ self::DATA_PERUBAHAN_IZIN }}')">
-            <span class="dash-menu-item-content">
-                <i class="fa-solid fa-file-edit me-2"></i>
-                <span>{{ self::DATA_PERUBAHAN_IZIN }}</span>
-            </span>
-        </div>
     </div>
     <div class="content-wrap py-3">
         @if ($preview_data_izin)

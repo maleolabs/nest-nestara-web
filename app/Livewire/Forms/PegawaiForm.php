@@ -9,6 +9,9 @@ use Livewire\Form;
 class PegawaiForm extends Form
 {
 
+    #[Rule('required|max:6')]
+    public $gender;
+
     #[Rule('required|max:100')]
     public $nama;
 

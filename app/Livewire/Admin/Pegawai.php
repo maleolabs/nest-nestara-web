@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin;
 
 use App\Livewire\Admin\Partials\PegawaiDetail;
+use App\Livewire\Forms\PegawaiForm;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\WithFileUploads;
@@ -23,11 +24,16 @@ class Pegawai extends Component
     public $current_tab;
 
     public $users = [],
-        $penandatangan = [];
+        $penandatangan = [],
+        $selected_penandatangan;
+
+    public PegawaiForm $penandatangan_form;
 
     public function mount()
     {
         $this->selectTab($this->tab);
+
+        $this->dispatch('component-rendered');
     }
 
     public function updated($field)
@@ -47,11 +53,8 @@ class Pegawai extends Component
 
     public function render()
     {
-        if (in_array($this->current_tab, $this->pegawaiTabs())) {
-            $this->setUsersData();
-        } else if ($this->current_tab == self::PENANDATANGAN_TAB) {
-            $this->setPenandatanganData();
-        }
+        $this->setUsersData();
+        $this->setPenandatanganData();
         
         return view('livewire.admin.pegawai');
     }
@@ -81,6 +84,30 @@ class Pegawai extends Component
 
         $this->to_detail = false;
         $this->user_foto = null;
+    }
+
+    public function selectPenandatangan($id)
+    {
+        $penandatangan = $this->getPegawaiService()->find($id);
+        $this->selected_penandatangan = $penandatangan;
+
+        $this->penandatangan_form->gender = $penandatangan->gender;
+        $this->penandatangan_form->nama = $penandatangan->nama;
+        $this->penandatangan_form->jabatan = $penandatangan->jabatan;
+        $this->penandatangan_form->pangkat = $penandatangan->pangkat;
+        $this->penandatangan_form->nip = $penandatangan->nip;
+    }
+
+    public function savePenandatangan()
+    {
+        $saved_data = $this->getPegawaiService()->update($this->selected_penandatangan->id, $this->penandatangan_form->all());
+        if ($saved_data) $this->cancelEditPenandatangan();
+    }
+
+    public function cancelEditPenandatangan()
+    {
+        $this->selected_penandatangan = null;
+        $this->penandatangan_form->reset();
     }
 
     private function setUsersData()

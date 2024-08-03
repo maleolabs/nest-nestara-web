@@ -129,59 +129,62 @@
     })
   }
 
-  const modalRight = select('.modal-right')
-  const modalRightContent = select('.modal-right-content')
-  const modalRightShowBtn = select('#modalRightShowBtn', true)
-  document.addEventListener('click', function(event) {
-    const isModalRightShowBtnClicked = Array.isArray(modalRightShowBtn) 
-        ? modalRightShowBtn.some(btn => btn.contains(event.target))
-        : modalRightShowBtn && modalRightShowBtn.contains(event.target)
+  window.addEventListener('load', appModal())
 
-    if (modalRightContent && !modalRightContent.contains(event.target) && !isModalRightShowBtnClicked) {
-      if (modalRight && modalRightContent) {
-        modalRight.classList.add('d-none')
-        if (modalRightContent.classList.contains('modal-right-content-md')) {
-          modalRightContent.style.right = '-70%'
-        } else {
-          modalRightContent.style.right = '-50%'
-        }
-      }
-    }
-  })
-  const modalRightCloseBtn = select('#modalRightCloseBtn')
-  if (modalRightCloseBtn) {
-    modalRightCloseBtn.addEventListener('click', function() {
-      if (modalRight && modalRightContent) {
-        modalRight.classList.add('d-none')
-        if (modalRightContent.classList.contains('modal-right-content-md')) {
-          modalRightContent.style.right = '-70%'
-        } else {
-          modalRightContent.style.right = '-50%'
+  function appModal() {
+    let modalRight = select('.modal-right')
+    let modalRightContent = select('.modal-right-content')
+    let modalRightShowBtn = select('#modalRightShowBtn', true)
+    document.addEventListener('click', function(event) {
+      let isModalRightShowBtnClicked = Array.isArray(modalRightShowBtn) 
+          ? modalRightShowBtn.some(btn => btn.contains(event.target))
+          : modalRightShowBtn && modalRightShowBtn.contains(event.target)
+
+      if (modalRightContent && !modalRightContent.contains(event.target) && !isModalRightShowBtnClicked) {
+        if (modalRight && modalRightContent) {
+          modalRight.classList.add('d-none')
+          if (modalRightContent.classList.contains('modal-right-content-md')) {
+            modalRightContent.style.right = '-70%'
+          } else {
+            modalRightContent.style.right = '-50%'
+          }
         }
       }
     })
-  }
-  if (modalRightShowBtn) {
-    if (Array.isArray(modalRightShowBtn)) {
-      modalRightShowBtn.forEach(btn => {
-        btn.addEventListener('click', function() {
+    let modalRightCloseBtn = select('#modalRightCloseBtn')
+    if (modalRightCloseBtn) {
+      modalRightCloseBtn.addEventListener('click', function() {
+        if (modalRight && modalRightContent) {
+          modalRight.classList.add('d-none')
+          if (modalRightContent.classList.contains('modal-right-content-md')) {
+            modalRightContent.style.right = '-70%'
+          } else {
+            modalRightContent.style.right = '-50%'
+          }
+        }
+      })
+    }
+    if (modalRightShowBtn) {
+      if (Array.isArray(modalRightShowBtn)) {
+        modalRightShowBtn.forEach(btn => {
+          btn.addEventListener('click', function() {
+            if (modalRight && modalRightContent) {
+              showRightModal()
+            }
+          })
+        })
+      } else {
+        modalRightShowBtn.addEventListener('click', function() {
           if (modalRight && modalRightContent) {
             showRightModal()
           }
         })
-      })
-    } else {
-      modalRightShowBtn.addEventListener('click', function() {
-        if (modalRight && modalRightContent) {
-          showRightModal()
-        }
-      })
+      }
     }
-  }
-
-  function showRightModal() {
-    modalRight.classList.remove('d-none')
-    modalRightContent.style.right = '0'
+    function showRightModal() {
+      modalRight.classList.remove('d-none')
+      modalRightContent.style.right = '0'
+    }
   }
 
   const scrollto = (el) => {
@@ -263,5 +266,7 @@
         scrollto(window.location.hash)
       }
     }
-  });
+  })
+
+
 })()

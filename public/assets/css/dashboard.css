@@ -690,6 +690,14 @@
     margin: 20px 20px 20px 0;
     border-radius: 14px;
 }
+.modal-right-content.modal-right-content-minimalist:not(.d-none) .modal-right-footer {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-radius: 0 0 14px 14px;
+    width: 100%;
+}
+
 .modal-right-loading {
     width: 50%;
 }

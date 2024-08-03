@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('nama', 100);
             $table->string('pangkat', 100)->nullable();
             $table->string('nip', 25)->nullable();
+            $table->enum('gender', ['male', 'female'])->default('male');
             $table->softDeletes();
             $table->timestamps();
 

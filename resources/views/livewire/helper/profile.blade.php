@@ -5,16 +5,21 @@
     <div class="card-body">
         <div class="row">
             <div class="col-md-3 col-sm-5 d-flex flex-column align-items-center">
-                <div class="position-relative">
-                    <img src="{{ asset('storage/users/' . auth()->user()->foto) }}" alt="" class="img-fluid img-rounded img-rounded-lg img-absolute">
-                </div>
-                <div class="mt-3 d-flex gap-2 justify-content-center">
-                    <button class="btn btn-light" type="button">
-                        <i class="fa-solid fa-pencil"></i>
+                <img src="{{ $user_foto ? $user_foto->temporaryUrl() : asset('storage/users/' . $user->foto) }}" alt="{{ $user->username }}" class="img-rounded img-rounded-lg shadow-md">
+
+                <div class="d-flex align-items-center gap-2 justify-content-center mt-3">
+                    <button class="btn btn-sm text-capitalize {{ $user_foto ? 'bg-gradient-primary' : 'bg-gradient-light' }}" type="button" @if($user_foto) wire:click='saveNewFoto' @else onclick="document.getElementById('userFoto').click()" @endif wire:loading.class='disabled' wire:target='saveNewFoto, user_foto'>
+                        <span class="spinner-border spinner-border-sm" wire:loading wire:target='user_foto, saveNewFoto'></span>
+                        <i class="fa-solid {{ $user_foto ? 'fa-upload' : 'fa-pencil' }} text-sm" wire:loading.remove wire:target='user_foto'></i>
+                        <span class="ms-1">{{ $user_foto ? 'simpan' : 'ubah foto' }}</span>
                     </button>
-                    <button class="btn btn-danger" type="button">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+                    <input type="file" hidden id="userFoto" wire:model='user_foto'>
+                    @if (!$foto_is_default)
+                        <button class="btn btn-sm bg-gradient-danger" type="button" wire:click='deleteFoto' wire:loading.class='disabled'>
+                            <i class="fa-solid fa-trash text-sm" wire:loading.remove wire:target='deleteFoto'></i>
+                            <span class="spinner-border spinner-border-sm" wire:loading wire:target='deleteFoto'></span>
+                        </button>
+                    @endif
                 </div>
             </div>
             <div class="col-md-9 col-sm-7">

@@ -11,15 +11,20 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\WithFileUploads;
 
 class Profile extends Component
 {
+
+    use WithFileUploads;
 
     public PegawaiForm $pegawai_form;
     public UserForm $user_form, $user_form_old;
     public PasswordForm $password_form;
 
-    public $user_id, $pegawai_id;
+    public $user, $user_id, $pegawai_id;
+
+    public $user_foto, $foto_is_default = true;
 
     public function mount()
     {
@@ -66,11 +71,30 @@ class Profile extends Component
         return redirect()->route('login');
     }
 
+    public function saveNewFoto()
+    {
+        $this->getUserService()->saveFotoFromLivewire($this->user_id, $this->user_foto->getClientOriginalPath());
+
+        $this->user_foto = null;
+
+        $this->setUpProfileData();
+    }
+
+    public function deleteFoto()
+    {
+        $this->getUserService()->deleteFoto($this->user_id);
+
+        $this->setUpProfileData();
+    }
+
     private function setUpProfileData()
     {
         $auth_user = $this->getUserService()->find(auth()->user()->id);
 
+        $this->user = $auth_user;
         $this->user_id = $auth_user->id;
+
+        $this->foto_is_default = $auth_user->foto == $auth_user->default_foto;
 
         if ($auth_user->hasAnyRole([FRONT_OFFICE_ROLE, BACK_OFFICE_ROLE])) {
             $this->pegawai_id = $auth_user->pegawai->id;

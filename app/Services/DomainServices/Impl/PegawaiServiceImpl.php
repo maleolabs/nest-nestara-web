@@ -42,6 +42,14 @@ class PegawaiServiceImpl implements PegawaiService {
 		return $penandatangan->all();
 	}
 
+	public function dismissPenandangan(int $id): void
+	{
+		$peran_pegawai = PeranPegawai::where('pegawai_id', $id)->where('peran', 'penandatangan')->first();
+		if (!$peran_pegawai) return;
+
+		$peran_pegawai->delete();
+	}
+
 	public function update(int $id, array $data_pegawai): ?Pegawai
 	{
 		$pegawai = $this->find($id);

@@ -71,8 +71,9 @@
                                         </p>
                                         <p class="mb-0 text-xs fw-medium">{{ $atasan->nip }}</p>
                                     </div>
-                                    <button class="btn btn-transparent p-0 d-flex align-items-center justify-content-center rounded-circle text-danger shadow-none align-self-center ms-auto card-icon text-sm btn-edit">
-                                        <i class="fa-solid fa-trash"></i>
+                                    <button class="btn btn-transparent p-0 d-flex align-items-center justify-content-center rounded-circle text-danger shadow-none align-self-center ms-auto card-icon text-sm btn-edit" wire:click='deletePenandatangan({{ $atasan->id }})' wire:loading.class='disabled' wire:target='deletePenandatangan({{ $atasan->id }})'>
+                                        <i class="fa-solid fa-trash" wire:loading.remove wire:target='deletePenandatangan({{ $atasan->id }})'></i>
+                                        <span class="spinner-border spinner-border-sm" wire:loading wire:target='deletePenandatangan({{ $atasan->id }})'></span>
                                     </button>
                                 </div>
                             </div>

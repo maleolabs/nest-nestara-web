@@ -10,7 +10,7 @@ class PegawaiForm extends Form
 {
 
     #[Rule('required|max:6')]
-    public $gender;
+    public $gender = 'male';
 
     #[Rule('required|max:100')]
     public $nama;

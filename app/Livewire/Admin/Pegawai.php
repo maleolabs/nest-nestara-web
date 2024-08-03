@@ -84,6 +84,8 @@ class Pegawai extends Component
 
         $this->to_detail = false;
         $this->user_foto = null;
+
+        $this->cancelEditPenandatangan();
     }
 
     public function selectPenandatangan($id)
@@ -108,6 +110,11 @@ class Pegawai extends Component
     {
         $this->selected_penandatangan = null;
         $this->penandatangan_form->reset();
+    }
+
+    public function deletePenandatangan($id)
+    {
+        $this->getPegawaiService()->dismissPenandangan($id);
     }
 
     private function setUsersData()

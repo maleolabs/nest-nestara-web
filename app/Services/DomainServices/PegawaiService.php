@@ -41,6 +41,14 @@ interface PegawaiService {
     function getAllPenandaTangan(): array;
 
     /**
+     * Mengabaikan pegawai sebagai penandatangan
+     * 
+     * @param int $id ID dari pegawai
+     * @return void
+     */
+    function dismissPenandangan(int $id): void;
+
+    /**
      * Memperbarui data pegawai berdasarkan ID.
      *
      * @param int $id ID pegawai yang akan diperbarui.

@@ -96,6 +96,13 @@ interface JenisPerizinanService {
     function getPersyaratan(int $jenis_id): array;
 
     /**
+     * Mendapatkan daftar data persyaratan berdasarkan id jenis perizinan
+     * @param int $jenis_id
+     * @return array
+     */
+    function getDataPersyaratan(int $jenis_id): array;
+
+    /**
      * Mendapatkan daftar persyaratan berdasarkan id jenis perizinan dan id pemohon
      * @param int $jenis_id
      * @param int $pemohon_id

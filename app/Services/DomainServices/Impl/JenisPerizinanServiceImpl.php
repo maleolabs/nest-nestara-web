@@ -143,6 +143,15 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
         return $result;
     }
 
+    public function getDataPersyaratan(int $jenis_id): array
+    {
+        $perizinan = JenisPerizinan::find($jenis_id);
+        if (!$perizinan) return [];
+
+        $persyaratan = $perizinan->syarat_izin;
+        return $persyaratan->all();
+    }
+
     public function getPersyaratanByJenisAndPemohon(int $jenis_id, int $pemohon_id): array
     {
         $perizinan = JenisPerizinan::find($jenis_id);

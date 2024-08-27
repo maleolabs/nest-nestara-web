@@ -20,6 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'show_izin' => \App\Http\Middleware\Izin\ShowIzinMiddleware::class,
             'revisi_izin' => \App\Http\Middleware\Izin\RevisiIzinMiddleware::class,
             'profile' => \App\Http\Middleware\ProfileMiddleware::class,
+
+            'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
+            'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

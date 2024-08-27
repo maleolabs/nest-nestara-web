@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterUserRequest extends FormRequest
@@ -27,6 +29,13 @@ class RegisterUserRequest extends FormRequest
             'username' => ['required', 'unique:users', 'max:100'],
             'password' => ['required', Password::min(6)->letters()->numbers()->symbols()]
         ];
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response([
+            'errors' => $validator->getMessageBag()
+        ], 400));
     }
     
 }

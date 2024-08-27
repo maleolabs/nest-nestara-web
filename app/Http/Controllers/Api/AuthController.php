@@ -7,6 +7,7 @@ use App\Http\Requests\Api\LoginRequest;
 use App\Http\Requests\Api\RegisterUserRequest;
 use App\Http\Resources\UserResource;
 use App\Services\DomainServices\UserService;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,6 +27,13 @@ class AuthController extends Controller
 
         if (!$token = Auth::guard('api')->attempt($credentials)) {
             return response()->json(['error' => 'unauthorized'], 401);
+        }
+
+        $current_user = Auth::guard('api')->user();
+        if (!$current_user->hasRole('pemohon')) {
+            throw new HttpResponseException(response([
+                'errors' => 'login khusus pemohon!'
+            ], 403));
         }
 
         return $this->respondWithToken($token);

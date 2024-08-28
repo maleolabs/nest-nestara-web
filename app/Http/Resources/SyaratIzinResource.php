@@ -19,7 +19,7 @@ class SyaratIzinResource extends JsonResource
             'nama' => $this->nama,
             'tipe' => $this->tipe,
             'online' => $this->online,
-            'created_at' => $this->created_at
+            'created_at' => $this->created_at->translatedFormat('d F Y')
         ];
     }
     

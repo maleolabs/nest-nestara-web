@@ -19,7 +19,7 @@ class JenisPerizinanResource extends JsonResource
             'nama' => $this->nama,
             'durasi' => $this->durasi,
             'masa_berlaku' => $this->masa_berlaku,
-            'created_at' => $this->created_at  
+            'created_at' => $this->created_at->translatedFormat('d F Y')
         ];
     }
 }

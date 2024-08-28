@@ -2,12 +2,17 @@
 
 use App\Http\Controllers\Api\JenisPerizinanController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\PerizinanController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['jwt.auth'])->group(function() {
     Route::prefix('/jenis-perizinan')->group(function () {
         Route::get('/', [JenisPerizinanController::class, 'getAll']);
         Route::get('/{id}/persyaratan', [JenisPerizinanController::class, 'getPersyaratan']);
+    });
+
+    Route::prefix('/izin-saya')->group(function() {
+        Route::get('/', [PerizinanController::class, 'get']);
     });
 });
 

@@ -21,8 +21,8 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'foto' => $this->foto,
             'default_foto' => $this->default_foto,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at
+            'created_at' => $this->created_at->translatedFormat('d F Y'),
+            'updated_at' => $this->updated_at->translatedFormat('d F Y')
         ];
     }
 }

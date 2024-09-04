@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\DaftarIzinRequest;
 use App\Http\Resources\IzinResource;
 use App\Services\DomainServices\PerizinanService;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 
 class PerizinanController extends Controller
@@ -19,7 +19,7 @@ class PerizinanController extends Controller
         $this->perizinanService = $perizinanService;
     }
 
-    public function get()
+    public function get(): JsonResponse
     {
         $current_user = Auth::guard('api')->user();
         $data = $current_user->pemohon ? $current_user->pemohon->izin : null;
@@ -29,7 +29,9 @@ class PerizinanController extends Controller
     
     public function daftarIzin(DaftarIzinRequest $request)
     {
+        $data = $request->validated();
 
+        $this->perizinanService->saveRegistration($data['jenis_perizinan_id'], $data['pemohon_id']);
     }
     
 }

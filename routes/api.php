@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Api\JenisPerizinanController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DataEntriController;
 use App\Http\Controllers\Api\PerizinanController;
+use App\Http\Controllers\Helper\FileController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['jwt.auth'])->group(function() {
@@ -14,6 +16,14 @@ Route::middleware(['jwt.auth'])->group(function() {
     Route::prefix('/izin-saya')->group(function() {
         Route::get('/', [PerizinanController::class, 'get']);
     });
+});
+
+Route::prefix('data-entri')->group(function () {
+    Route::get('/{jenis_perizinan_id}', [DataEntriController::class, 'getByJenisPerizinanId']);
+});
+
+Route::prefix('/files')->group(function () {
+    Route::get('/{file_name}', [FileController::class, 'render']);
 });
 
 Route::prefix('/auth')->group(function () {

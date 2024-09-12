@@ -59,7 +59,7 @@ class User extends Authenticatable implements JWTSubject
 
     public function pemohon(): HasOne
     {
-        return $this->hasOne(Pemohon::class);
+        return $this->hasOne(Pemohon::class, 'user_id', 'id');
     }
 
     public function pegawai(): HasOne

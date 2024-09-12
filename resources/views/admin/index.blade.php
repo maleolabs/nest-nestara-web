@@ -10,7 +10,7 @@
                         <div>
                             <h6 class="text-xs mb-0">
                                 @if ($user->hasRole(PEMOHON_ROLE))
-                                    <span class="fw-semibold">{{ $user->pemohon->nama_pemohon }}</span>
+                                    <span class="fw-semibold">{{ $user->pemohon ? $user->pemohon->nama_pemohon : $user->name }}</span>
                                 @elseif($user->hasAnyRole([FRONT_OFFICE_ROLE, BACK_OFFICE_ROLE]))
                                     <span class="fw-semibold">{{ $user->pegawai->nama }}</span>
                                 @else

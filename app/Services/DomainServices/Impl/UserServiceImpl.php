@@ -100,7 +100,7 @@ class UserServiceImpl implements UserService {
 
     public function getAll(): array
     {
-        $users = User::all();
+        $users = User::with('pemohon')->get();
 
         return $users->all();
     }

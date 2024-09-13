@@ -5,6 +5,7 @@ namespace App\Services\DomainServices\Impl;
 use App\Models\Izin;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\EntriDataService;
+use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PengaturanService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\StatusIzinService;
@@ -22,6 +23,8 @@ use Illuminate\Support\Facades\DB;
 class PerizinanServiceImpl implements PerizinanService
 {
 
+    protected JenisPerizinanService $jenisPerizinanService;
+
     protected StatusIzinService $statusIzinService;
 
     protected EntriDataService $entriDataService;
@@ -33,12 +36,14 @@ class PerizinanServiceImpl implements PerizinanService
     protected PengaturanService $pengaturanService;
 
     public function __construct(
+        JenisPerizinanService $jenisPerizinanService,
         StatusIzinService $statusIzinService, 
         EntriDataService $entriDataService,
         SuratService $suratService,
         DokumenPemohonService $dokumenPemohonService,
         PengaturanService $pengaturanService)
     {
+        $this->jenisPerizinanService = $jenisPerizinanService;
         $this->statusIzinService = $statusIzinService;
         $this->entriDataService = $entriDataService;
         $this->suratService = $suratService;
@@ -46,8 +51,14 @@ class PerizinanServiceImpl implements PerizinanService
         $this->pengaturanService = $pengaturanService;
     }
     
-    public function saveRegistration(int $jenis_izin_id, int $pemohon_id): ?Izin
+    public function saveRegistration(int $jenis_izin_id, int $pemohon_id, array $persyaratan = []): ?Izin
     {
+        /*$syarat_izin = $this->jenisPerizinanService->getPersyaratan($jenis_izin_id);
+        dd(array_diff_key($syarat_izin, $persyaratan));
+        if (array_diff_key($syarat_izin, $persyaratan) > 0) {
+            // throw validation exception
+        }*/
+
         $izin = Izin::create([
             'jenis_perizinan_id' => $jenis_izin_id,
             'pemohon_id' => $pemohon_id

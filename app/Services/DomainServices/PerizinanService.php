@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
  * Menyediakan antarmuka untuk mengelola perizinan dalam aplikasi.
  *
  * Antarmuka ini mendefinisikan metode-metode untuk menangani berbagai operasi terkait perizinan, seperti:
- * @method null|App\Models\Izin saveRegistration(int $jenis_izin_id, int $pemohon_id)
+ * @method null|App\Models\Izin saveRegistration(int $jenis_izin_id, int $pemohon_id, array $persyaratan = [])
  * @method null|App\Models\Izin find(int $id)
  * @method Collection get(
  *        string $search = '',
@@ -79,10 +79,11 @@ interface PerizinanService
      *
      * @param int $jenis_izin_id ID jenis perizinan yang akan didaftarkan.
      * @param int $pemohon_id ID pemohon yang mengajukan perizinan.
+     * @param array $persyaratan Syarat jenis perizinan yang akan didaftarkan. Default [].
      *
      * @return \App\Models\Izin|null Objek perizinan yang baru didaftarkan, atau null jika gagal.
      */
-    function saveRegistration(int $jenis_izin_id, int $pemohon_id): ?Izin;
+    function saveRegistration(int $jenis_izin_id, int $pemohon_id, array $persyaratan = []): ?Izin;
 
     /**
      * Mencari perizinan berdasarkan ID.

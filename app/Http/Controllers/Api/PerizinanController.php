@@ -27,7 +27,7 @@ class PerizinanController extends Controller
         return response()->json(($data ? IzinResource::collection($data) : []), 200);
     }
     
-    public function daftarIzin(DaftarIzinRequest $request)
+    public function create(DaftarIzinRequest $request)
     {
         $data = $request->validated();
 

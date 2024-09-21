@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Services\APIClient\Impl\EmsifaAPIService;
+use App\Services\APIClient\Impl\OcrAPIServiceImpl;
+use App\Services\APIClient\OcrAPIService;
 use App\Services\APIClient\RegionAPIService;
 use App\Services\AppService\EncryptionService;
 use App\Services\AppService\FileService;
@@ -63,6 +65,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
             EncryptionService::class,
             PdfTemplateService::class,
             FileManager::class,
+            OcrAPIService::class,
         ];
     }
 
@@ -88,6 +91,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(EncryptionService::class, EncryptionServiceImpl::class);
         $this->app->singleton(PdfTemplateService::class, PdfTemplateServiceImpl::class);
         $this->app->singleton(FileManager::class, LocalStorageFileManager::class);
+        $this->app->singleton(OcrAPIService::class, OcrAPIServiceImpl::class);
 
         $this->app->singleton(GetIzin::class, function () {
             return new GetIzin();

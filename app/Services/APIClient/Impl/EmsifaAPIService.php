@@ -12,13 +12,18 @@ use GuzzleHttp\Exception\RequestException;
 class EmsifaAPIService implements RegionAPIService
 {
 
-    private const BASE_URL = 'https://emsifa.github.io/api-wilayah-indonesia/api/';
+    private $base_url;
 
     private const GET_METHOD = 'GET';
 
     private const LOCAL_REGION_PATH = 'region';
 
     private const NOT_FOUND = 'tidak ditemukan';
+
+    public function __construct()
+    {
+        $this->base_url = config('api-client.region_api.base_url');
+    }
 
     private function fileService(): FileService
     {
@@ -90,7 +95,7 @@ class EmsifaAPIService implements RegionAPIService
         } catch (Exception $e) {}
 
         try {
-            $response = $client->request($method, self::BASE_URL . $param);
+            $response = $client->request($method, $this->base_url . $param);
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody(), true);
                 $this->fileService()->save($path, $response->getBody());

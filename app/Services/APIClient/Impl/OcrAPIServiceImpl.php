@@ -31,7 +31,7 @@ class OcrAPIServiceImpl implements OcrAPIService
             $response = $client->request('GET', $this->base_url . $path);
             if ($response->getStatusCode() == 200) {
                 $data = json_decode($response->getBody(), true);
-                return $data;
+                return $data['data'];
             }
         } catch (ConnectionException | RequestException $e) {
             Log::info($e->getMessage());

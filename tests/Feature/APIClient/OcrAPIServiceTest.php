@@ -16,6 +16,7 @@ class OcrAPIServiceTest extends TestCase
     {
         $apiService = app(OcrAPIService::class);
 
-        $apiService->getEntriDataValueByIzinId(1);
+        $data = $apiService->getEntriDataValueByIzinId(1);
+        dd($data);
     }
 }

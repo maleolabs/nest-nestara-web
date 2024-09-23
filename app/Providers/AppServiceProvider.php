@@ -39,6 +39,7 @@ use App\Services\DomainServices\StatusIzinService;
 use App\Services\DomainServices\SuratService;
 use App\Services\DomainServices\SyaratIzinService;
 use App\Services\DomainServices\UserService;
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
@@ -95,6 +96,10 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
 
         $this->app->singleton(GetIzin::class, function () {
             return new GetIzin();
+        });
+
+        $this->app->singleton(Client::class, function () {
+            return new Client();
         });
     }
 

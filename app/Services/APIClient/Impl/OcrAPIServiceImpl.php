@@ -45,7 +45,7 @@ class OcrAPIServiceImpl implements OcrAPIService
             ]);
             return $this->parseJsonResponse($response->getBody()->getContents());
         } catch (RequestException $re) {
-            $this->handleRequestException($re);
+            return $this->handleRequestException($re);
         } catch (ConnectionException $ce) {
             Log::error($ce->getMessage());
             return null;
@@ -63,7 +63,7 @@ class OcrAPIServiceImpl implements OcrAPIService
             ]);
             return $this->parseJsonResponse($response->getBody()->getContents());
         } catch (RequestException $re) {
-            $this->handleRequestException($re);
+            return $this->handleRequestException($re);
         } catch (ConnectionException $ce) {
             Log::info($ce->getMessage());
             return null;

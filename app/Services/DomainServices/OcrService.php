@@ -11,8 +11,8 @@ interface OcrService
      * Melakukan request OCR untuk data pendaftaran baru
      * 
      * @param App\Models\Izin $izin
-     * @return void
+     * @return array
      */
-    function doOcrRequestForNewDataRegistation(Izin $izin): void;
+    function doOcrRequestForNewDataRegistation(Izin $izin): ?array;
 
 }

@@ -21,7 +21,8 @@ class OcrServiceTest extends TestCase
         $izin = $izinService->find(1);
         assertNotNull($izin);
 
-        $ocrService->doOcrRequestForNewDataRegistation($izin);       
+        $res = $ocrService->doOcrRequestForNewDataRegistation($izin);       
+        dd($res);
     }
     
 }

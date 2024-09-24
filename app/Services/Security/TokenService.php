@@ -8,7 +8,7 @@ interface TokenService
     /**
      * Membuat token baru
      * 
-     * @return void
+     * @return string
      */
     function generateToken(): string;
 

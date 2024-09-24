@@ -30,14 +30,12 @@ class OcrServiceImpl implements OcrService
 
     public function doOcrRequestForNewDataRegistation(Izin $izin): ?array
     {
-        $pemohon_id = $izin->pemohon_id;
-        $jenis_perizinan_id = $izin->jenis_perizinan_id;
-        $persyaratan = $this->syaratIzinService->getByTypeAndJenisPerizinan('img', $jenis_perizinan_id);
-        if (count($persyaratan) == 0) return null;
+        $persyaratan = $this->syaratIzinService->getByTypeAndJenisPerizinan('img', $izin->jenis_perizinan_id);
+        if (empty($persyaratan)) return null;
 
-        $url_dokumen = $this->getUrlDokumen($persyaratan, $pemohon_id, $izin->id);
-        $requests = $this->getRequests($url_dokumen, $izin->id, $jenis_perizinan_id);
-        return $this->sendRequestRecursively($requests);
+        $url_dokumen = $this->getUrlDokumen($persyaratan, $izin->pemohon_id, $izin->id);
+        $requests = $this->getRequests($url_dokumen, $izin->id, $izin->jenis_perizinan_id);
+        return $this->sendRequest($requests);
     }
 
     private function getUrlDokumen($persyaratan, $pemohon_id, $izin_id): array
@@ -56,44 +54,50 @@ class OcrServiceImpl implements OcrService
 
     private function getRequests($url_dokumen, $izin_id, $jenis_perizinan_id): array
     {
-        $requests = [];
-        foreach ($url_dokumen as $syarat_id => $url) {
-            $request = OcrRequest::builder()
-                        ->setIzinId($izin_id)
-                        ->setJenisPerizinanId($jenis_perizinan_id)
-                        ->setSyaratIzinId($syarat_id)
-                        ->setImageUrl($url)
-                        ->build();
-            $requests[] = $request;
-        }
-        return $requests;
+        return array_map(function($syarat_id, $url) use ($izin_id, $jenis_perizinan_id) {
+            return OcrRequest::builder()
+                ->setIzinId($izin_id)
+                ->setJenisPerizinanId($jenis_perizinan_id)
+                ->setSyaratIzinId($syarat_id)
+                ->setImageUrl($url)
+                ->build();
+        }, array_keys($url_dokumen), $url_dokumen);
     }
 
-    private function sendRequestRecursively($requests): array
+    private function sendRequest($requests): array
     {
-        $checks_count = 0;
-        $failure_count = 0;
+        $check_stats = [
+            'request_count' => count($requests),
+            'checks_count' => 0,
+            'failure_count' => 0
+        ];
+
         foreach ($requests as $request) {
             $response = $this->ocrAPIService->sendOcrRequest($request);
             if ($response) {
                 $request_id = $response->getData()['requestId'];
-                $request_status = $response->getData()['status'];
-                do {
-                    $response = $this->ocrAPIService->checkOcrRequestStatus($request_id);
-                    $request_status = $response->getData()['status'];
-                    $checks_count++;
-                    sleep(5);
-                } while ($request_status == 'WAITING' || $request_status == 'PROCESSING');
-                if ($request_status == 'FAILURE') {
-                    $failure_count++;
-                }
+                $check_stats = $this->checkRequestStatus($request_id, $check_stats);
+                
             }
         }
-        return [
-            'request_count' => count($requests),
-            'checks_count' => $checks_count,
-            'failure_count' => $failure_count
-        ];
+        
+        return $check_stats;
+    }
+
+    private function checkRequestStatus($request_id, $check_stats): array
+    {
+        do {
+            $response = $this->ocrAPIService->checkOcrRequestStatus($request_id);
+            $request_status = $response->getData()['status'];
+            $check_stats['checks_count']++;
+            sleep(5);
+        } while (in_array($request_status, ['WAITING', 'PROCESSING']));
+
+        if ($request_status == 'FAILURE') {
+            $check_stats['failure_count']++;
+        }
+
+        return $check_stats;
     }
 
 }

@@ -39,6 +39,8 @@ use App\Services\DomainServices\StatusIzinService;
 use App\Services\DomainServices\SuratService;
 use App\Services\DomainServices\SyaratIzinService;
 use App\Services\DomainServices\UserService;
+use App\Services\Security\Impl\ClientTokenService;
+use App\Services\Security\TokenService;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Pagination\Paginator;
@@ -67,6 +69,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
             PdfTemplateService::class,
             FileManager::class,
             OcrAPIService::class,
+            TokenService::class,
         ];
     }
 
@@ -93,6 +96,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(PdfTemplateService::class, PdfTemplateServiceImpl::class);
         $this->app->singleton(FileManager::class, LocalStorageFileManager::class);
         $this->app->singleton(OcrAPIService::class, OcrAPIServiceImpl::class);
+        $this->app->singleton(TokenService::class, ClientTokenService::class);
 
         $this->app->singleton(GetIzin::class, function () {
             return new GetIzin();

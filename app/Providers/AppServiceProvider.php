@@ -20,6 +20,7 @@ use App\Services\DomainServices\Helpers\GetIzin;
 use App\Services\DomainServices\Impl\DokumenPemohonServiceImpl;
 use App\Services\DomainServices\Impl\EntriDataServiceImpl;
 use App\Services\DomainServices\Impl\JenisPerizinanServiceImpl;
+use App\Services\DomainServices\Impl\OcrServiceImpl;
 use App\Services\DomainServices\Impl\PegawaiServiceImpl;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\Impl\PemohonServiceImpl;
@@ -31,6 +32,7 @@ use App\Services\DomainServices\Impl\SuratServiceImpl;
 use App\Services\DomainServices\Impl\SyaratIzinServiceImpl;
 use App\Services\DomainServices\Impl\UserServiceImpl;
 use App\Services\DomainServices\JenisPerizinanService;
+use App\Services\DomainServices\OcrService;
 use App\Services\DomainServices\PegawaiService;
 use App\Services\DomainServices\PengaturanService;
 use App\Services\DomainServices\PerizinanService;
@@ -70,6 +72,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
             FileManager::class,
             OcrAPIService::class,
             TokenService::class,
+            OcrService::class,
         ];
     }
 
@@ -97,6 +100,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(FileManager::class, LocalStorageFileManager::class);
         $this->app->singleton(OcrAPIService::class, OcrAPIServiceImpl::class);
         $this->app->singleton(TokenService::class, ClientTokenService::class);
+        $this->app->singleton(OcrService::class, OcrServiceImpl::class);
 
         $this->app->singleton(GetIzin::class, function () {
             return new GetIzin();

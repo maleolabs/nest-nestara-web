@@ -72,6 +72,15 @@ interface SyaratIzinService
 	* @return array Daftar tipe PDF syarat izin
 	*/
 	function getIdsTypePdfByJenisAndPemohon(int $jenis_izin_id, int $pemohon_id): array;
+
+	/**
+	 * Mengambil persyaratan berdasarkan tipe dan jenis perizinan id
+	 * 
+	 * @param string $type Tipe syarat
+	 * @param int $jenis_perizinan_id ID dari jenis perizinan
+	 * @return array List Persyaratan
+	 */
+	function getByTypeAndJenisPerizinan(string $type, int $jenis_perizinan_id): array;
 	
 	/**
 	 * Mengambil semua persyaratan izin yang tidak terkait dengan jenis perizinan tertentu

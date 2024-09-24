@@ -25,7 +25,7 @@ Route::prefix('data-entri')->group(function () {
 });
 
 Route::prefix('/files')->group(function () {
-    Route::get('/{file_name}', [FileController::class, 'render']);
+    Route::get('/{file_name}', [FileController::class, 'render'])->name('api.render-file');
 });
 
 Route::prefix('/auth')->group(function () {

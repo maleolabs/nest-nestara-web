@@ -23,9 +23,9 @@ class ClientTokenService implements TokenService
     public function generateToken(): string
     {
         $current_timestamp = now()->timestamp;
-        $token = $this->createHmacToken();
 
         $token_ttl = Carbon::createFromTimestamp($current_timestamp)->addDays(7)->timestamp;
+        $token = $this->createHmacToken($token_ttl);
 
         set_pengaturan(self::SET_CLIENT_TOKEN, $token, self::SET_SECURITY_GROUP);
         set_pengaturan(self::SET_CLIENT_TOKEN_TTL, $token_ttl, self::SET_SECURITY_GROUP);
@@ -41,7 +41,7 @@ class ClientTokenService implements TokenService
         
         if (Carbon::createFromTimestamp($token_ttl)->isBefore(now())) return false;
 
-        $expected_token = $this->createHmacToken();
+        $expected_token = $this->createHmacToken($token_ttl);
         if ($token !== $expected_token) return false;
 
         return true;
@@ -52,9 +52,9 @@ class ClientTokenService implements TokenService
         return get_pengaturan(self::SET_CLIENT_TOKEN);
     }
 
-    private function createHmacToken(): string
+    private function createHmacToken($timestamp): string
     {
-        $tokenData = self::CLIENT_TOKEN_DATA;
+        $tokenData = $timestamp . '-' . self::CLIENT_TOKEN_DATA;
         $token = hash_hmac('sha256', $tokenData, $this->secretKey);
         return $token;
     }

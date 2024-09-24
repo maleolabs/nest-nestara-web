@@ -46,7 +46,7 @@ class OcrResponse
         return $this->success;
     }
 
-    public function getErrorMessage(): string
+    public function getErrorMessage(): ?string
     {
         return $this->errorMessage;
     }

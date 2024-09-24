@@ -39,7 +39,19 @@ class OcrAPIServiceImpl implements OcrAPIService
 
     public function sendOcrRequest(OcrRequest $request): ?OcrResponse
     {
-        $uri = $this->base_url . 'ocr/do-ocr';
+        $path = 'ocr/do-ocr';
+        return $this->postDataAndParseResponse($path, $request);
+    }
+
+    public function checkOcrRequestStatus(int $request_id): ?OcrResponse
+    {
+        $path = 'ocr/check-status/' . $request_id;
+        return $this->fetchDataAndParseResponse($path);
+    }
+
+    private function postDataAndParseResponse($path, $request)
+    {
+        $uri = $this->base_url . $path;
         $headers = $this->getDefaultHeaders();
 
         try {

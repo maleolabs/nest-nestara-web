@@ -8,18 +8,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
+use function PHPUnit\Framework\assertNotNull;
+use function PHPUnit\Framework\assertNull;
+use function PHPUnit\Framework\assertSame;
+use function PHPUnit\Framework\assertTrue;
+
 class OcrAPIServiceTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $apiService = app(OcrAPIService::class);
-
-        // $data = $apiService->getEntriDataValueByIzinId(5);
-        // dd($data);
-    }
 
     public function test_send_ocr_request(): void
     {
@@ -33,7 +28,32 @@ class OcrAPIServiceTest extends TestCase
                                 ->build();
 
         $response = $apiService->sendOcrRequest($request);
-        dd($response->toArray());
+        
+        assertNotNull($response);
+        assertNotNull($response->getData());
+        assertTrue($response->isSuccess());
+        assertNull($response->getErrorMessage());
+
+        $requestStatus = $response->getData()['status'];
+        assertNotNull($requestStatus);
+
+        $requestId = $response->getData()['requestId'];
+        assertNotNull($requestId);
+        
+        do {
+            $response = $apiService->checkOcrRequestStatus($requestId);
+            assertNotNull($response);
+            assertNotNull($response->getData());
+            assertTrue($response->isSuccess());
+            assertNull($response->getErrorMessage());
+            
+            $requestStatus = $response->getData()['status'];
+
+            sleep(5);
+        } while ($requestStatus == 'WAITING' || $requestStatus == 'PROCESSING');
+
+        assertSame('DONE', $requestStatus);
+        assertNotNull($response->getData()['duration']);
     }
 
 }

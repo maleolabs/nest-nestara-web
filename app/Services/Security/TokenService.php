@@ -15,9 +15,10 @@ interface TokenService
     /**
      * Memverifikasi token
      * 
+     * @param string $token Token yang akan diverifikasi
      * @return bool
      */
-    function verifyToken(): bool;
+    function verifyToken(string $token): bool;
 
     /**
      * Mengambil token

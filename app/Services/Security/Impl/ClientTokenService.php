@@ -33,9 +33,8 @@ class ClientTokenService implements TokenService
         return $token;
     }
 
-    public function verifyToken(): bool
+    public function verifyToken(string $token): bool
     {
-        $token = get_pengaturan(self::SET_CLIENT_TOKEN);
         $token_ttl = get_pengaturan(self::SET_CLIENT_TOKEN_TTL);
 
         if (is_null($token) || is_null($token_ttl)) return false;

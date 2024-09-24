@@ -2,9 +2,11 @@
 
 namespace App\Services\APIClient\Impl;
 
+use App\Exceptions\InvalidTokenException;
 use App\Services\APIClient\dto\OcrRequest;
 use App\Services\APIClient\dto\OcrResponse;
 use App\Services\APIClient\OcrAPIService;
+use App\Services\Security\TokenService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Client\ConnectionException;
@@ -16,14 +18,16 @@ class OcrAPIServiceImpl implements OcrAPIService
     private $base_url;
 
     private Client $client;
+    private TokenService $tokenService;
 
-    private const AUTHORIZATION_HEADER = 'Authorization';
+    private const AUTHORIZATION_HEADER = 'X-API-KEY';
     private const CONTENT_TYPE_HEADER = 'Content-Type';
     private const APPLICATION_JSON = 'application/json';
 
-    public function __construct(Client $client)
+    public function __construct(Client $client, TokenService $tokenService)
     {
         $this->client = $client;
+        $this->tokenService = $tokenService;
         $this->base_url = config('api-client.ocr_api.base_url');
     }
 
@@ -92,13 +96,23 @@ class OcrAPIServiceImpl implements OcrAPIService
         if ($statusCode === 400) {
             return $this->parseJsonResponse($response->getBody()->getContents());
         } else if ($statusCode === 401) {
-            // todo : get new token
+            $this->handleInvalidToken();
         }
+    }
+
+    private function handleInvalidToken()
+    {
+        $this->tokenService->generateToken();
+        throw new InvalidTokenException("unauthorized");
     }
 
     private function getApiToken(): string
     {
-        return "";
+        $token = $this->tokenService->getToken();
+        if (!$token) {
+            $this->handleInvalidToken();
+        }
+        return $token;
     }
 
 }

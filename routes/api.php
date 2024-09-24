@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\JenisPerizinanController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DataEntriController;
 use App\Http\Controllers\Api\PerizinanController;
+use App\Http\Controllers\Api\TokenController;
 use App\Http\Controllers\Helper\FileController;
 use Illuminate\Support\Facades\Route;
 
@@ -39,3 +40,5 @@ Route::prefix('/auth')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
     });
 });
+
+Route::post('/verify-client-token/{token}', [TokenController::class, 'verifyClientToken']);

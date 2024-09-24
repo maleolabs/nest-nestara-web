@@ -20,9 +20,10 @@ interface OcrAPIService
      * Mengirimkan data untuk proses OCR
      * 
      * @param OcrRequest $request Data permintaan yang akan dikirim
+     * @param string|null $token
      * @return OcrResponse|null
      */
-    function sendOcrRequest(OcrRequest $request): ?OcrResponse;
+    function sendOcrRequest(OcrRequest $request, ?string $token = null): ?OcrResponse;
 
     /**
      * Mengecek status dari request OCR

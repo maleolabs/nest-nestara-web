@@ -2,6 +2,8 @@
 
 namespace App\Services\Security\Impl;
 
+use App\Exceptions\TokenExpireException;
+use App\Exceptions\TokenMismatchException;
 use App\Services\Security\TokenService;
 use Carbon\Carbon;
 
@@ -17,7 +19,7 @@ class ClientTokenService implements TokenService
 
     public function __construct()
     {
-        $this->secretKey = config('jwt.secret');
+        $this->secretKey = config('app.key');
     }
 
     public function generateToken(): string
@@ -25,7 +27,7 @@ class ClientTokenService implements TokenService
         $current_timestamp = now()->timestamp;
 
         $token_ttl = Carbon::createFromTimestamp($current_timestamp)->addDays(7)->timestamp;
-        $token = $this->createHmacToken($token_ttl);
+        $token = $this->createHmacToken(intval($token_ttl));
 
         set_pengaturan(self::SET_CLIENT_TOKEN, $token, self::SET_SECURITY_GROUP);
         set_pengaturan(self::SET_CLIENT_TOKEN_TTL, $token_ttl, self::SET_SECURITY_GROUP);
@@ -39,10 +41,15 @@ class ClientTokenService implements TokenService
 
         if (is_null($token) || is_null($token_ttl)) return false;
         
-        if (Carbon::createFromTimestamp($token_ttl)->isBefore(now())) return false;
+        $token_expires_at = Carbon::createFromTimestamp($token_ttl);
+        if ($token_expires_at->isBefore(now())) {
+            throw new TokenExpireException('token expires at ' . $token_expires_at->translatedFormat('d-m-Y H:i'));
+        }
 
         $expected_token = $this->createHmacToken($token_ttl);
-        if ($token !== $expected_token) return false;
+        if ($token !== $expected_token) {
+            throw new TokenMismatchException();
+        }
 
         return true;
     }

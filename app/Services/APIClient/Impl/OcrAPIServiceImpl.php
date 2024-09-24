@@ -37,10 +37,10 @@ class OcrAPIServiceImpl implements OcrAPIService
         return $this->fetchDataAndParseResponse($path);
     }
 
-    public function sendOcrRequest(OcrRequest $request): ?OcrResponse
+    public function sendOcrRequest(OcrRequest $request, ?string $token = null): ?OcrResponse
     {
         $path = 'ocr/do-ocr';
-        return $this->postDataAndParseResponse($path, $request);
+        return $this->postDataAndParseResponse($path, $request, $token);
     }
 
     public function checkOcrRequestStatus(int $request_id): ?OcrResponse
@@ -49,10 +49,10 @@ class OcrAPIServiceImpl implements OcrAPIService
         return $this->fetchDataAndParseResponse($path);
     }
 
-    private function postDataAndParseResponse($path, $request)
+    private function postDataAndParseResponse($path, $request, $token = null)
     {
         $uri = $this->base_url . $path;
-        $headers = $this->getDefaultHeaders();
+        $headers = $this->getDefaultHeaders($token);
 
         try {
             $response = $this->client->post($uri, [
@@ -114,13 +114,12 @@ class OcrAPIServiceImpl implements OcrAPIService
 
     private function handleInvalidToken()
     {
-        $this->tokenService->generateToken();
         throw new InvalidTokenException("unauthorized");
     }
 
-    private function getApiToken(): string
+    private function getApiToken($request_token = null): string
     {
-        $token = $this->tokenService->getToken();
+        $token = $request_token ?? $this->tokenService->getToken();
         if (!$token) {
             $this->handleInvalidToken();
         }

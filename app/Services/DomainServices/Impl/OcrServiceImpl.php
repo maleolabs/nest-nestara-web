@@ -2,30 +2,39 @@
 
 namespace App\Services\DomainServices\Impl;
 
+use App\Exceptions\InvalidTokenException;
 use App\Models\Izin;
 use App\Services\APIClient\dto\OcrRequest;
 use App\Services\APIClient\OcrAPIService;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\OcrService;
 use App\Services\DomainServices\SyaratIzinService;
+use App\Services\Security\TokenService;
 
 class OcrServiceImpl implements OcrService
 {
 
+    private TokenService $tokenService;
     private OcrAPIService $ocrAPIService;
-
     private SyaratIzinService $syaratIzinService;
-
     private DokumenPemohonService $dokumenPemohonService;
 
+    private $retry_max;
+    private $retry_delay;
+
     public function __construct(
+        TokenService $tokenService,
         OcrAPIService $ocrAPIService,
         SyaratIzinService $syaratIzinService,
         DokumenPemohonService $dokumenPemohonService
     ) {
+        $this->tokenService = $tokenService;
         $this->ocrAPIService = $ocrAPIService;
         $this->syaratIzinService = $syaratIzinService;
         $this->dokumenPemohonService = $dokumenPemohonService;
+
+        $this->retry_max = config('api-client.ocr_api.retry_max');
+        $this->retry_delay = config('api-client.ocr_api.retry_delay');
     }
 
     public function doOcrRequestForNewDataRegistation(Izin $izin): ?array
@@ -35,7 +44,8 @@ class OcrServiceImpl implements OcrService
 
         $url_dokumen = $this->getUrlDokumen($persyaratan, $izin->pemohon_id, $izin->id);
         $requests = $this->getRequests($url_dokumen, $izin->id, $izin->jenis_perizinan_id);
-        return $this->sendRequest($requests);
+
+        return $this->sendRequestWithRetry($requests);
     }
 
     private function getUrlDokumen($persyaratan, $pemohon_id, $izin_id): array
@@ -64,6 +74,33 @@ class OcrServiceImpl implements OcrService
         }, array_keys($url_dokumen), $url_dokumen);
     }
 
+    private function sendRequestWithRetry($requests): array
+    {
+        $retry_count = 0;
+
+        while ($retry_count <= $this->retry_max) {
+            try {
+                return $this->sendRequest($requests);
+            } catch (InvalidTokenException $e) {
+                if ($this->shouldRetry()) {
+                    $this->tokenService->generateToken();
+                    $retry_count++;
+                } else {
+                    throw $e;
+                }
+            }
+            sleep($this->retry_delay);
+        }
+
+        return [];
+    }
+
+    private function shouldRetry(): bool
+    {
+        $token_invalid = get_pengaturan('CLIENT_TOKEN_INVALID');
+        return in_array($token_invalid, ['TOKEN_EXPIRES', 'TOKEN_MISMATCH']);
+    }
+
     private function sendRequest($requests): array
     {
         $check_stats = [
@@ -74,10 +111,10 @@ class OcrServiceImpl implements OcrService
 
         foreach ($requests as $request) {
             $response = $this->ocrAPIService->sendOcrRequest($request);
+
             if ($response) {
                 $request_id = $response->getData()['requestId'];
                 $check_stats = $this->checkRequestStatus($request_id, $check_stats);
-                
             }
         }
         

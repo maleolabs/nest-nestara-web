@@ -2,6 +2,7 @@
 
 namespace App\Services\DomainServices\Impl;
 
+use App\Jobs\SendOcrRequest;
 use App\Models\Izin;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\EntriDataService;
@@ -64,6 +65,9 @@ class PerizinanServiceImpl implements PerizinanService
             'pemohon_id' => $pemohon_id
         ]);
         $this->statusIzinService->save($izin->id, Status::DIDAFTARKAN);
+
+        SendOcrRequest::dispatch($izin);
+
         return $izin;
     }
 

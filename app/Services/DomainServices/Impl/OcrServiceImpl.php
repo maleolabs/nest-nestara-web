@@ -77,11 +77,12 @@ class OcrServiceImpl implements OcrService
     private function sendRequestWithRetry($requests): array
     {
         $retry_count = 0;
-
+        
         while ($retry_count <= $this->retry_max) {
             try {
                 return $this->sendRequest($requests);
             } catch (InvalidTokenException $e) {
+                dd($e);
                 if ($this->shouldRetry()) {
                     $this->tokenService->generateToken();
                     $retry_count++;
@@ -104,36 +105,42 @@ class OcrServiceImpl implements OcrService
     private function sendRequest($requests): array
     {
         $check_stats = [
-            'request_count' => count($requests),
+            'total_request' => count($requests),
             'checks_count' => 0,
-            'failure_count' => 0
+            'requests' => []
         ];
 
         foreach ($requests as $request) {
             $response = $this->ocrAPIService->sendOcrRequest($request);
-
             if ($response) {
                 $request_id = $response->getData()['requestId'];
                 $check_stats = $this->checkRequestStatus($request_id, $check_stats);
             }
         }
-        
+
         return $check_stats;
     }
 
     private function checkRequestStatus($request_id, $check_stats): array
     {
+        $request = [
+            'request_id' => $request_id,
+            'status' => null,
+            'duration' => null
+        ];
+
         do {
             $response = $this->ocrAPIService->checkOcrRequestStatus($request_id);
-            $request_status = $response->getData()['status'];
+            $status = $response->getData()['status'];
+            $duration = $response->getData()['duration'];
             $check_stats['checks_count']++;
             sleep(5);
-        } while (in_array($request_status, ['WAITING', 'PROCESSING']));
+        } while (in_array($status, ['WAITING', 'PROCESSING']));
 
-        if ($request_status == 'FAILURE') {
-            $check_stats['failure_count']++;
-        }
-
+        $request['status'] = $status;
+        $request['duration'] = $duration . 's';
+        $check_stats['requests'][] = $request;
+        
         return $check_stats;
     }
 

@@ -7,6 +7,7 @@ use App\Exceptions\TokenMismatchException;
 use App\Http\Controllers\Controller;
 use App\Services\Security\TokenService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class TokenController extends Controller
 {
@@ -23,6 +24,8 @@ class TokenController extends Controller
         $token = $request->token;
         $isValid = false;
 
+        Log::channel('app')->info('request token', ['token' => $token]);
+
         try {
             $isValid = $this->tokenService->verifyToken($token);
             $this->saveTokenException(null);
@@ -32,7 +35,7 @@ class TokenController extends Controller
             $this->saveTokenException('TOKEN_MISMATCH');
         }
 
-        $statusCode = $isValid ? 200 : 400;
+        $statusCode = $isValid ? 200 : 401;
 
         $data = [
             'token' => $token,

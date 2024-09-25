@@ -10,6 +10,7 @@ use App\Services\Security\TokenService;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class OcrAPIServiceImpl implements OcrAPIService
@@ -23,6 +24,8 @@ class OcrAPIServiceImpl implements OcrAPIService
     private const AUTHORIZATION_HEADER = 'X-API-KEY';
     private const CONTENT_TYPE_HEADER = 'Content-Type';
     private const APPLICATION_JSON = 'application/json';
+
+    private const CACHE_TTL = 7200; // 6 hours
 
     public function __construct(Client $client, TokenService $tokenService)
     {
@@ -46,7 +49,7 @@ class OcrAPIServiceImpl implements OcrAPIService
     public function checkOcrRequestStatus(int $request_id): ?OcrResponse
     {
         $path = 'ocr/check-status/' . $request_id;
-        return $this->fetchDataAndParseResponse($path);
+        return $this->fetchDataAndParseResponse($path, false);
     }
 
     private function postDataAndParseResponse($path, $request, $token = null)
@@ -63,27 +66,51 @@ class OcrAPIServiceImpl implements OcrAPIService
         } catch (RequestException $re) {
             return $this->handleRequestException($re);
         } catch (ConnectionException $ce) {
-            Log::error($ce->getMessage());
+            Log::channel('app')->error($ce->getMessage());
             return null;
         }
     }
 
-    private function fetchDataAndParseResponse($path)
+    private function fetchDataAndParseResponse($path, $cache = true)
     {
         $uri = $this->base_url . $path;
         $headers = $this->getDefaultHeaders();
+        $key = str_replace('/', '-', $path);
+
+        $dataFromCache = $this->getCacheData($key);
+        if ($dataFromCache && $cache) {
+            return $this->parseJsonResponse($dataFromCache);
+        }
 
         try {
             $response = $this->client->get($uri, [
                 'headers' => $headers
             ]);
-            return $this->parseJsonResponse($response->getBody()->getContents());
+            $contents = $response->getBody()->getContents();
+            
+            if ($cache) {
+                $this->saveCacheData($key, $contents);
+            }
+            
+            return $this->parseJsonResponse($contents);
         } catch (RequestException $re) {
             return $this->handleRequestException($re);
         } catch (ConnectionException $ce) {
-            Log::info($ce->getMessage());
+            Log::channel('app')->info($ce->getMessage());
             return null;
         }
+    }
+
+    private function saveCacheData($key, $data)
+    {
+        Cache::remember($key, self::CACHE_TTL, function() use ($data) {
+            return $data;
+        });
+    }
+
+    private function getCacheData($key)
+    {
+        return Cache::get($key);
     }
 
     private function getDefaultHeaders(): array

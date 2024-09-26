@@ -4,6 +4,7 @@ namespace App\Livewire\Dashboard\BackOffice\Partials;
 
 use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\JenisPerizinanService;
+use App\Services\DomainServices\OcrService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\StatusIzinService;
 use App\utils\enums\BackOfficeStatusEnum;
@@ -160,6 +161,22 @@ trait EntriDataTrait
         return !in_array($this->last_izin_status->keterangan, $entering_status) && in_array($this->last_izin_status->keterangan, $editable_status);
     }
 
+    public function automaticFill()
+    {
+        $entri_data_ocr = $this->getOcrService()->getEntriDataByIzinId($this->preview_izin_id);
+        if (!$entri_data_ocr) {
+            return;
+        }
+
+        $ocr_data_map = array_column($entri_data_ocr, 'textValue', 'textKey');
+
+        foreach($this->entri_data as $entri) {
+            if (isset($ocr_data_map[$entri->nama])) {
+                $this->entri_data_izin[$entri->id] = $ocr_data_map[$entri->nama];
+            }
+        }
+    }
+
     protected function hasEntriDataForm(): bool
     {
         return $this->getJenisPerizinanService()->hasEntriDataForm($this->jenis_perizinan_id);
@@ -183,6 +200,11 @@ trait EntriDataTrait
     protected function getPerizinanService(): PerizinanService
     {
         return app(PerizinanService::class);
+    }
+
+    protected function getOcrService(): OcrService
+    {
+        return app(OcrService::class);
     }
 
 }

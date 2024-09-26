@@ -30,7 +30,7 @@
                     @error('entri_data_izin.' . $entri->id)
                         <div class="text-danger text-sm">{{ str_replace('entri data izin.' . $entri->id, $entri->nama, $message) }}</div>
                     @enderror
-                    @if ($entri->is_multi_value)
+                    @if ($entri->is_multi_value && false)
                         <p class="mb-0 mt-1 text-xs">
                             <i class="fa-solid fa-info-circle me-1"></i>
                             Untuk menambahkan beberapa data, pisahkan dengan simbol ";" (contoh: data1;data2;data3)

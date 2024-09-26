@@ -48,6 +48,13 @@ class OcrServiceImpl implements OcrService
         return $this->sendRequestWithRetry($requests);
     }
 
+    public function getEntriDataByIzinId(int $izin_id): ?array
+    {
+        return $this->excecuteWithRetry(function() use ($izin_id) {
+            return $this->ocrAPIService->getEntriDataValueByIzinId($izin_id)?->getData();
+        });
+    }
+
     private function getUrlDokumen($persyaratan, $pemohon_id, $izin_id): array
     {
         $url_dokumen = [];
@@ -76,30 +83,9 @@ class OcrServiceImpl implements OcrService
 
     private function sendRequestWithRetry($requests): array
     {
-        $retry_count = 0;
-        
-        while ($retry_count <= $this->retry_max) {
-            try {
-                return $this->sendRequest($requests);
-            } catch (InvalidTokenException $e) {
-                dd($e);
-                if ($this->shouldRetry()) {
-                    $this->tokenService->generateToken();
-                    $retry_count++;
-                } else {
-                    throw $e;
-                }
-            }
-            sleep($this->retry_delay);
-        }
-
-        return [];
-    }
-
-    private function shouldRetry(): bool
-    {
-        $token_invalid = get_pengaturan('CLIENT_TOKEN_INVALID');
-        return in_array($token_invalid, ['TOKEN_EXPIRES', 'TOKEN_MISMATCH']);
+        return $this->excecuteWithRetry(function() use ($requests) {
+            return $this->sendRequest($requests);
+        });
     }
 
     private function sendRequest($requests): array
@@ -142,6 +128,31 @@ class OcrServiceImpl implements OcrService
         $check_stats['requests'][] = $request;
         
         return $check_stats;
+    }
+
+    private function excecuteWithRetry(callable $callback): ?array
+    {
+        $retry_count = 0;
+        while ($retry_count <= $this->retry_max) {
+            try {
+                return $callback();
+            } catch (InvalidTokenException $e) {
+                if ($this->shouldRetry()) {
+                    $this->tokenService->generateToken();
+                    $retry_count++;
+                } else {
+                    throw $e;
+                }
+            }
+            sleep($this->retry_delay);
+        }
+        return null;
+    }
+
+    private function shouldRetry(): bool
+    {
+        $token_invalid = get_pengaturan('CLIENT_TOKEN_INVALID');
+        return in_array($token_invalid, ['TOKEN_EXPIRES', 'TOKEN_MISMATCH']);
     }
 
 }

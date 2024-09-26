@@ -161,12 +161,9 @@
                                     @if ($this->alreadyEntriData())
                                         <div class="d-flex align-items-center gap-2">
                                             <button class="btn btn-sm btn-warning" wire:click='reEditEntriData' wire:loading.remove wire:target='reEditEntriData'>
-                                                Edit Entri Data
-                                            </button>
-                                            <span class="spinner-border spinner-border-sm" role="status" wire:loading wire:target='reEditEntriData'>
-                                            </span>
-                                            <button class="btn btn-sm btn-light">
-                                                minimize
+                                                <span wire:loading.remove wire:target='reEditEntriData'>Edit Entri Data</span>
+                                                <span class="spinner-border spinner-border-sm" role="status" wire:loading wire:target='reEditEntriData'>
+                                                </span>
                                             </button>
                                         </div>
                                     @endif
@@ -195,10 +192,16 @@
                                     @if ($this->isFormFillAuthorized())
                                         <div class="card mb-4">
                                             <div class="card-body">
-                                                <h6 class="text-bold mb-1">
-                                                    <i class="fa-regular fa-circle-right me-1"></i>
-                                                    Entri Data
-                                                </h6>
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <h6 class="text-bold mb-1">
+                                                        <i class="fa-regular fa-circle-right me-1"></i>
+                                                        Entri Data
+                                                    </h6>
+                                                    <button class="btn btn-sm bg-gradient-info text-capitalize" type="button" wire:click='automaticFill'>
+                                                        <span wire:loading.remove wire:target='automaticFill'>isi otomatis</span>
+                                                        <span class="spinner-border spinner-border-sm" role="status" wire:loading wire:target='automaticFill'></span>
+                                                    </button>
+                                                </div>
                                                 @include('livewire.dashboard.preview-izin.form-entri-data')
                                             </div>
                                         </div>

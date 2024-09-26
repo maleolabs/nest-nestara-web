@@ -108,8 +108,15 @@
                 <div class="border rounded-3 p-3">
                     @if ($api_token)
                         <div class="d-flex align-items-center mb-2">
-                            <p class="fw-semibold text-sm text-capitalize text-primary mb-0">ocr api token</p>
-                            <span class="ms-auto fs-xs">Terakhir digunakan pada hari 3 menit lalu!</span>
+                            <div>
+                                <p class="fw-semibold text-sm text-capitalize text-primary mb-0">ocr api token</p>
+                                @if ($token_used_count && $token_used_count > 0)
+                                    <span class="text-muted fs-xs">Digunakan {{ $token_used_count }} kali.</span>
+                                @endif
+                            </div>
+                            @if ($token_used_date)
+                                <span class="ms-auto fs-xs">Terakhir digunakan {{ $token_used_date }}!</span>
+                            @endif
                             <button class="btn btn-sm btn-outline-danger text-capitalize ms-2" wire:click='deleteToken' wire:loading.attr='disabled' wire:loading.class='disabled' wire:target='deleteToken'>
                                 <span wire:loading.remove wire:target='deleteToken'>hapus token</span>
                                 <span class="spinner-border spinner-border-sm" wire:loading wire:target='deleteToken'></span>

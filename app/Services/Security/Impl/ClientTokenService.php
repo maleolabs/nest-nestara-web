@@ -11,11 +11,13 @@ use Carbon\Carbon;
 class ClientTokenService implements TokenService
 {
 
-    private const DEFAULT_TOKEN_DATA = 'ocr-api-client-token';
-    private const SET_CLIENT_TOKEN_DATA = 'CLIENT_TOKEN_DATA';
-    private const SET_CLIENT_TOKEN = 'CLIENT_TOKEN';
-    private const SET_CLIENT_TOKEN_TTL = 'CLIENT_TOKEN_TTL';
-    private const SET_SECURITY_GROUP = 'SECURITY';
+    public const DEFAULT_TOKEN_DATA = 'ocr-api-client-token';
+    public const SET_CLIENT_TOKEN_DATA = 'CLIENT_TOKEN_DATA';
+    public const SET_CLIENT_TOKEN = 'CLIENT_TOKEN';
+    public const SET_CLIENT_TOKEN_TTL = 'CLIENT_TOKEN_TTL';
+    public const SET_CLIENT_TOKEN_USED_COUNT = 'CLIENT_TOKEN_USED_COUNT';
+    public const SET_CLIENT_TOKEN_USED_DATE = 'CLIENT_TOKEN_USED_DATE';
+    public const SET_SECURITY_GROUP = 'SECURITY';
 
     private $secretKey;
 
@@ -63,6 +65,8 @@ class ClientTokenService implements TokenService
             throw new TokenMismatchException();
         }
 
+        $this->updateTokenUsed();
+
         return true;
     }
 
@@ -76,6 +80,8 @@ class ClientTokenService implements TokenService
         $this->pengaturanService->deleteByNama(self::SET_CLIENT_TOKEN);
         $this->pengaturanService->deleteByNama(self::SET_CLIENT_TOKEN_TTL);
         $this->pengaturanService->deleteByNama(self::SET_CLIENT_TOKEN_DATA);
+        $this->pengaturanService->deleteByNama(self::SET_CLIENT_TOKEN_USED_COUNT);
+        $this->pengaturanService->deleteByNama(self::SET_CLIENT_TOKEN_USED_DATE);
     }
 
     private function createHmacToken($timestamp, $data = null): string
@@ -114,6 +120,15 @@ class ClientTokenService implements TokenService
                 break;
         }
         return $curr_time->timestamp;
+    }
+
+    private function updateTokenUsed()
+    {
+        $used_count = get_pengaturan(self::SET_CLIENT_TOKEN_USED_COUNT);
+        $used_count = !is_null($used_count) && $used_count >= 0 ? $used_count++ : 1;
+        
+        set_pengaturan(self::SET_CLIENT_TOKEN_USED_COUNT, $used_count, self::SET_SECURITY_GROUP);
+        set_pengaturan(self::SET_CLIENT_TOKEN_USED_DATE, Carbon::now()->timestamp, self::SET_SECURITY_GROUP);
     }
 
 }

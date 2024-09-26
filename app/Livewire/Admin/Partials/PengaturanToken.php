@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin\Partials;
 
+use App\Services\Security\Impl\ClientTokenService;
 use App\Services\Security\TokenService;
 use Carbon\Carbon;
 
@@ -16,12 +17,21 @@ trait PengaturanToken
         $token_expire = '1 Hari',
         $token_expired_at;
 
+    public $token_used_date,
+        $token_used_count;
+
     protected function setTokenData()
     {
-        $this->api_token = get_pengaturan('CLIENT_TOKEN');
+        $this->api_token = get_pengaturan(ClientTokenService::SET_CLIENT_TOKEN);
 
-        if ($token_expired_at = get_pengaturan('CLIENT_TOKEN_TTL')) {
+        if ($token_expired_at = get_pengaturan(ClientTokenService::SET_CLIENT_TOKEN_TTL)) {
             $this->token_expired_at = Carbon::createFromTimestamp($token_expired_at)->translatedFormat('d F Y');
+        }
+
+        $this->token_used_count = get_pengaturan(ClientTokenService::SET_CLIENT_TOKEN_USED_COUNT);
+    
+        if ($token_used_date = get_pengaturan(ClientTokenService::SET_CLIENT_TOKEN_USED_DATE)) {
+            $this->token_used_date = Carbon::createFromTimestamp($token_used_date)->diffForHumans();
         }
     }
 

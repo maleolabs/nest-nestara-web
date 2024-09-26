@@ -25,7 +25,9 @@ trait PengaturanToken
         $this->api_token = get_pengaturan(ClientTokenService::SET_CLIENT_TOKEN);
 
         if ($token_expired_at = get_pengaturan(ClientTokenService::SET_CLIENT_TOKEN_TTL)) {
-            $this->token_expired_at = Carbon::createFromTimestamp($token_expired_at)->translatedFormat('d F Y');
+            $expired_date = Carbon::createFromTimestamp($token_expired_at);
+            $format = now()->diffInDays($expired_date) < 2 ? 'd F Y H:i' : 'd F Y';
+            $this->token_expired_at = $expired_date->translatedFormat($format);
         }
 
         $this->token_used_count = get_pengaturan(ClientTokenService::SET_CLIENT_TOKEN_USED_COUNT);

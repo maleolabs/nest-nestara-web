@@ -118,7 +118,7 @@
                             @if ($token_used_date)
                                 <span class="ms-auto fs-xs">Terakhir digunakan {{ $token_used_date }}!</span>
                             @endif
-                            <button class="btn btn-sm btn-outline-danger text-capitalize ms-2" wire:click='deleteToken' wire:loading.attr='disabled' wire:loading.class='disabled' wire:target='deleteToken'>
+                            <button class="btn btn-sm btn-outline-danger text-capitalize ms-2 {{ !$token_used_date ? 'ms-auto' : '' }}" wire:click='deleteToken' wire:loading.attr='disabled' wire:loading.class='disabled' wire:target='deleteToken'>
                                 <span wire:loading.remove wire:target='deleteToken'>hapus token</span>
                                 <span class="spinner-border spinner-border-sm" wire:loading wire:target='deleteToken'></span>
                             </button>

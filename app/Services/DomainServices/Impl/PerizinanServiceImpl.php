@@ -330,6 +330,7 @@ class PerizinanServiceImpl implements PerizinanService
             return;
 
         $last_izin_status = $izin->status_izin->last();
+
         if (!$this->entriDataService->isEntriDataIzinExistsByIzinAndJenis($izin_id, $izin->jenis_perizinan_id) && $last_izin_status->progres == Progres::PROCESSING && in_array($last_izin_status->keterangan, $this->getUpdatableStatusWhenEntriDataHasChanged())) {
             $entri_deleted_at = $this->entriDataService->getDeletedAtByJenis($izin->jenis_perizinan_id);
             $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::PERUBAHAN_ENTRI, $last_izin_status->pegawai_id, $entri_deleted_at);

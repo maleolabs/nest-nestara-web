@@ -138,9 +138,15 @@ class EntriDataServiceImpl implements EntriDataService {
 
 	public function isEntriDataIzinExistsByIzinAndJenis(int $izin_id, int $jenis_perizinan_id): bool
 	{
-		$entri_data = EntriData::select('id')->where('jenis_perizinan_id', $jenis_perizinan_id)->where('mandatori', true)->get();
-		$entri_data_izin = EntriDataIzin::select('entri_data_id')->where('izin_id', $izin_id)->get();
-		return (count($entri_data_izin) >= count($entri_data)) && ($entri_data->pluck('id') == $entri_data_izin->pluck('entri_data_id'));
+		$entri_data = EntriData::where('jenis_perizinan_id', $jenis_perizinan_id)
+			->where('mandatori', true)
+			->pluck('id');
+
+		$entri_data_izin = EntriDataIzin::where('izin_id', $izin_id)
+			->whereIn('entri_data_id', $entri_data)
+			->pluck('entri_data_id');
+
+		return $entri_data_izin->diff($entri_data)->isEmpty();
 	}
 
 	public function getOldEntriDataByIzin(\App\Models\Izin $izin): array

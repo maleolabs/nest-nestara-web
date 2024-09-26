@@ -124,6 +124,10 @@ function setInputsHandle() {
             
             inputs[i].addEventListener('focus', function(e) {
                 this.parentElement.classList.add('is-focused');
+                var inputPlaceholder = this.parentElement.querySelector('.input-group-placeholder')
+                if (inputPlaceholder) {
+                    inputPlaceholder.classList.remove('d-none')
+                }
             }, false);
 
             inputs[i].onkeyup = function(e) {
@@ -139,6 +143,12 @@ function setInputsHandle() {
                     this.parentElement.classList.add('is-filled');
                 }
                 this.parentElement.classList.remove('is-focused');
+                var inputPlaceholder = this.parentElement.querySelector('.input-group-placeholder')
+                if (inputPlaceholder) {
+                    setTimeout(() => {
+                        inputPlaceholder.classList.add('d-none')
+                    }, 500);
+                }
             }, false);
         }
         var selects = document.querySelectorAll('select');

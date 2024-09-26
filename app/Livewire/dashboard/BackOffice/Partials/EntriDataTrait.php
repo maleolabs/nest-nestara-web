@@ -20,6 +20,7 @@ trait EntriDataTrait
         $jenis_perizinan_id,
         $entri_data_izin = [],
         $entri_data_validate = [],
+        $entri_data_placeholder = [],
         $is_entri_changed = false;
 
     public $edit_entri_data = false;
@@ -168,13 +169,20 @@ trait EntriDataTrait
             return;
         }
 
-        $ocr_data_map = array_column($entri_data_ocr, 'textValue', 'textKey');
-
         foreach($this->entri_data as $entri) {
-            if (isset($ocr_data_map[$entri->nama])) {
-                $this->entri_data_izin[$entri->id] = $ocr_data_map[$entri->nama];
+            if (isset($entri_data_ocr[$entri->nama])) {
+                $this->entri_data_izin[$entri->id] = $entri_data_ocr[$entri->nama];
+                unset($entri_data_ocr[$entri->nama]);
             }
         }
+
+        $this->entri_data_placeholder = $entri_data_ocr;
+    }
+
+    public function setEntriValue($entri_id, $key)
+    {
+        $this->entri_data_izin[$entri_id] = $this->entri_data_placeholder[$key];
+        unset($this->entri_data_placeholder[$key]);
     }
 
     protected function hasEntriDataForm(): bool

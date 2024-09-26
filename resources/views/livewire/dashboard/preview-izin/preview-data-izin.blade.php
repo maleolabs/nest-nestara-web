@@ -197,10 +197,12 @@
                                                         <i class="fa-regular fa-circle-right me-1"></i>
                                                         Entri Data
                                                     </h6>
-                                                    <button class="btn btn-sm bg-gradient-info text-capitalize" type="button" wire:click='automaticFill'>
-                                                        <span wire:loading.remove wire:target='automaticFill'>isi otomatis</span>
-                                                        <span class="spinner-border spinner-border-sm" role="status" wire:loading wire:target='automaticFill'></span>
-                                                    </button>
+                                                    @if(get_pengaturan('CLIENT_TOKEN') != null)
+                                                        <button class="btn btn-sm bg-gradient-info text-capitalize" type="button" wire:click='automaticFill'>
+                                                            <span wire:loading.remove wire:target='automaticFill'>isi otomatis</span>
+                                                            <span class="spinner-border spinner-border-sm" role="status" wire:loading wire:target='automaticFill'></span>
+                                                        </button>
+                                                    @endif
                                                 </div>
                                                 @include('livewire.dashboard.preview-izin.form-entri-data')
                                             </div>

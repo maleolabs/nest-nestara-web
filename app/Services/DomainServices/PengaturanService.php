@@ -67,5 +67,13 @@ interface PengaturanService {
      * @return bool True jika pengaturan berhasil dihapus, false jika gagal.
      */
     function delete(int $id): bool;
+
+    /**
+     * Menghapus pengaturan berdasarkan nama
+     * 
+     * @param string $nama Nama pengaturan
+     * @return bool True jika pengaturan berhasil dihapus, false jika gagal.
+     */
+    function deleteByNama(string $nama): bool;
 	
 }

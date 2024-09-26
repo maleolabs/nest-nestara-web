@@ -59,5 +59,9 @@ class PengaturanServiceImpl implements PengaturanService {
 		return $pengaturan->delete();
 	}
 
+	public function deleteByNama(string $nama): bool
+	{
+		return Pengaturan::where('nama', $nama)->first()?->delete();
+	}
 	
 }

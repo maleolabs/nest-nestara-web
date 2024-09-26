@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Livewire\Admin\Partials\PengaturanToken;
 use App\Livewire\Forms\KopSuratForm;
 use App\Services\DomainServices\SuratService;
 use Livewire\Component;
@@ -9,14 +10,22 @@ use Livewire\Component;
 class Pengaturan extends Component
 {
 
+    use PengaturanToken;
+
     public KopSuratForm $kop_surat_form;
 
     public $nomor_surat,
         $tempat_penetapan;
 
+    public function mount()
+    {
+        $this->ocr_setting = env('APP_OCR_SETTING', false);
+    }
+
     public function render()
     {
         $this->setUpSuratForm();
+        $this->setTokenData();
 
         return view('livewire.admin.pengaturan');
     }

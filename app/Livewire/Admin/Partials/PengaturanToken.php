@@ -55,6 +55,11 @@ trait PengaturanToken
         $this->toggleTokenForm();
     }
 
+    public function regenerateToken()
+    {
+        $this->getTokenService()->regenerateToken();
+    }
+
     public function deleteToken()
     {
         $this->getTokenService()->delete();

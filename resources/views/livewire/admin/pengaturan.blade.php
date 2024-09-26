@@ -100,8 +100,9 @@
                 <div class="d-flex align-items-center justify-content-between mb-2">
                     <p class="text-sm fw-semibold mb-1">API Token</p>
                     @if ($api_token)
-                        <button class="btn btn-sm bg-gradient-info text-capitalize" type="button">
-                            regenerate token
+                        <button class="btn btn-sm bg-gradient-info text-capitalize" type="button" wire:click='regenerateToken' wire:loading.attr='disabled' wire:loading.class='disabled' wire:target='regenerateToken'>
+                            <span wire:loading.remove wire:target='regenerateToken'>regenerate token</span>
+                            <span class="spinner-border spinner-border-sm" wire:loading wire:target='regenerateToken'></span>
                         </button>
                     @endif
                 </div>

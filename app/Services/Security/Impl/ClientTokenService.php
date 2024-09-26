@@ -15,6 +15,8 @@ class ClientTokenService implements TokenService
     public const SET_CLIENT_TOKEN_DATA = 'CLIENT_TOKEN_DATA';
     public const SET_CLIENT_TOKEN = 'CLIENT_TOKEN';
     public const SET_CLIENT_TOKEN_TTL = 'CLIENT_TOKEN_TTL';
+    public const SET_CLIENT_TOKEN_TTL_TYPE = 'CLIENT_TOKEN_TTL_TYPE';
+    public const SET_CLIENT_TOKEN_TTL_LONG = 'CLIENT_TOKEN_TTL_LONG';
     public const SET_CLIENT_TOKEN_USED_COUNT = 'CLIENT_TOKEN_USED_COUNT';
     public const SET_CLIENT_TOKEN_USED_DATE = 'CLIENT_TOKEN_USED_DATE';
     public const SET_SECURITY_GROUP = 'SECURITY';
@@ -35,6 +37,7 @@ class ClientTokenService implements TokenService
         $token = $this->createHmacToken($token_ttl, $data);
 
         $this->saveToken($data, $token, $token_ttl);
+        $this->saveTokenTTlData($ttl_type, $ttl_long);
     }
 
     public function generateToken(): string
@@ -47,6 +50,22 @@ class ClientTokenService implements TokenService
         $this->saveToken(self::DEFAULT_TOKEN_DATA, $token, $token_ttl);
 
         return $token;
+    }
+
+    public function regenerateToken(string $ttl_type = null, int $ttl_long = null): void
+    {
+        if (is_null($ttl_type) || is_null($ttl_long)) {
+            $ttl_type = get_pengaturan(self::SET_CLIENT_TOKEN_TTL_TYPE);
+            $ttl_long = get_pengaturan(self::SET_CLIENT_TOKEN_TTL_LONG);
+            $ttl = $this->getTokenTTL($ttl_type, $ttl_long);
+        } else {
+            $ttl = $this->getTokenTTL($ttl_type, $ttl_long);
+            $this->saveTokenTTlData($ttl_type, $ttl_long);
+        }
+
+        $token = $this->createHmacToken($ttl);
+
+        $this->saveToken(get_pengaturan(self::SET_CLIENT_TOKEN_DATA), $token, $ttl);
     }
 
     public function verifyToken(string $token): bool
@@ -97,6 +116,12 @@ class ClientTokenService implements TokenService
         set_pengaturan(self::SET_CLIENT_TOKEN_DATA, $data, self::SET_SECURITY_GROUP);
         set_pengaturan(self::SET_CLIENT_TOKEN, $token, self::SET_SECURITY_GROUP);
         set_pengaturan(self::SET_CLIENT_TOKEN_TTL, $ttl, self::SET_SECURITY_GROUP);
+    }
+
+    private function saveTokenTTlData($ttl_type, $ttl_long)
+    {
+        set_pengaturan(self::SET_CLIENT_TOKEN_TTL_TYPE, $ttl_type, self::SET_SECURITY_GROUP);
+        set_pengaturan(self::SET_CLIENT_TOKEN_TTL_LONG, $ttl_long, self::SET_SECURITY_GROUP);
     }
 
     private function getTokenTTL(string $ttl_type, int $ttl_long)

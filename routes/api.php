@@ -42,3 +42,4 @@ Route::prefix('/auth')->group(function () {
 });
 
 Route::post('/verify-client-token/{token}', [TokenController::class, 'verifyClientToken']);
+Route::post('/generate-client-token', [TokenController::class, 'generateToken']);

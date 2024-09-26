@@ -45,6 +45,16 @@ class TokenController extends Controller
         return response()->json($data, $statusCode);
     }
 
+    public function generateToken()
+    {
+        $env = env('APP_ENV');
+        if ($env != 'production') {
+            $this->tokenService->generateToken();
+            return response()->json('OK', 201);
+        }
+        abort(404);
+    }
+
     private function saveTokenException($exception_type)
     {
         set_pengaturan('CLIENT_TOKEN_INVALID', $exception_type, 'SECURITY');

@@ -414,12 +414,10 @@ class PerizinanServiceImpl implements PerizinanService
                 ->where('progres', Progres::PROCESSING)
                 ->where('keterangan', OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN)
                 ->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) from status_izin WHERE status_izin.izin_id = izin.id)'));
-        })->get();
+        })->orWhere('no_surat', '!=', null)->get();
+
         foreach ($semua_izin as $izin) {
-            $izin_status = $izin->status_izin->last();
-            if ($izin_status->nama == Status::PROSES && $izin->status_izin->last()->keterangan == OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN) {
-                $this->statusIzinService->updateStatusIzin($izin->id, Status::PROSES, Progres::PROCESSING, OfficeStatus::TIDAK_DIREKOM, $pegawai_id);
-            }
+            $this->statusIzinService->updateStatusIzin($izin->id, Status::PROSES, Progres::PROCESSING, OfficeStatus::TIDAK_DIREKOM, $pegawai_id);
         }
     }
 

@@ -3,7 +3,11 @@
 namespace App\Http\Requests\Api;
 
 use App\Services\DomainServices\JenisPerizinanService;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class PersyaratanRequest extends FormRequest
 {
@@ -47,5 +51,12 @@ class PersyaratanRequest extends FormRequest
         return [
             //
         ];
+    }
+
+    public function failedValidation(Validator $validator): JsonResponse
+    {
+        throw new HttpResponseException(response()->json([
+            'errors' => $validator->getMessageBag()
+        ], Response::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

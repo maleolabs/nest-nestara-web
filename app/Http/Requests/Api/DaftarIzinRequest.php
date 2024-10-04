@@ -2,7 +2,11 @@
 
 namespace App\Http\Requests\Api;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class DaftarIzinRequest extends FormRequest
 {
@@ -25,5 +29,12 @@ class DaftarIzinRequest extends FormRequest
             'pemohon_id' => ['required'],
             'jenis_perizinan_id' => ['required']
         ];
+    }
+
+    public function failedValidation(Validator $validator): JsonResponse
+    {
+        throw new HttpResponseException(response()->json([
+            'errors' => $validator->errors()
+        ], Response::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

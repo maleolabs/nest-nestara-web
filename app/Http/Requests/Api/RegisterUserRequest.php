@@ -5,6 +5,7 @@ namespace App\Http\Requests\Api;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Rules\Password;
 
 class RegisterUserRequest extends FormRequest
@@ -35,7 +36,7 @@ class RegisterUserRequest extends FormRequest
     {
         throw new HttpResponseException(response([
             'errors' => $validator->getMessageBag()
-        ], 400));
+        ], Response::HTTP_UNPROCESSABLE_ENTITY));
     }
     
 }

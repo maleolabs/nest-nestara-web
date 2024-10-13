@@ -24,7 +24,7 @@ class OcrAPIServiceTest extends TestCase
                                 ->setIzinId(10)
                                 ->setJenisPerizinanId(167)
                                 ->setSyaratIzinId(855)
-                                ->setImageUrl("http://sistem-informasi-dinas-pmptsp.me/api/files/MTcyNTQzMzA1MDg1NS10ZXN0LmpwZw==")
+                                ->setImageUrl("http://localhost:8000/api/files/MTcyODg0MDUzNjg1NS1kb2NwcmV2aWV3MS5qcGVn")
                                 ->build();
 
         $response = $apiService->sendOcrRequest($request);

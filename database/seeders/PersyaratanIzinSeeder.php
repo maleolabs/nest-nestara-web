@@ -25,7 +25,7 @@ class PersyaratanIzinSeeder extends Seeder
         DB::table('jenis_perizinan_syarat_izin')->delete();
         DB::statement("SET foreign_key_checks=1");
 
-        $data_folder = storage_path('app\\private_files\\data\\');
+        $data_folder = storage_path('app/private_files/data/');
 
         $syarat_import_file_path = $data_folder . 'distinct_data_output.xlsx';
         Excel::import(new SyaratIzinImport, $syarat_import_file_path);

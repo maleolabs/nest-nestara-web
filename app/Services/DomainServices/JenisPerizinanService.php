@@ -68,6 +68,15 @@ interface JenisPerizinanService {
     function getAll(string $sorting_by = 'created_at', string $sort = 'DESC'): array;
 
     /**
+     * Mengambil jenis perizinan dengan paginate
+     * 
+     * @param string $search Nama jenis perizinan untuk di filter
+     * @param int $page Halaman
+     * @param int $limit Batas jumlah data yang akan diambil
+     */
+    function getAllPaginate(string $search = '', int $page = 1, int $limit = 10): array;
+
+    /**
      * Mengambil semua jenis perizinan dengan paginate
      * 
      * @param int $page Halaman yang akan diambil datanya. Default pada halaman pertama (1)

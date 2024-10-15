@@ -18,6 +18,12 @@ class JenisPerizinanController extends Controller
         $this->jenisPerizinanService = $jenisPerizinanService;
     }
 
+    public function find(int $id): JsonResponse
+    {
+        $data = $this->jenisPerizinanService->find($id);
+        return response()->json($data, 200);
+    }
+
     public function getAll(): JsonResponse
     {
         $search = request()->query('search', '');

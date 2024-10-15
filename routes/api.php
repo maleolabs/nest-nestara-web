@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['jwt.auth'])->group(function() {
     Route::prefix('/jenis-perizinan')->group(function () {
         Route::get('/', [JenisPerizinanController::class, 'getAll']);
+        Route::get('/{id}', [JenisPerizinanController::class, 'find']);
         Route::get('/{id}/persyaratan', [JenisPerizinanController::class, 'getPersyaratan']);
     });
 

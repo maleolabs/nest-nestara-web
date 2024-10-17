@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\UnprocessableEntityException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\DaftarIzinRequest;
 use App\Http\Resources\IzinResource;
@@ -32,12 +33,20 @@ class PerizinanController extends Controller
     {
         $data = $request->validated();
 
-        $izin = $this->perizinanService->saveRegistration($data['jenis_perizinan_id'], $data['pemohon_id']);
-
-        if (empty($izin)) {
+        try {
+            $izin = $this->perizinanService->saveRegistrationWithPersyaratan($data['jenis_perizinan_id'], $data['pemohon_id'], $request->persyaratan);
+    
+            if (empty($izin)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Gagal menyimpan pendaftaran izin'
+                ], Response::HTTP_BAD_REQUEST);
+            }
+        } catch (UnprocessableEntityException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menyimpan pendaftaran izin'
+                'message' => 'Gagal menyimpan pendaftaran izin',
+                'errors' => $e->getEntityErrorMessage()
             ], Response::HTTP_BAD_REQUEST);
         }
 

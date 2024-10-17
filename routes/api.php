@@ -17,7 +17,7 @@ Route::middleware(['jwt.auth'])->group(function() {
 
     Route::prefix('/izin')->group(function() {
         Route::get('/', [PerizinanController::class, 'get']);
-        Route::post('/create', [PerizinanController::class, 'create']);
+        Route::post('/', [PerizinanController::class, 'create']);
     });
 });
 

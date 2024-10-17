@@ -2,8 +2,10 @@
 
 namespace App\Services\DomainServices\Impl;
 
+use App\Exceptions\UnprocessableEntityException;
 use App\Jobs\SendOcrRequest;
 use App\Models\Izin;
+use App\Services\AppService\FileService;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\JenisPerizinanService;
@@ -36,13 +38,16 @@ class PerizinanServiceImpl implements PerizinanService
 
     protected PengaturanService $pengaturanService;
 
+    protected FileService $fileService;
+
     public function __construct(
         JenisPerizinanService $jenisPerizinanService,
         StatusIzinService $statusIzinService, 
         EntriDataService $entriDataService,
         SuratService $suratService,
         DokumenPemohonService $dokumenPemohonService,
-        PengaturanService $pengaturanService)
+        PengaturanService $pengaturanService,
+        FileService $fileService,)
     {
         $this->jenisPerizinanService = $jenisPerizinanService;
         $this->statusIzinService = $statusIzinService;
@@ -50,16 +55,11 @@ class PerizinanServiceImpl implements PerizinanService
         $this->suratService = $suratService;
         $this->dokumenPemohonService = $dokumenPemohonService;
         $this->pengaturanService = $pengaturanService;
+        $this->fileService = $fileService;
     }
     
-    public function saveRegistration(int $jenis_izin_id, int $pemohon_id, array $persyaratan = []): ?Izin
+    public function saveRegistration(int $jenis_izin_id, int $pemohon_id): ?Izin
     {
-        /*$syarat_izin = $this->jenisPerizinanService->getPersyaratan($jenis_izin_id);
-        dd(array_diff_key($syarat_izin, $persyaratan));
-        if (array_diff_key($syarat_izin, $persyaratan) > 0) {
-            // throw validation exception
-        }*/
-
         $izin = Izin::create([
             'jenis_perizinan_id' => $jenis_izin_id,
             'pemohon_id' => $pemohon_id
@@ -67,6 +67,42 @@ class PerizinanServiceImpl implements PerizinanService
         $this->statusIzinService->save($izin->id, Status::DIDAFTARKAN);
 
         SendOcrRequest::dispatch($izin);
+
+        return $izin;
+    }
+
+    public function saveRegistrationWithPersyaratan($jenis_izin_id, $pemohon_id, array $persyaratan): ?Izin
+    {
+        $entityErrorResponse = [];
+        $syarat_izin = $this->jenisPerizinanService->getDataPersyaratan($jenis_izin_id);
+        if (empty($persyaratan)) {
+            $entityErrorResponse = array_map(function($syarat) {
+                return [$syarat->id => 'Persyaratan ini diperlukan'];
+            }, $syarat_izin);
+        } else {
+            foreach ($syarat_izin as $syarat) {
+                if ($syarat->online) {
+                    if (!in_array($syarat->id, array_keys($persyaratan))) {
+                        $entityErrorResponse[] = [$syarat->id => 'Persyaratan ini diperlukan'];
+                    } else {
+                        $mimesType = $syarat->tipe == 'img' ? ['image/png', 'image/jpeg', 'image/jpg'] : ['application/pdf'];
+
+                        $mimeType = $persyaratan[$syarat->id]->getMimeType();
+                        if (!in_array($mimeType, $mimesType)) {
+                            $entityErrorResponse[] = [$syarat->id => 'File harus bertipe ' . implode(', ', $mimesType)];
+                        }
+                    }
+                }
+            }
+        }
+        if (count($entityErrorResponse) > 0) {
+            throw new UnprocessableEntityException($entityErrorResponse);
+        }
+
+        $izin = $this->saveRegistration($jenis_izin_id, $pemohon_id);
+
+        $data_persyaratan = $this->fileService->savePrivately($persyaratan);
+        $this->dokumenPemohonService->saveAll($pemohon_id, $izin->id, $data_persyaratan);
 
         return $izin;
     }

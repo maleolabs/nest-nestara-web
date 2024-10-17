@@ -26,7 +26,6 @@ class DaftarIzinRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'pemohon_id' => ['required'],
             'jenis_perizinan_id' => ['required']
         ];
     }

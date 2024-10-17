@@ -51,9 +51,11 @@ class PerizinanController extends Controller
     public function create(DaftarIzinRequest $request): JsonResponse
     {
         $data = $request->validated();
+        $current_user = Auth::guard('api')->user();
+        $pemohon_id = $current_user->pemohon;
 
         try {
-            $izin = $this->perizinanService->saveRegistrationWithPersyaratan($data['jenis_perizinan_id'], $data['pemohon_id'], $request->persyaratan);
+            $izin = $this->perizinanService->saveRegistrationWithPersyaratan($data['jenis_perizinan_id'], $pemohon_id, $request->persyaratan);
     
             if (empty($izin)) {
                 return response()->json([

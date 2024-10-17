@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Exceptions\UnprocessableEntityException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\DaftarIzinRequest;
+use App\Http\Resources\DokumenPemohonResource;
 use App\Http\Resources\IzinResource;
+use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\PerizinanService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -16,9 +18,14 @@ class PerizinanController extends Controller
 
     private PerizinanService $perizinanService;
 
-    public function __construct(PerizinanService $perizinanService)
+    private DokumenPemohonService $dokumenPemohonService;
+
+    public function __construct(
+        PerizinanService $perizinanService,
+        DokumenPemohonService $dokumenPemohonService)
     {
         $this->perizinanService = $perizinanService;
+        $this->dokumenPemohonService = $dokumenPemohonService;
     }
 
     public function get(): JsonResponse
@@ -53,6 +60,21 @@ class PerizinanController extends Controller
         return response()->json([
             'id' => $izin->id
         ], Response::HTTP_OK);
+    }
+
+    public function getPersyaratan(int $id): JsonResponse
+    {
+        $izin = $this->perizinanService->find($id);
+        if (empty($izin)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Izin tidak ditemukan'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $allDokumen = $this->dokumenPemohonService->getAllByPemohonAndSyaratAndIzin($izin->pemohon_id, $izin->jenis_perizinan_id, $id);
+        
+        return response()->json(DokumenPemohonResource::collection(collect($allDokumen)), Response::HTTP_OK);
     }
     
 }

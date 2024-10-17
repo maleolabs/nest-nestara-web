@@ -28,6 +28,18 @@ class PerizinanController extends Controller
         $this->dokumenPemohonService = $dokumenPemohonService;
     }
 
+    public function find(int $id): JsonResponse
+    {
+        $izin = $this->perizinanService->find($id);
+        if (empty($izin)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Izin tidak ditemukan'
+            ], Response::HTTP_NOT_FOUND);
+        }
+        return response()->json(new IzinResource($izin), Response::HTTP_OK);
+    }
+
     public function get(): JsonResponse
     {
         $current_user = Auth::guard('api')->user();

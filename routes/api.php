@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\DataEntriController;
 use App\Http\Controllers\Api\PemohonController;
 use App\Http\Controllers\Api\PerizinanController;
 use App\Http\Controllers\Api\TokenController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Helper\FileController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,10 @@ Route::middleware(['jwt.auth'])->group(function() {
     Route::prefix('/pemohon')->group(function() {
         Route::post('/', [PemohonController::class, 'store']);
         Route::get('/', [PemohonController::class, 'find']);
+    });
+
+    Route::prefix('/user')->group(function() {
+        Route::put('/update-profil', [UserController::class, 'updateProfil']);
     });
 });
 

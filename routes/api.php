@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\JenisPerizinanController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DataEntriController;
@@ -20,6 +21,11 @@ Route::middleware(['jwt.auth'])->group(function() {
         Route::post('/', [PerizinanController::class, 'create']);
         Route::get('/{id}', [PerizinanController::class, 'find']);
         Route::get('/{id}/persyaratan', [PerizinanController::class, 'getPersyaratan']);    
+    });
+
+    Route::prefix('/address')->group(function() {
+        Route::get('/regions/{type}/{parent_id}', [AddressController::class, 'getRegions']);
+        Route::get('/find-by-id/{type}/{id}', [AddressController::class, 'findById']);
     });
 });
 

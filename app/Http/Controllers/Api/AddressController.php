@@ -66,27 +66,6 @@ class AddressController extends Controller
     }
 
     /**
-     * Cari region berdasarkan nama dan tipe.
-     */
-    public function findByName($type, string $name): JsonResponse
-    {
-        if (!$this->isValidType($type)) {
-            return response()->json(['error' => 'Invalid type'], Response::HTTP_BAD_REQUEST);
-        }
-
-        $data = $this->handleByType($type);
-
-        if (!$data) {
-            return response()->json(['error' => 'Invalid data'], Response::HTTP_BAD_REQUEST);
-        }
-
-        // Implementasikan logika pencarian nama pada service
-        // $result = $this->regionService->findByName($type, $name);
-
-        return response()->json([], Response::HTTP_OK);
-    }
-
-    /**
      * Cari region berdasarkan ID dan tipe.
      */
     public function findById($type, int $id): JsonResponse
@@ -103,5 +82,35 @@ class AddressController extends Controller
 
         return response()->json($data(), Response::HTTP_OK);
     }
+
+    /**
+     * Cari region berdasarkan nama dan tipe.
+     */
+    public function getAll(): JsonResponse
+    {
+        $data = [];
+
+        $provinces = $this->regionService->getProvinces();
+
+        foreach ($provinces as $province) {
+            $data[] = $province;
+
+            $regencies = $this->regionService->getRegenciesByProvince($province['id']);
+            foreach ($regencies as $regency) {
+                $data[] = $regency;
+
+                $districts = $this->regionService->getDistrictsByRegency($regency['id']);
+                foreach ($districts as $district) {
+                    $data[] = $district;
+
+                    $villages = $this->regionService->getVillagesByDistrict($district['id']);
+                    $data = array_merge($data, $villages);
+                }
+            }
+        }
+
+        return response()->json($data, Response::HTTP_OK);
+    }
+
 
 }

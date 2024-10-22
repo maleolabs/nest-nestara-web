@@ -84,9 +84,34 @@ class AddressController extends Controller
     }
 
     /**
-     * Cari region berdasarkan nama dan tipe.
+     * Mencari region berdasarkan nama
+     */
+    public function findByName(string $name): JsonResponse
+    {
+        $name = strtolower($name);
+        $all = $this->getAllRegions();
+        foreach ($all as $region) {
+            $regionName = strtolower($region['name']);
+            if ($regionName == $name) {
+                return response()->json($region, Response::HTTP_OK);
+            }
+        }
+        return response()->json([
+            'success' => false,
+            'message' => 'region not found'
+        ], Response::HTTP_NOT_FOUND);
+    }
+
+    /**
+     * Mengambil semua region.
      */
     public function getAll(): JsonResponse
+    {
+        $data = $this->getAllRegions();
+        return response()->json($data, Response::HTTP_OK);
+    }
+
+    private function getAllRegions(): array
     {
         $data = [];
 
@@ -109,8 +134,7 @@ class AddressController extends Controller
             }
         }
 
-        return response()->json($data, Response::HTTP_OK);
+        return $data;
     }
-
 
 }

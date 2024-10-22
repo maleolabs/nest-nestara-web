@@ -26,6 +26,7 @@ Route::middleware(['jwt.auth'])->group(function() {
     Route::prefix('/address')->group(function() {
         Route::get('/regions/{type}/{parent_id}', [AddressController::class, 'getRegions']);
         Route::get('/find-by-id/{type}/{id}', [AddressController::class, 'findById']);
+        Route::get('/find-by-name/{name}', [AddressController::class, 'findByName']);
         Route::get('/get-all', [AddressController::class, 'getAll']);
     });
 });

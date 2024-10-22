@@ -25,7 +25,7 @@ class EmsifaAPIService implements RegionAPIService
     public function __construct()
     {
         $this->base_url = config('api-client.region_api.base_url');
-        $this->get_all_province = config('api_client.region.get_all_province');
+        $this->get_all_province = config('api-client.region_api.get_all_province');
     }
 
     private function fileService(): FileService
@@ -96,7 +96,8 @@ class EmsifaAPIService implements RegionAPIService
             if (count($data) > 0)
                 return $data;
         } catch (Exception $e) {}
-        if (!$this->get_all_province) {
+        
+        if (!$this->get_all_province && str_starts_with($param, 'province')) {
             return [];
         }
         try {

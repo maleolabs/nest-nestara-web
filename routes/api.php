@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\JenisPerizinanController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DataEntriController;
+use App\Http\Controllers\Api\PemohonController;
 use App\Http\Controllers\Api\PerizinanController;
 use App\Http\Controllers\Api\TokenController;
 use App\Http\Controllers\Helper\FileController;
@@ -28,6 +29,11 @@ Route::middleware(['jwt.auth'])->group(function() {
         Route::get('/find-by-id/{type}/{id}', [AddressController::class, 'findById']);
         Route::get('/find-by-name/{name}', [AddressController::class, 'findByName']);
         Route::get('/get-all', [AddressController::class, 'getAll']);
+    });
+
+    Route::prefix('/pemohon')->group(function() {
+        Route::post('/', [PemohonController::class, 'store']);
+        Route::get('/', [PemohonController::class, 'find']);
     });
 });
 

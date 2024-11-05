@@ -52,10 +52,17 @@ class PerizinanController extends Controller
     {
         $data = $request->validated();
         $current_user = Auth::guard('api')->user();
-        $pemohon_id = $current_user->pemohon;
+        $pemohon = $current_user->pemohon;
+        if (empty($pemohon)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pemohon tidak ditemukan',
+                'error' => 'Data pemohon tidak ditemukan'
+            ]);
+        }
 
         try {
-            $izin = $this->perizinanService->saveRegistrationWithPersyaratan($data['jenis_perizinan_id'], $pemohon_id, $request->persyaratan);
+            $izin = $this->perizinanService->saveRegistrationWithPersyaratan($data['jenis_perizinan_id'], $pemohon->id, $request->persyaratan);
     
             if (empty($izin)) {
                 return response()->json([

@@ -16,6 +16,11 @@ class JenisPerizinan extends Model
 
     protected $table = 'jenis_perizinan';
 
+    public function getNamaAttribute($value)
+    {
+        return str_capitalize($value, true);
+    }
+
     public function getDurasiAttribute($value)
     {
         return $value . ' hari';

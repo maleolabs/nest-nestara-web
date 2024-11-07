@@ -31,15 +31,13 @@ class PemohonController extends Controller
             $pemohon = $authUser->pemohon;
     
             $savedData = $pemohon ? $this->pemohonService->update($pemohon->id, $data) : $this->pemohonService->save($data, $authUser->id);
-            return response()->json([
-                'id' => $savedData->id
-            ], $pemohon ? Response::HTTP_OK : Response::HTTP_CREATED);
+            return response()->json($savedData->id, $pemohon ? Response::HTTP_OK : Response::HTTP_CREATED);
         } catch (Exception $e) {
             Log::channel('app')->error('Tidak dapat menyimpan data pemohon', ['error' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menyimpan data pemohon'
-            ]);
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 

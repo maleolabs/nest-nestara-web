@@ -117,7 +117,6 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     public function boot(): void
     {
-        URL::forceScheme('https');
         Paginator::useBootstrapFive();
     }
 }

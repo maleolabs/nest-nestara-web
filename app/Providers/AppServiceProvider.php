@@ -46,6 +46,7 @@ use App\Services\Security\TokenService;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider implements DeferrableProvider
@@ -116,6 +117,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
      */
     public function boot(): void
     {
+        URL::forceScheme('https');
         Paginator::useBootstrapFive();
     }
 }

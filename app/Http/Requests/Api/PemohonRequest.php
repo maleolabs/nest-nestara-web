@@ -26,7 +26,7 @@ class PemohonRequest extends FormRequest
     {
         return [
             'sumber_identitas' => ['required'],
-            'nomor_id' => ['required'],
+            'nomor_id' => ['required', 'max:20'],
             'nama_pemohon' => ['required'],
             'no_telepon' => ['required'],
             'provinsi' => ['required'],

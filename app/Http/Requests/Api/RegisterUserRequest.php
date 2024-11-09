@@ -28,7 +28,8 @@ class RegisterUserRequest extends FormRequest
         return [
             'name' => ['max:255'],
             'username' => ['required', 'unique:users', 'max:100'],
-            'password' => ['required', Password::min(6)->letters()->numbers()->symbols()]
+            'password' => ['required', Password::min(6)->letters()->numbers()->symbols()],
+            'konfirmasi_password' => ['required', 'same:password']
         ];
     }
 

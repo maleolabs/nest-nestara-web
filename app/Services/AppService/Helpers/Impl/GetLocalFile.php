@@ -5,6 +5,7 @@ namespace App\Services\AppService\Helpers\Impl;
 use App\Services\AppService\Helpers\GetFile;
 use DirectoryIterator;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class GetLocalFile implements GetFile
 {
@@ -39,10 +40,10 @@ class GetLocalFile implements GetFile
 
     public function getFile(string $file_name): string
     {
-        $file_path = "{$this->folders}\\$file_name";
-        if (!File::exists($file_path))
+        $file_path = "{$this->folders}/$file_name";
+        if (!Storage::disk('public')->exists($file_path))
             return null;
-        return File::get($file_path);
+        return Storage::disk('public')->get($file_path);
     }
 
     public function isFileNotEmpty(string $file_name): bool

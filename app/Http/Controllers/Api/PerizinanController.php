@@ -62,7 +62,7 @@ class PerizinanController extends Controller
         }
 
         try {
-            $izin = $this->perizinanService->saveRegistrationWithPersyaratan($data['jenis_perizinan_id'], $pemohon->id, $request->persyaratan);
+            $izin = $this->perizinanService->saveRegistrationWithPersyaratan($data['jenis_perizinan_id'], $pemohon->id, $request->persyaratan ?? []);
     
             if (empty($izin)) {
                 return response()->json([

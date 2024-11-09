@@ -115,6 +115,13 @@ class JenisPerizinanServiceImpl implements JenisPerizinanService
         return $jenis_perizinan->all();
     }
 
+    public function getAllPaginate(string $search = '', int $page = 1, int $limit = 10): array
+    {
+        $offset = ($page - 1) * $limit;
+        $jenis_perizinan = JenisPerizinan::where('nama', 'LIKE', '%' . $search . '%')->offset($offset)->limit($limit)->get();
+        return $jenis_perizinan->all();
+    }
+
     public function getPaginateAll(int $page = 1, int $count = 10, string $sorting_by = 'created_at', $sort = 'DESC'): LengthAwarePaginator
     {
         return JenisPerizinan::orderBy($sorting_by, $sort)

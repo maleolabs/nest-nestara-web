@@ -20,9 +20,12 @@ class EmsifaAPIService implements RegionAPIService
 
     private const NOT_FOUND = 'tidak ditemukan';
 
+    private $get_all_province;
+
     public function __construct()
     {
         $this->base_url = config('api-client.region_api.base_url');
+        $this->get_all_province = config('api-client.region_api.get_all_province');
     }
 
     private function fileService(): FileService
@@ -93,7 +96,10 @@ class EmsifaAPIService implements RegionAPIService
             if (count($data) > 0)
                 return $data;
         } catch (Exception $e) {}
-
+        
+        if (!$this->get_all_province && str_starts_with($param, 'province')) {
+            return [];
+        }
         try {
             $response = $client->request($method, $this->base_url . $param);
             if ($response->getStatusCode() == 200) {

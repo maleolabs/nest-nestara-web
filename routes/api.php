@@ -1,22 +1,45 @@
 <?php
 
+use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\JenisPerizinanController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DataEntriController;
+use App\Http\Controllers\Api\PemohonController;
 use App\Http\Controllers\Api\PerizinanController;
 use App\Http\Controllers\Api\TokenController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Helper\FileController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['jwt.auth'])->group(function() {
     Route::prefix('/jenis-perizinan')->group(function () {
         Route::get('/', [JenisPerizinanController::class, 'getAll']);
+        Route::get('/{id}', [JenisPerizinanController::class, 'find']);
         Route::get('/{id}/persyaratan', [JenisPerizinanController::class, 'getPersyaratan']);
     });
 
     Route::prefix('/izin')->group(function() {
         Route::get('/', [PerizinanController::class, 'get']);
-        Route::post('/create', [PerizinanController::class, 'create']);
+        Route::post('/', [PerizinanController::class, 'create']);
+        Route::get('/{id}', [PerizinanController::class, 'find']);
+        Route::get('/{id}/persyaratan', [PerizinanController::class, 'getPersyaratan']);    
+    });
+
+    Route::prefix('/address')->group(function() {
+        Route::get('/regions/{type}/{parent_id}', [AddressController::class, 'getRegions']);
+        Route::get('/find-by-id/{type}/{id}', [AddressController::class, 'findById']);
+        Route::get('/find-by-name/{name}', [AddressController::class, 'findByName']);
+        Route::get('/get-all', [AddressController::class, 'getAll']);
+    });
+
+    Route::prefix('/pemohon')->group(function() {
+        Route::post('/', [PemohonController::class, 'store']);
+        Route::get('/', [PemohonController::class, 'find']);
+    });
+
+    Route::prefix('/user')->group(function() {
+        Route::put('/update-profil', [UserController::class, 'updateProfil']);
+        Route::put('/update-password', [UserController::class, 'updatePassword']);
     });
 });
 

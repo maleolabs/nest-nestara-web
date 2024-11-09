@@ -17,8 +17,8 @@ class IzinResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'pemohon' => new PemohonResource($this->pemohon),
             'jenis_perizinan' => new JenisPerizinanResource($this->jenis_perizinan),
+            'status' => StatusIzinResource::collection($this->status_izin),
             'jenis_permohonan' => $this->jenis_permohonan,
             'no_pendaftaran' => $this->no_pendaftaran,
             'lokasi_izin' => $this->lokasi_izin,

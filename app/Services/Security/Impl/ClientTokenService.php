@@ -55,8 +55,8 @@ class ClientTokenService implements TokenService
     public function regenerateToken(string $ttl_type = null, int $ttl_long = null): void
     {
         if (is_null($ttl_type) || is_null($ttl_long)) {
-            $ttl_type = get_pengaturan(self::SET_CLIENT_TOKEN_TTL_TYPE);
-            $ttl_long = get_pengaturan(self::SET_CLIENT_TOKEN_TTL_LONG);
+            $ttl_type = get_pengaturan(self::SET_CLIENT_TOKEN_TTL_TYPE, 'day');
+            $ttl_long = get_pengaturan(self::SET_CLIENT_TOKEN_TTL_LONG, 30);
             $ttl = $this->getTokenTTL($ttl_type, $ttl_long);
         } else {
             $ttl = $this->getTokenTTL($ttl_type, $ttl_long);

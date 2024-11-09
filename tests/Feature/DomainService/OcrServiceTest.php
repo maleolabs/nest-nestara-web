@@ -18,7 +18,7 @@ class OcrServiceTest extends TestCase
         $izinService = app(PerizinanService::class);
         $ocrService = app(OcrService::class);
 
-        $izin = $izinService->find(1);
+        $izin = $izinService->find(14);
         assertNotNull($izin);
 
         $res = $ocrService->doOcrRequestForNewDataRegistation($izin);       

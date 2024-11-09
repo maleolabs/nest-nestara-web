@@ -9,7 +9,8 @@ return [
     ],
 
     'region_api' => [
-        'base_url' => env('EMSIFA_API_BASE_URL', null)
+        'base_url' => env('EMSIFA_API_BASE_URL', null),
+        'get_all_province' => env('GET_ALL_PROVINCE', false)
     ]
 
 ];

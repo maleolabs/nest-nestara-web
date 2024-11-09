@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'foto' => $this->foto,
             'default_foto' => $this->default_foto,
+            'foto_url' => route('api.render-file', ['file_name' => base64_encode('users/' . ($this->foto ?? $this->default_foto))]),
             'created_at' => $this->created_at->translatedFormat('d F Y'),
             'updated_at' => $this->updated_at->translatedFormat('d F Y')
         ];

@@ -75,28 +75,31 @@ class PerizinanServiceImpl implements PerizinanService
     {
         $entityErrorResponse = [];
         $syarat_izin = $this->jenisPerizinanService->getDataPersyaratan($jenis_izin_id);
-        if (empty($persyaratan)) {
-            $entityErrorResponse = array_map(function($syarat) {
-                return [$syarat->id => 'Persyaratan ini diperlukan'];
-            }, $syarat_izin);
-        } else {
-            foreach ($syarat_izin as $syarat) {
-                if ($syarat->online) {
-                    if (!in_array($syarat->id, array_keys($persyaratan))) {
-                        $entityErrorResponse[] = [$syarat->id => 'Persyaratan ini diperlukan'];
-                    } else {
-                        $mimesType = $syarat->tipe == 'img' ? ['image/png', 'image/jpeg', 'image/jpg'] : ['application/pdf'];
 
-                        $mimeType = $persyaratan[$syarat->id]->getMimeType();
-                        if (!in_array($mimeType, $mimesType)) {
-                            $entityErrorResponse[] = [$syarat->id => 'File harus bertipe ' . implode(', ', $mimesType)];
+        if (!empty($syarat_izin)) {
+            if (empty($persyaratan)) {
+                $entityErrorResponse = array_map(function($syarat) {
+                    return [$syarat->id => 'Persyaratan ini diperlukan'];
+                }, $syarat_izin);
+            } else {
+                foreach ($syarat_izin as $syarat) {
+                    if ($syarat->online) {
+                        if (!in_array($syarat->id, array_keys($persyaratan))) {
+                            $entityErrorResponse[] = [$syarat->id => 'Persyaratan ini diperlukan'];
+                        } else {
+                            $mimesType = $syarat->tipe == 'img' ? ['image/png', 'image/jpeg', 'image/jpg'] : ['application/pdf'];
+    
+                            $mimeType = $persyaratan[$syarat->id]->getMimeType();
+                            if (!in_array($mimeType, $mimesType)) {
+                                $entityErrorResponse[] = [$syarat->id => 'File harus bertipe ' . implode(', ', $mimesType)];
+                            }
                         }
                     }
                 }
             }
-        }
-        if (count($entityErrorResponse) > 0) {
-            throw new UnprocessableEntityException($entityErrorResponse);
+            if (count($entityErrorResponse) > 0) {
+                throw new UnprocessableEntityException($entityErrorResponse);
+            }
         }
 
         $izin = $this->saveRegistration($jenis_izin_id, $pemohon_id);

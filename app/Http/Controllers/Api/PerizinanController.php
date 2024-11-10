@@ -43,7 +43,7 @@ class PerizinanController extends Controller
     public function get(): JsonResponse
     {
         $current_user = Auth::guard('api')->user();
-        $data = $current_user->pemohon ? $current_user->pemohon->izin : null;
+        $data = $current_user->pemohon ? $current_user->pemohon->izin()->orderBy('updated_at', 'DESC')->get() : null;
 
         return response()->json(($data ? IzinResource::collection($data) : []), Response::HTTP_OK);
     }

@@ -8,6 +8,7 @@ use App\Http\Resources\SyaratIzinResource;
 use App\Models\JenisPerizinan;
 use App\Services\DomainServices\JenisPerizinanService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class JenisPerizinanController extends Controller
 {
@@ -29,10 +30,15 @@ class JenisPerizinanController extends Controller
         $search = request()->query('search', '');
         $page = request()->query('page', 1);
         $limit = request()->query('limit', 10);
+        $onlyTemplateExists = request()->query('available', false);
 
         $data = $this->jenisPerizinanService->getAllPaginate($search, $page, $limit);
+        $idsAvailabele = $this->jenisPerizinanService->getIdsWhereTemplateExists();
+        $dataWithTemplateExists = array_filter($data, function($item) use ($idsAvailabele) {
+            return in_array($item['id'], $idsAvailabele);
+        });
 
-        return response()->json(JenisPerizinanResource::collection($data), 200);
+        return response()->json(JenisPerizinanResource::collection($onlyTemplateExists === 'true' ? $dataWithTemplateExists : $data), 200);
     }
 
     public function getPersyaratan($id): JsonResponse

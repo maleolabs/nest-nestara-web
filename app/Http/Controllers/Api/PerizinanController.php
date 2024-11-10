@@ -9,9 +9,11 @@ use App\Http\Resources\DokumenPemohonResource;
 use App\Http\Resources\IzinResource;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\PerizinanService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PerizinanController extends Controller
 {
@@ -50,6 +52,7 @@ class PerizinanController extends Controller
     
     public function create(DaftarIzinRequest $request): JsonResponse
     {
+        Log::channel('app')->info('request izin', ['persyaratan' => $request->input('persyaratan')]);
         $data = $request->validated();
         $current_user = Auth::guard('api')->user();
         $pemohon = $current_user->pemohon;
@@ -71,11 +74,14 @@ class PerizinanController extends Controller
                 ], Response::HTTP_BAD_REQUEST);
             }
         } catch (UnprocessableEntityException $e) {
+            Log::channel('app')->error('error saving izin', ['error' => $e->getMessage()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Gagal menyimpan pendaftaran izin',
                 'errors' => $e->getEntityErrorMessage()
             ], Response::HTTP_BAD_REQUEST);
+        } catch (Exception $e) {
+            Log::channel('app')->error('error saving izin', ['error' => $e->getMessage()]);
         }
 
         return response()->json([

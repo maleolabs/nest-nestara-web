@@ -78,20 +78,20 @@ class PerizinanServiceImpl implements PerizinanService
 
         if (!empty($syarat_izin)) {
             if (empty($persyaratan)) {
-                $entityErrorResponse = array_map(function($syarat) {
-                    return [$syarat->id => 'Persyaratan ini diperlukan'];
-                }, $syarat_izin);
+                foreach ($syarat_izin as $syarat) {
+                    $entityErrorResponse[$syarat->id][] = 'Persyaratan ini diperlukan';
+                }
             } else {
                 foreach ($syarat_izin as $syarat) {
                     if ($syarat->online) {
                         if (!in_array($syarat->id, array_keys($persyaratan))) {
-                            $entityErrorResponse[] = [$syarat->id => 'Persyaratan ini diperlukan'];
+                            $entityErrorResponse[$syarat->id][] = 'Persyaratan ini diperlukan';
                         } else {
                             $mimesType = $syarat->tipe == 'img' ? ['image/png', 'image/jpeg', 'image/jpg'] : ['application/pdf'];
     
                             $mimeType = $persyaratan[$syarat->id]->getMimeType();
                             if (!in_array($mimeType, $mimesType)) {
-                                $entityErrorResponse[] = [$syarat->id => 'File harus bertipe ' . implode(', ', $mimesType)];
+                                $entityErrorResponse[$syarat->id][] = 'File harus bertipe ' . implode(', ', $mimesType);
                             }
                         }
                     }
@@ -104,8 +104,10 @@ class PerizinanServiceImpl implements PerizinanService
 
         $izin = $this->saveRegistration($jenis_izin_id, $pemohon_id);
 
-        $data_persyaratan = $this->fileService->savePrivately($persyaratan);
-        $this->dokumenPemohonService->saveAll($pemohon_id, $izin->id, $data_persyaratan);
+        if (!empty($syarat_izin)) {
+            $data_persyaratan = $this->fileService->savePrivately($persyaratan);
+            $this->dokumenPemohonService->saveAll($pemohon_id, $izin->id, $data_persyaratan);
+        }
 
         return $izin;
     }

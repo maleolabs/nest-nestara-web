@@ -17,7 +17,7 @@ class SyaratIzinResource extends JsonResource
         return [
             'id' => $this->id,
             'nama' => $this->nama,
-            'tipe' => $this->tipe,
+            'tipe' => $this->tipe == 'img' ? 'png, jpeg, jpg' : $this->tipe,
             'online' => $this->online,
             'created_at' => $this->created_at->translatedFormat('d F Y')
         ];

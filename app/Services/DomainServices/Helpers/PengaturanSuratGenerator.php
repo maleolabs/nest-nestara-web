@@ -92,6 +92,18 @@ class PengaturanSuratGenerator
         $this->pengaturanService->createMany($setupdatajenisnomor);
     }
 
+    public function updateAllIzinTemplateFolder(): void
+    {
+        $all_jenis = $this->jenisPerizinanService->getAll();
+        foreach ($all_jenis as $jenis) {
+            $this->jenisPerizinanService->saveField(
+                $jenis->id, 
+                'template_folder', 
+                str_replace('\\', '/', $jenis->template_folder)
+            );
+        }
+    }
+
     public function setDefaultJenisSuratTemplate(): void
     {
         $setup_jenis_templates = [];

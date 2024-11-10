@@ -13,6 +13,7 @@ use App\Services\DomainServices\SuratService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class DashboardController extends Controller
 {
@@ -75,20 +76,20 @@ class DashboardController extends Controller
         try {
             $id = $this->encryptionService->decryptId($id);
         } catch (DecryptException $e) {
-            abort(403);
+            abort(Response::HTTP_FORBIDDEN);
         }
 
         $izin = $this->perizinanService->find($id);
         if (!$izin)
-            abort(404);
+            abort(Response::HTTP_NOT_FOUND, 'Izin not found');
 
         $templateView = $this->jenisPerizinanService->getPdfTemplate($izin->jenis_perizinan_id);
         if (!$templateView)
-            abort(404);
+            abort(Response::HTTP_BAD_REQUEST, 'Template not found');
 
         $data_izin = $this->entriDataService->getDataIzinGroupByNama($izin->id, $izin->jenis_perizinan_id);
         if (count($data_izin) == 0)
-            abort(404);
+            abort(Response::HTTP_BAD_REQUEST, 'Data izin not found');
 
         $title = "IZIN-{$izin->no_pendaftaran}";
 

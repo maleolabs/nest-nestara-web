@@ -108,4 +108,6 @@ interface SuratService {
      */
     function setDefaultJenisSuratTemplate(): void;
 
+    function updateAllIzinTemplateFolder(): void;
+
 }

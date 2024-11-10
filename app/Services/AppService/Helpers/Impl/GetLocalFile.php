@@ -4,7 +4,6 @@ namespace App\Services\AppService\Helpers\Impl;
 
 use App\Services\AppService\Helpers\GetFile;
 use DirectoryIterator;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class GetLocalFile implements GetFile
@@ -14,7 +13,7 @@ class GetLocalFile implements GetFile
 
     public function getResourceFile(): self
     {
-        $this->folders = resource_path("views\\{$this->folders}");
+        $this->folders = resource_path("views/{$this->folders}");
         return $this;
     }
 
@@ -48,7 +47,7 @@ class GetLocalFile implements GetFile
 
     public function isFileNotEmpty(string $file_name): bool
     {
-        $file_path = "{$this->folders}\\$file_name";
+        $file_path = "{$this->folders}/$file_name";
         return is_readable($file_path) && filesize($file_path) > 0;
     }
 

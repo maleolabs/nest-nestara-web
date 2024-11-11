@@ -22,7 +22,9 @@ Route::middleware(['jwt.auth'])->group(function() {
         Route::get('/', [PerizinanController::class, 'get']);
         Route::post('/', [PerizinanController::class, 'create']);
         Route::get('/{id}', [PerizinanController::class, 'find']);
-        Route::get('/{id}/persyaratan', [PerizinanController::class, 'getPersyaratan']);    
+        Route::get('/{id}/persyaratan', [PerizinanController::class, 'getPersyaratan']);
+        Route::patch('/{id}/cancel', [PerizinanController::class, 'cancelRegistration']);
+        Route::delete('/{id}/delete', [PerizinanController::class, 'delete']);
     });
 
     Route::prefix('/address')->group(function() {

@@ -103,5 +103,43 @@ class PerizinanController extends Controller
         
         return response()->json(DokumenPemohonResource::collection(collect($allDokumen)), Response::HTTP_OK);
     }
+
+    public function cancelRegistration(int $id): JsonResponse
+    {
+        $authUser = Auth::guard('api')->user();
+        $izin = $this->perizinanService->find($id);
+        if (empty($izin)) {
+            return response()->json([
+                'success' => false,
+                'error' => 'izin tidak ditemukan'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $description = 'Izin ini telah dibatalkan oleh ' . $authUser->username;
+        $this->perizinanService->cancelRegistration($id, $description);
+
+        return response()->json([
+            'success' => true,
+            'message' => $description
+        ], Response::HTTP_OK);
+    }
     
+    public function delete(int $id): JsonResponse
+    {
+        $authUser = Auth::guard('api')->user();
+        $izin = $this->perizinanService->find($id);
+        if (empty($izin)) {
+            return response()->json([
+                'success' => false,
+                'error' => 'izin tidak ditemukan'
+            ], Response::HTTP_NOT_FOUND);
+        }
+        $this->perizinanService->delete($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'izin berhasil di hapus'
+        ], Response::HTTP_OK);
+    }
+
 }

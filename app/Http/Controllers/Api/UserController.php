@@ -25,6 +25,14 @@ class UserController extends Controller
     public function updateProfil(UserRequest $request): JsonResponse
     {
         $data = $request->validated();
+
+        $authUser = Auth::guard('api')->user();
+        if ($authUser->username != $data['username']) {
+            $request->validate([
+                'username' => ['unique:users']
+            ]);
+        }
+
         $authUser = Auth::guard('api')->user();
         $user = $this->userService->save($authUser->id, $data);
         return response()->json(new UserResource($user, Response::HTTP_OK));

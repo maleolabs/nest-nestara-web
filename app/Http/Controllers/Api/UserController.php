@@ -45,7 +45,10 @@ class UserController extends Controller
         if (!Hash::check($data['old_password'], $user->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Password lama salah'
+                'message' => 'Gagal menyimpan password baru',
+                'errors' => [
+                    'old_password' => ['password lama salah']
+                ]
             ], Response::HTTP_BAD_REQUEST);
         }
         $this->userService->savePassword($user->id, $data['new_password']);

@@ -31,8 +31,20 @@ class PasswordRequest extends FormRequest
         ];
     }
 
+    public function attributes()
+    {
+        return [
+            'old_password' => 'password',
+            'new_password' => 'password'
+        ];
+    }
+
     public function failedValidation(Validator $validator)
     {
-        throw new HttpResponseException(response()->json($validator->errors(), Response::HTTP_UNPROCESSABLE_ENTITY));
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'message' => 'validation errors',
+            'errors' => $validator->errors()
+        ], Response::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

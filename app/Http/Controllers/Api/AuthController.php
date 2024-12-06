@@ -26,7 +26,7 @@ class AuthController extends Controller
         $credentials = $request->validated();
 
         if (!$token = Auth::guard('api')->attempt($credentials)) {
-            return response()->json(['error' => 'unauthorized'], 401);
+            return response()->json(['error' => 'username atau password salah'], 401);
         }
 
         $current_user = Auth::guard('api')->user();

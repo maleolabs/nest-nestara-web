@@ -21,7 +21,7 @@ class JenisPerizinanController extends Controller
     public function find(int $id): JsonResponse
     {
         $data = $this->jenisPerizinanService->find($id);
-        return response()->json($data, 200);
+        return response()->json(new JenisPerizinanResource($data), 200);
     }
 
     public function getAll(): JsonResponse
@@ -29,10 +29,21 @@ class JenisPerizinanController extends Controller
         $search = request()->query('search', '');
         $page = request()->query('page', 1);
         $limit = request()->query('limit', 10);
+        $onlyTemplateExists = request()->query('available', false);
+
+        if ($limit <= 10) {
+            $totalData = JenisPerizinan::count();
+            $totalPage = ceil($totalData / $limit);
+            $page = rand(1, $totalPage);
+        }
 
         $data = $this->jenisPerizinanService->getAllPaginate($search, $page, $limit);
+        $idsAvailabele = $this->jenisPerizinanService->getIdsWhereTemplateExists();
+        $dataWithTemplateExists = array_filter($data, function($item) use ($idsAvailabele) {
+            return in_array($item['id'], $idsAvailabele);
+        });
 
-        return response()->json(JenisPerizinanResource::collection($data), 200);
+        return response()->json(JenisPerizinanResource::collection($onlyTemplateExists === 'true' ? $dataWithTemplateExists : $data), 200);
     }
 
     public function getPersyaratan($id): JsonResponse

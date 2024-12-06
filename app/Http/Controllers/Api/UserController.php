@@ -25,6 +25,14 @@ class UserController extends Controller
     public function updateProfil(UserRequest $request): JsonResponse
     {
         $data = $request->validated();
+
+        $authUser = Auth::guard('api')->user();
+        if ($authUser->username != $data['username']) {
+            $request->validate([
+                'username' => ['unique:users']
+            ]);
+        }
+
         $authUser = Auth::guard('api')->user();
         $user = $this->userService->save($authUser->id, $data);
         return response()->json(new UserResource($user, Response::HTTP_OK));
@@ -37,7 +45,10 @@ class UserController extends Controller
         if (!Hash::check($data['old_password'], $user->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Password lama salah'
+                'message' => 'Gagal menyimpan password baru',
+                'errors' => [
+                    'old_password' => ['password lama salah']
+                ]
             ], Response::HTTP_BAD_REQUEST);
         }
         $this->userService->savePassword($user->id, $data['new_password']);

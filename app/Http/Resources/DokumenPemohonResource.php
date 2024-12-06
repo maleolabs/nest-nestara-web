@@ -14,9 +14,11 @@ class DokumenPemohonResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $nama_file = explode('-', $this->nama_file, 2);
         return [
             'syarat_izin' => $this->syarat_izin->nama,
-            'nama_file' => base64_encode($this->nama_file)
+            'url_file' => route('api.render-file', ['file_name' => base64_encode($this->nama_file)]),
+            'nama_file' => $nama_file[1]
         ];
     }
 }

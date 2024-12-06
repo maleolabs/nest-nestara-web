@@ -34,12 +34,18 @@ class FileController extends Controller
         try {
             $file_name_2 = explode('/', $file_name);
             Log::channel('app')->info('FileController@render.file_name: ' . $file_name);
-            if (count($file_name_2) > 1)
-                $file = $this->fileService->getFileRelativePath($file_name);
+            if (count($file_name_2) > 1) {
+                $file = $this->fileService->fileManager()
+                        ->getFile()
+                        ->folders($file_name_2[0])
+                        ->getFile($file_name_2[1]);
+            }
             else
                 $file = $this->fileService->getPrivateFile($file_name);
         } catch (ItemNotFoundException $e) {
             abort(404, $e->getMessage());
+        } catch (\Exception $e) {
+            abort(404);
         }
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $type = $finfo->buffer($file);

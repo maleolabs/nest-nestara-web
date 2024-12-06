@@ -17,7 +17,7 @@ class PdfTemplateServiceImpl implements PdfTemplateService {
     public function generatePdfTemplateFile(string $template_name, bool $create_sub_folder = true): string
     {
         $file_name = strtolower($template_name) . '.blade.php';
-        $path = $create_sub_folder ? "{$template_name}\\{$file_name}" : $file_name;
+        $path = $create_sub_folder ? "{$template_name}/{$file_name}" : $file_name;
         $file_path = $this->fileManager->createFile()->path($path)->createAsResource()->create();
         return $file_path;
     }

@@ -24,7 +24,8 @@ class IzinResource extends JsonResource
             'lokasi_izin' => $this->lokasi_izin,
             'no_surat' => $this->no_surat,
             'created_at' => $this->created_at->isToday() ? $this->created_at->diffForHumans() : $this->created_at->translatedFormat('d F Y H:i'),
-            'updated_at' => $this->updated_at->isToday() ? $this->updated_at->diffForHumans() : $this->updated_at->translatedFormat('d F Y')
+            'updated_at' => $this->updated_at->isToday() ? $this->updated_at->diffForHumans() : $this->updated_at->translatedFormat('d F Y'),
+            'updated_at_timestamp' => $this->updated_at
         ];
     }
     

@@ -21,7 +21,7 @@ interface PengaturanService {
      * @param mixed $value Nilai pengaturan.
      * @param string|null $group (Opsional) Kelompok pengaturan.
      * @param mixed|null $user_id (Opsional) ID pengguna terkait.
-     * @patam bool $hidden (Opsional) Apakah pengaturan harus disembunyikan.
+     * @param bool $hidden (Opsional) Apakah pengaturan harus disembunyikan.
      * @return Pengaturan|null Objek Pengaturan yang diperbarui atau dibuat, atau null jika gagal.
      */
     function updateOrCreate(string $nama, $value, string $group = null, $user_id = null, bool $hidden = false): ?Pengaturan;

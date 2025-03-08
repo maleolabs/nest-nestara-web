@@ -34,3 +34,13 @@ if (!function_exists('getCountDownloadedSurat')) {
         return $pengaturan ? (string) $pengaturan->value . ' kali.' : null;
     }
 }
+
+
+/**
+ |------------------------------------------------------------------
+ | Settings Constant
+ |------------------------------------------------------------------
+ */
+const OCR_API_SETT_GROUP = 'ocr-api-setting-group';
+const OCR_API_KEY = 'ocr-api-key';
+const OCR_BASE_URL = 'ocr-base-url';

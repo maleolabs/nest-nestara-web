@@ -91,7 +91,7 @@
                         @error('user_form.username')
                             <div class="text-danger text-sm">{{ $message }}</div>
                         @enderror
-                    </div>
+                    </div>  
                     <div class="col-sm-6 mb-3">
                         <label for="email" class="mb-1 text-xs fw-medium text-capitalize">email</label>
                         <div class="input-group input-group-sm border rounded-3">

@@ -25,7 +25,7 @@ class Pengaturan extends Component
     public function render()
     {
         $this->setUpSuratForm();
-        $this->setTokenData();
+        $this->setOcrApiConfig();
 
         return view('livewire.admin.pengaturan');
     }

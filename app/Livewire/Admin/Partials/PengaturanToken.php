@@ -10,92 +10,23 @@ trait PengaturanToken
 {
 
     public $ocr_setting,
-        $api_token,
-        $token_form_active = false,
-        $token_expire_op = [],
-        $nama_token,
-        $token_expire = '1 Hari',
-        $token_expired_at;
+        $api_key,
+        $base_url;
 
-    public $token_used_date,
-        $token_used_count;
+    public $ocr_config_saved = false;
 
-    protected function setTokenData()
+    protected function setOcrApiConfig()
     {
-        $this->api_token = get_pengaturan(ClientTokenService::SET_CLIENT_TOKEN);
-
-        if ($token_expired_at = get_pengaturan(ClientTokenService::SET_CLIENT_TOKEN_TTL)) {
-            $expired_date = Carbon::createFromTimestamp($token_expired_at);
-            $format = now()->diffInDays($expired_date) < 2 ? 'd F Y H:i' : 'd F Y';
-            $this->token_expired_at = $expired_date->translatedFormat($format);
-        }
-
-        $this->token_used_count = get_pengaturan(ClientTokenService::SET_CLIENT_TOKEN_USED_COUNT);
+        $this->api_key = get_pengaturan(OCR_API_KEY);
+        $this->base_url = get_pengaturan(OCR_BASE_URL);
+    }
     
-        if ($token_used_date = get_pengaturan(ClientTokenService::SET_CLIENT_TOKEN_USED_DATE)) {
-            $this->token_used_date = Carbon::createFromTimestamp($token_used_date)->diffForHumans();
-        }
-    }
-
-    public function toggleTokenForm()
+    public function saveOcrApiConfig()
     {
-        $this->token_form_active = !$this->token_form_active;
-        if ($this->token_form_active) {
-            $this->token_expire_op = $this->getExpireTokenOption();
-        }
-    }
+        set_pengaturan(OCR_API_KEY, $this->api_key, OCR_API_SETT_GROUP);
+        set_pengaturan(OCR_BASE_URL, $this->base_url, OCR_API_SETT_GROUP);
 
-    public function createToken()
-    {
-        $this->validate([
-            'nama_token' => ['required'],
-            'token_expire' => ['required']
-        ]);
-
-        $this->getTokenService()->create($this->nama_token, $this->token_expire_op[$this->token_expire]['type'], $this->token_expire_op[$this->token_expire]['ttl_long']);
-
-        $this->toggleTokenForm();
-    }
-
-    public function regenerateToken()
-    {
-        $this->getTokenService()->regenerateToken();
-    }
-
-    public function deleteToken()
-    {
-        $this->getTokenService()->delete();
-    }
-
-    private function getExpireTokenOption(): array
-    {
-        return [
-            '1 Hari' => [
-                'ttl_long' => 1,
-                'type' => 'day'
-            ],
-            '1 Bulan' => [
-                'ttl_long' => 1,
-                'type' => 'month'
-            ],
-            '3 Bulan' => [
-                'ttl_long' => 3,
-                'type' => 'month'
-            ],
-            '6 Bulan' => [
-                'ttl_long' => 6,
-                'type' => 'month'
-            ],
-            '1 Tahun' => [
-                'ttl_long' => 1,
-                'type' => 'year'
-            ],
-        ];
-    }
-
-    private function getTokenService(): TokenService
-    {
-        return app(TokenService::class);
+        $this->ocr_config_saved = true;
     }
 
 }

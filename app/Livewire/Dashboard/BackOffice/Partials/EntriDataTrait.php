@@ -165,6 +165,7 @@ trait EntriDataTrait
     public function automaticFill()
     {
         $entri_data_ocr = $this->getOcrService()->getEntriDataByIzinId($this->preview_izin_id);
+        
         if (!$entri_data_ocr) {
             return;
         }

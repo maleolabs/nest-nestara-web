@@ -58,8 +58,14 @@ class OcrServiceImpl implements OcrService
     public function getEntriDataByIzinId(int $izin_id): ?array
     {
         return $this->excecuteWithRetry(function() use ($izin_id) {
-            $data = $this->ocrAPIService->getEntriDataValueByIzinId($izin_id)?->getData();
-            return array_column($data ?? [], 'textValue', 'textKey');
+            $data = $this->ocrAPIService->getEntriDataValueByIzinId($izin_id)?->getData()['extractedTexts'] ?? [];
+            
+            if (is_object($data)) {
+                $data = get_object_vars($data);
+                return $data;
+            }
+
+            return array_column($data, 'textValue', 'textKey');
         });
     }
 

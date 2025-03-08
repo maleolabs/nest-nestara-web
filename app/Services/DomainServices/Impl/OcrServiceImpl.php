@@ -48,10 +48,11 @@ class OcrServiceImpl implements OcrService
 
         $entri_data = $this->entriDataService->getByJenisPerizinanId($izin->jenis_perizinan_id);
         $required_keys = array_column($entri_data, 'nama');
+        
         $url_dokumen = $this->getUrlDokumen($persyaratan, $izin->pemohon_id, $izin->id);
         $requests = $this->getRequests($url_dokumen, $izin->id, $izin->jenis_perizinan_id, $required_keys);
 
-        return $this->sendRequestWithRetry($requests);
+        return $this->sendRequest($requests);
     }
 
     public function getEntriDataByIzinId(int $izin_id): ?array

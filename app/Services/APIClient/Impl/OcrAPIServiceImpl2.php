@@ -68,7 +68,7 @@ class OcrAPIServiceImpl2 implements OcrAPIService
         try {
             $endpoint = "/ocr/check-status/{$request_id}";
 
-            return $this->fetchAndParseResponse($endpoint);
+            return $this->fetchAndParseResponse($endpoint, [], false);
         } catch (Exception $e) {
             Log::channel('app')->error('failed to check ocr request status', ['error' => $e->getMessage()]);
             return null;
@@ -111,13 +111,15 @@ class OcrAPIServiceImpl2 implements OcrAPIService
 
         try {
             $response = Http::withHeaders($headers)->get($uri);
-            $responseData = $response->json();
+            $responseData = $response->body();
 
-            if ($cache) {
+            $ocrResponse = $this->parseJsonResponse($responseData);
+            
+            if ($cache && $ocrResponse->getData()['status'] == 'DONE') {
                 $this->saveCacheData($cacheKey, $responseData);
             }
             
-            return $this->parseJsonResponse($response->json());
+            return $ocrResponse;
         } catch (RequestException $re) {
             return $this->handleRequestException($re);
         } catch (ConnectionException $ce) {

@@ -31,6 +31,6 @@ interface OcrAPIService
      * @param int $request_id ID dari request
      * @return OcrResponse|null
      */
-    function checkOcrRequestStatus(int $request_id): ?OcrResponse;
+    function checkOcrRequestStatus(int|string $request_id): ?OcrResponse;
 
 }

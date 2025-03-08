@@ -3,7 +3,7 @@
 namespace App\Providers;
 
 use App\Services\APIClient\Impl\EmsifaAPIService;
-use App\Services\APIClient\Impl\OcrAPIServiceImpl;
+use App\Services\APIClient\Impl\OcrAPIServiceImpl2;
 use App\Services\APIClient\OcrAPIService;
 use App\Services\APIClient\RegionAPIService;
 use App\Services\AppService\EncryptionService;
@@ -46,7 +46,6 @@ use App\Services\Security\TokenService;
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider implements DeferrableProvider
@@ -99,7 +98,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(EncryptionService::class, EncryptionServiceImpl::class);
         $this->app->singleton(PdfTemplateService::class, PdfTemplateServiceImpl::class);
         $this->app->singleton(FileManager::class, LocalStorageFileManager::class);
-        $this->app->singleton(OcrAPIService::class, OcrAPIServiceImpl::class);
+        $this->app->singleton(OcrAPIService::class, OcrAPIServiceImpl2::class);
         $this->app->singleton(TokenService::class, ClientTokenService::class);
         $this->app->singleton(OcrService::class, OcrServiceImpl::class);
 

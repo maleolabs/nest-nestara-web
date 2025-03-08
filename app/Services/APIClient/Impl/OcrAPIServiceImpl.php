@@ -46,7 +46,7 @@ class OcrAPIServiceImpl implements OcrAPIService
         return $this->postDataAndParseResponse($path, $request, $token);
     }
 
-    public function checkOcrRequestStatus(int $request_id): ?OcrResponse
+    public function checkOcrRequestStatus(int|string $request_id): ?OcrResponse
     {
         $path = 'ocr/check-status/' . $request_id;
         return $this->fetchDataAndParseResponse($path, false);
@@ -137,6 +137,8 @@ class OcrAPIServiceImpl implements OcrAPIService
         } else if ($statusCode === 401) {
             $this->handleInvalidToken();
         }
+
+        return null;
     }
 
     private function handleInvalidToken()

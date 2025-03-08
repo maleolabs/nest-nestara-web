@@ -7,6 +7,7 @@ use App\Models\Izin;
 use App\Services\APIClient\dto\OcrRequest;
 use App\Services\APIClient\OcrAPIService;
 use App\Services\DomainServices\DokumenPemohonService;
+use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\OcrService;
 use App\Services\DomainServices\SyaratIzinService;
 use App\Services\Security\TokenService;
@@ -18,6 +19,7 @@ class OcrServiceImpl implements OcrService
     private OcrAPIService $ocrAPIService;
     private SyaratIzinService $syaratIzinService;
     private DokumenPemohonService $dokumenPemohonService;
+    private EntriDataService $entriDataService;
 
     private $retry_max;
     private $retry_delay;
@@ -26,12 +28,14 @@ class OcrServiceImpl implements OcrService
         TokenService $tokenService,
         OcrAPIService $ocrAPIService,
         SyaratIzinService $syaratIzinService,
-        DokumenPemohonService $dokumenPemohonService
+        DokumenPemohonService $dokumenPemohonService,
+        EntriDataService $entriDataService
     ) {
         $this->tokenService = $tokenService;
         $this->ocrAPIService = $ocrAPIService;
         $this->syaratIzinService = $syaratIzinService;
         $this->dokumenPemohonService = $dokumenPemohonService;
+        $this->entriDataService = $entriDataService;
 
         $this->retry_max = config('api-client.ocr_api.retry_max');
         $this->retry_delay = config('api-client.ocr_api.retry_delay');
@@ -42,8 +46,10 @@ class OcrServiceImpl implements OcrService
         $persyaratan = $this->syaratIzinService->getByTypeAndJenisPerizinan('img', $izin->jenis_perizinan_id);
         if (empty($persyaratan)) return null;
 
+        $entri_data = $this->entriDataService->getByJenisPerizinanId($izin->jenis_perizinan_id);
+        $required_keys = array_column($entri_data, 'nama');
         $url_dokumen = $this->getUrlDokumen($persyaratan, $izin->pemohon_id, $izin->id);
-        $requests = $this->getRequests($url_dokumen, $izin->id, $izin->jenis_perizinan_id);
+        $requests = $this->getRequests($url_dokumen, $izin->id, $izin->jenis_perizinan_id, $required_keys);
 
         return $this->sendRequestWithRetry($requests);
     }
@@ -70,14 +76,15 @@ class OcrServiceImpl implements OcrService
         return $url_dokumen;
     }
 
-    private function getRequests($url_dokumen, $izin_id, $jenis_perizinan_id): array
+    private function getRequests($url_dokumen, $izin_id, $jenis_perizinan_id, $required_keys): array
     {
-        return array_map(function($syarat_id, $url) use ($izin_id, $jenis_perizinan_id) {
+        return array_map(function($syarat_id, $url) use ($izin_id, $jenis_perizinan_id, $required_keys) {
             return OcrRequest::builder()
                 ->setIzinId($izin_id)
                 ->setJenisPerizinanId($jenis_perizinan_id)
                 ->setSyaratIzinId($syarat_id)
                 ->setImageUrl($url)
+                ->setRequiredKeys($required_keys)
                 ->build();
         }, array_keys($url_dokumen), $url_dokumen);
     }

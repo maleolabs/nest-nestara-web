@@ -13,14 +13,40 @@ class OcrRequest
 
     private $imageUrl;
 
+    private $requiredKeys;
+
     private static ?OcrRequestBuilder $ocrRequestBuilder = null;
 
-    public function __construct($izinId, $jenisPerizinanId, $syaratIzinId, $imageUrl)
+    public function __construct($izinId, $jenisPerizinanId, $syaratIzinId, $imageUrl, $requiredKeys = []) 
     {
         $this->izinId = $izinId;
         $this->jenisPerizinanId = $jenisPerizinanId;
         $this->syaratIzinId = $syaratIzinId;
         $this->imageUrl = $imageUrl;
+        $this->requiredKeys = $requiredKeys;
+    }
+
+    public function getIzinId()
+    {
+        return $this->izinId;
+    }
+
+    public function getImageUrl()
+    {
+        return $this->imageUrl;
+    }
+
+    public function getRequiredKeys()
+    {
+        $requiredKeys = [];
+        foreach ($this->requiredKeys as $key) {
+            $requiredKeys[] = [
+                'name' => 'requiredKeys[]',
+                'contents' => $key
+            ];
+        }
+
+        return $requiredKeys;
     }
 
     public static function builder(): OcrRequestBuilder
@@ -29,16 +55,6 @@ class OcrRequest
             self::$ocrRequestBuilder = new OcrRequestBuilder;
         }
         return self::$ocrRequestBuilder;
-    }
-
-    public function toArray()
-    {
-        return [
-            'izinId' => $this->izinId,
-            'jenisPerizinanId' => $this->jenisPerizinanId,
-            'syaratIzinId' => $this->syaratIzinId,
-            'imageUrl' => $this->imageUrl
-        ];
     }
 
 }
@@ -53,6 +69,8 @@ class OcrRequestBuilder
     private $syaratIzinId;
 
     private $imageUrl;
+
+    private $requiredKeys = [];
 
     public function setIzinId(int $izinId): self
     {
@@ -78,13 +96,20 @@ class OcrRequestBuilder
         return $this;
     }
 
+    public function setRequiredKeys(array $requiredKeys): self
+    {
+        $this->requiredKeys = $requiredKeys;
+        return $this;
+    }
+
     public function build(): OcrRequest
     {
         return new OcrRequest(
             $this->izinId,
             $this->jenisPerizinanId,
             $this->syaratIzinId,
-            $this->imageUrl
+            $this->imageUrl,
+            $this->requiredKeys
         );
     }
 

@@ -4,6 +4,7 @@ namespace Tests\Feature\APIClient;
 
 use App\Services\APIClient\dto\OcrRequest;
 use App\Services\APIClient\OcrAPIService;
+use App\Services\DomainServices\EntriDataService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -18,13 +19,17 @@ class OcrAPIServiceTest extends TestCase
 
     public function test_send_ocr_request(): void
     {
+        $entriDataService = app(EntriDataService::class);
         $apiService = app(OcrAPIService::class);
+
+        $requiredKeys = array_column($entriDataService->getByJenisPerizinanId(167), 'nama');
 
         $request = OcrRequest::builder()
                                 ->setIzinId(10)
                                 ->setJenisPerizinanId(167)
                                 ->setSyaratIzinId(855)
-                                ->setImageUrl("http://localhost:8000/api/files/MTcyODg0MDUzNjg1NS1kb2NwcmV2aWV3MS5qcGVn")
+                                ->setImageUrl("http://localhost:8000/api/files/MTc0MTQxMzg4Nzg1NS0xNzI2NTE2ODIxODU0LWFiZDU5NzU2LTRlZmUtNDQ4OS04ZmEyLWRhOGJjZDU2NGJiYS5qcGVn")
+                                ->setRequiredKeys($requiredKeys)
                                 ->build();
 
         $response = $apiService->sendOcrRequest($request);
@@ -39,8 +44,14 @@ class OcrAPIServiceTest extends TestCase
 
         $requestId = $response->getData()['requestId'];
         assertNotNull($requestId);
+
+        $checkCount = 0;
         
         do {
+            if ($checkCount > 10) {
+                break;
+            }
+
             $response = $apiService->checkOcrRequestStatus($requestId);
             assertNotNull($response);
             assertNotNull($response->getData());
@@ -48,6 +59,8 @@ class OcrAPIServiceTest extends TestCase
             assertNull($response->getErrorMessage());
             
             $requestStatus = $response->getData()['status'];
+
+            $checkCount++;
 
             sleep(5);
         } while ($requestStatus == 'WAITING' || $requestStatus == 'PROCESSING');

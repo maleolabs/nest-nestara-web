@@ -31,14 +31,16 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-Auth::routes();
+Auth::routes([
+    'verify' => true
+]);
 
 Route::get('/jenis-perizinan', [PerizinanController::class, 'jenisPerizinan'])->name('jenis-perizinan');
 
 Route::get('/konfirmasi-izin/{izin_id}', [DashboardController::class, 'confirmIzin'])->name('confirm.izin');
 
 Route::middleware('auth')->group(function() use ($pemohonMiddleware, $adminMiddleware, $frontOfcMiddleware, $backOfcMiddleware, $pegawaiMiddleware) {
-    Route::middleware([$pemohonMiddleware])->group(function() {
+    Route::middleware([$pemohonMiddleware, 'verified'])->group(function() {
         Route::get('/buat-izin-baru', [PerizinanController::class, 'create'])->name('create-izin');
         Route::get('/izin-saya', [PerizinanController::class, 'semuaIzin'])->name('user.izin');
         Route::middleware(['revisi_izin', 'show_izin'])->get('/revisi-izin/{izin_id}', [PerizinanController::class, 'revisiIzin'])->name('user.revisi-izin');
@@ -106,7 +108,7 @@ Route::middleware('auth')->group(function() use ($pemohonMiddleware, $adminMiddl
         Route::get('/profile/admin', [ProfileController::class, 'admin'])->name('profile.admin');
         Route::get('/profile/pengelola_layanan', [ProfileController::class, 'pengelola_layanan'])->name('profile.pengelola_layanan');
         Route::get('/profile/pegawai', [ProfileController::class, 'pegawai'])->name('profile.pegawai');
-        Route::get('/profile/pemohon', [ProfileController::class, 'pemohon'])->name('profile.pemohon');
+        Route::get('/profile/pemohon', [ProfileController::class, 'pemohon'])->name('profile.pemohon')->middleware('verified');
     });
 
 });

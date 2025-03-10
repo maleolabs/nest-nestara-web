@@ -36,7 +36,7 @@ class RegisterController extends Controller implements HasMiddleware
      *
      * @var string
      */
-    protected $redirectTo = '/verify';
+    protected $redirectTo = '/email/verify';
 
     /**
      * service for manipulate user data
@@ -54,27 +54,6 @@ class RegisterController extends Controller implements HasMiddleware
         return [
             'guest'
         ];
-    }
-
-    /**
-     * Handle a registration request for the application.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
-     */
-    public function register(Request $request)
-    {
-        $this->validator($request->all())->validate();
-
-        event(new Registered($user = $this->create($request->all())));
-
-        if ($response = $this->registered($request, $user)) {
-            return $response;
-        }
-
-        return $request->wantsJson()
-                    ? new JsonResponse([], Response::HTTP_CREATED)
-                    : redirect($this->redirectPath());
     }
 
     /**
@@ -102,18 +81,6 @@ class RegisterController extends Controller implements HasMiddleware
     protected function create(array $data)
     {
         return $this->userService->save(null, $data, 'pemohon');
-    }
-
-    protected function registered(Request $request, $user)
-    {
-        try {
-            $mail = new AccountVerificationMail($user, 'http://localhost:8000');
-
-            Mail::to($user->email)
-                ->send($mail);
-        } catch (Exception $e) {
-            Log::channel('app')->error('failed to send account verfication email', ['error' => $e->getMessage()]);
-        }
     }
     
 }

@@ -3,13 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AccountVerificationMail;
 use App\Services\DomainServices\UserService;
+use Exception;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller implements HasMiddleware
@@ -98,6 +102,18 @@ class RegisterController extends Controller implements HasMiddleware
     protected function create(array $data)
     {
         return $this->userService->save(null, $data, 'pemohon');
+    }
+
+    protected function registered(Request $request, $user)
+    {
+        try {
+            $mail = new AccountVerificationMail($user, 'http://localhost:8000');
+
+            Mail::to($user->email)
+                ->send($mail);
+        } catch (Exception $e) {
+            Log::channel('app')->error('failed to send account verfication email', ['error' => $e->getMessage()]);
+        }
     }
     
 }

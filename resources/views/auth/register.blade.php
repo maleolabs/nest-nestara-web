@@ -44,6 +44,18 @@
                                     </div>
                                 @enderror
                             </div>
+                            <div class="input-group input-group-outline mb-3 @error('email') mb-5 is-invalid @elseif(old('email')) is-valid @enderror">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" value="{{ old('email') }}" required>
+                                @error('email')
+                                    <div class="position-absolute top-100 ms-2">
+                                        <small class="text-danger">
+                                            <i class="fa-solid fa-circle-info me-2"></i>
+                                            {{ $message }}
+                                        </small>
+                                    </div>
+                                @enderror
+                            </div>
                             <div class="input-group input-group-outline mb-3 @error('password') mb-5 is-invalid @enderror">
                                 <label class="form-label">Password</label>
                                 <input type="password" class="form-control" name="password" required>

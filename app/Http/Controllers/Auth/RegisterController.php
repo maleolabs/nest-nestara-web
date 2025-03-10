@@ -3,9 +3,17 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Mail\AccountVerificationMail;
 use App\Services\DomainServices\UserService;
+use Exception;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller implements HasMiddleware
@@ -28,7 +36,7 @@ class RegisterController extends Controller implements HasMiddleware
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/email/verify';
 
     /**
      * service for manipulate user data
@@ -59,6 +67,7 @@ class RegisterController extends Controller implements HasMiddleware
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:100', 'unique:users'],
+            'email' => ['required', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
     }
@@ -73,4 +82,5 @@ class RegisterController extends Controller implements HasMiddleware
     {
         return $this->userService->save(null, $data, 'pemohon');
     }
+    
 }

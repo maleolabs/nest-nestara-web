@@ -37,7 +37,7 @@ class GetLocalFile implements GetFile
         return $files_name;
     }
 
-    public function getFile(string $file_name): string
+    public function getFile(string $file_name): ?string
     {
         $file_path = "{$this->folders}/$file_name";
         if (!Storage::disk('public')->exists($file_path))

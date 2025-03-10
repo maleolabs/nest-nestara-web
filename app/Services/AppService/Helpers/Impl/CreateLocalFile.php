@@ -28,20 +28,20 @@ class CreateLocalFile implements CreateFile
 
     public function createAsResource(): self
     {
-        $this->path = resource_path("views\\templates\\{$this->path}");
+        $this->path = resource_path("views/templates/{$this->path}");
         $position = strpos($this->path, 'templates');
         if ($position) {
             $actual_path = substr($this->path, $position);
-            $directories = explode("\\", $actual_path);
-            $this->file_folder = implode("\\", array_slice($directories, 0, count($directories) - 1));
+            $directories = explode("/", $actual_path);
+            $this->file_folder = implode("/", array_slice($directories, 0, count($directories) - 1));
         }
         return $this;
     }
 
     public function create(): string
     {
-        $directories = explode("\\", $this->path);
-        $path_directory = implode("\\", array_slice($directories, 0, count($directories) - 1));
+        $directories = explode("/", $this->path);
+        $path_directory = implode("/", array_slice($directories, 0, count($directories) - 1));
         if (!File::exists($path_directory))
             File::makeDirectory($path_directory, 0755, true);
         

@@ -4,6 +4,7 @@ namespace App\Services\DomainServices\Impl;
 
 use App\Exceptions\UnprocessableEntityException;
 use App\Jobs\SendOcrRequest;
+use App\Mail\RegistrationRevisionMail;
 use App\Models\Izin;
 use App\Services\AppService\FileService;
 use App\Services\DomainServices\DokumenPemohonService;
@@ -18,10 +19,13 @@ use App\utils\enums\StatusIzinEnum as Status;
 use App\utils\enums\StatusIzinProgressEnum as Progres;
 use App\utils\enums\SuratGroupsEnum;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Pagination\CursorPaginator;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class PerizinanServiceImpl implements PerizinanService
 {
@@ -239,22 +243,34 @@ class PerizinanServiceImpl implements PerizinanService
 
     public function saveRegistrationAction(int $izin_id, string $lokasi_izin, string $keterangan = null, string $status_permohonan = 'permohonan-selesai', int $pegawai_id = null): bool
     {
-        DB::beginTransaction();
-        $izin = Izin::find($izin_id);
-        if (!$izin) {
-            DB::rollBack();
+        try {
+            DB::beginTransaction();
+            $izin = Izin::find($izin_id);
+            if (!$izin) {
+                DB::rollBack();
+                return false;
+            }
+            $izin->lokasi_izin = $lokasi_izin;
+            $izin->save();
+    
+            if ($status_permohonan == 'permohonan-selesai') {
+                $this->statusIzinService->updateStatusIzin($izin_id, Status::DITINJAU, Progres::FINISHED, $keterangan, $pegawai_id);
+            } else if ($status_permohonan == 'revisi-permohonan') {
+                $this->statusIzinService->updateStatusIzin($izin_id, Status::REVISI_PERSYARATAN, Progres::UNPROCESSED, $keterangan, $pegawai_id);
+
+                $user = $izin->pemohon->user;
+                $url = route('user.revisi-izin', ['izin_id' => encrypt_id($izin_id)]);
+                $mail = new RegistrationRevisionMail($user, $keterangan, $url);
+                Mail::to($user->email)
+                    ->send($mail);
+            }
+    
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            Log::channel('app')->error('failed to save registration action', ['error' => $e->getMessage()]);
             return false;
         }
-        $izin->lokasi_izin = $lokasi_izin;
-        $izin->save();
-
-        if ($status_permohonan == 'permohonan-selesai')
-            $this->statusIzinService->updateStatusIzin($izin_id, Status::DITINJAU, Progres::FINISHED, $keterangan, $pegawai_id);
-        else if ($status_permohonan == 'revisi-permohonan')
-            $this->statusIzinService->updateStatusIzin($izin_id, Status::REVISI_PERSYARATAN, Progres::UNPROCESSED, $keterangan, $pegawai_id);
-
-        DB::commit();
-        return true;
     }
 
     public function rollbackRegistration(int $izin_id, string $keterangan, int $pegawai_id): void
@@ -274,15 +290,20 @@ class PerizinanServiceImpl implements PerizinanService
     public function saveRegistrationRevision(int $izin_id, string $detail_keterangan = null): void
     {
         DB::beginTransaction();
-        $izin = Izin::find($izin_id);
-        if (!$izin) {
+        try {
+            $izin = Izin::find($izin_id);
+            if (!$izin) {
+                DB::rollBack();
+                return;
+            }
+    
+            $this->statusIzinService->updateStatusIzinWithDetailKeterangan($izin_id, Status::REVISI_PERSYARATAN, Progres::FINISHED, null, $detail_keterangan);
+    
+            DB::commit();
+        } catch (Exception $e) {
+            Log::channel('app')->error('failed to save registration revision', ['error' => $e->getMessage()]);
             DB::rollBack();
-            return;
         }
-
-        $this->statusIzinService->updateStatusIzinWithDetailKeterangan($izin_id, Status::REVISI_PERSYARATAN, Progres::FINISHED, null, $detail_keterangan);
-
-        DB::commit();
     }
 
     public function getAllStatusCancelable(): array

@@ -43,7 +43,7 @@
     "src": "resources/icons/fontawesome-free-6.4.2-web/webfonts/fa-v4compatibility.woff2"
   },
   "resources/js/app.js": {
-    "file": "assets/app-Cdl1R99B.js",
+    "file": "assets/app-C-6LfJun.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
@@ -54,7 +54,7 @@
       "__vite-browser-external"
     ],
     "css": [
-      "assets/app-C_PfAAM4.css"
+      "assets/app-8CsZQ6f6.css"
     ],
     "assets": [
       "assets/fa-brands-400-B0G11Utd.woff2",

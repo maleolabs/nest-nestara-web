@@ -1,0 +1,61 @@
+project:
+    name: nestara-web
+    product_name: Nestara
+    original_name: Nestara
+    version: 1.0.0
+    description: Sistem Informasi Perizinan Online DPMPTSP Kabupaten Bone Bolango
+    release: Genesis
+    codename: Genesis
+    build: 1
+    release_date: "2026-08-22"
+    status: alpha
+    license: proprietary
+    copyright: MaleoLabs
+    website: https://maleolabs.com
+    organization_name: DPMPTSP Kabupaten Bone Bolango
+    organization_email: support@perizinanpmptsp.go.id
+    organization_phone: "(021) 123-4567"
+    organization_address: Kompleks Perkantoran Bone Bolango, Gorontalo
+    minimum_php_version: "8.4"
+    minimum_laravel_version: "13"
+    minimum_node_version: "22"
+    framework: laravel
+artifact:
+    include: []
+    exclude:
+        - .anvil/**
+        - .git/**
+        - .github/**
+        - .fleet/**
+        - .idea/**
+        - .vscode/**
+        - docs/**
+        - node_modules/**
+        - tests/**
+        - storage/framework/**
+        - storage/logs/**
+        - storage/app/livewire-tmp/**
+        - storage/app/private/**
+        - storage/app/private_files/**
+        - storage/app/public/dokumen_persyaratan/**
+        - storage/app/public/users/**
+        - .editorconfig
+        - .gitattributes
+        - .gitignore
+        - .phpunit.cache/**
+        - .phpunit.result.cache
+        - .styleci.yml
+        - phpunit.xml
+        - pint.json
+        - setup_nginx.sh
+        - Homestade.yaml
+        - Homestead.json
+        - auth.json
+        - npm-debug.log
+        - yarn-error.log
+        - public/hot
+        - .env
+        - .env.backup
+        - .env.encrypted
+        - .env.production
+        - .env.testing

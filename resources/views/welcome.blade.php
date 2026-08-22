@@ -15,11 +15,11 @@
       <div class="lg:col-span-6" data-reveal>
         <div class="inline-flex items-center gap-2 rounded-full border border-nest-200 bg-nest-50 px-3 py-1 text-xs font-bold tracking-wide text-nest-800">
           <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          LAYANAN PERIZINAN ONLINE DPMPTSP BONE BOLANGO
+          LAYANAN PERIZINAN ONLINE {{ strtoupper(Version::productName()) }}
         </div>
         <h1 class="mt-4 font-display font-extrabold tracking-tight text-ink-900 text-[32px] sm:text-[42px] lg:text-[48px] leading-[0.95] text-balance">
           Perizinan Online
-          <span class="bg-gradient-to-r from-nest-700 to-nest-500 bg-clip-text text-transparent">Bone Bolango</span>
+          <span class="bg-gradient-to-r from-nest-700 to-nest-500 bg-clip-text text-transparent">{{ Version::productName() }}</span>
           <span class="block text-ink-700 font-bold">cepat, transparan.</span>
         </h1>
         <p class="mt-4 text-[15px] sm:text-[16px] leading-relaxed text-ink-600 max-w-[60ch] text-balance">
@@ -195,14 +195,16 @@
         <p class="mt-2 text-sm text-white/75 max-w-[60ch]">Buat akun, pilih jenis izin, dan ajukan dalam hitungan menit. Tim kami siap membantu jika Anda menemui kendala dokumen.</p>
         <div class="mt-4 flex flex-wrap gap-3">
           <a href="{{ route('create-izin') }}" class="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-extrabold text-nest-900 hover:bg-ink-50 transition">Mulai Sekarang <i class="fa-solid fa-arrow-right"></i></a>
-          <a href="mailto:support@perizinanpmptsp.go.id" class="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-bold text-white hover:bg-white/10 transition"><i class="fa-solid fa-envelope"></i> support@perizinanpmptsp.go.id</a>
+          @if (Version::organizationEmail())
+          <a href="mailto:{{ Version::organizationEmail() }}" class="inline-flex items-center gap-2 rounded-full border border-white/20 px-5 py-2.5 text-sm font-bold text-white hover:bg-white/10 transition"><i class="fa-solid fa-envelope"></i> {{ Version::organizationEmail() }}</a>
+          @endif
         </div>
       </div>
       <div class="lg:col-span-4 rounded-2xl bg-white/10 p-4 ring-1 ring-white/15 backdrop-blur">
         <p class="text-xs font-bold tracking-widest uppercase text-white/80">Jam Operasional</p>
         <p class="mt-1 text-sm font-bold">Senin – Jumat: 08.00 – 16.00 WITA</p>
         <p class="text-xs text-white/70">Di luar jam operasional, pengajuan tetap dapat dilakukan. Verifikasi diproses pada jam kerja.</p>
-        <div class="mt-3 flex items-center gap-2 text-xs text-white/80"><i class="fa-solid fa-phone"></i> (021) 123-4567 • <span>Kab. Bone Bolango</span></div>
+        <div class="mt-3 flex items-center gap-2 text-xs text-white/80"><i class="fa-solid fa-phone"></i> {{ Version::organizationPhone() }} • <span>{{ Version::organizationName() }}</span></div>
       </div>
     </div>
   </div>

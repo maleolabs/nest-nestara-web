@@ -8,7 +8,7 @@
       <div>
         <a href="{{ route('welcome') }}" class="inline-flex items-center gap-3">
           <div class="h-10 w-10 rounded-xl bg-white grid place-items-center overflow-hidden"><img src="{{ asset('storage/web/favicon.ico') }}" alt="Logo" class="h-8 w-8 object-contain"></div>
-          <div><p class="font-display font-extrabold tracking-tight">NESTARA</p><p class="text-xs tracking-widest text-white/70 uppercase">Bone Bolango • PMPTSP</p></div>
+          <div><p class="font-display font-extrabold tracking-tight">{{ strtoupper(Version::productName()) }}</p><p class="text-xs tracking-widest text-white/70 uppercase">{{ Version::organizationName() }}</p></div>
         </a>
         <h1 class="mt-10 font-display font-extrabold text-[34px] leading-[0.95] text-balance">Buat akun<br><span class="text-nest-300">dalam 1 menit.</span></h1>
         <p class="mt-3 text-sm leading-relaxed text-white/70 max-w-[44ch]">Daftar sekali, ajukan berbagai jenis perizinan kapan saja. Data Anda terenkripsi dan hanya digunakan untuk verifikasi resmi.</p>
@@ -23,10 +23,10 @@
 
         <div class="mt-6 rounded-2xl overflow-hidden bg-white p-2 shadow-[0_16px_40px_rgba(0,0,0,0.25)] ring-1 ring-white/20">
           <div class="relative h-36 overflow-hidden rounded-xl">
-            <img src="{{ asset('storage/web/gedung-mpp.png') }}" alt="Gedung MPP Bone Bolango" class="h-full w-full object-cover">
+            <img src="{{ asset('storage/web/building.png') }}" alt="Kantor layanan perizinan" class="h-full w-full object-cover">
             <div class="absolute inset-0 bg-gradient-to-t from-ink-900/60 to-transparent"></div>
             <div class="absolute bottom-0 left-0 right-0 p-3">
-              <p class="text-xs font-bold text-white">Gedung MPP Bone Bolango</p>
+              <p class="text-xs font-bold text-white">{{ Version::organizationName() }}</p>
               <p class="text-[11px] text-white/70">Loket layanan perizinan terpadu</p>
             </div>
           </div>
@@ -36,7 +36,7 @@
           </div>
         </div>
       </div>
-      <p class="text-xs text-white/50">© {{ date('Y') }} DPMPTSP Bone Bolango • Resmi & Teraudit</p>
+      <p class="text-xs text-white/50">© {{ date('Y') }} {{ Version::organizationName() }} • Resmi & Teraudit</p>
     </div>
   </div>
 
@@ -46,7 +46,7 @@
     <div class="w-full max-w-[480px]">
       <div class="lg:hidden flex items-center gap-3 mb-6">
         <a href="{{ route('welcome') }}" class="h-10 w-10 rounded-xl bg-white ring-1 ring-ink-200 grid place-items-center overflow-hidden"><img src="{{ asset('storage/web/favicon.ico') }}" alt="Logo" class="h-8 w-8 object-contain"></a>
-        <div><p class="font-display font-extrabold text-ink-900 leading-none">NESTARA</p><p class="text-xs tracking-widest text-ink-500 uppercase">PMPTSP Bone Bolango</p></div>
+        <div><p class="font-display font-extrabold text-ink-900 leading-none">{{ strtoupper(Version::productName()) }}</p><p class="text-xs tracking-widest text-ink-500 uppercase">{{ Version::organizationName() }}</p></div>
       </div>
 
       <div class="rounded-[24px] bg-white p-6 sm:p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)] ring-1 ring-ink-200">

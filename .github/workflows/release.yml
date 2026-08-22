@@ -1,0 +1,289 @@
+# Nestara Release Workflow (diadopsi dari BloodSync, dijalankan via Anvil)
+#
+# staging branch  → Candidate Release (GitHub Pre-release, tag v{VERSION}-rc.{BUILD})
+# main branch     → Promotion Candidate → Stable Release (manual via workflow_dispatch)
+#
+# Boundary:
+#   Anvil:   artifact package, VERSION generate, artifact verify
+#   GitHub Workflow: Git Tag, GitHub Release, artifact upload, release notes
+#
+# BUILD diambil dari github.run_number (monotonik per workflow) dan di-inject
+# ke anvil.yaml sebelum `anvil project version generate`.
+
+name: Release
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+    inputs:
+      promote:
+        description: 'Promote a Candidate Release to Stable'
+        required: true
+        default: false
+        type: boolean
+      candidate_tag:
+        description: 'Git tag of the candidate to promote (e.g., v1.0.0-rc.3). Leave empty to auto-detect latest.'
+        required: false
+        type: string
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_ENV: testing
+  APP_KEY: base64:woVYpWbwkf8OX8y+o8Ij7c1Nv71/BavSze4AnCoPMwA=
+  DB_CONNECTION: mysql
+  DB_HOST: 127.0.0.1
+  DB_PORT: 3306
+  DB_DATABASE: testing
+  DB_USERNAME: root
+  DB_PASSWORD: root
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  ########################################################################
+  # CANDIDATE RELEASE — push ke staging → GitHub Pre-release + artifact
+  ########################################################################
+  candidate:
+    name: Candidate Release
+    if: ${{ github.ref_name == 'staging' && ! inputs.promote }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testing
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: mysql, gd, imagick, zip, bcmath, xml, curl, json, ctype, filter, hash, mbstring, openssl, session, tokenizer
+          coverage: none
+          tools: composer:v2
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v6
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            npm-
+
+      - name: Install Anvil CLI
+        run: |
+          curl -fsSL https://github.com/maleolabs/anvil/releases/download/v2.2.1/install.sh -o /tmp/anvil-install.sh
+          sh /tmp/anvil-install.sh --version v2.2.1 --with-adapters laravel
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          anvil --version
+
+      # ── Phase 1: Install (dev) & frontend deps ───────────────────
+      - name: Install PHP dependencies (with dev)
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      # ── Phase 2: Test (needs DB + .env) ──────────────────────────
+      - name: Prepare environment
+        run: |
+          test -f .env || cp .env.testing .env
+          php artisan key:generate --force
+
+      - name: Run migrations
+        run: php artisan migrate --force
+
+      - name: Run tests
+        run: php artisan test --compact
+
+      # ── Phase 3: Production package ──────────────────────────────
+      - name: Reinstall PHP dependencies (production)
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-progress
+
+      - name: Inject BUILD and generate VERSION
+        run: |
+          # Inject monotonic build number into anvil.yaml
+          sed -i "s/^\([[:space:]]*build:\).*/\1 ${{ github.run_number }}/" anvil.yaml
+          echo "anvil.yaml build → ${{ github.run_number }}"
+          grep -E "^\s*build:" anvil.yaml
+          anvil project version generate
+          echo "--- VERSION ---"
+          cat VERSION
+
+      - name: Build frontend & optimize
+        run: anvil pipeline build
+
+      - name: Package artifact
+        run: anvil artifact package
+
+      - name: Verify artifact
+        run: |
+          ARTIFACT=$(ls .anvil/artifacts/*.tar.gz | head -1)
+          echo "Verifying $ARTIFACT"
+          anvil artifact verify "$ARTIFACT"
+
+      # ── Determine version & tag ──────────────────────────────────
+      - name: Determine version and candidate tag
+        id: version
+        run: |
+          VERSION=$(grep '^VERSION=' VERSION | cut -d= -f2)
+          BUILD=$(grep '^BUILD=' VERSION | cut -d= -f2)
+          ARTIFACT_TAR=$(ls .anvil/artifacts/*.tar.gz | head -1)
+          ARTIFACT_ZIP=$(ls .anvil/artifacts/*.zip 2>/dev/null | head -1 || true)
+          CANDIDATE_TAG="v${VERSION}-rc.${BUILD}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "build=${BUILD}" >> "$GITHUB_OUTPUT"
+          echo "artifact_tar=${ARTIFACT_TAR}" >> "$GITHUB_OUTPUT"
+          echo "artifact_zip=${ARTIFACT_ZIP}" >> "$GITHUB_OUTPUT"
+          echo "candidate_tag=${CANDIDATE_TAG}" >> "$GITHUB_OUTPUT"
+          echo "Resolved: ${CANDIDATE_TAG} ← ${ARTIFACT_TAR}"
+
+      # ── Publish Candidate Release ────────────────────────────────
+      - name: Create GitHub Pre-release (Candidate)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          RELEASE_NOTES=$(mktemp)
+          cat > "$RELEASE_NOTES" <<-NOTE_EOF
+          ## RC ${{ steps.version.outputs.candidate_tag }}
+
+          **Build:** ${{ steps.version.outputs.build }}
+          **Artifact:** $(basename "${{ steps.version.outputs.artifact_tar }}")
+          **Commit:** ${{ github.sha }}
+
+          See CHANGELOG or commit history for details.
+          NOTE_EOF
+
+          ASSET_ARGS=("${{ steps.version.outputs.artifact_tar }}")
+          if [ -n "${{ steps.version.outputs.artifact_zip }}" ]; then
+            ASSET_ARGS+=("${{ steps.version.outputs.artifact_zip }}")
+          fi
+
+          gh release create \
+            "${{ steps.version.outputs.candidate_tag }}" \
+            --title "${{ steps.version.outputs.candidate_tag }}" \
+            --notes-file "$RELEASE_NOTES" \
+            --prerelease \
+            --target "${{ github.sha }}" \
+            "${ASSET_ARGS[@]}"
+
+          echo "✓ Candidate Release published: ${{ steps.version.outputs.candidate_tag }}"
+
+  ########################################################################
+  # PROMOTE TO STABLE — manual workflow_dispatch, reuse artifact (Build Once)
+  ########################################################################
+  promote:
+    name: Promote to Stable
+    if: ${{ inputs.promote }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Determine candidate and stable tags
+        id: tags
+        run: |
+          if [ -n "${{ inputs.candidate_tag }}" ]; then
+            CANDIDATE_TAG="${{ inputs.candidate_tag }}"
+          else
+            CANDIDATE_TAG=$(gh release list --json tagName,isPrerelease --jq '.[] | select(.isPrerelease) | .tagName' | head -1)
+          fi
+          if [ -z "$CANDIDATE_TAG" ]; then
+            echo "Error: No candidate tag found."
+            exit 1
+          fi
+          STABLE_TAG=$(echo "$CANDIDATE_TAG" | sed 's/-rc\.[0-9]*$//')
+          echo "candidate_tag=${CANDIDATE_TAG}" >> "$GITHUB_OUTPUT"
+          echo "stable_tag=${STABLE_TAG}" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show promotion plan
+        run: |
+          echo "Promoting: ${{ steps.tags.outputs.candidate_tag }} → ${{ steps.tags.outputs.stable_tag }}"
+          echo "Artifact is reused — no rebuild."
+
+      - name: Download candidate artifact
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download "${{ steps.tags.outputs.candidate_tag }}" --dir /tmp/candidate-artifact
+          echo "Downloaded artifacts from ${{ steps.tags.outputs.candidate_tag }}:"
+          ls -la /tmp/candidate-artifact/
+
+      - name: Create GitHub Release (Stable)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CANDIDATE_NOTES=$(gh release view "${{ steps.tags.outputs.candidate_tag }}" --json body --jq '.body' 2>/dev/null || echo "Promoted from ${{ steps.tags.outputs.candidate_tag }}")
+          PROMOTION_NOTES="${CANDIDATE_NOTES}
+
+          ---
+          **Promoted from:** \`${{ steps.tags.outputs.candidate_tag }}\`
+          **Promotion date:** $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+          ASSETS=""
+          for file in /tmp/candidate-artifact/artifact-*.tar.gz /tmp/candidate-artifact/*.tar.gz; do
+            [ -f "$file" ] && ASSETS="${ASSETS} ${file}" || true
+          done
+          for file in /tmp/candidate-artifact/artifact-*.zip /tmp/candidate-artifact/*.zip; do
+            [ -f "$file" ] && ASSETS="${ASSETS} ${file}" || true
+          done
+
+          TARGET_SHA=$(gh release view "${{ steps.tags.outputs.candidate_tag }}" --json targetCommitish --jq '.targetCommitish')
+
+          if [ -n "$ASSETS" ]; then
+            # shellcheck disable=SC2086
+            gh release create \
+              "${{ steps.tags.outputs.stable_tag }}" \
+              --title "${{ steps.tags.outputs.stable_tag }}" \
+              --notes "$PROMOTION_NOTES" \
+              --target "$TARGET_SHA" \
+              $ASSETS
+          else
+            gh release create \
+              "${{ steps.tags.outputs.stable_tag }}" \
+              --title "${{ steps.tags.outputs.stable_tag }}" \
+              --notes "$PROMOTION_NOTES" \
+              --target "$TARGET_SHA"
+          fi
+
+          echo "✓ Stable Release published: ${{ steps.tags.outputs.stable_tag }}"

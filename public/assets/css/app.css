@@ -329,11 +329,11 @@ textarea::-webkit-scrollbar {
 }
 
 .page-header:not(.page-register) {
-  background-image: url("../../storage/web//gedung-mpp.png");
+  background-image: url("../../storage/web/building.png");
 }
 
 .page-img {
-  background-image: url("../../storage/web//gedung-mpp.png");
+  background-image: url("../../storage/web/building.png");
   background-size: cover;
 }
 /*--------------------------------------------------------------

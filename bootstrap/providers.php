@@ -1,8 +1,15 @@
 <?php
 
+use App\Providers\AppServiceProvider;
+use App\Providers\EventServiceProvider;
+use App\Support\Version\VersionServiceProvider;
+use Maatwebsite\Excel\ExcelServiceProvider;
+use Tymon\JWTAuth\Providers\LaravelServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\EventServiceProvider::class,
-    Maatwebsite\Excel\ExcelServiceProvider::class,
-    Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
+    AppServiceProvider::class,
+    VersionServiceProvider::class,
+    EventServiceProvider::class,
+    ExcelServiceProvider::class,
+    LaravelServiceProvider::class,
 ];

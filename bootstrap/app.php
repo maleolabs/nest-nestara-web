@@ -1,8 +1,17 @@
 <?php
 
+use App\Http\Middleware\DashboardMiddleware;
+use App\Http\Middleware\Izin\RevisiIzinMiddleware;
+use App\Http\Middleware\Izin\ShowIzinMiddleware;
+use App\Http\Middleware\ProfileMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Spatie\Permission\Middleware\PermissionMiddleware;
+use Spatie\Permission\Middleware\RoleMiddleware;
+use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
+use Tymon\JWTAuth\Http\Middleware\Authenticate;
+use Tymon\JWTAuth\Http\Middleware\RefreshToken;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -13,16 +22,16 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
-            'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
-            'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'dashboard' => \App\Http\Middleware\DashboardMiddleware::class,
-            'show_izin' => \App\Http\Middleware\Izin\ShowIzinMiddleware::class,
-            'revisi_izin' => \App\Http\Middleware\Izin\RevisiIzinMiddleware::class,
-            'profile' => \App\Http\Middleware\ProfileMiddleware::class,
+            'role' => RoleMiddleware::class,
+            'permission' => PermissionMiddleware::class,
+            'role_or_permission' => RoleOrPermissionMiddleware::class,
+            'dashboard' => DashboardMiddleware::class,
+            'show_izin' => ShowIzinMiddleware::class,
+            'revisi_izin' => RevisiIzinMiddleware::class,
+            'profile' => ProfileMiddleware::class,
 
-            'jwt.auth' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
-            'jwt.refresh' => \Tymon\JWTAuth\Http\Middleware\RefreshToken::class,
+            'jwt.auth' => Authenticate::class,
+            'jwt.refresh' => RefreshToken::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

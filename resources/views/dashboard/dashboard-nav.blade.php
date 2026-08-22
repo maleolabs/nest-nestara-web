@@ -6,7 +6,7 @@
       </button>
       <a href="{{ route('welcome') }}" class="hidden sm:flex items-center gap-2">
         <div class="h-8 w-8 rounded-lg bg-white ring-1 ring-ink-200 grid place-items-center overflow-hidden"><img src="{{ asset('storage/web/favicon.ico') }}" alt="Logo" class="h-6 w-6 object-contain"></div>
-        <span class="font-display font-extrabold text-sm tracking-tight text-ink-900">NESTARA</span>
+        <span class="font-display font-extrabold text-sm tracking-tight text-ink-900">{{ strtoupper(Version::productName()) }}</span>
       </a>
       <nav aria-label="Breadcrumb" class="hidden md:flex items-center gap-1 text-sm">
         <span class="h-4 w-px bg-ink-200 mx-1"></span>

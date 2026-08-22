@@ -5,8 +5,8 @@
         <div class="flex items-center gap-3">
           <div class="h-9 w-9 rounded-xl bg-nest-50 ring-1 ring-nest-200 grid place-items-center overflow-hidden"><img src="{{ asset('storage/web/favicon.ico') }}" alt="Logo" class="h-7 w-7 object-contain"></div>
           <div>
-            <p class="font-display font-extrabold tracking-tight text-ink-900">NESTARA</p>
-            <p class="text-xs font-medium tracking-widest text-ink-500 uppercase">DPMPTSP Kabupaten Bone Bolango</p>
+            <p class="font-display font-extrabold tracking-tight text-ink-900">{{ strtoupper(Version::productName()) }}</p>
+            <p class="text-xs font-medium tracking-widest text-ink-500 uppercase">{{ Version::organizationName() }}</p>
           </div>
         </div>
         <p class="mt-4 text-sm leading-relaxed text-ink-600 max-w-[46ch]">
@@ -29,14 +29,14 @@
       <div class="md:col-span-4">
         <p class="text-xs font-bold tracking-widest text-ink-900 uppercase">Kontak Resmi</p>
         <div class="mt-3 space-y-2 text-sm">
-          <p class="flex items-center gap-2 text-ink-700"><i class="fa-solid fa-envelope text-ink-400"></i> support@perizinanpmptsp.go.id</p>
-          <p class="flex items-center gap-2 text-ink-700"><i class="fa-solid fa-phone text-ink-400"></i> (021) 123-4567</p>
-          <p class="flex items-start gap-2 text-ink-600"><i class="fa-solid fa-location-dot text-ink-400 mt-1"></i> Kompleks Perkantoran Bone Bolango, Gorontalo</p>
+          <p class="flex items-center gap-2 text-ink-700"><i class="fa-solid fa-envelope text-ink-400"></i> {{ Version::organizationEmail() }}</p>
+          <p class="flex items-center gap-2 text-ink-700"><i class="fa-solid fa-phone text-ink-400"></i> {{ Version::organizationPhone() }}</p>
+          <p class="flex items-start gap-2 text-ink-600"><i class="fa-solid fa-location-dot text-ink-400 mt-1"></i> {{ Version::organizationAddress() }}</p>
         </div>
       </div>
     </div>
     <div class="mt-8 flex flex-col md:flex-row items-center justify-between gap-3 border-t border-ink-100 pt-6 text-xs text-ink-500">
-      <p>© {{ date('Y') }} DPMPTSP Bone Bolango — Pemerintah Kabupaten Bone Bolango. All rights reserved.</p>
+      <p>© {{ date('Y') }} {{ Version::organizationName() }}. All rights reserved.</p>
       <p class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-nest-500"></span> Sistem Perizinan Online Terpadu</p>
     </div>
   </div>

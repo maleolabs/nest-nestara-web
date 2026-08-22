@@ -3,7 +3,7 @@
     <div class="flex items-center gap-3">
       <div class="h-9 w-9 rounded-xl bg-white grid place-items-center overflow-hidden"><img src="{{ asset('storage/web/favicon.ico') }}" alt="Logo" class="h-7 w-7 object-contain"></div>
       <div>
-        <p class="font-display font-extrabold tracking-tight leading-none">NESTARA</p>
+        <p class="font-display font-extrabold tracking-tight leading-none">{{ strtoupper(Version::productName()) }}</p>
         <p class="text-[11px] tracking-widest text-white/60 uppercase">Admin Console</p>
       </div>
     </div>
@@ -69,7 +69,7 @@
 <div class="lg:hidden sticky top-0 z-30 border-b border-ink-200 bg-white/90 backdrop-blur px-4 py-3 flex items-center justify-between">
   <div class="flex items-center gap-3">
     <div class="h-8 w-8 rounded-lg bg-white ring-1 ring-ink-200 grid place-items-center overflow-hidden"><img src="{{ asset('storage/web/favicon.ico') }}" alt="Logo" class="h-6 w-6 object-contain"></div>
-    <span class="font-display font-extrabold text-sm">NESTARA Admin</span>
+    <span class="font-display font-extrabold text-sm">{{ strtoupper(Version::productName()) }} Admin</span>
   </div>
   <button onclick="document.getElementById('mobileAdminMenu').classList.toggle('hidden')" class="h-9 w-9 rounded-full border border-ink-200 grid place-items-center"><i class="fa-solid fa-bars"></i></button>
 </div>

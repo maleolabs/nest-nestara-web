@@ -80,7 +80,7 @@
                                 </div>
                                 <p class="mt-3 text-sm font-extrabold capitalize text-emerald-800"><i class="fa-solid fa-hand-holding-heart mr-1.5"></i>{{ $statusIzin::PENYERAHAN }}</p>
                                 <p class="mt-1.5 flex-1 text-xs leading-relaxed text-emerald-800/80">
-                                    Dokumen resmi siap diambil oleh pemohon di loket layanan MPP Bone Bolango.
+                                    Dokumen resmi siap diambil oleh pemohon di loket layanan MPP.
                                 </p>
                                 <div class="mt-3 flex items-start gap-2 rounded-lg bg-white/70 px-3 py-2 ring-1 ring-emerald-200/70">
                                     <i class="fa-solid fa-bolt mt-0.5 text-[10px] text-emerald-600"></i>

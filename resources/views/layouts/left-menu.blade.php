@@ -5,9 +5,9 @@
     <div class="flex items-center justify-between px-4 py-3 border-b border-ink-100 bg-ink-50/50">
       <div class="flex items-center gap-3">
         <div class="h-8 w-8 rounded-lg bg-white ring-1 ring-ink-200 grid place-items-center overflow-hidden"><img src="{{ asset('storage/web/favicon.ico') }}" alt="Logo" class="h-6 w-6 object-contain"></div>
-        <div>
+        <div class="min-w-0">
           <p class="text-sm font-extrabold text-ink-900 leading-none">Menu Pegawai</p>
-          <p class="text-[11px] font-semibold tracking-widest text-ink-500 uppercase">PMPTSP • Aksi cepat</p>
+          <p class="text-[11px] font-semibold tracking-widest text-ink-500 uppercase truncate">{{ Version::organizationName() }} • Aksi cepat</p>
         </div>
       </div>
       <button type="button" class="menu-left-btn-close h-8 w-8 rounded-full bg-white text-ink-600 grid place-items-center ring-1 ring-ink-200 hover:bg-ink-50"><i class="fa-solid fa-xmark text-xs"></i></button>

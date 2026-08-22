@@ -21,3 +21,6 @@ yarn-error.log
 /.fleet
 /.idea
 setup_nginx.sh
+/.anvil/artifacts/
+/.anvil/state/
+/storage/app/region/

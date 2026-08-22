@@ -1,0 +1,32 @@
+pipeline:
+    name: ci
+    stages:
+        - name: environment
+          tasks:
+            - name: prepare-env
+              command: bash
+              args:
+                - -lc
+                - test -f .env || cp .env.testing .env
+            - name: generate-key
+              command: php
+              args:
+                - artisan
+                - key:generate
+                - --force
+        - name: database
+          tasks:
+            - name: migrate
+              command: php
+              args:
+                - artisan
+                - migrate
+                - --force
+        - name: test
+          tasks:
+            - name: unit-and-feature-tests
+              command: php
+              args:
+                - artisan
+                - test
+                - --compact

@@ -8,11 +8,11 @@
       <div class="flex items-center gap-3 min-w-0">
         <a href="{{ route('welcome') }}" class="flex items-center gap-3 group">
           <div class="h-9 w-9 rounded-xl bg-nest-700 flex items-center justify-center shadow-sm ring-1 ring-nest-800/10 group-hover:bg-nest-800 transition">
-            <img src="{{ asset('storage/web/favicon.ico') }}" alt="Nestara" class="h-6 w-6 object-contain rounded-md">
+            <img src="{{ asset('storage/web/favicon.ico') }}" alt="{{ Version::productName() }}" class="h-6 w-6 object-contain rounded-md">
           </div>
           <div class="hidden sm:block leading-none">
-            <p class="font-display font-extrabold tracking-tight text-[15px] text-ink-900">NESTARA</p>
-            <p class="text-[11px] font-medium tracking-widest text-ink-500 uppercase -mt-0.5">Bone Bolango • PMPTSP</p>
+            <p class="font-display font-extrabold tracking-tight text-[15px] text-ink-900">{{ strtoupper(Version::productName()) }}</p>
+            <p class="text-[11px] font-medium tracking-widest text-ink-500 uppercase -mt-0.5">{{ Version::organizationName() }}</p>
           </div>
         </a>
         <div class="hidden lg:flex items-center gap-1 ml-6">

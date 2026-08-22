@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light">
     <meta name="theme-color" content="#0f766e">
-    <title>{{ env('APP_NAME', 'Nestara') }} — Perizinan Online Bone Bolango</title>
-    <meta name="description" content="Sistem Informasi Perizinan Online Dinas Penanaman Modal dan PTSP Kabupaten Bone Bolango — transparan, cepat, terintegrasi.">
+    <title>{{ Version::productName() }} — Perizinan Online</title>
+    <meta name="description" content="{{ Version::description() ?? 'Sistem Informasi Perizinan Online' }}">
     <link rel="shortcut icon" href="{{ asset('storage/web/favicon.ico') }}" type="image/x-icon">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

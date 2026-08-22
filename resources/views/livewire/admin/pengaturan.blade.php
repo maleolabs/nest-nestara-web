@@ -30,13 +30,13 @@
                 <div class="mt-4 grid gap-4 sm:grid-cols-2">
                     <div>
                         <label class="text-xs font-bold tracking-wide text-ink-700 uppercase">Nama Pemerintah</label>
-                        <input type="text" wire:model='kop_surat_form.nama_pemerintah' placeholder="Pemerintah Kabupaten Bone Bolango"
+                        <input type="text" wire:model='kop_surat_form.nama_pemerintah' placeholder="{{ Version::organizationName() }}"
                             class="mt-1.5 w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
                         @error('kop_surat_form.nama_pemerintah')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label class="text-xs font-bold tracking-wide text-ink-700 uppercase">Nama Dinas</label>
-                        <input type="text" wire:model='kop_surat_form.nama_dinas' placeholder="Dinas Penanaman Modal & PTSP"
+                        <input type="text" wire:model='kop_surat_form.nama_dinas' placeholder="Nama dinas penerbit izin"
                             class="mt-1.5 w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
                         @error('kop_surat_form.nama_dinas')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
                     </div>
@@ -48,7 +48,7 @@
                     </div>
                     <div>
                         <label class="text-xs font-bold tracking-wide text-ink-700 uppercase">Website</label>
-                        <input type="text" wire:model='kop_surat_form.website' placeholder="https://bonebolango.go.id"
+                        <input type="text" wire:model='kop_surat_form.website' placeholder="{{ Version::website() ?? 'https://example.go.id' }}"
                             class="mt-1.5 w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
                         @error('kop_surat_form.website')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
                     </div>

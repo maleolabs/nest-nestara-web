@@ -5,7 +5,7 @@
     <div class="w-full max-w-[460px]">
         <div class="flex items-center gap-3 mb-6">
             <a href="{{ route('welcome') }}" class="h-10 w-10 rounded-xl bg-white ring-1 ring-ink-200 grid place-items-center overflow-hidden"><img src="{{ asset('storage/web/favicon.ico') }}" alt="Logo" class="h-8 w-8 object-contain"></a>
-            <div><p class="font-display font-extrabold text-ink-900 leading-none">NESTARA</p><p class="text-xs tracking-widest text-ink-500 uppercase">PMPTSP Bone Bolango</p></div>
+            <div><p class="font-display font-extrabold text-ink-900 leading-none">{{ strtoupper(Version::productName()) }}</p><p class="text-xs tracking-widest text-ink-500 uppercase">{{ Version::organizationName() }}</p></div>
         </div>
 
         <div class="rounded-[24px] bg-white p-6 sm:p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)] ring-1 ring-ink-200">
@@ -66,7 +66,7 @@
 @endsection
         </div>
 
-        <p class="mt-4 text-center text-xs text-ink-500">Butuh bantuan? Hubungi support@perizinanpmptsp.go.id</p>
+        <p class="mt-4 text-center text-xs text-ink-500">Butuh bantuan? Hubungi {{ Version::organizationEmail() }}</p>
     </div>
 </div>
 @endsection

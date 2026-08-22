@@ -17,7 +17,7 @@
                             </p>
                             <p class="text-sm text-bold mb-0">
                                 <i class="fa-solid fa-envelope me-1"></i>
-                                dpmptsp.bonebolango@gmail.com
+                                {{ Version::organizationEmail() }}
                             </p>
                         @elseif ($izin)
                             <i class="fa-solid fa-circle-check fs-2 text-success"></i>

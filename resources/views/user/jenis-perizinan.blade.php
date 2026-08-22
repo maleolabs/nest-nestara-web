@@ -28,7 +28,7 @@
           <span class="rounded-full bg-ink-50 px-2.5 py-1 text-[11px] font-bold tracking-wide text-ink-600 ring-1 ring-ink-200">Syarat {{ $perizinan->persyaratan_count ?? '—' }}</span>
         </div>
         <h3 class="mt-3 font-bold text-ink-900 leading-snug line-clamp-2">{{ $perizinan->nama }}</h3>
-        <p class="mt-1 text-xs leading-relaxed text-ink-500 line-clamp-2">{{ Str::limit($perizinan->deskripsi ?? 'Perizinan resmi DPMPTSP Bone Bolango dengan alur verifikasi berlapis dan penetapan terverifikasi.', 110) }}</p>
+        <p class="mt-1 text-xs leading-relaxed text-ink-500 line-clamp-2">{{ Str::limit($perizinan->deskripsi ?? (Version::description() ?? 'Perizinan resmi dengan alur verifikasi berlapis dan penetapan terverifikasi.'), 110) }}</p>
         <div class="mt-4 flex items-center gap-2 text-xs font-bold text-nest-700">
           Ajukan sekarang <i class="fa-solid fa-arrow-right text-[11px] group-hover:translate-x-0.5 transition"></i>
         </div>
@@ -51,7 +51,9 @@
       <p class="font-bold">Tidak menemukan izin yang dicari?</p>
       <p class="text-sm text-white/70">Hubungi layanan bantuan — kami bantu identifikasi jenis izin yang tepat.</p>
     </div>
-    <a href="mailto:support@perizinanpmptsp.go.id" class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-extrabold text-ink-900">Hubungi Support</a>
+    @if (Version::organizationEmail())
+    <a href="mailto:{{ Version::organizationEmail() }}" class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-extrabold text-ink-900">Hubungi Support</a>
+    @endif
   </div>
 </div>
 @endsection

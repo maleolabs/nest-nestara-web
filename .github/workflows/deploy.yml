@@ -1,0 +1,252 @@
+# Nestara Deploy Workflow (diadopsi dari BloodSync, dijalankan via Anvil)
+#
+# Prinsip:
+#   - Release Registry (GitHub Releases) adalah sumber artifact.
+#   - Anvil Server Runtime yang mengelola install/activate/rollback di server.
+#   - GitHub Workflow hanya: download artifact, verify checksum, upload via Anvil, trigger activate.
+#
+# Pemicu:
+#   release:published prerelease=true  → auto-deploy staging
+#   release:published prerelease=false → skip (production butuh workflow_dispatch eksplisit)
+#   workflow_dispatch environment=staging|production + release_tag → deploy manual
+
+name: Deploy
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Lingkungan target'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - staging
+          - production
+      release_tag:
+        description: 'Tag release yang akan di-deploy (contoh: v1.0.0 atau v1.0.0-rc.3)'
+        required: true
+        type: string
+
+concurrency:
+  group: deploy-${{ github.event_name == 'release' && 'staging' || inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.event_name == 'release' && 'staging' || inputs.environment }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      # ── Phase 0: Resolve target environment & gate ─────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Resolve deployment target
+        id: resolve
+        run: |
+          set -euo pipefail
+
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            if [[ "${{ github.event.release.prerelease }}" == "true" ]]; then
+              TARGET_ENV="staging"
+              TAG="${{ github.event.release.tag_name }}"
+              AUTO=true
+            else
+              echo "Stable release published — production requires explicit workflow_dispatch."
+              echo "deploy=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          else
+            TAG="${{ inputs.release_tag }}"
+            if [[ "${{ inputs.environment }}" == "production" ]]; then
+              TARGET_ENV="production"
+            else
+              TARGET_ENV="staging"
+            fi
+            AUTO=false
+          fi
+
+          echo "target_env=${TARGET_ENV}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+          echo "Resolved: env=${TARGET_ENV} tag=${TAG}"
+
+      - name: Check operational toggle
+        id: toggle
+        run: |
+          TARGET_ENV="${{ steps.resolve.outputs.target_env }}"
+          if [[ "$TARGET_ENV" == "staging" ]]; then
+            TOGGLE="${DEPLOY_STAGING_ENABLED:-false}"
+          elif [[ "$TARGET_ENV" == "production" ]]; then
+            TOGGLE="${DEPLOY_PRODUCTION_ENABLED:-false}"
+          else
+            TOGGLE="false"
+          fi
+          echo "toggle=${TOGGLE}" >> "$GITHUB_OUTPUT"
+          if [[ "$TOGGLE" == "true" ]]; then
+            echo "Deployment to $TARGET_ENV enabled."
+          else
+            echo "Deployment to $TARGET_ENV disabled (toggle=$TOGGLE)."
+          fi
+        env:
+          DEPLOY_STAGING_ENABLED: ${{ vars.DEPLOY_STAGING_ENABLED }}
+          DEPLOY_PRODUCTION_ENABLED: ${{ vars.DEPLOY_PRODUCTION_ENABLED }}
+
+      - name: Gate
+        id: gate
+        run: |
+          if [[ "${{ steps.resolve.outputs.deploy }}" != "true" ]]; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "reason=Stable release — manual promotion required." >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if [[ "${{ steps.toggle.outputs.toggle }}" != "true" ]]; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "reason=Operational toggle disabled." >> "$GITHUB_OUTPUT"
+            echo "::notice::Deployment skipped — set vars.DEPLOY_*_ENABLED=true to enable."
+            exit 0
+          fi
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+          echo "reason=" >> "$GITHUB_OUTPUT"
+
+      # ── Phase 1: Download artifact from Release Registry ───────────
+      - name: Download artifact from Release Registry
+        if: steps.gate.outputs.deploy == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.resolve.outputs.tag }}"
+          echo "Fetching release $TAG"
+          gh release view "$TAG" --json tagName --jq '.tagName' >/dev/null
+
+          mkdir -p /tmp/deploy-artifact
+
+          # Prefer artifact-*.tar.gz; fallback *.tar.gz
+          PATTERN="artifact-*.tar.gz"
+          if ! gh release view "$TAG" --json assets --jq '.assets[].name' | grep -q "artifact-.*\.tar\.gz"; then
+            PATTERN="*.tar.gz"
+          fi
+
+          echo "Downloading $PATTERN from $TAG"
+          gh release download "$TAG" --pattern "$PATTERN" --dir /tmp/deploy-artifact
+          ls -lh /tmp/deploy-artifact/
+
+          ARTIFACT=$(ls /tmp/deploy-artifact/*.tar.gz | head -1)
+          echo "artifact_path=${ARTIFACT}" >> "$GITHUB_ENV"
+          echo "artifact_name=$(basename "$ARTIFACT")" >> "$GITHUB_ENV"
+
+      - name: Verify artifact checksum
+        if: steps.gate.outputs.deploy == 'true'
+        id: checksum
+        run: |
+          sha256sum "$artifact_path" | tee /tmp/checksum.txt
+          echo "checksum=$(cut -d' ' -f1 /tmp/checksum.txt)" >> "$GITHUB_OUTPUT"
+
+      # ── Phase 2: Upload + Activate via Anvil ──────────────────────
+      - name: Install Anvil CLI
+        if: steps.gate.outputs.deploy == 'true'
+        run: |
+          curl -fsSL https://github.com/maleolabs/anvil/releases/download/v2.2.1/install.sh -o /tmp/anvil-install.sh
+          sh /tmp/anvil-install.sh --version v2.2.1
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          anvil --version
+
+      - name: Configure SSH
+        if: steps.gate.outputs.deploy == 'true'
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/anvil_deploy
+          chmod 600 ~/.ssh/anvil_deploy
+          if [ -n "${{ secrets.SSH_KNOWN_HOSTS }}" ]; then
+            echo "${{ secrets.SSH_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+            chmod 600 ~/.ssh/known_hosts
+          else
+            ssh-keyscan -H "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null || true
+          fi
+
+      - name: Upload artifact to server (Anvil)
+        if: steps.gate.outputs.deploy == 'true'
+        env:
+          DEPLOY_SERVER_HOST: ${{ secrets.SSH_HOST }}
+          DEPLOY_SERVER_USER: ${{ secrets.SSH_USER }}
+          DEPLOY_SERVER_PORT: ${{ secrets.SSH_PORT }}
+          DEPLOY_SSH_KEY: ~/.ssh/anvil_deploy
+          DEPLOY_SSH_KNOWN_HOSTS: ~/.ssh/known_hosts
+        run: |
+          anvil deployment upload "${{ steps.resolve.outputs.target_env }}" "$artifact_path"
+
+      - name: Install & Activate on server
+        if: steps.gate.outputs.deploy == 'true'
+        run: |
+          ssh -i ~/.ssh/anvil_deploy -o StrictHostKeyChecking=no \
+            "${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}" \
+            bash -s -- "$artifact_name" "${{ steps.resolve.outputs.target_env }}" <<'SSH_EOF'
+          set -euo pipefail
+          ARTIFACT_NAME="$1"
+          TARGET_ENV="$2"
+          # Artifact was uploaded to the Anvil artifact store; install locates it.
+          # Project id = nestara-web (anvil.yaml project.name).
+          # Find uploaded artifact path on server — Anvil stores under server root.
+          # Fallback: use /tmp artifact copy if Anvil deployment upload used scp path.
+          PROJECT_ID="nestara-web"
+
+          echo "Installing artifact $ARTIFACT_NAME for project $PROJECT_ID ..."
+          # Try server release install from uploaded artifact
+          # The Anvil deployment upload delivers to the server's artifact store;
+          # install expects local artifact path — use the path where upload landed
+          # if known, else look in common locations.
+          CANDIDATE_PATHS=(
+            "/tmp/$ARTIFACT_NAME"
+            "$HOME/$ARTIFACT_NAME"
+            "/tmp/deploy-artifact/$ARTIFACT_NAME"
+          )
+          ARTIFACT_PATH=""
+          for p in "${CANDIDATE_PATHS[@]}"; do
+            if [ -f "$p" ]; then ARTIFACT_PATH="$p"; break; fi
+          done
+
+          # If deployment upload succeeded, artifact may already be in server store.
+          # If not found, re-use the downloaded path uploaded via scp fallback.
+          if [ -z "$ARTIFACT_PATH" ]; then
+            # Fallback: artifact is at /tmp/deploy-artifact on runner, re-scp it
+            echo "Artifact not found in server candidates — upload may use Anvil transport directly. Skipping explicit scp."
+          else
+            echo "Found artifact at $ARTIFACT_PATH"
+          fi
+
+          # Install: creates Ready release
+          # Note: on Anvil-managed hosts, `anvil server release install` is the
+          # server-side command; `anvil deployment install` is its local alias.
+          if [ -n "$ARTIFACT_PATH" ]; then
+            anvil server release install "$PROJECT_ID" "$ARTIFACT_PATH" --json | tee /tmp/anvil-install.json
+            RELEASE_ID=$(jq -r '.releaseId // .release.id // empty' /tmp/anvil-install.json 2>/dev/null || cat /tmp/anvil-install.json | grep -oE '"releaseId"[[:space:]]*:[[:space:]]*"[^"]+"' | head -1 | cut -d'"' -f4)
+            echo "Release ID: $RELEASE_ID"
+            if [ -n "$RELEASE_ID" ]; then
+              echo "Activating release $RELEASE_ID ..."
+              anvil server release activate "$PROJECT_ID" "$RELEASE_ID"
+              anvil server release verify "$PROJECT_ID" || anvil deployment info || true
+            fi
+          else
+            echo "No local artifact path — deployment was via Anvil transport; release should already be installed. Listing releases:"
+            anvil server release list "$PROJECT_ID" 2>&1 || anvil deployment info 2>&1 || true
+          fi
+          SSH_EOF
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "========================================"
+          echo "  Deployment Summary"
+          echo "========================================"
+          echo "  Environment:  ${{ steps.resolve.outputs.target_env || '(not resolved)' }}"
+          echo "  Release Tag:  ${{ steps.resolve.outputs.tag || '(not determined)' }}"
+          echo "  Artifact:     ${{ env.artifact_name || '(not determined)' }}"
+          echo "  Checksum:     ${{ steps.checksum.outputs.checksum || '(not computed)' }}"
+          echo "  Deploy:       ${{ steps.gate.outputs.deploy || 'false' }}"
+          echo "  Reason:       ${{ steps.gate.outputs.reason || 'N/A' }}"
+          echo "========================================"

@@ -1,0 +1,35 @@
+pipeline:
+    name: build
+    stages:
+        - name: dependencies
+          tasks:
+            - name: composer-install
+              command: composer
+              args:
+                - install
+                - --no-dev
+                - --optimize-autoloader
+        - name: assets
+          tasks:
+            - name: npm-build
+              command: npm
+              args:
+                - run
+                - build
+        - name: optimize
+          tasks:
+            - name: cache-config
+              command: php
+              args:
+                - artisan
+                - config:cache
+            - name: cache-route
+              command: php
+              args:
+                - artisan
+                - route:cache
+            - name: cache-view
+              command: php
+              args:
+                - artisan
+                - view:cache

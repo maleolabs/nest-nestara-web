@@ -44,8 +44,10 @@
     <div class="p-4 border-t border-ink-100 space-y-3 bg-ink-50/30">
       <div class="rounded-2xl bg-gradient-to-br from-nest-700 to-nest-800 p-4 text-white">
         <p class="text-sm font-bold">Butuh bantuan?</p>
-        <p class="text-xs text-white/80 mt-1">Hubungi PMPTSP Bone Bolango jam 08.00–16.00 WITA</p>
-        <a href="mailto:support@perizinanpmptsp.go.id" class="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-nest-800">Hubungi Support <i class="fa-solid fa-envelope"></i></a>
+        <p class="text-xs text-white/80 mt-1">Hubungi {{ Version::organizationName() }} jam 08.00–16.00 WITA</p>
+        @if (Version::organizationEmail())
+        <a href="mailto:{{ Version::organizationEmail() }}" class="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-nest-800">Hubungi Support <i class="fa-solid fa-envelope"></i></a>
+        @endif
       </div>
       <form id="logout-form" action="{{ route('logout') }}" method="POST">
         @csrf

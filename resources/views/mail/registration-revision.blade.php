@@ -70,7 +70,7 @@
 
         <div class="email-body">
             <p>Halo <strong>{{ $user->pemohon->nama_pemohon }}</strong>,</p>
-            <p>Terima kasih telah mengajukan permohonan izin di Dinas PMPTSP Kabupaten Bone Bolango. Setelah melakukan verifikasi berkas/dokumen, kami menemukan beberapa hal yang perlu diperbaiki sebelum permohonan Anda dapat diproses lebih lanjut.</p>
+            <p>Terima kasih telah mengajukan permohonan izin di {{ Version::organizationName() }}. Setelah melakukan verifikasi berkas/dokumen, kami menemukan beberapa hal yang perlu diperbaiki sebelum permohonan Anda dapat diproses lebih lanjut.</p>
 
             <div class="revision-details">
                 <h3>Detail Revisi:</h3>

@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, staging, main]
+  push:
+    branches: [develop, main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_ENV: testing
+  APP_KEY: base64:woVYpWbwkf8OX8y+o8Ij7c1Nv71/BavSze4AnCoPMwA=
+  APP_DEBUG: true
+  DB_CONNECTION: mysql
+  DB_HOST: 127.0.0.1
+  DB_PORT: 3306
+  DB_DATABASE: testing
+  DB_USERNAME: root
+  DB_PASSWORD: root
+
+jobs:
+  ci:
+    name: Continuous Integration
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: false
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: testing
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup PHP 8.4
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          extensions: mysql, gd, imagick, zip, bcmath, xml, curl, json, ctype, filter, hash, mbstring, openssl, session, tokenizer
+          coverage: none
+          tools: composer:v2
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v6
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: |
+            composer-
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v6
+        with:
+          path: node_modules
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            npm-
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install Anvil CLI
+        run: |
+          curl -fsSL https://github.com/maleolabs/anvil/releases/download/v2.2.1/install.sh -o /tmp/anvil-install.sh
+          sh /tmp/anvil-install.sh --version v2.2.1 --with-adapters laravel
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          anvil --version
+          anvil standard list
+
+      - name: Run CI Pipeline
+        run: anvil pipeline ci

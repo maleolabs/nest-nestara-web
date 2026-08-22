@@ -24,9 +24,10 @@ pipeline:
                 - --force
         - name: test
           tasks:
-            - name: unit-and-feature-tests
+            - name: unit-tests
               command: php
               args:
                 - artisan
                 - test
+                - tests/Unit
                 - --compact

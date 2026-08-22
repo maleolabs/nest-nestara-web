@@ -1,9 +1,9 @@
 {
-    "name": "laravel/laravel",
+    "name": "maleolabs/nestara-web",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
-    "license": "MIT",
+    "description": "Nestara — Sistem Perizinan Online DPMPTSP Kabupaten Bone Bolango",
+    "keywords": ["nestara", "perizinan", "ptsp", "laravel", "livewire"],
+    "license": "proprietary",
     "require": {
         "php": "^8.4",
         "arielmejiadev/larapex-charts": "^10.0",

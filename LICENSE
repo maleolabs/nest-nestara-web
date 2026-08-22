@@ -1,21 +1,139 @@
-MIT License
+Nestara Proprietary Software License Agreement (PSLA)
+Version 1.0
+Last Updated: August 22, 2026
 
-Copyright (c) 2024 Ma'rij Mokoginta
+Copyright (c) 2026 M2Code - MaleoLabs.
+All Rights Reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. DEFINITIONS
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+"Software" means the Nestara software application, including all source code,
+object code, documentation, configuration files, designs, assets, and any
+associated materials distributed by M2Code - MaleoLabs.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+"Licensor" means M2Code - MaleoLabs, the owner and copyright holder of the
+Software.
+
+"Licensee" means the individual or organization that has lawfully obtained
+permission to use the Software.
+
+2. OWNERSHIP
+
+The Software is proprietary and is protected by copyright laws and
+international intellectual property treaties.
+
+The Software is licensed, not sold.
+
+All rights, title, and interest in and to the Software, including all
+intellectual property rights, remain the exclusive property of the Licensor.
+
+3. GRANT OF LICENSE
+
+Subject to the terms of this Agreement, the Licensor grants the Licensee a
+limited, non-exclusive, non-transferable, non-sublicensable, revocable license
+to install and use the Software solely for the Licensee's internal business
+operations.
+
+No ownership rights are transferred to the Licensee.
+
+4. RESTRICTIONS
+
+Unless expressly authorized in writing by the Licensor, the Licensee shall not:
+
+a. Copy, reproduce, or distribute the Software;
+b. Modify, adapt, translate, or create derivative works of the Software;
+c. Reverse engineer, decompile, disassemble, or otherwise attempt to discover
+   the source code of the Software;
+d. Rent, lease, sublicense, sell, assign, or transfer the Software;
+e. Remove, alter, or obscure any copyright, trademark, or proprietary notices;
+f. Use the Software to develop competing products or services;
+g. Make the Software available to any third party.
+
+5. SOURCE CODE
+
+The source code of Nestara is confidential and proprietary information of the
+Licensor.
+
+No right or license to the source code is granted unless explicitly stated in a
+separate written agreement.
+
+The Licensee shall maintain the confidentiality of all proprietary information
+related to the Software and shall take reasonable measures to prevent
+unauthorized disclosure or use.
+
+The Licensee agrees not to disclose, publish, or otherwise make available the
+source code, in whole or in part, to any third party without prior written
+consent from the Licensor.
+
+6. CONFIDENTIALITY
+
+The Licensee shall maintain the confidentiality of all proprietary information
+related to the Software and shall take reasonable measures to prevent
+unauthorized disclosure or use.
+
+7. UPDATES AND MODIFICATIONS
+
+The Licensor may provide updates, patches, or enhancements at its sole
+discretion and under separate support or maintenance agreements.
+
+Nothing in this Agreement obligates the Licensor to provide maintenance,
+technical support, updates, or new versions.
+
+8. TERMINATION
+
+This license shall automatically terminate if the Licensee breaches any term of
+this Agreement.
+
+Upon termination, the Licensee must immediately:
+
+a. Cease all use of the Software;
+b. Destroy all copies of the Software and related materials;
+c. Remove the Software from all systems and devices.
+
+Termination does not affect any rights or remedies available to the Licensor.
+
+9. LIMITED WARRANTY
+
+The Software is provided "AS IS" and "AS AVAILABLE", without warranties of any
+kind, whether express or implied, including but not limited to warranties of
+merchantability, fitness for a particular purpose, non-infringement, or
+uninterrupted operation.
+
+10. LIMITATION OF LIABILITY
+
+To the maximum extent permitted by applicable law, the Licensor shall not be
+liable for any indirect, incidental, consequential, special, punitive, or
+exemplary damages arising from or relating to the use of the Software.
+
+In no event shall the Licensor's total liability exceed the amount paid by the
+Licensee for the Software.
+
+11. AUDIT RIGHTS
+
+The Licensor may request reasonable information necessary to verify compliance
+with this Agreement.
+
+12. GOVERNING LAW
+
+This Agreement shall be governed by and construed in accordance with the laws of
+the Republic of Indonesia.
+
+Any dispute arising out of or relating to this Agreement shall be resolved
+through good-faith negotiations.
+
+If no resolution can be reached, the dispute shall be submitted to the
+exclusive jurisdiction of the competent courts in Indonesia.
+
+13. ENTIRE AGREEMENT
+
+This Agreement constitutes the entire agreement between the parties concerning
+the Software and supersedes all prior agreements, understandings, or
+communications relating to the Software.
+
+14. CONTACT INFORMATION
+
+M2Code - MaleoLabs
+Email: legal@maleolabs.com
+Website: https://maleolabs.com
+
+END OF TERMS AND CONDITIONS

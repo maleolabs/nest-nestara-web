@@ -79,7 +79,7 @@ jobs:
       - name: Install Anvil CLI
         run: |
           curl -fsSL https://github.com/maleolabs/anvil/releases/download/v2.2.1/install.sh -o /tmp/anvil-install.sh
-          sh /tmp/anvil-install.sh --version v2.2.1 --with-adapters laravel
+          sh /tmp/anvil-install.sh --version v2.2.1
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
           anvil --version
           anvil standard list

@@ -20,8 +20,8 @@ use Illuminate\Support\Collection;
  *       array $filter_status = [],
  *       array $filter_status_progress = [],
  *       array $filter_keterangan = [],
- *       string $filter_start_date = null,
- *       string $filter_end_date = null,
+ *       ?string $filter_start_date = null,
+ *       ?string $filter_end_date = null,
  *       string $sort = 'DESC',
  *       ?int $limit = null,
  *       string $order_by = 'created_at',
@@ -31,8 +31,8 @@ use Illuminate\Support\Collection;
  *      string $search = '', 
  *      array $filter_status = [], 
  *      array $filter_status_progress = [], 
- *      string $filter_start_date = null, 
- *      string $filter_end_date = null, 
+ *      ?string $filter_start_date = null, 
+ *      ?string $filter_end_date = null, 
  *      string $sort = 'DESC',
  *      ?int $limit = null,
  *      string $order_by = 'created_at')
@@ -41,21 +41,21 @@ use Illuminate\Support\Collection;
  *      array $filter_status = [],
  *      array $filter_status_progress = [],
  *       array $filter_keterangan = [],
- *       string $filter_start_date = null,
- *       string $filter_end_date = null,
+ *       ?string $filter_start_date = null,
+ *       ?string $filter_end_date = null,
  *       string $sort = 'DESC',
  *       ?int $limit = null,
  *       string $order_by = 'created_at')
  * @method bool saveRegistrationAction(int $izin_id,
  *      string $lokasi_izin, 
- *      string $keterangan = null, 
+ *      ?string $keterangan = null, 
  *      string $status_permohonan = 'permohonan-selesai', 
- *      int $pegawai_id = null)
+ *      ?int $pegawai_id = null)
  * @method int getCount(array $status, array $progres, array $keterangan)
  * @method void rollbackRegistration(int $izin_id, string $keterangan, int $pegawai_id)
- * @method void saveRegistrationRevision(int $izin_id, string $detail_keterangan = null)
+ * @method void saveRegistrationRevision(int $izin_id, ?string $detail_keterangan = null)
  * @method array getAllStatusCancelable()
- * @method void cancelRegistration(int $zin_id, string $keterangan = null)
+ * @method void cancelRegistration(int $zin_id, ?string $keterangan = null)
  * @method void delete(int $izin_id)
  * @method void updateIzinStatusThatHaveBeenReviewed()
  * @method void updateAllIzinStatusWhenEntriDataHasChanged()
@@ -68,8 +68,8 @@ use Illuminate\Support\Collection;
  * @method void penetapanIzin(int $izin_id, int $pegawai_id, string $tindakan)
  * @method void updateCetakIzinStatus(int $izin_id, int $pegawai_id)
  * @method void updateAllIzinStatusWhenAlreadyPrinted()
- * @method void penerbitanFinished(int $izin_id, int $pegawai_id = null)
- * @method void allDone(int $izin_id, int $pegawai_id = null)
+ * @method void penerbitanFinished(int $izin_id, ?int $pegawai_id = null)
+ * @method void allDone(int $izin_id, ?int $pegawai_id = null)
  * @method array getIzinDetails(int $izin_id)
  */
 interface PerizinanService
@@ -126,8 +126,8 @@ interface PerizinanService
         array $filter_status = [],
         array $filter_status_progress = [],
         array $filter_keterangan = [],
-        string $filter_start_date = null,
-        string $filter_end_date = null,
+        ?string $filter_start_date = null,
+        ?string $filter_end_date = null,
         string $sort = 'DESC',
         ?int $limit = null,
         string $order_by = 'created_at',
@@ -160,8 +160,8 @@ interface PerizinanService
         string $search = '', 
         array $filter_status = [], 
         array $filter_status_progress = [], 
-        string $filter_start_date = null, 
-        string $filter_end_date = null, 
+        ?string $filter_start_date = null, 
+        ?string $filter_end_date = null, 
         string $sort = 'DESC',
         ?int $limit = null,
         string $order_by = 'created_at'
@@ -195,8 +195,8 @@ interface PerizinanService
         array $filter_status = [],
         array $filter_status_progress = [],
         array $filter_keterangan = [],
-        string $filter_start_date = null,
-        string $filter_end_date = null,
+        ?string $filter_start_date = null,
+        ?string $filter_end_date = null,
         string $sort = 'DESC',
         ?int $limit = null,
         string $order_by = 'created_at'
@@ -224,7 +224,7 @@ interface PerizinanService
      *
      * @return bool Mengembalikan nilai true jika penyimpanan data berhasil, false jika gagal.
      */
-    function saveRegistrationAction(int $izin_id, string $lokasi_izin, string $keterangan = null, string $status_permohonan = 'permohonan-selesai', int $pegawai_id = null): bool;
+    function saveRegistrationAction(int $izin_id, string $lokasi_izin, ?string $keterangan = null, string $status_permohonan = 'permohonan-selesai', ?int $pegawai_id = null): bool;
 
     /**
      * Melakukan pembatalan atau revisi terhadap perizinan yang telah didaftarkan.
@@ -245,7 +245,7 @@ interface PerizinanService
      *
      * @return void
      */
-    function saveRegistrationRevision(int $izin_id, string $detail_keterangan = null): void;
+    function saveRegistrationRevision(int $izin_id, ?string $detail_keterangan = null): void;
 
     /**
      * Mendapatkan semua status perizinan yang dapat dibatalkan.
@@ -262,7 +262,7 @@ interface PerizinanService
      *
      * @return void
      */
-    function cancelRegistration(int $zin_id, string $keterangan = null): void;
+    function cancelRegistration(int $zin_id, ?string $keterangan = null): void;
 
     /**
      * Menghapus data perizinan berdasarkan ID.
@@ -402,7 +402,7 @@ interface PerizinanService
      *
      * @return void Fungsi ini tidak mengembalikan apa-apa.
      */
-    function penerbitanFinished(int $izin_id, int $pegawai_id = null): void;
+    function penerbitanFinished(int $izin_id, ?int $pegawai_id = null): void;
 
     /**
      * Menandai izin yang diterbitkan sebagai selesai.
@@ -412,7 +412,7 @@ interface PerizinanService
      *
      * @return void Fungsi ini tidak mengembalikan apa-apa.
      */
-    function allDone(int $izin_id, int $pegawai_id = null): void;
+    function allDone(int $izin_id, ?int $pegawai_id = null): void;
 
     /**
      * Mengambil detail dari permohonan izin.

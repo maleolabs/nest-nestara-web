@@ -64,7 +64,7 @@ interface StatusIzinService {
 	 * @param bool $keep_pegawai Apakah pegawai harus tetap digunakan (opsional)
 	 * @return void
 	 */
-	function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null, $updated_at = null, bool $new = false, bool $keep_pegawai = false): void;
+	function updateStatusIzin(int $izin_id, string $status, string $progres, ?string $ket = null, ?int $pegawai_id = null, $updated_at = null, bool $new = false, bool $keep_pegawai = false): void;
 
 	/**
 	 * Memperbarui status izin dengan detail keterangan tambahan.
@@ -75,7 +75,7 @@ interface StatusIzinService {
 	 * @param string $detail_keterangan Detail keterangan tambahan
 	 * @return void
 	 */
-	function updateStatusIzinWithDetailKeterangan(int $izin_id, string $status, string $progres, string $keterangan = null, string $detail_keterangan = null): void;
+	function updateStatusIzinWithDetailKeterangan(int $izin_id, string $status, string $progres, ?string $keterangan = null, ?string $detail_keterangan = null): void;
 
 	/**
 	 * Menghapus semua data status izin berdasarkan ID izin

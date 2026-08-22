@@ -1,36 +1,56 @@
 @extends('layanan.layouts.app')
 @push('breadcrumb-item')
-    <li class="breadcrumb-item">
-        <a href="{{ route('layanan.pendaftaran') }}">
-            Pendaftaran
-        </a>
-    </li>
-    <li class="breadcrumb-item active">
-        Tambah {{ $type }}
-    </li>
+    <li class="text-xs font-semibold text-ink-600">/ <a href="{{ route('layanan.pendaftaran') }}" class="hover:text-nest-700">Pendaftaran</a></li>
+    <li class="text-xs font-bold text-nest-700">Tambah {{ $type }}</li>
 @endpush
 @push('nav-dashboard-content')
-    <div class="dropdown">
-        <a href="javasciprt:;" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1 dropdown-toggle p-2" data-bs-toggle="dropdown" id="navbarDropdownMenuLink2">
-            <i class="fa-solid fa-square-plus fs-5"></i>
-            Tambah
-        </a>
-        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
-            <li>
-                <a class="dropdown-item" href="{{ route('layanan.pendaftaran.create', ['type' => 'data-pemohon']) }}">
-                    <i class="fa-solid fa-users me-2"></i>
-                    Data Pemohon
-                </a>
-            </li>
-            <li>
-                <a class="dropdown-item" href="{{ route('layanan.pendaftaran.create', ['type' => 'izin-baru']) }}">
-                    <i class="fa-solid fa-file-circle-plus me-2"></i>
-                    Izin Baru
-                </a>
-            </li>
-        </ul>
+    <div class="relative" id="tambahDropdownWrap">
+        <button type="button" id="navbarDropdownMenuLink2"
+            class="inline-flex items-center gap-2 rounded-full bg-nest-700 px-4 py-2 text-sm font-bold text-white shadow-[0_8px_20px_rgba(15,118,110,0.25)] hover:bg-nest-800 transition"
+            aria-haspopup="true" aria-expanded="false">
+            <i class="fa-solid fa-square-plus text-xs"></i> Tambah
+            <i class="fa-solid fa-chevron-down text-[10px] opacity-70"></i>
+        </button>
+        <div id="tambahDropdownMenu"
+            class="hidden absolute right-0 top-[calc(100%+8px)] w-56 rounded-2xl bg-white shadow-[0_16px_40px_rgba(15,23,42,0.14)] ring-1 ring-ink-200 p-1.5 z-50 animate-fadeIn">
+            <a href="{{ route('layanan.pendaftaran.create', ['type' => 'data-pemohon']) }}"
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold {{ $type == 'Data Pemohon' ? 'bg-nest-50 text-nest-800' : 'text-ink-700 hover:bg-nest-50' }} transition">
+                <span class="h-8 w-8 grid place-items-center rounded-lg bg-sky-50 text-sky-600"><i class="fa-solid fa-users text-xs"></i></span>
+                Data Pemohon
+            </a>
+            <a href="{{ route('layanan.pendaftaran.create', ['type' => 'izin-baru']) }}"
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold {{ $type == 'Izin Baru' ? 'bg-nest-50 text-nest-800' : 'text-ink-700 hover:bg-nest-50' }} transition">
+                <span class="h-8 w-8 grid place-items-center rounded-lg bg-nest-50 text-nest-700"><i class="fa-solid fa-file-circle-plus text-xs"></i></span>
+                Izin Baru
+            </a>
+        </div>
     </div>
 @endpush
 @section('main')
     @livewire('dashboard.pendaftaran.pendaftaran-create')
 @endsection
+@push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrap = document.getElementById('tambahDropdownWrap')
+            const btn = document.getElementById('navbarDropdownMenuLink2')
+            const menu = document.getElementById('tambahDropdownMenu')
+            if (!wrap || !btn || !menu) return
+            const toggle = (e) => {
+                e?.preventDefault(); e?.stopPropagation()
+                menu.classList.toggle('hidden')
+                btn.setAttribute('aria-expanded', String(!menu.classList.contains('hidden')))
+            }
+            btn.addEventListener('click', toggle)
+            document.addEventListener('click', (e) => {
+                if (!wrap.contains(e.target)) {
+                    menu.classList.add('hidden')
+                    btn.setAttribute('aria-expanded', 'false')
+                }
+            })
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') { menu.classList.add('hidden'); btn.setAttribute('aria-expanded', 'false') }
+            })
+        })
+    </script>
+@endpush

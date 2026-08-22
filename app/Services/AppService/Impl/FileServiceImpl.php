@@ -60,7 +60,7 @@ class FileServiceImpl implements FileService {
         return $data_files;
     }
 
-    public function fileTemp(string $original_file_path, string $temp_file_name = null, string $temp_file_type = 'pdf'): ?string
+    public function fileTemp(string $original_file_path, ?string $temp_file_name = null, string $temp_file_type = 'pdf'): ?string
     {
         Storage::deleteDirectory(self::TEMP_FOLDER_PATH);
         $file_name = $file_name ?? Str::random() . '.' . $temp_file_type;

@@ -13,13 +13,13 @@ interface UserService {
      * 
      * The default user photo in this method will be generated automatically (for create only)
      * 
-     * @param int $user_id = null
+     * @param ?int $user_id = null
      * @param array $user_data
-     * @param string $role_name = null
+     * @param ?string $role_name = null
      * 
      * @return \App\Models\User 
      */
-    function save(int $user_id = null, array $user_data, string $role_name = null): ?User;
+    function save(?int $user_id = null, array $user_data, ?string $role_name = null): ?User;
 
     /**
      * Menyimpan field atau kolom dari user tertentu

@@ -107,7 +107,7 @@ class EntriDataServiceImpl implements EntriDataService {
 		return $data_izin;
 	}
 
-	public function saveEntriDataIzin($entri_data, int $izin_id, string $value = null): array
+	public function saveEntriDataIzin($entri_data, int $izin_id, ?string $value = null): array
 	{
 		$entri_data_izin = null;
 		if (is_array($entri_data)) {

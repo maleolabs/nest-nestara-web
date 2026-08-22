@@ -6,7 +6,7 @@
                 <i class="fa-solid fa-file-pen me-2"></i>
                 <span>{{ self::PENDATAAN }}</span>
                 {{-- @if (count($semua_pemohon))
-                    <span class="ms-2 badge rounded-pill bg-app-primary-light">{{ count($semua_pemohon) }}</span>
+                    <span class="ms-2 badge rounded-pill bg-nest-50 text-nest-700 ring-1 ring-nest-200">{{ count($semua_pemohon) }}</span>
                 @endif --}}
             </span>
         </div>
@@ -15,7 +15,7 @@
                 <i class="fa-solid fa-people-group me-2"></i>
                 <span>{{ self::TIM_TEKNIS }}</span>
                 {{-- @if (count($semua_izin))
-                    <span class="ms-2 badge rounded-pill bg-app-primary-light">{{ count($semua_izin) }}</span>
+                    <span class="ms-2 badge rounded-pill bg-nest-50 text-nest-700 ring-1 ring-nest-200">{{ count($semua_izin) }}</span>
                 @endif --}}
             </span>
         </div>

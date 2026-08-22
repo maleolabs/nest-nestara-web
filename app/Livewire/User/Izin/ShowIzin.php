@@ -22,7 +22,9 @@ class ShowIzin extends Component
 
     public function render()
     {
-        $this->semua_izin = auth()->user()->pemohon ? auth()->user()->pemohon->izin()->paginate(10) : new Collection();
+        $this->semua_izin = auth()->user()->pemohon
+            ? auth()->user()->pemohon->izin()->with(['jenis_perizinan', 'status_izin'])->paginate(10)
+            : new Collection();
         return view('livewire.user.izin.show-izin', [
             'semua_izin' => $this->semua_izin,
         ]);

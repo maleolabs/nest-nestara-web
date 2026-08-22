@@ -12,26 +12,23 @@
                 <input type="date" class="form-control" id="end_date" name="end_date" wire:model.live='end_date'>
             </div>
         </div>
-        <div class="input-group input-group-outline">
-            <label for="search" class="form-label">cari...</label>
-            <input type="text" class="form-control" id="search" name="search" wire:model.live='search'>
-        </div>
+        <div><label for="search" class="block text-xs font-bold tracking-wide text-ink-700 uppercase">cari...</label><input type="text" class="mt-1.5 w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100 " id="search" name="search" wire:model.live='search'></div>
     </div>
 
     <div class="table-responsive position-relative">
         <table class="table table-hover table-striped align-items-center mb-0" style="--bs-table-striped-bg: var(--color-primary-extra-light);">
             <thead>
                 <tr>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No Pendaftraran</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID Pemohon</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pemohon</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis Izin</th>
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tanggal Permohonan</th>
+                    <th class="text-uppercase text-secondary text-[10px] font-weight-bolder opacity-7">No</th>
+                    <th class="text-uppercase text-secondary text-[10px] font-weight-bolder opacity-7">No Pendaftraran</th>
+                    <th class="text-uppercase text-secondary text-[10px] font-weight-bolder opacity-7">ID Pemohon</th>
+                    <th class="text-uppercase text-secondary text-[10px] font-weight-bolder opacity-7">Pemohon</th>
+                    <th class="text-uppercase text-secondary text-[10px] font-weight-bolder opacity-7">Jenis Izin</th>
+                    <th class="text-uppercase text-secondary text-[10px] font-weight-bolder opacity-7">Tanggal Permohonan</th>
                     @if (isset($table_content))
-                        <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">{{ $table_content }}</th>
+                        <th class="text-uppercase text-secondary text-[10px] font-weight-bolder opacity-7">{{ $table_content }}</th>
                     @endif
-                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                    <th class="text-uppercase text-secondary text-[10px] font-weight-bolder opacity-7">Status</th>
                 </tr>
             </thead>
             <tbody>

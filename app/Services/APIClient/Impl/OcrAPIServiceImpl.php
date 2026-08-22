@@ -13,6 +13,12 @@ use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * @deprecated Use OcrAPIServiceImpl2 (DB config X-API-KEY). Kept for reference, will be removed v2. Binding in AppServiceProvider uses Impl2
+ *
+ * Legacy OCR implementation using Guzzle Client + TokenService + config('api-client.ocr_api.base_url').
+ * No longer bound. Retained only for reference / branch compatibility.
+ */
 class OcrAPIServiceImpl implements OcrAPIService
 {
 

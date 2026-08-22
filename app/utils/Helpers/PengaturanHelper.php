@@ -13,7 +13,7 @@ if (!function_exists('get_pengaturan')) {
 }
 
 if (!function_exists('set_pengaturan')) {
-    function set_pengaturan(string $nama, $value, string $group = null, $user_id = null)
+    function set_pengaturan(string $nama, $value, ?string $group = null, $user_id = null)
     {
         $pengaturanService = app(PengaturanService::class);
         return $pengaturanService->updateOrCreate($nama, $value, $group, $user_id);

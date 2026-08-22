@@ -69,7 +69,7 @@ class LocalStorageMover implements MoveFile
         return $this->moveFile($file_name);
     }
 
-    private function moveFile(string $new_file_name = null): ?string
+    private function moveFile(?string $new_file_name = null): ?string
     {
         if (!Storage::exists($this->from_path))
             return null;

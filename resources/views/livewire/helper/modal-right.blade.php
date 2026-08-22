@@ -1,10 +1,10 @@
 <div class="modal-right d-none">
     <div class="modal-right-content d-flex">
         <div>
-            <h4 class="mb-4 spacing-md">Lihat pendaftaran izin</h4>
+            <h4 class="mb-4 ">Lihat pendaftaran izin</h4>
             @if ($selectedPreview)
                 <p class="mb-0 text-sm">Nama Izin</p>
-                <h3 class="spacing-md">{{ str_capitalize($selectedPreview->jenis_perizinan->nama, true) }}</h3>
+                <h3 class="">{{ str_capitalize($selectedPreview->jenis_perizinan->nama, true) }}</h3>
                 <p class="mb-0 text-sm">Kelompok Izin</p>
                 <h6 class="text-capitalize">{{ $selectedPreview->jenis_perizinan->kelompok_izin }}</h6>
                 <h6 class="mb-0">
@@ -41,7 +41,7 @@
                         </a>
                     </div>
                 @else
-                    <div class="rounded-3 bg-app-primary-light p-3 mt-3">
+                    <div class="rounded-3 bg-nest-50 text-nest-700 ring-1 ring-nest-200 p-3 mt-3">
                         <strong>Informasi:</strong>
                         <p class="mb-0">
                             Dokumen Anda akan divalidasi terlebih dahulu, kemudian akan diproses oleh petugas, dan izin Anda akan diterbitkan setelah semua tahap selesai.

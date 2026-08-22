@@ -58,7 +58,7 @@ interface FileService {
      * @return string|null
      * lokasi file sementara
      */
-    function fileTemp(string $original_file_path, string $temp_file_name = null, string $temp_file_type = 'pdf'): ?string;
+    function fileTemp(string $original_file_path, ?string $temp_file_name = null, string $temp_file_type = 'pdf'): ?string;
 
     /**
      * mendapatkan file yang ter enkripsi

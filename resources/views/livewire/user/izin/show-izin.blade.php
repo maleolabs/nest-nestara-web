@@ -1,84 +1,95 @@
-<div class="container mb-5">
+<div class="mx-auto max-w-[960px] px-4 sm:px-6 lg:px-8 py-6">
     @if ($to_confirm_delete)
-        <div class="row justify-content-center">
-            <div class="col-md-5 col-sm-7">
-                <div class="card p-4 mb-0">
-                    <h5 class="mb-0">Konfirmasi Penghapusan Permohonan Izin</h5>
-                    <div class="rounded-3 mt-3 p-3" style="border: 3px dotted #DEE2E6">
-                        <p class="text-sm text-align-justify">
-                            Apakah Anda yakin ingin menghapus permohonan izin ini? Harap diperhatikan bahwa tindakan ini bersifat permanen dan tidak dapat dibatalkan. Semua data terkait permohonan izin ini akan dihapus secara permanen. Pastikan Anda telah mempertimbangkan keputusan ini dengan matang sebelum melanjutkan.
-                        </p>
-                        <div class="form-check ms-0 ps-0">
-                            <input type="checkbox" wire:model.live='confirm_delete' class="form-check-input" id="confirm" name="confirm">
-                            <label for="confirm" class="form-check-label">konfirmasi penghapusan</label>
-                        </div>
-                        <button class="btn bg-gradient-danger mt-3 w-100{{ !$confirm_delete ? ' disabled' : '' }}" type="button" {{ !$confirm_delete ? 'disabled' : '' }} wire:click='confirmDelete'>
-                            <span wire:loading.remove wire:target='confirmDelete'>Hapus</span>
-                            <div class="spinner-border spinner-border-sm" role="status" wire:loading wire:target='confirmDelete'>
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </button>
+        <div class="mx-auto max-w-[520px]">
+            <div class="rounded-2xl bg-white p-6 ring-1 ring-red-200 shadow-[0_8px_24px_rgba(15,23,42,0.06)]">
+                <div class="flex items-start gap-3">
+                    <span class="h-10 w-10 shrink-0 rounded-xl bg-red-50 text-red-600 grid place-items-center ring-1 ring-red-200"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                    <div>
+                        <h5 class="font-display font-extrabold text-[18px] text-ink-900 leading-tight">Konfirmasi Penghapusan Permohonan</h5>
+                        <p class="mt-1 text-sm leading-relaxed text-ink-600">Tindakan ini bersifat <b class="text-red-600">permanen</b> dan tidak dapat dibatalkan. Seluruh data terkait permohonan izin ini akan dihapus.</p>
                     </div>
                 </div>
+                <div class="mt-4 rounded-xl border-2 border-dashed border-ink-200 p-4">
+                    <label class="flex items-center gap-2.5 text-sm font-semibold text-ink-700 cursor-pointer">
+                        <input type="checkbox" wire:model.live='confirm_delete' class="h-4 w-4 rounded border-ink-300 text-red-600 focus:ring-red-200">
+                        Saya memahami konsekuensi penghapusan ini
+                    </label>
+                    <button type="button" wire:click='confirmDelete' {{ !$confirm_delete ? 'disabled' : '' }}
+                        class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-full bg-red-600 px-5 py-3 text-sm font-extrabold text-white hover:bg-red-700 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                        wire:loading.attr="disabled" wire:target='confirmDelete'>
+                        <span wire:loading.remove wire:target='confirmDelete'><i class="fa-solid fa-trash"></i> Hapus Permanen</span>
+                        <span wire:loading wire:target='confirmDelete'><i class="fa-solid fa-spinner fa-spin"></i> Menghapus…</span>
+                    </button>
+                </div>
             </div>
-        </div>    
-    @else    
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h3>Aktivitas</h3>
-                <h6>{{ count($semua_izin) . ' Izin' }}</h6>
-            </div>
-            <a href="{{ route('create-izin') }}" class="btn bg-gradient-primary">buat izin baru</a>
         </div>
-        <div class="row">
+    @else
+        {{-- header --}}
+        <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+            <div>
+                <p class="text-xs font-extrabold tracking-widest text-nest-700 uppercase">Ruang Pemohon</p>
+                <h1 class="mt-1 font-display font-extrabold text-[26px] leading-tight text-ink-900">Izin Saya</h1>
+                <p class="mt-1 text-sm text-ink-600">{{ count($semua_izin) }} permohonan terdaftar atas nama Anda.</p>
+            </div>
+            <a href="{{ route('create-izin') }}" class="inline-flex items-center gap-2 rounded-full bg-nest-700 px-5 py-2.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(15,118,110,0.25)] hover:bg-nest-800 transition">
+                <i class="fa-solid fa-plus text-xs"></i> Buat Izin Baru
+            </a>
+        </div>
+
+        {{-- list izin --}}
+        <div class="space-y-3">
             @forelse ($semua_izin->reverse() as $izin)
-                <div class="col-12 mb-3">
-                    @php
-                        $is_izin_new = $izin->created_at >= \Carbon\Carbon::now()->subMinutes(30);
-                    @endphp
-                    <div class="card flex-row align-items-top p-4 mb-0{{ $is_izin_new ? ' bg-gradient-primary' : '' }}">
-                        <div>
-                            <a href="javascript:;" id="modalRightShowBtn" wire:click='preview({{ $izin->id }})'>
-                                <h6 class="border-bottom border-2 d-inline border-dark">{{ $izin->jenis_perizinan->nama }}</h6>
+                @php
+                    $is_izin_new = $izin->created_at >= \Carbon\Carbon::now()->subMinutes(30);
+                    $status = $izin->status_izin->last();
+                    $sc = getStatusIzinClasses($status);
+                @endphp
+                <div class="rounded-2xl bg-white p-4 ring-1 ring-ink-200 shadow-[0_4px_20px_rgba(15,23,42,0.05)] {{ $is_izin_new ? 'ring-2 ring-nest-500' : '' }}">
+                    <div class="flex flex-wrap items-start justify-between gap-3">
+                        <button type="button" id="modalRightShowBtn" wire:click='preview({{ $izin->id }})' class="min-w-0 flex-1 text-left group">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-[15px] text-ink-900 group-hover:text-nest-700 transition">{{ $izin->jenis_perizinan->nama }}</h3>
                                 @if ($is_izin_new)
-                                    <span class="badge bg-gradient-info text-xs px-2 py-1 text-white text-capitalize">baru</span>
+                                    <span class="rounded-full bg-nest-50 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide text-nest-700 ring-1 ring-nest-200">Baru</span>
                                 @endif
-                            </a>
-                            @php
-                                $status = $izin->status_izin->last()
-                            @endphp
-                            {!! renderStatusIzinWithIcon($status) !!}
-                        </div>
+                            </div>
+                            <p class="mt-1 text-xs text-ink-500">No. Pendaftran {{ $izin->no_pendaftaran }} • Diajukan {{ $izin->created_at->diffForHumans() }}</p>
+                            <span class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-ink-50 px-2.5 py-1 text-[11px] font-bold ring-1 ring-ink-200 {{ $sc['textClass'] }}">
+                                <i class="{{ $sc['bgClass'] }} h-1.5 w-1.5 rounded-full"></i> {{ $status->nama }}
+                            </span>
+                        </button>
+
                         @if ($this->isIzinCancelable($status->nama))
-                            <div class="ms-auto mb-auto">
-                                <div class="dropdown">
-                                    <button class="btn p-0 card-icon rounded-circle" data-bs-toggle="dropdown" id="cancelIzinAction">
-                                        <i class="fa-solid fa-ellipsis-vertical text-sm"></i>
-                                    </button>
-                                    <ul class="dropdown-menu" aria-labelledby="cancelIzinAction">
-                                        <li>
-                                            <a class="dropdown-item" href="javascript:;" wire:click='cancel({{ $izin->id }})'>
-                                                <i class="fa-solid fa-circle-minus me-1"></i>
-                                                Batalkan
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
+                            <div class="dropdown relative">
+                                <button class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-ink-500 ring-1 ring-ink-200 hover:bg-ink-50 transition" data-bs-toggle="dropdown" id="cancelIzinAction" aria-expanded="false">
+                                    <i class="fa-solid fa-ellipsis-vertical text-sm"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cancelIzinAction">
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="javascript:;" wire:click='cancel({{ $izin->id }})'>
+                                            <i class="fa-solid fa-circle-minus me-2"></i> Batalkan Permohonan
+                                        </a>
+                                    </li>
+                                </ul>
                             </div>
                         @endif
                     </div>
                 </div>
             @empty
-                <div class="col-12">
-                    <div class="border rounded-3 p-4 d-flex align-items-center justify-content-center">
-                        Tidak ada permohonan izin
-                    </div>
+                <div class="rounded-2xl border border-dashed border-ink-200 bg-white p-12 text-center">
+                    <div class="mx-auto h-14 w-14 rounded-2xl bg-ink-50 grid place-items-center text-ink-400 ring-1 ring-ink-200"><i class="fa-solid fa-file-circle-plus text-xl"></i></div>
+                    <p class="mt-3 text-sm font-bold text-ink-900">Belum ada permohonan izin</p>
+                    <p class="mt-1 text-sm text-ink-500">Ajukan permohonan pertama Anda melalui tombol di atas.</p>
                 </div>
             @endforelse
+
             @if (count($semua_izin) > 0)
-                {{ $semua_izin->links() }}
+                <div class="pt-2">
+                    {{ $semua_izin->links('components.pagination-nestara', ['livewire' => true]) }}
+                </div>
             @endif
         </div>
+
         @include('livewire.helper.modal-right')
     @endif
 </div>

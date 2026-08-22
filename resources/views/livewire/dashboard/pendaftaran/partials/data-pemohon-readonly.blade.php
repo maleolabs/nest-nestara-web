@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-12">
-        <div class="border border-2 border-success rounded bg-app-primary-light p-3 mb-4 text-success">
+        <div class="border border-2 border-success rounded bg-nest-50 text-nest-700 ring-1 ring-nest-200 p-3 mb-4 text-success">
             <span class="text-bold">Sukses! </span>
             <span class="text-sm">
                 Data pemohon baru berhasil disimpan. Terima kasih telah memperbarui informasi pemohon. Semua data telah dicatat dan disimpan dengan aman. Anda sekarang dapat melanjutkan untuk menambahkan data pemohon lainnya atau kembali ke daftar pemohon untuk melihat data yang baru saja ditambahkan.

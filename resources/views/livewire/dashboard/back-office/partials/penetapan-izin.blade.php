@@ -1,10 +1,10 @@
 <div class="modal-right d-none">
     <div class="modal-right-content modal-right-content-md d-flex">
         <div class="w-100">
-            <h4 class="mb-4 spacing-md">Penetapan Izin</h4>
+            <h4 class="mb-4 ">Penetapan Izin</h4>
             @if ($selectedPreview)
                 <p class="mb-0 text-sm">Nama Izin</p>
-                <h3 class="spacing-md">{{ str_capitalize($selectedPreview->jenis_perizinan->nama, true) }}</h3>
+                <h3 class="">{{ str_capitalize($selectedPreview->jenis_perizinan->nama, true) }}</h3>
                 <p class="mb-0 text-sm">Pemohon</p>
                 <h6 class="text-capitalize">{{ $selectedPreview->pemohon->nama_pemohon }}</h6>
                 <p class="mb-0 text-sm">Lokasi Izin</p>
@@ -57,7 +57,7 @@
                                 <button class="btn btn-sm bg-gradient-primary mt-3" type="submit">simpan</button>
                             </form>
                         </div>
-                        <div class="bg-app-primary-light rounded-4 p-4 text-sm">
+                        <div class="bg-nest-50 text-nest-700 ring-1 ring-nest-200 rounded-4 p-4 text-sm">
                             Pastikan Anda memilih tindakan (izinkan atau tolak) untuk menyelesaikan proses permohonan izin ini.
                         </div>
                     </div>

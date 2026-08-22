@@ -1,86 +1,66 @@
-<div class="sidebar-container d-none" id="sideMenuLeftContainer">
-    <aside class="side-menu-left p-3" id="sideMenuLeft">
-        <div class="d-flex align-items-top justify-content-between mb-4">
-            <img src="{{ asset('storage/web/favicon.ico') }}" width="35" height="35" alt="none" class="img-circle img-circle-sm">
-            <button class="btn btn-transparent rounded-3 menu-left-btn-close m-0 px-3 py-1">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+{{-- Left menu — popover (not slider) for all screens --}}
+<div id="sideMenuLeftContainer" class="hidden fixed inset-0 z-40">
+  <div id="sideMenuLeftBackdrop" class="absolute inset-0 bg-ink-900/10 backdrop-blur-[1px]"></div>
+  <div class="absolute left-3 sm:left-4 top-[72px] w-[360px] max-w-[92vw] rounded-2xl bg-white shadow-[0_20px_60px_rgba(15,23,42,0.18)] ring-1 ring-ink-200 overflow-hidden animate-fadeIn">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-ink-100 bg-ink-50/50">
+      <div class="flex items-center gap-3">
+        <div class="h-8 w-8 rounded-lg bg-white ring-1 ring-ink-200 grid place-items-center overflow-hidden"><img src="{{ asset('storage/web/favicon.ico') }}" alt="Logo" class="h-6 w-6 object-contain"></div>
+        <div>
+          <p class="text-sm font-extrabold text-ink-900 leading-none">Menu Pegawai</p>
+          <p class="text-[11px] font-semibold tracking-widest text-ink-500 uppercase">PMPTSP • Aksi cepat</p>
         </div>
-        <ul class="sidebar-nav">
-            @role(FRONT_OFFICE_ROLE)
-                <li class="nav-item ps-2 mb-3">
-                    <img src="{{ asset('storage/web/layanan-icon.png') }}" width="35" height="35" class="img-fluid me-2">
-                    <span class="text-sm">Layanan</span>
-                </li>
-                <div class="nav-divider mt-3 mb-2">Pengelolaan izin</div>
-                <li class="nav-item">
-                    <a href="{{ route('layanan.pendaftaran') }}" class="nav-link{{ Route::currentRouteName() == 'layanan.pendaftaran' ? ' active' : '' }}">
-                        <i class="fa-solid fa-book-open"></i>
-                        <span>Pendaftaran</span>
-                        <span id="pendaftaranCount" class="ms-auto badge rounded-pill bg-danger text-white">{{ countByProcess('pendaftaran') }}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('layanan.penyerahan') }}" class="nav-link{{ Route::currentRouteName() == 'layanan.penyerahan' ? ' active' : '' }}">
-                        <i class="fa-solid fa-file-export"></i>
-                        <span>Penyerahan</span>
-                        <span id="penyerahanCount" class="ms-auto badge rounded-pill bg-danger text-white">{{ countByProcess('penyerahan') }}</span>
-                    </a>
-                </li>
-            @elserole(BACK_OFFICE_ROLE)
-                <li class="nav-item ps-2 mb-3">
-                    <img src="{{ asset('storage/web/employees.png') }}" width="35" height="35" class="img-fluid me-2">
-                    <span class="text-sm">Back Office</span>
-                </li>
-                <div class="nav-divider mt-3 mb-2">Pengelolaan izin</div>
-                <li class="nav-item">
-                    <a href="{{ route('pegawai.pendataan') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.pendataan' ? ' active' : '' }}">
-                        <i class="fa-solid fa-file-signature"></i>
-                        <span>Pendataan</span>
-                        <span id="pendataanCount" class="ms-auto badge rounded-pill bg-danger text-white">{{ countByProcess('pendataan') }}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('pegawai.rekomendasi') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.rekomendasi' ? ' active' : '' }}">
-                        <i class="fa-solid fa-medal"></i>
-                        <span>Rekomendasi</span>
-                        <span id="rekomendasiCount" class="ms-auto badge rounded-pill bg-danger text-white">{{ countByProcess('rekomendasi') }}</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('pegawai.penetapan') }}" class="nav-link{{ Route::currentRouteName() == 'pegawai.penetapan' ? ' active' : '' }}">
-                        <i class="fa-solid fa-file-circle-check"></i>
-                        <span>Penetapan</span>
-                        <span id="penetapanCount" class="ms-auto badge rounded-pill bg-danger text-white">{{ countByProcess('penetapan') }}</span>
-                    </a>
-                </li>
-            @elserole(ADMIN_ROLE)
-                <div class="nav-divider mt-3 mb-2">Menu</div>
-                <li class="nav-item">
-                    <a class="nav-link {{ Str::contains(Route::currentRouteName(), 'jenis-perizinan') ? 'active' : '' }}" href="{{ route('admin.jenis-perizinan.index') }}">
-                        <i class="fa-solid fa-file-invoice"></i>
-                        <span>Jenis Perizinan</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::currentRouteName() == 'admin.pegawai' ? 'active' : '' }}" href="{{ route('admin.pegawai') }}">
-                        <i class="fa-solid fa-users-line"></i>
-                        <span>Pegawai</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ Route::currentRouteName() == 'admin.pengaturan' ? 'active' : '' }}" href="{{ route('admin.pengaturan') }}">
-                        <i class="fa-solid fa-gear"></i>
-                        <span>Pengaturan</span>
-                    </a>
-                </li>
-            @endrole
-            @hasanyrole([FRONT_OFFICE_ROLE, BACK_OFFICE_ROLE])
-                @livewire('dashboard.component.left-menu-content')
-            @endhasanyrole
-        </ul>
-    </aside>
+      </div>
+      <button type="button" class="menu-left-btn-close h-8 w-8 rounded-full bg-white text-ink-600 grid place-items-center ring-1 ring-ink-200 hover:bg-ink-50"><i class="fa-solid fa-xmark text-xs"></i></button>
+    </div>
+    <div class="max-h-[70vh] overflow-y-auto p-3">
+      @include('layouts.left-menu-nav')
+    </div>
+    <div class="p-3 border-t border-ink-100 bg-ink-50/30">
+      <p class="text-xs text-ink-500 text-center">Tekan di luar untuk menutup • <span class="font-bold text-ink-700">Esc</span></p>
+    </div>
+  </div>
 </div>
-@push('scripts')
-    <script src="{{ asset('assets/js/notif-count.js') }}"></script>
-@endpush
+
+<script>
+(function() {
+  function initLeftMenu() {
+    const container = document.getElementById('sideMenuLeftContainer');
+    const backdrop = document.getElementById('sideMenuLeftBackdrop');
+    if (!container) return;
+    const openBtns = document.querySelectorAll('.btn-show-left-menu');
+    const closeBtns = document.querySelectorAll('.menu-left-btn-close');
+    const show = (e) => {
+      if (e) e.preventDefault();
+      container.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    };
+    const hide = () => {
+      container.classList.add('hidden');
+      document.body.style.overflow = '';
+    };
+    openBtns.forEach(b => {
+      b.removeEventListener('click', show);
+      b.addEventListener('click', show);
+    });
+    closeBtns.forEach(b => {
+      b.removeEventListener('click', hide);
+      b.addEventListener('click', hide);
+    });
+    if (backdrop) {
+      backdrop.removeEventListener('click', hide);
+      backdrop.addEventListener('click', hide);
+    }
+    document.removeEventListener('keydown', hide);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !container.classList.contains('hidden')) hide(); });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLeftMenu);
+  } else {
+    initLeftMenu();
+  }
+  // also re-init after Livewire updates
+  if (window.Livewire) {
+    document.addEventListener('livewire:navigated', initLeftMenu);
+  }
+})();
+</script>

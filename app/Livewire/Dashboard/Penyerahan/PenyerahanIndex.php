@@ -8,16 +8,24 @@ use App\utils\enums\StatusIzinEnum;
 use App\utils\enums\StatusIzinProgressEnum;
 use Carbon\Carbon;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class PenyerahanIndex extends Component
 {
-    public $all_izin = [],
-        $preview_izin_id,
+    use WithPagination;
+
+    protected $paginationTheme = 'tailwind';
+
+    /** Paginator tidak boleh public — Livewire tidak bisa dehydrate. Dikirim via render(). */
+    protected $all_izin;
+    public $preview_izin_id,
         $selectedPreview;
 
     public $search = '',
         $start_date,
         $end_date;
+
+    protected array $tanggalPermohonanMap = [];
 
     public function mount()
     {
@@ -28,7 +36,27 @@ class PenyerahanIndex extends Component
     public function render()
     {
         $this->setData();
-        return view('livewire.dashboard.penyerahan.penyerahan-index');
+        $this->buildTanggalPermohonanMap();
+        return view('livewire.dashboard.penyerahan.penyerahan-index', [
+            'all_izin' => $this->all_izin,
+        ]);
+    }
+
+    /** reset ke halaman 1 saat filter berubah */
+    public function updatedSearch() { $this->resetPage(); }
+    public function updatedStartDate() { $this->resetPage(); }
+    public function updatedEndDate() { $this->resetPage(); }
+
+    protected function buildTanggalPermohonanMap(): void
+    {
+        $ids = collect($this->all_izin)->pluck('id')->all();
+        $this->tanggalPermohonanMap = empty($ids)
+            ? []
+            : \Illuminate\Support\Facades\DB::table('status_izin')
+                ->whereIn('izin_id', $ids)
+                ->where('nama', StatusIzinEnum::DIDAFTARKAN)
+                ->pluck('created_at', 'izin_id')
+                ->all();
     }
 
     private function setData()
@@ -44,7 +72,19 @@ class PenyerahanIndex extends Component
             StatusIzinProgressEnum::CANCELED,
         ];
 
-        $this->all_izin = $this->getPerizinanService()->getAll($this->search, $filter_status, $filter_progres, $this->start_date, $this->end_date, 'DESC', null, 'updated_at');
+        $this->all_izin = $this->getPerizinanService()->get(
+            $this->search,
+            $filter_status,
+            $filter_progres,
+            [],
+            $this->start_date,
+            $this->end_date,
+            'DESC',
+            20,
+            'updated_at',
+            paginate: true,
+            page: $this->getPage()
+        );
     }
 
     public function previewDataIzin($izin_id)
@@ -75,9 +115,21 @@ class PenyerahanIndex extends Component
         $this->setData();
     }
 
-    protected function getTanggalPermohonan($izin_id): string
+    protected function getTanggalPermohonan($izin): string
     {
-        $permohonan = $this->getStatusIzinService()->findByNamaAndIzin(StatusIzinEnum::DIDAFTARKAN, $izin_id);
+        // 1) dari map ringan (render list)
+        $raw = $this->tanggalPermohonanMap[$izin->id ?? $izin] ?? null;
+        if ($raw) {
+            return Carbon::parse($raw)->translatedFormat('l, d F Y');
+        }
+
+        // 2) fallback relasi eager / query tunggal
+        if ($izin instanceof \App\Models\Izin) {
+            $permohonan = $izin->didaftarkanStatus;
+            return $permohonan ? $permohonan->created_at->translatedFormat('l, d F Y') : '-';
+        }
+
+        $permohonan = $this->getStatusIzinService()->findByNamaAndIzin(StatusIzinEnum::DIDAFTARKAN, $izin);
         return $permohonan ? $permohonan->created_at->translatedFormat('l, d F Y') : '-';
     }
 

@@ -1,81 +1,129 @@
 <div class="modal-right d-none">
     <div class="modal-right-content modal-right-content-md d-flex">
-        <div class="w-100">
-            @if ($selectedPreview)
-                @php($previewStatus = $selectedPreview->status_izin->last())
-                @if ($previewStatus->nama == $statusIzin::PENYERAHAN && $previewStatus->progres == $statusProgres::FINISHED)
-                    <img src="{{ asset('storage/web/celebration-sd.gif') }}" class="gif-modal-md">
-                    <div class="position-absolute top-50 start-50 translate-middle text-center" style="z-index: 10000">
-                        <h3 class="text-center">Izin telah diserahkan</h3>
-                        <a href="{{ route('preview-izin', ['izin_id' => encrypt_id($selectedPreview->id)]) }}" class="btn bg-gradient-primary mt-3">lihat detail izin</a>
-                    </div>
-                @else    
-                    <h4 class="mb-4 spacing-md">Preview Izin</h4>
-                    <p class="mb-0 text-sm">Nama Izin</p>
-                    <h3 class="spacing-md">{{ str_capitalize($selectedPreview->jenis_perizinan->nama, true) }}</h3>
-                    <p class="mb-0 text-sm">Pemohon</p>
-                    <h6 class="text-capitalize">{{ $selectedPreview->pemohon->nama_pemohon }}</h6>
-                    <p class="mb-0 text-sm">Tanggal Permohonan</p>
-                    <h6 class="text-capitalize">{{ $this->getTanggalPermohonan($selectedPreview->id) }}</h6>
-                    <p class="mb-0 text-sm">Lokasi Izin</p>
-                    <h6 class="text-capitalize">{{ $selectedPreview->lokasi_izin }}</h6>
-                    <p class="mb-0 text-sm">Nomor Surat</p>
-                    <h6 class="text-capitalize">{{ $selectedPreview->no_surat }}</h6>
-                    <p class="mb-0 text-sm">Penandatangan</p>
-                    <h6 class="text-capitalize">{{ $selectedPreview->penandatangan->nama }}</h6>
+        <div class="w-100 h-100 flex flex-col bg-white">
+            {{-- header --}}
+            <div class="flex items-center justify-between gap-3 border-b border-ink-100 px-5 py-4">
+                <div>
+                    <p class="text-[11px] font-extrabold tracking-widest text-nest-700 uppercase">Penyerahan</p>
+                    <h4 class="font-display font-extrabold text-[18px] leading-tight text-ink-900">Preview Izin</h4>
+                </div>
+                <button type="button" wire:click='closePreview' id="modalRightCloseBtn"
+                    class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink-50 text-ink-600 ring-1 ring-ink-200 hover:bg-ink-100 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
 
-                    @if ($selectedPreview->status_izin->last()->nama == $statusIzin::PENERBITAN)
-                        <div class="rounded-3 p-4 bg-app-primary-light mt-4">
-                            <i class="fa-solid fa-circle-info me-1"></i>
-                            Proses penandatanganan surat izin sedang berlangsung. Mohon update status ini setelah penandatanganan izin selesai.
+            <div class="flex-1 overflow-y-auto p-5">
+                @if ($selectedPreview && $selectedPreview->status_izin->last()->nama === $statusIzin::PENYERAHAN && $selectedPreview->status_izin->last()->progres === $statusProgres::FINISHED)
+                        {{-- celebration --}}
+                        <div class="flex flex-col items-center justify-center text-center py-8">
+                            <img src="{{ asset('storage/web/celebration-sd.gif') }}" alt="" class="w-40 h-auto">
+                            <span class="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-sm font-extrabold text-emerald-700 ring-1 ring-emerald-200">
+                                <i class="fa-solid fa-circle-check"></i> Izin telah diserahkan
+                            </span>
+                            <p class="mt-2 max-w-[36ch] text-xs leading-relaxed text-ink-500">Proses penyerahan dokumen ini sudah selesai dan tercatat dalam arsip sistem.</p>
+                            <a href="{{ route('preview-izin', ['izin_id' => encrypt_id($selectedPreview->id)]) }}"
+                                class="mt-5 inline-flex items-center gap-2 rounded-full bg-nest-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-nest-800 transition">
+                                Lihat Detail Izin <i class="fa-solid fa-arrow-right text-xs"></i>
+                            </a>
                         </div>
-
-                        <div class="d-flex mt-4 gap-2 text-dark align-items-center">
-                            <i class="fa-solid fa-circle-arrow-right"></i>
-                            <span>Proses penandatanganan izin telah selesai?</span>
-                            <button class="btn btn-sm bg-gradient-info" type="button" wire:click='penerbitanFinished({{ $selectedPreview->id }})'>
-                                <span wire:loading.remove wire:target='penerbitanFinished'>
-                                    ya, surat izin siap diserahkan
-                                </span>
-                                <div wire:loading wire:target='penerbitanFinished' class="spinner-border spinner-border-sm" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </button>
-                        </div>
-
-                        <p class="text-sm mt-4">
-                            Pastikan semua informasi pada surat izin telah diverifikasi sebelum mengubah status menjadi "siap diserahkan".
-                        </p>
-                    @else
-                        <div class="rounded-3 p-4 bg-app-info-light mt-4">
-                            <i class="fa-solid fa-circle-info me-1"></i>
-                            Surat izin siap untuk diserahkan kepada pemohon. Mohon update status ini setelah surat izin diserahkan untuk memastikan proses telah selesai dan terdokumentasi dengan baik.
-                        </div>
-
-                        <div class="d-flex mt-4 gap-2 text-dark align-items-center">
-                            <i class="fa-solid fa-circle-arrow-right"></i>
-                            <span>Surat izin telah diserahkan?</span>
-                            <button class="btn btn-sm bg-gradient-info" type="button" wire:click='allDone({{ $selectedPreview->id }})'>
-                                <span wire:loading.remove wire:target='allDone'>
-                                    ya, surat izin telah diserahkan
-                                </span>
-                                <div wire:loading wire:target='allDone' class="spinner-border spinner-border-sm" role="status">
-                                    <span class="visually-hidden">Loading...</span>
-                                </div>
-                            </button>
-                        </div>
-                    @endif
                 @endif
-                
-                <div class="p-3"></div>
-            @endif
+
+                @if ($selectedPreview && $selectedPreview->status_izin->last()->nama !== $statusIzin::PENYERAHAN)
+                        {{-- identitas izin --}}
+                        <div class="rounded-2xl bg-gradient-to-br from-nest-700 to-nest-800 p-4 text-white">
+                            <p class="text-[11px] font-bold tracking-widest uppercase text-white/70">Jenis Perizinan</p>
+                            <h3 class="mt-1 font-display font-extrabold text-[17px] leading-snug">{{ str_capitalize($selectedPreview->jenis_perizinan->nama, true) }}</h3>
+                            @php
+                                $sc = getStatusIzinClasses($previewStatus);
+                            @endphp
+                            <span class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-extrabold">
+                                <i class="{{ $sc['bgClass'] }} h-1.5 w-1.5 rounded-full {{ $previewStatus->nama == $statusIzin::PENERBITAN ? 'bg-white' : '' }}"></i>
+                                {{ $selectedPreview->status_izin->last()->nama }}
+                            </span>
+                        </div>
+
+                        {{-- detail data --}}
+                        <dl class="mt-5 space-y-3 text-sm">
+                            <div class="flex items-start justify-between gap-3">
+                                <dt class="shrink-0 text-xs font-bold tracking-wide text-ink-500 uppercase">Pemohon</dt>
+                                <dd class="text-right font-bold capitalize text-ink-900">{{ $selectedPreview->pemohon->nama_pemohon }}</dd>
+                            </div>
+                            <div class="flex items-start justify-between gap-3 border-t border-dashed border-ink-200 pt-3">
+                                <dt class="shrink-0 text-xs font-bold tracking-wide text-ink-500 uppercase">No. Pendaftaran</dt>
+                                <dd class="text-right font-semibold text-ink-800">{{ $selectedPreview->no_pendaftaran }}</dd>
+                            </div>
+                            <div class="flex items-start justify-between gap-3 border-t border-dashed border-ink-200 pt-3">
+                                <dt class="shrink-0 text-xs font-bold tracking-wide text-ink-500 uppercase">Tanggal Permohonan</dt>
+                                <dd class="text-right font-semibold text-ink-800">{{ $this->getTanggalPermohonan($selectedPreview) }}</dd>
+                            </div>
+                            <div class="flex items-start justify-between gap-3 border-t border-dashed border-ink-200 pt-3">
+                                <dt class="shrink-0 text-xs font-bold tracking-wide text-ink-500 uppercase">Lokasi Izin</dt>
+                                <dd class="text-right font-medium capitalize text-ink-700">{{ $selectedPreview->lokasi_izin ?? '—' }}</dd>
+                            </div>
+                            <div class="flex items-start justify-between gap-3 border-t border-dashed border-ink-200 pt-3">
+                                <dt class="shrink-0 text-xs font-bold tracking-wide text-ink-500 uppercase">Nomor Surat</dt>
+                                <dd class="text-right font-semibold {{ $selectedPreview->no_surat ? 'text-ink-800' : 'italic text-ink-400' }}">{{ $selectedPreview->no_surat ?? 'Belum terbit' }}</dd>
+                            </div>
+                            <div class="flex items-start justify-between gap-3 border-t border-dashed border-ink-200 pt-3">
+                                <dt class="shrink-0 text-xs font-bold tracking-wide text-ink-500 uppercase">Penandatangan</dt>
+                                <dd class="text-right font-medium capitalize text-ink-700">{{ $selectedPreview->penandatangan?->nama ?? '—' }}</dd>
+                            </div>
+                        </dl>
+
+                        {{-- aksi status --}}
+                        @if ($selectedPreview->status_izin->last()->nama === $statusIzin::PENERBITAN)
+                            <div class="mt-5 rounded-xl bg-amber-50 p-4 ring-1 ring-amber-200">
+                                <p class="text-sm font-bold text-amber-800"><i class="fa-solid fa-pen-nib mr-1.5"></i>Proses penandatanganan berlangsung</p>
+                                <p class="mt-1 text-xs leading-relaxed text-amber-800/80">Pastikan seluruh informasi pada surat izin telah diverifikasi sebelum melanjutkan.</p>
+                                <button type="button" wire:click='penerbitanFinished({{ $selectedPreview->id }})'
+                                    class="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-4 py-2.5 text-sm font-extrabold text-white hover:bg-amber-600 transition disabled:opacity-50"
+                                    wire:loading.attr="disabled" wire:target='penerbitanFinished'>
+                                    <span wire:loading.remove wire:target='penerbitanFinished'><i class="fa-solid fa-forward"></i> Ya, surat izin siap diserahkan</span>
+                                    <span wire:loading wire:target='penerbitanFinished'><i class="fa-solid fa-spinner fa-spin"></i> Memperbarui…</span>
+                                </button>
+                            </div>
+                        @else
+                            <div class="mt-5 rounded-xl bg-emerald-50 p-4 ring-1 ring-emerald-200">
+                                <p class="text-sm font-bold text-emerald-800"><i class="fa-solid fa-hand-holding-heart mr-1.5"></i>Surat izin siap diserahkan</p>
+                                <p class="mt-1 text-xs leading-relaxed text-emerald-800/80">Serahkan dokumen kepada pemohon, lalu tandai selesai agar proses terdokumentasi.</p>
+                                <button type="button" wire:click='allDone({{ $selectedPreview->id }})'
+                                    class="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-full bg-emerald-600 px-4 py-2.5 text-sm font-extrabold text-white hover:bg-emerald-700 transition disabled:opacity-50"
+                                    wire:loading.attr="disabled" wire:target='allDone'>
+                                    <span wire:loading.remove wire:target='allDone'><i class="fa-solid fa-check-double"></i> Ya, surat izin telah diserahkan</span>
+                                    <span wire:loading wire:target='allDone'><i class="fa-solid fa-spinner fa-spin"></i> Memperbarui…</span>
+                                </button>
+                            </div>
+                        @endif
+
+                        <div class="mt-4 flex items-start gap-2 rounded-lg bg-ink-50 px-3 py-2.5 ring-1 ring-ink-200">
+                            <i class="fa-solid fa-shield-halved mt-0.5 text-xs text-nest-700"></i>
+                            <p class="text-[11px] leading-relaxed text-ink-600">Perubahan status tercatat dalam jejak audit — lengkap dengan waktu & pegawai.</p>
+                        </div>
+                @endif
+
+                @if (! $selectedPreview)
+                    {{-- empty state --}}
+                    <div class="flex h-full flex-col items-center justify-center text-center py-12">
+                        <div class="h-14 w-14 rounded-2xl bg-ink-50 grid place-items-center text-ink-400 ring-1 ring-ink-200"><i class="fa-solid fa-file-circle-question text-xl"></i></div>
+                        <p class="mt-3 text-sm font-bold text-ink-900">Tidak ada izin dipilih</p>
+                        <p class="mt-1 max-w-[30ch] text-xs leading-relaxed text-ink-500">Klik salah satu baris permohonan pada tabel untuk melihat preview di panel ini.</p>
+                    </div>
+                @endif
+            </div>
         </div>
-        <button class="ms-auto text-md btn btn-transparent p-0 card-icon sticky-top-0" wire:click='closePreview' id="modalRightCloseBtn" style="z-index: 10001">
+
+        <button type="button" wire:click='closePreview' id="modalRightCloseBtnMobile"
+            class="absolute top-3 right-3 h-9 w-9 items-center justify-center rounded-full bg-white/90 text-ink-600 ring-1 ring-ink-200 md:hidden">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <div wire:loading wire:target='previewDataIzin, penerbitanFinished, allDone'>
-            <div class="position-fixed top-0 end-0 bottom-0 bg-white opacity-75 d-flex align-items-center justify-content-center modal-right-loading">
-                <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
+
+        {{-- loading overlay panel --}}
+        <div wire:loading wire:target='previewDataIzin, penerbitanFinished, allDone'
+            class="absolute inset-0 z-10 grid place-items-center bg-white/75 backdrop-blur-[2px]">
+            <div class="flex flex-col items-center gap-2">
+                <i class="fa-solid fa-spinner fa-spin text-xl text-nest-700"></i>
+                <p class="text-xs font-bold text-ink-500">Memuat data izin…</p>
             </div>
         </div>
     </div>

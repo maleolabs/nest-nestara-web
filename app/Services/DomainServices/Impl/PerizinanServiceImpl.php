@@ -126,8 +126,8 @@ class PerizinanServiceImpl implements PerizinanService
         array $filter_status = [],
         array $filter_status_progress = [],
         array $filter_keterangan = [],
-        string $filter_start_date = null,
-        string $filter_end_date = null,
+        ?string $filter_start_date = null,
+        ?string $filter_end_date = null,
         string $sort = 'DESC',
         ?int $limit = null,
         string $order_by = 'created_at',
@@ -137,26 +137,21 @@ class PerizinanServiceImpl implements PerizinanService
         $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
         $filter_end_date = Carbon::parse($filter_end_date)->addDay()->ToDateTimeString();
 
-        $semua_izin = Izin::whereHas('status_izin', function ($query) use ($filter_status, $filter_status_progress, $filter_keterangan) {
-            if (!empty($filter_status)) {
-                $query->whereIn('status_izin.nama', $filter_status);
-
-                if (!empty($filter_status_progress))
-                    $query->whereIn('progres', $filter_status_progress);
-
-                if (!empty($filter_keterangan))
-                    $query->whereIn('keterangan', $filter_keterangan);
-            }
-        })
-            ->where(function ($query) use ($search) {
+        $semua_izin = Izin::query();
+        $this->joinLatestStatus($semua_izin, $filter_status, $filter_status_progress, $filter_keterangan);
+        if ($search !== '') {
+            $semua_izin->where(function ($query) use ($search) {
                 $query->whereHas('jenis_perizinan', function ($jenis_perizinan) use ($search) {
                     $jenis_perizinan->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($search) . '%']);
                 })->orWhereHas('pemohon', function ($pemohon) use ($search) {
                     $pemohon->whereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%'])
                         ->orWhere('nomor_id', 'LIKE', '%' . $search . '%');
                 });
-            })
+            });
+        }
+        $semua_izin
             ->whereBetween('izin.created_at', [$filter_start_date, $filter_end_date])
+            ->with(['pemohon.user', 'jenis_perizinan', 'latestStatus'])
             ->orderBy($order_by, $sort);
 
         if ($paginate) {
@@ -174,8 +169,8 @@ class PerizinanServiceImpl implements PerizinanService
         string $search = '', 
         array $filter_status = [], 
         array $filter_status_progress = [], 
-        string $filter_start_date = null, 
-        string $filter_end_date = null, 
+        ?string $filter_start_date = null, 
+        ?string $filter_end_date = null, 
         string $sort = 'DESC',
         ?int $limit = null,
         string $order_by = 'created_at'
@@ -184,24 +179,21 @@ class PerizinanServiceImpl implements PerizinanService
         $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
         $filter_end_date = Carbon::parse($filter_end_date)->addDay()->ToDateTimeString();
 
-        $semua_izin = Izin::where(function ($query) use ($search) {
-            $query->whereHas('jenis_perizinan', function($jenis_perizinan) use ($search) {
-                $jenis_perizinan->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($search) . '%']);
-            })->orWhereHas('pemohon', function ($pemohon) use ($search) {
-                $pemohon->whereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%'])
-                    ->orWhere('nomor_id', 'LIKE', '%' . $search . '%');
+        $semua_izin = Izin::query();
+        $this->joinLatestStatus($semua_izin, $filter_status, $filter_status_progress);
+        if ($search !== '') {
+            $semua_izin->where(function ($query) use ($search) {
+                $query->whereHas('jenis_perizinan', function($jenis_perizinan) use ($search) {
+                    $jenis_perizinan->whereRaw('LOWER(nama) LIKE ?', ['%' . strtolower($search) . '%']);
+                })->orWhereHas('pemohon', function ($pemohon) use ($search) {
+                    $pemohon->whereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%'])
+                        ->orWhere('nomor_id', 'LIKE', '%' . $search . '%');
+                });
             });
-        })->whereHas('status_izin', function ($status_izin) use ($filter_status, $filter_status_progress) {
-            if (!empty($filter_status)) {
-                $status_izin->whereIn('nama', $filter_status);
-
-                if (!empty($filter_status_progress))
-                    $status_izin->whereIn('progres', $filter_status_progress);
-                
-                $status_izin->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) FROM status_izin WHERE status_izin.izin_id = izin.id)'));   
-            }
-        })
+        }
+        $semua_izin
         ->whereBetween('created_at', [$filter_start_date, $filter_end_date])
+        ->with(['pemohon.user', 'jenis_perizinan', 'latestStatus'])
         ->orderBy($order_by, $sort);
         if ($limit)
             $semua_izin = $semua_izin->limit($limit);
@@ -215,8 +207,8 @@ class PerizinanServiceImpl implements PerizinanService
         array $filter_status = [],
         array $filter_status_progress = [],
         array $filter_keterangan = [],
-        string $filter_start_date = null,
-        string $filter_end_date = null,
+        ?string $filter_start_date = null,
+        ?string $filter_end_date = null,
         string $sort = 'DESC',
         ?int $limit = null,
         string $order_by = 'created_at'
@@ -226,22 +218,46 @@ class PerizinanServiceImpl implements PerizinanService
 
     public function getCount(array $status, array $progres, array $keterangan): int
     {
-        return Izin::whereHas('status_izin', function ($query) use ($status, $progres, $keterangan) {
-            if (!empty($status)) {
-                $query->whereIn('nama', $status);
+        $query = Izin::query();
+        $this->joinLatestStatus($query, $status, $progres, $keterangan, selectIzinColumns: false);
 
-                if (!empty($progres))
-                    $query->whereIn('progres', $progres);
-
-                if (!empty($keterangan))
-                    $query->whereIn('keterangan', $keterangan);
-
-                $query->whereColumn('status_izin.created_at', '=', DB::raw('(SELECT MAX(created_at) FROM status_izin WHERE status_izin.izin_id = izin.id)'));
-            }
-        })->count();
+        return (int) $query->selectRaw('COUNT(DISTINCT izin.id) as c')->value('c');
     }
 
-    public function saveRegistrationAction(int $izin_id, string $lokasi_izin, string $keterangan = null, string $status_permohonan = 'permohonan-selesai', int $pegawai_id = null): bool
+    /**
+     * Join ke status TERAKHIR tiap izin via derived table —
+     * materialize sekali (index-covered), bukan correlated subquery per baris.
+     */
+    private function joinLatestStatus($builder, array $status, array $progres = [], array $keterangan = [], bool $selectIzinColumns = true): void
+    {
+        $latest = DB::table('status_izin as s')
+            ->joinSub(
+                DB::table('status_izin')
+                    ->select('izin_id', DB::raw('MAX(created_at) as max_created'))
+                    ->groupBy('izin_id'),
+                'm',
+                fn ($join) => $join->on('m.izin_id', '=', 's.izin_id')->on('m.max_created', '=', 's.created_at')
+            )
+            ->select('s.izin_id', 's.nama', 's.progres', 's.keterangan');
+
+        $builder->joinSub($latest, 'ls', 'ls.izin_id', '=', 'izin.id');
+
+        if ($selectIzinColumns) {
+            $builder->select('izin.*');
+        }
+
+        if (!empty($status)) {
+            $builder->whereIn('ls.nama', $status);
+        }
+        if (!empty($progres)) {
+            $builder->whereIn('ls.progres', $progres);
+        }
+        if (!empty($keterangan)) {
+            $builder->whereIn('ls.keterangan', $keterangan);
+        }
+    }
+
+    public function saveRegistrationAction(int $izin_id, string $lokasi_izin, ?string $keterangan = null, string $status_permohonan = 'permohonan-selesai', ?int $pegawai_id = null): bool
     {
         try {
             DB::beginTransaction();
@@ -287,7 +303,7 @@ class PerizinanServiceImpl implements PerizinanService
         DB::commit();
     }
 
-    public function saveRegistrationRevision(int $izin_id, string $detail_keterangan = null): void
+    public function saveRegistrationRevision(int $izin_id, ?string $detail_keterangan = null): void
     {
         DB::beginTransaction();
         try {
@@ -315,7 +331,7 @@ class PerizinanServiceImpl implements PerizinanService
         ];
     }
 
-    public function cancelRegistration(int $izin_id, string $keterangan = null): void
+    public function cancelRegistration(int $izin_id, ?string $keterangan = null): void
     {
         DB::beginTransaction();
         $izin = Izin::find($izin_id);
@@ -556,7 +572,7 @@ class PerizinanServiceImpl implements PerizinanService
         $this->statusIzinService->updateStatusIzin($izin_id, Status::PENERBITAN, Progres::PROCESSING, null, null);
     }
 
-    public function penerbitanFinished(int $izin_id, int $pegawai_id = null): void
+    public function penerbitanFinished(int $izin_id, ?int $pegawai_id = null): void
     {
         DB::transaction(function () use ($izin_id, $pegawai_id) {
             $izin = $this->find($izin_id);

@@ -73,19 +73,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
-            'ocr_config' => $this->getOcrConfig()
         ]);
-    }
-
-    protected function getOcrConfig(): array
-    {
-        $apiKey = get_pengaturan(OCR_API_KEY);
-        $baseUrl = get_pengaturan(OCR_BASE_URL);
-
-        return [
-            'api_key' => $apiKey,
-            'base_url' => $baseUrl,
-        ];
     }
     
 }

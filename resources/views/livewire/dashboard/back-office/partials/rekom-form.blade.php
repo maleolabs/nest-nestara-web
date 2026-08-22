@@ -9,13 +9,13 @@
         </div>
         <div class="card-body">
             <p class="mb-0 text-sm">Nama Izin</p>
-            <h3 class="spacing-md">{{ str_capitalize($preview_izin->jenis_perizinan->nama, true) }}</h3>
+            <h3 class="">{{ str_capitalize($preview_izin->jenis_perizinan->nama, true) }}</h3>
             <p class="mb-0 text-sm">Nama Pemohon</p>
             <h6 class="text-bold">{{ str_capitalize($preview_izin->pemohon->nama_pemohon) }}</h6>
             <p class="mb-0 text-">Lokasi Izin</p>
             <h6 class="text-bold">{{ str_capitalize($preview_izin->lokasi_izin) }}</h6>
             <hr>
-            <div class="rounded-4 bg-app-primary-light p-3 mb-3 text-sm text-primary">
+            <div class="rounded-4 bg-nest-50 text-nest-700 ring-1 ring-nest-200 p-3 mb-3 text-sm text-primary">
                 @if ($saved)
                     <i class="fa-solid fa-circle-check me-1"></i>
                     Rekomendasi permohonan berhasil disimpan!

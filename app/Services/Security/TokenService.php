@@ -29,7 +29,7 @@ interface TokenService
      * @param int|null $ttl
      * @return void
      */
-    function regenerateToken(string $ttl_type = null, int $ttl_long = null): void;
+    function regenerateToken(?string $ttl_type = null, ?int $ttl_long = null): void;
 
     /**
      * Memverifikasi token

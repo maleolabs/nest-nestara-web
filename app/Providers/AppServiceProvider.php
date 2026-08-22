@@ -98,6 +98,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(EncryptionService::class, EncryptionServiceImpl::class);
         $this->app->singleton(PdfTemplateService::class, PdfTemplateServiceImpl::class);
         $this->app->singleton(FileManager::class, LocalStorageFileManager::class);
+        // Active OCR binding uses Impl2 (DB-driven X-API-KEY via get_pengaturan + Http) — Impl (Guzzle+TokenService+config api-client.ocr_api.base_url) is deprecated legacy, kept for reference only
         $this->app->singleton(OcrAPIService::class, OcrAPIServiceImpl2::class);
         $this->app->singleton(TokenService::class, ClientTokenService::class);
         $this->app->singleton(OcrService::class, OcrServiceImpl::class);

@@ -2,7 +2,10 @@
 
 namespace App\Livewire\Dashboard\Pendaftaran;
 
+use App\Models\Izin;
+use App\Models\Pemohon;
 use App\Services\APIClient\RegionAPIService;
+use Illuminate\Support\Facades\DB;
 use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\StatusIzinService;
@@ -11,9 +14,14 @@ use Carbon\Carbon;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class PendaftaranIndex extends Component
 {
+    use WithPagination;
+
+    protected $paginationTheme = 'tailwind';
+
     #[Url()]
     public $layout, $tab, $preview_izin_id, $preview_pemohon_id;
     public $menu;
@@ -24,14 +32,17 @@ class PendaftaranIndex extends Component
     private const DATA_PEMOHON = 'Data Pemohon';
     private const DATA_IZIN_BARU = 'Permohonan Izin Baru';
 
-    public $semua_pemohon = [],
-        $semua_izin = [],
-        $semua_perpanjangan = [],
+    /** Paginator tidak boleh public — Livewire tidak bisa dehydrate. Dikirim via render(). */
+    protected $semua_pemohon;
+    protected $semua_izin;
+    public $semua_perpanjangan = [],
         $semua_perubahan = [];
     public $search = '',
         $start_date,
         $end_date,
         $filter_status;
+
+    protected array $tanggalPermohonanMap = [];
 
     public function mount()
     {
@@ -66,8 +77,17 @@ class PendaftaranIndex extends Component
     public function render()
     {
         $this->setDataList();
-        return view('livewire.dashboard.pendaftaran.pendaftaran-index');
+        $this->buildTanggalPermohonanMap();
+        return view('livewire.dashboard.pendaftaran.pendaftaran-index', [
+            'semua_izin' => $this->semua_izin,
+            'semua_pemohon' => $this->semua_pemohon,
+        ]);
     }
+
+    /** reset ke halaman 1 saat filter berubah */
+    public function updatedSearch() { $this->resetPage('page'); $this->resetPage('pPage'); }
+    public function updatedStartDate() { $this->resetPage('page'); $this->resetPage('pPage'); }
+    public function updatedEndDate() { $this->resetPage('page'); $this->resetPage('pPage'); }
 
     public function selectMenu($select_menu, $reset_url = true)
     {
@@ -82,8 +102,33 @@ class PendaftaranIndex extends Component
 
     private function setDataList()
     {
-        $this->semua_pemohon = $this->getPemohonService()->getAll($this->search);
-        $this->semua_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::DIDAFTARKAN, StatusIzinEnum::DITINJAU, StatusIzinEnum::REVISI_PERSYARATAN, StatusIzinEnum::BATAL], [], $this->start_date, $this->end_date);
+        $this->semua_pemohon = $this->getPemohonService()->getPaginated($this->search, 20, $this->getPage('pPage'), 'pPage');
+        $this->semua_izin = $this->getPerizinanService()->get(
+            $this->search,
+            [StatusIzinEnum::DIDAFTARKAN, StatusIzinEnum::DITINJAU, StatusIzinEnum::REVISI_PERSYARATAN, StatusIzinEnum::BATAL],
+            [],
+            [],
+            $this->start_date,
+            $this->end_date,
+            'DESC',
+            20,
+            'created_at',
+            paginate: true,
+            page: $this->getPage()
+        );
+    }
+
+    /** Map [izin_id => tanggal didaftarkan] — 1 query ringan, tanpa hydrate model. */
+    protected function buildTanggalPermohonanMap(): void
+    {
+        $ids = collect($this->semua_izin)->pluck('id')->all();
+        $this->tanggalPermohonanMap = empty($ids)
+            ? []
+            : DB::table('status_izin')
+                ->whereIn('izin_id', $ids)
+                ->where('nama', StatusIzinEnum::DIDAFTARKAN)
+                ->pluck('created_at', 'izin_id')
+                ->all();
     }
 
     #[On('change-layout')]
@@ -98,9 +143,13 @@ class PendaftaranIndex extends Component
         $this->selectMenu(self::DATA_IZIN_BARU);
     }
 
-    protected function getAlamat($pemohon_id)
+    protected function getAlamat($pemohon)
     {
-        $pemohon = $this->getPemohonService()->find($pemohon_id);
+        // terima model Pemohon (hindari query + region lookup per baris);
+        // fallback id untuk kompatibilitas
+        if (!$pemohon instanceof Pemohon) {
+            $pemohon = $this->getPemohonService()->find($pemohon);
+        }
         return "{$pemohon->detail_alamat}, " . $this->getRegionValue('kelurahan', $pemohon->kelurahan) . ', ' . $this->getRegionValue('kecamatan', $pemohon->kecamatan) . ', ' . $this->getRegionValue('kabupaten', $pemohon->kabupaten) . ', ' . $this->getRegionValue('provinsi', $pemohon->provinsi);
     }
 
@@ -136,9 +185,21 @@ class PendaftaranIndex extends Component
         $this->preview_pemohon_id = $id;
     }
 
-    protected function getTanggalPermohonan(int $izin_id): string
+    protected function getTanggalPermohonan($izin): string
     {
-        $permohonan = $this->getStatusIzinService()->findByNamaAndIzin(StatusIzinEnum::DIDAFTARKAN, $izin_id);
+        // 1) dari map ringan (render list)
+        $raw = $this->tanggalPermohonanMap[$izin->id ?? $izin] ?? null;
+        if ($raw) {
+            return Carbon::parse($raw)->translatedFormat('l, d F Y');
+        }
+
+        // 2) fallback relasi eager / query tunggal
+        if ($izin instanceof Izin) {
+            $permohonan = $izin->didaftarkanStatus;
+            return $permohonan ? $permohonan->created_at->translatedFormat('l, d F Y') : '-';
+        }
+
+        $permohonan = $this->getStatusIzinService()->findByNamaAndIzin(StatusIzinEnum::DIDAFTARKAN, $izin);
         return $permohonan ? $permohonan->created_at->translatedFormat('l, d F Y') : '-';
     }
 

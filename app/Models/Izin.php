@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Izin extends Model
@@ -31,6 +32,20 @@ class Izin extends Model
     public function status_izin(): HasMany
     {
         return $this->hasMany(StatusIzin::class);
+    }
+
+    /** Status terakhir — 1 baris per izin (untuk list/badge). */
+    public function latestStatus(): HasOne
+    {
+        return $this->hasOne(StatusIzin::class)->latestOfMany('created_at');
+    }
+
+    /** Status awal pendaftaran — untuk kolom tanggal permohonan. */
+    public function didaftarkanStatus(): HasOne
+    {
+        return $this->hasOne(StatusIzin::class)
+            ->where('nama', \App\utils\enums\StatusIzinEnum::DIDAFTARKAN)
+            ->oldestOfMany('created_at');
     }
 
     public function riwayat_proses_izin(): HasMany

@@ -1,52 +1,47 @@
-<div class="table-responsive position-relative">
-    <table class="table table-hover table-striped align-items-center mb-0" style="--bs-table-striped-bg: var(--color-primary-extra-light);">
+<div class="table-responsive relative">
+    <table class="w-full text-left">
         <thead>
-        <tr>
-            @if ($menu == self::DATA_PEMOHON)
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Alamat</th>
-            @elseif ($menu == self::DATA_IZIN_BARU)
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">No Pendaftraran</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID Pemohon</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pemohon</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jenis Izin</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tanggal Permohonan</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status Izin</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Pegawai yang meninjau</th>
-            @endif
-        </tr>
+            <tr class="border-b border-ink-200 bg-ink-50/60">
+                @if ($menu == self::DATA_PEMOHON)
+                    <th class="px-5 py-3.5 text-[11px] font-extrabold uppercase tracking-widest text-ink-500">No</th>
+                    <th class="px-4 py-3.5 text-[11px] font-extrabold uppercase tracking-widest text-ink-500">ID</th>
+                    <th class="px-4 py-3.5 text-[11px] font-extrabold uppercase tracking-widest text-ink-500">Nama</th>
+                    <th class="px-4 py-3.5 text-[11px] font-extrabold uppercase tracking-widest text-ink-500">Alamat</th>
+                @elseif ($menu == self::DATA_IZIN_BARU)
+                    <th class="px-5 py-3.5 text-[11px] font-extrabold uppercase tracking-widest text-ink-500">No</th>
+                    <th class="px-4 py-3.5 text-[11px] font-extrabold uppercase tracking-widest text-ink-500">No Pendaftaran</th>
+                    <th class="px-4 py-3.5 text-[11px] font-extrabold uppercase tracking-widest text-ink-500">ID Pemohon</th>
+                    <th class="px-4 py-3.5 text-[11px] font-extrabold uppercase tracking-widest text-ink-500">Pemohon</th>
+                    <th class="px-4 py-3.5 text-[11px] font-extrabold uppercase tracking-widest text-ink-500">Jenis Izin</th>
+                    <th class="px-4 py-3.5 text-[11px] font-extrabold uppercase tracking-widest text-ink-500">Tanggal</th>
+                    <th class="px-4 py-3.5 text-center text-[11px] font-extrabold uppercase tracking-widest text-ink-500">Status</th>
+                    <th class="px-4 py-3.5 text-[11px] font-extrabold uppercase tracking-widest text-ink-500">Peninjau</th>
+                @endif
+            </tr>
         </thead>
-        <tbody>
+        <tbody class="divide-y divide-ink-100">
             @if ($menu == self::DATA_PEMOHON)
                 @forelse ($semua_pemohon as $pemohon)
-                    <tr class="cursor-pointer data-pemohon" data-pemohon-id="{{ $pemohon->id }}" wire:click='previewPemohon({{ $pemohon->id }})'>
-                        <td class="align-middle ps-4 text-sm">{{ $loop->iteration }}</td>
-                        <td class="text-sm">
-                            <p class="text-xs font-weight-bold mb-0">{{ $pemohon->nomor_id }}</p>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <img src="{{ asset('storage/users/' . ($pemohon->user ? $pemohon->user->foto : 'profile.png')) }}" alt="{{ $pemohon->nama_pemohon }}" class="img-circle img-circle-xs">
-                                
-                                <h6 class="mb-0 text-sm">
-                                    {{ str_capitalize($pemohon->nama_pemohon, true) }}
-                                </h6>
+                    <tr class="cursor-pointer data-pemohon transition hover:bg-nest-50/60" data-pemohon-id="{{ $pemohon->id }}" wire:click='previewPemohon({{ $pemohon->id }})'>
+                        <td class="px-5 py-3.5 text-sm font-semibold text-ink-400">{{ $loop->iteration }}</td>
+                        <td class="px-4 py-3.5 text-sm font-bold text-ink-900">{{ $pemohon->nomor_id }}</td>
+                        <td class="px-4 py-3.5">
+                            <div class="flex items-center gap-2.5">
+                                <img src="{{ asset('storage/users/' . ($pemohon->user ? $pemohon->user->foto : 'profile.png')) }}" alt="{{ $pemohon->nama_pemohon }}" class="h-8 w-8 rounded-full object-cover ring-1 ring-ink-200">
+                                <span class="text-sm font-bold text-ink-900">{{ str_capitalize($pemohon->nama_pemohon, true) }}</span>
                             </div>
                         </td>
-                        <td>
-                            <p class="text-sm text-secondary mb-0 text-capitalize">
-                                {{ $this->getAlamat($pemohon->id) }}
-                            </p>
+                        <td class="max-w-[280px] px-4 py-3.5 text-sm capitalize text-ink-600">
+                            <span class="line-clamp-2">{{ $this->getAlamat($pemohon) }}</span>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="text-muted text-sm">
-                            <div class="vh-30 d-flex align-items-center justify-content-center">
-                                {{ $search != '' ? "'{$search}' tidak ditemukan" : 'Tidak ada data pemohon' }}
+                        <td colspan="5" class="px-5">
+                            <div class="flex flex-col items-center justify-center gap-2 py-14 text-center">
+                                <div class="h-12 w-12 rounded-2xl bg-ink-50 grid place-items-center text-ink-400"><i class="fa-solid fa-inbox"></i></div>
+                                <p class="text-sm font-bold text-ink-900">{{ $search != '' ? 'Tidak ditemukan' : 'Belum ada data pemohon' }}</p>
+                                @if ($search != '')<p class="text-sm text-ink-500">Hasil untuk “{{ $search }}” tidak ada.</p>@endif
                             </div>
                         </td>
                     </tr>
@@ -54,50 +49,38 @@
             @elseif ($menu == self::DATA_IZIN_BARU)
                 @forelse ($semua_izin as $izin)
                     @php
-                        $status = $izin->status_izin->last();
+                        $status = $izin->latestStatus;
                         $statusClasses = getStatusIzinClasses($status)
                     @endphp
-                    <tr class="cursor-pointer data-izin" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})'>
-                        <td class="align-middle text-center text-sm">{{ $loop->iteration }}</td>
-                        <td class="text-sm">
-                            <p class="text-xs font-weight-bold mb-0">{{ $izin->no_pendaftaran }}</p>
+                    <tr class="cursor-pointer data-izin transition hover:bg-nest-50/60" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})'>
+                        <td class="px-5 py-3.5 text-sm font-semibold text-ink-400">{{ $loop->iteration }}</td>
+                        <td class="px-4 py-3.5 text-sm font-bold text-ink-900">{{ $izin->no_pendaftaran }}</td>
+                        <td class="px-4 py-3.5 text-sm font-semibold text-ink-700">{{ $izin->pemohon->nomor_id }}</td>
+                        <td class="px-4 py-3.5">
+                            <div class="flex items-center gap-2.5">
+                                <img src="{{ asset('storage/users/' . ($izin->pemohon->user ? $izin->pemohon->user->foto : 'profile.png')) }}" alt="{{ $izin->pemohon->nama_pemohon }}" class="h-8 w-8 rounded-full object-cover ring-1 ring-ink-200">
+                                <span class="text-sm font-bold text-ink-900">{{ str_capitalize($izin->pemohon->nama_pemohon, true) }}</span>
+                            </div>
                         </td>
-                        <td class="text-sm">
-                            <p class="text-xs font-weight-bold mb-0">{{ $izin->pemohon->nomor_id }}</p>
-                        </td>
-                        <td>
-                            <h6 class="mb-0 text-sm">
-                                {{ str_capitalize($izin->pemohon->nama_pemohon, true) }}
-                            </h6>
-                        </td>
-                        <td>
-                            <p class="text-sm text-secondary mb-0">
-                                {{ str_capitalize($izin->jenis_perizinan->nama, true) }}
-                            </p>
-                        </td>
-                        <td class="text-center text-sm">
-                            {{ $this->getTanggalPermohonan($izin->id) }}
-                        </td>
-                        <td class="d-flex flex-column align-items-center">
-                            <span class="badge badge-dot">
-                                <i class="{{ $statusClasses['bgClass'] }}"></i>
-                                <span class="text-sm {{ $statusClasses['textClass'] }}">
-                                    {{ $status->nama }}
-                                </span>
+                        <td class="max-w-[220px] px-4 py-3.5 text-sm text-ink-600"><span class="line-clamp-2">{{ str_capitalize($izin->jenis_perizinan->nama, true) }}</span></td>
+                        <td class="whitespace-nowrap px-4 py-3.5 text-sm text-ink-600">{{ $this->getTanggalPermohonan($izin) }}</td>
+                        <td class="px-4 py-3.5 text-center">
+                            <span class="inline-flex items-center gap-1.5 rounded-full bg-ink-50 px-2.5 py-1 text-[11px] font-bold ring-1 ring-ink-200 {{ $statusClasses['textClass'] }}">
+                                <i class="{{ $statusClasses['bgClass'] }} h-1.5 w-1.5 rounded-full"></i> {{ Str::limit($status->nama, 18) }}
                             </span>
-                            <p class="text-xs text-muted mb-0">{{ $status->updated_at->diffForHumans() }}</p>
+                            <p class="mt-0.5 text-[11px] text-ink-400">{{ $status->updated_at->diffForHumans() }}</p>
                         </td>
-                        <td>
-                            <p class="text-wrap text-sm text-bold text-center mb-0">
-                                {{ $status->pegawai ? $status->pegawai->nama : 'Belum ada pegawai yang meninjau' }}
-                            </p>
+                        <td class="max-w-[160px] px-4 py-3.5 text-center text-sm font-semibold {{ $status->pegawai ? 'text-ink-800' : 'text-ink-400 italic' }}">
+                            {{ $status->pegawai ? $status->pegawai->nama : 'Belum ditinjau' }}
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td class="text-sm text-muted py-3" colspan="8">
-                            <div class="vh-30 d-flex align-items-center justify-content-center">
-                                tidak ada data
+                        <td colspan="8" class="px-5">
+                            <div class="flex flex-col items-center justify-center gap-2 py-14 text-center">
+                                <div class="h-12 w-12 rounded-2xl bg-ink-50 grid place-items-center text-ink-400"><i class="fa-solid fa-inbox"></i></div>
+                                <p class="text-sm font-bold text-ink-900">Tidak ada data</p>
+                                <p class="text-sm text-ink-500">Coba ubah filter tanggal atau kata kunci pencarian.</p>
                             </div>
                         </td>
                     </tr>
@@ -106,8 +89,17 @@
         </tbody>
     </table>
     <div wire:loading wire:target='previewDataIzin, previewPemohon, start_date, end_date, search'>
-        <div class="position-absolute top-0 start-0 h-100 w-100 d-flex align-items-center justify-content-center bg-light opacity-75">
-            <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
+        <div class="absolute inset-0 z-10 grid place-items-center bg-white/75 backdrop-blur-[2px]">
+            <div class="flex flex-col items-center gap-2">
+                <i class="fa-solid fa-spinner fa-spin text-xl text-nest-700"></i>
+                <p class="text-xs font-bold text-ink-500">Memuat…</p>
+            </div>
         </div>
     </div>
+
+    @if ($menu == self::DATA_PEMOHON)
+        <x-pagination-nestara :paginator="$semua_pemohon" />
+    @else
+        <x-pagination-nestara :paginator="$semua_izin" />
+    @endif
 </div>

@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * Active OCR API implementation.
+ *
+ * Runtime DB config via get_pengaturan(OCR_API_KEY / OCR_BASE_URL), header X-API-KEY,
+ * uses Illuminate\Support\Facades\Http (multipart). Bound as OcrAPIService in AppServiceProvider.
+ */
 class OcrAPIServiceImpl2 implements OcrAPIService
 {
 

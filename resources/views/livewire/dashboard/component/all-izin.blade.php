@@ -13,10 +13,7 @@
                     <input type="date" class="form-control" id="end_date" name="end_date" wire:model.live='end_date'>
                 </div>
             </div>
-            <div class="input-group input-group-outline">
-                <label for="search" class="form-label">cari...</label>
-                <input type="text" class="form-control" id="search" name="search" wire:model.live='search'>
-            </div>
+            <div><label for="search" class="block text-xs font-bold tracking-wide text-ink-700 uppercase">cari...</label><input type="text" class="mt-1.5 w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100 " id="search" name="search" wire:model.live='search'></div>
         </div>
         @foreach ($semua_izin as $izin)
             @php

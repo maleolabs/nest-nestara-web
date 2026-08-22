@@ -35,8 +35,11 @@ class CreateIzin extends Component
     private const LAST_STEP = 3;
 
     public $allPerizinan = [],
+        $filteredPerizinan = [],
         $selectedPerizinan,
         $persyaratan = [];
+
+    public $jenis_izin_search = '';
 
     public function mount()
     {
@@ -48,14 +51,31 @@ class CreateIzin extends Component
     {
         $this->setUpdatedData($field);
         if ($field == 'data_izin_form.jenis_izin') {
-            $this->selectedPerizinan = $this->getJenisPerizinanService()->findByName($this->data_izin_form->jenis_izin);
-            $this->persyaratan = [];
+            $this->applyJenisIzin();
         }
+    }
+
+    private function applyJenisIzin()
+    {
+        $this->selectedPerizinan = $this->getJenisPerizinanService()->findByName($this->data_izin_form->jenis_izin);
+        $this->persyaratan = [];
+    }
+
+    public function selectJenisIzin($nama)
+    {
+        $this->data_izin_form->jenis_izin = $nama;
+        $this->jenis_izin_search = $nama;
+        $this->applyJenisIzin();
+        $this->dispatch('izin-selected');
     }
 
     public function render()
     {
         $this->allPerizinan = JenisPerizinan::all();
+        $q = trim($this->jenis_izin_search);
+        $this->filteredPerizinan = $q === ''
+            ? $this->allPerizinan
+            : $this->allPerizinan->filter(fn ($p) => str_contains(strtolower($p->nama), strtolower($q)))->values();
         $this->setDataPemohonIfUserAlreadyHas();
         $this->setRegionData();
         return view('livewire.user.izin.create-izin');
@@ -63,6 +83,13 @@ class CreateIzin extends Component
 
     public function save()
     {
+        // validasi eksplisit agar kegagalan tidak terjadi diam-diam di step konfirmasi
+        $this->data_izin_form->validate();
+        if (!$this->selectedPerizinan) {
+            throw ValidationException::withMessages([
+                'data_izin_form.jenis_izin' => 'Jenis izin belum dipilih.',
+            ]);
+        }
         $this->saveDataPemohon(auth()->user()->id);
         $izin = $this->getPerizinanService()->saveRegistration($this->selectedPerizinan->id, $this->pemohon_id);
         $this->saveDataIzin($izin->id);

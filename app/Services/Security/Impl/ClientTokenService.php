@@ -52,7 +52,7 @@ class ClientTokenService implements TokenService
         return $token;
     }
 
-    public function regenerateToken(string $ttl_type = null, int $ttl_long = null): void
+    public function regenerateToken(?string $ttl_type = null, ?int $ttl_long = null): void
     {
         if (is_null($ttl_type) || is_null($ttl_long)) {
             $ttl_type = get_pengaturan(self::SET_CLIENT_TOKEN_TTL_TYPE, 'day');

@@ -17,10 +17,24 @@ class PerizinanController extends Controller
         $this->encryptionService = $encryptionService;
     }
     
-    public function jenisPerizinan()
+    public function jenisPerizinan(Request $request)
     {
+        $q = trim((string) $request->input('q', ''));
+
+        $all_perizinan = JenisPerizinan::query()
+            ->when($q !== '', function ($query) use ($q) {
+                $query->where(function ($sub) use ($q) {
+                    $sub->where('nama', 'LIKE', "%{$q}%")
+                        ->orWhere('kelompok_izin', 'LIKE', "%{$q}%");
+                });
+            })
+            ->orderBy('nama')
+            ->paginate(12)
+            ->withQueryString();
+
         return response()->view('user.jenis-perizinan', [
-            'all_perizinan' => JenisPerizinan::paginate(20)
+            'all_perizinan' => $all_perizinan,
+            'q' => $q,
         ]);
     }
 

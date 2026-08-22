@@ -1,153 +1,152 @@
 @push('breadcrumb-item')
-    <li class="breadcrumb-item active">
-        Pegaturan
-    </li>
+    <li class="text-xs font-semibold text-ink-600">/ Pengaturan</li>
 @endpush
-<div>
-    <md-linear-progress wire:loading wire:target='selectTab' class="position-fixed top-0 w-100 start-0" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: var(--color-primary-disable); z-index: 9999"></md-linear-progress>
+<div class="mx-auto max-w-[880px] space-y-6">
+    <md-linear-progress wire:loading wire:target='selectTab' class="fixed top-0 left-0 w-full" indeterminate style="--md-linear-progress-active-indicator-color: #0f766e; z-index: 9999"></md-linear-progress>
 
-    <div class="card mb-4">
-        <div class="card-header border-bottom">
-            <h6 class="fw-bold mb-0 text-capitalize">pengaturan surat</h6>
-        </div>
-        <div class="card-body">
-            <p class="text-sm fw-semibold mb-1">Pengaturan Kop Surat</p>
-            <div class="border rounded-3 p-4">
-                <div class="row">
-                    <div class="col-6 mb-3">
-                        <p class="mb-1 text-xs fw-medium">nama pemerintah</p>
-                        <div class="input-group input-group-sm border rounded-3">
-                            <input type="text" class="form-control rounded-3 border-0" wire:model='kop_surat_form.nama_pemerintah' placeholder="masukkan nama pemerintah">
-                        </div>
-                        @error('kop_surat_form.nama_pemerintah')
-                            <div class="text-danger text-sm">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-6 mb-3">
-                        <p class="mb-1 text-xs fw-medium">nama dinas</p>
-                        <div class="input-group input-group-sm border rounded-3">
-                            <input type="text" class="form-control rounded-3 border-0" wire:model='kop_surat_form.nama_dinas' placeholder="masukkan nama dinas">
-                        </div>
-                        @error('kop_surat_form.nama_dinas')
-                            <div class="text-danger text-sm">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-6 mb-3">
-                        <p class="mb-1 text-xs fw-medium">alamat</p>
-                        <div class="input-group input-group-sm border rounded-3">
-                            <input type="text" class="form-control rounded-3 border-0" wire:model='kop_surat_form.alamat' placeholder="masukkan alamat dinas">
-                        </div>
-                        @error('kop_surat_form.alamat')
-                            <div class="text-danger text-sm">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-6 mb-3">
-                        <p class="mb-1 text-xs fw-medium">website</p>
-                        <div class="input-group input-group-sm border rounded-3">
-                            <input type="text" class="form-control rounded-3 border-0" wire:model='kop_surat_form.website' placeholder="masukkan website">
-                        </div>
-                        @error('kop_surat_form.website')
-                            <div class="text-danger text-sm">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <button class="btn btn-sm bg-gradient-primary text-capitalize" type="button" wire:click='saveKopSurat' wire:loading.class='disabled' wire:target='saveKopSurat'>
-                        <span wire:loading.remove wire:target='saveKopSurat'>simpan</span>
-                        <span class="spinner-border spinner-border-sm" wire:loading wire:target='saveKopSurat'></span>
-                    </button>
-                </div>
-            </div>
-
-            <p class="text-sm fw-semibold mb-1 mt-4">Pengaturan Info Surat</p>
-            <div class="border rounded-3 p-4">
-                <div class="row">
-                    <div class="col-6 mb-3">
-                        <p class="mb-1 text-xs fw-medium">nomor surat terakhir</p>
-                        <div class="input-group input-group-sm border rounded-3">
-                            <input type="number" class="form-control rounded-3 border-0" wire:model='nomor_surat' placeholder="masukkan nomor surat terakhir">
-                        </div>
-                        @error('nomor_surat')
-                            <div class="text-danger text-sm">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-6 mb-3">
-                        <p class="mb-1 text-xs fw-medium">tempat penetapan</p>
-                        <div class="input-group input-group-sm border rounded-3">
-                            <input type="text" class="form-control rounded-3 border-0" wire:model='tempat_penetapan' placeholder="masukkan tempat penetapan">
-                        </div>
-                        @error('tempat_penetapan')
-                            <div class="text-danger text-sm">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-                <div class="mt-3">
-                    <button class="btn btn-sm bg-gradient-primary text-capitalize" type="button" wire:click='saveInfoSurat' wire:loading.class='disabled' wire:target='saveInfoSurat'>
-                        <span wire:loading.remove wire:target='saveInfoSurat'>simpan</span>
-                        <span class="spinner-border spinner-border-sm" wire:loading wire:target='saveInfoSurat'></span>
-                    </button>
-                </div>
-            </div>
-        </div>
+    {{-- header --}}
+    <div>
+        <p class="text-xs font-extrabold tracking-widest text-nest-700 uppercase">Konfigurasi Sistem</p>
+        <h1 class="mt-1 font-display font-extrabold text-[26px] leading-tight text-ink-900">Pengaturan</h1>
+        <p class="mt-1 text-sm text-ink-600">Kelola identitas surat resmi dan integrasi API OCR.</p>
     </div>
 
-    @if ($ocr_setting)
-        <div class="card">
-            <div class="card-header border-bottom">
-                <h6 class="fw-bold mb-0">Pengaturan OCR</h6>    
-            </div>
-            <div class="card-body p-4">
-                <div class="border rounded-3 p-3">
-                    <div class="row mb-3">
-                        <div class="col-sm-5 mb-3">
-                            <label for="api_token">
-                                <p class="mb-1 text-sm fw-semibold">API Token</p>
-                                <p class="text-xs mb-0">
-                                    Masukkan API Key yang digunakan untuk mengautentikasi permintaan ke API OCR. Jangan bagikan API Key ini kepada pihak lain.
-                                </p>
-                            </label>
-                        </div>
-                        <div class="col-sm-7 mb-3">
-                            <div class="input-group input-group-sm border rounded-3">
-                                <input type="text" class="form-control rounded-3 border-0" wire:model='api_key' placeholder="Masukkan API Key">
-                            </div>
-                        </div>
-    
-                        <div class="col-12 mb-3">
-                            <hr>
-                        </div>
-    
-                        <div class="col-sm-5 mb-3">
-                            <label for="api_token">
-                                <p class="mb-1 text-sm fw-semibold">Base URL API</p>
-                                <p class="text-xs mb-0">
-                                    URL dasar untuk mengakses layanan API OCR. Pastikan URL ini sesuai dengan lingkungan yang digunakan (misalnya produksi atau pengujian).
-                                </p>
-                            </label>
-                        </div>
-                        <div class="col-sm-7 mb-3">
-                            <div class="input-group input-group-sm border rounded-3">
-                                <input type="text" class="form-control rounded-3 border-0" wire:model='base_url' placeholder="https://api.ocr-system.com/v1">
-                            </div>
-                        </div>
-
-                        <div class="col-12 mb-3">
-                            <hr>
-                        </div>
-                    </div>
-
-                    @if($ocr_config_saved)
-                        <div class="border border-success bg-success-light p-3 text-success text-sm rounded mb-3">
-                            Berhasil menyimpan konfigurasi API OCR
-                        </div>
-                    @endif
-
-                    <button class="btn btn-sm bg-gradient-primary text-capitalize" type="button" wire:click='saveOcrApiConfig' wire:loading.class='disabled' wire:target='saveOcrApiConfig'>
-                        <span wire:loading.remove wire:target='saveOcrApiConfig'>simpan</span>
-                        <span class="spinner-border spinner-border-sm" wire:loading wire:target='saveOcrApiConfig'></span>
-                    </button>
-                </div>
+    {{-- kop & info surat --}}
+    <section class="rounded-2xl bg-white ring-1 ring-ink-200 shadow-[0_4px_20px_rgba(15,23,42,0.05)] overflow-hidden">
+        <div class="flex items-center gap-3 border-b border-ink-100 px-6 py-4">
+            <span class="h-9 w-9 rounded-xl bg-nest-50 text-nest-700 grid place-items-center ring-1 ring-nest-200"><i class="fa-solid fa-file-lines text-sm"></i></span>
+            <div>
+                <h3 class="text-sm font-extrabold text-ink-900">Pengaturan Surat</h3>
+                <p class="text-xs text-ink-500">Kop surat & info penetapan dokumen resmi.</p>
             </div>
         </div>
+        <div class="p-6 space-y-8">
+            {{-- kop --}}
+            <div>
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-heading text-xs text-ink-400"></i>
+                    <p class="text-sm font-bold text-ink-900">Kop Surat</p>
+                </div>
+                <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div>
+                        <label class="text-xs font-bold tracking-wide text-ink-700 uppercase">Nama Pemerintah</label>
+                        <input type="text" wire:model='kop_surat_form.nama_pemerintah' placeholder="Pemerintah Kabupaten Bone Bolango"
+                            class="mt-1.5 w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
+                        @error('kop_surat_form.nama_pemerintah')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold tracking-wide text-ink-700 uppercase">Nama Dinas</label>
+                        <input type="text" wire:model='kop_surat_form.nama_dinas' placeholder="Dinas Penanaman Modal & PTSP"
+                            class="mt-1.5 w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
+                        @error('kop_surat_form.nama_dinas')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold tracking-wide text-ink-700 uppercase">Alamat</label>
+                        <input type="text" wire:model='kop_surat_form.alamat' placeholder="Alamat lengkap dinas"
+                            class="mt-1.5 w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
+                        @error('kop_surat_form.alamat')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold tracking-wide text-ink-700 uppercase">Website</label>
+                        <input type="text" wire:model='kop_surat_form.website' placeholder="https://bonebolango.go.id"
+                            class="mt-1.5 w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
+                        @error('kop_surat_form.website')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
+                    </div>
+                </div>
+                <button type="button" wire:click='saveKopSurat' wire:loading.class='opacity-50 pointer-events-none' wire:target='saveKopSurat'
+                    class="mt-4 inline-flex items-center gap-2 rounded-full bg-ink-900 px-5 py-2.5 text-sm font-bold text-white hover:bg-ink-800 transition">
+                    <span wire:loading.remove wire:target='saveKopSurat'><i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Kop Surat</span>
+                    <span class="hidden" wire:loading wire:target='saveKopSurat'><i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan…</span>
+                </button>
+            </div>
+
+            <div class="border-t border-dashed border-ink-200"></div>
+
+            {{-- info surat --}}
+            <div>
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-stamp text-xs text-ink-400"></i>
+                    <p class="text-sm font-bold text-ink-900">Info Surat</p>
+                </div>
+                <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div>
+                        <label class="text-xs font-bold tracking-wide text-ink-700 uppercase">Nomor Surat Terakhir</label>
+                        <input type="number" wire:model='nomor_surat' placeholder="Contoh: 128"
+                            class="mt-1.5 w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
+                        @error('nomor_surat')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold tracking-wide text-ink-700 uppercase">Tempat Penetapan</label>
+                        <input type="text" wire:model='tempat_penetapan' placeholder="Contoh: Suwawa"
+                            class="mt-1.5 w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
+                        @error('tempat_penetapan')<p class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</p>@enderror
+                    </div>
+                </div>
+                <button type="button" wire:click='saveInfoSurat' wire:loading.class='opacity-50 pointer-events-none' wire:target='saveInfoSurat'
+                    class="mt-4 inline-flex items-center gap-2 rounded-full bg-ink-900 px-5 py-2.5 text-sm font-bold text-white hover:bg-ink-800 transition">
+                    <span wire:loading.remove wire:target='saveInfoSurat'><i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Info Surat</span>
+                    <span class="hidden" wire:loading wire:target='saveInfoSurat'><i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan…</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    {{-- OCR --}}
+    @if ($ocr_setting)
+        <section class="rounded-2xl bg-white ring-1 ring-ink-200 shadow-[0_4px_20px_rgba(15,23,42,0.05)] overflow-hidden">
+            <div class="flex items-center justify-between border-b border-ink-100 px-6 py-4">
+                <div class="flex items-center gap-3">
+                    <span class="h-9 w-9 rounded-xl bg-sky-50 text-sky-700 grid place-items-center ring-1 ring-sky-200"><i class="fa-solid fa-cloud-arrow-up text-sm"></i></span>
+                    <div>
+                        <h3 class="text-sm font-extrabold text-ink-900">Integrasi API OCR</h3>
+                        <p class="text-xs text-ink-500">Autentikasi & endpoint layanan OCR untuk baca dokumen otomatis.</p>
+                    </div>
+                </div>
+                <span class="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-bold text-emerald-700 ring-1 ring-emerald-200">
+                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Aktif
+                </span>
+            </div>
+            <div class="p-6 space-y-6">
+                <div class="grid gap-4 sm:grid-cols-[minmax(0,280px)_1fr] sm:items-start">
+                    <div>
+                        <p class="text-sm font-bold text-ink-900">API Token</p>
+                        <p class="mt-0.5 text-xs leading-relaxed text-ink-500">API Key untuk autentikasi permintaan ke layanan OCR. Jangan bagikan ke pihak lain.</p>
+                    </div>
+                    <div>
+                        <div class="relative">
+                            <i class="fa-solid fa-key pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400 text-xs"></i>
+                            <input type="password" wire:model='api_key' placeholder="Masukkan API Key"
+                                class="w-full rounded-xl border border-ink-200 bg-white py-2.5 pl-10 pr-4 text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
+                        </div>
+                    </div>
+                </div>
+                <div class="border-t border-dashed border-ink-200"></div>
+                <div class="grid gap-4 sm:grid-cols-[minmax(0,280px)_1fr] sm:items-start">
+                    <div>
+                        <p class="text-sm font-bold text-ink-900">Base URL API</p>
+                        <p class="mt-0.5 text-xs leading-relaxed text-ink-500">URL dasar layanan OCR — sesuaikan dengan lingkungan (produksi/pengujian).</p>
+                    </div>
+                    <div>
+                        <div class="relative">
+                            <i class="fa-solid fa-link pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-400 text-xs"></i>
+                            <input type="text" wire:model='base_url' placeholder="https://api.ocr-system.com/v1"
+                                class="w-full rounded-xl border border-ink-200 bg-white py-2.5 pl-10 pr-4 text-sm font-medium text-ink-900 placeholder:text-ink-400 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
+                        </div>
+                    </div>
+                </div>
+
+                @if($ocr_config_saved)
+                    <div class="flex items-center gap-2 rounded-xl bg-emerald-50 px-4 py-3 ring-1 ring-emerald-200 text-sm font-semibold text-emerald-700">
+                        <i class="fa-solid fa-circle-check"></i> Berhasil menyimpan konfigurasi API OCR.
+                    </div>
+                @endif
+
+                <button type="button" wire:click='saveOcrApiConfig' wire:loading.class='opacity-50 pointer-events-none' wire:target='saveOcrApiConfig'
+                    class="inline-flex items-center gap-2 rounded-full bg-nest-700 px-5 py-2.5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(15,118,110,0.25)] hover:bg-nest-800 transition">
+                    <span wire:loading.remove wire:target='saveOcrApiConfig'><i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Konfigurasi OCR</span>
+                    <span class="hidden" wire:loading wire:target='saveOcrApiConfig'><i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan…</span>
+                </button>
+            </div>
+        </section>
     @endif
 </div>

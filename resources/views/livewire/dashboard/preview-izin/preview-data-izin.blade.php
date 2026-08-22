@@ -34,16 +34,16 @@
                         <div class="d-flex flex-sm-row flex-column justify-content-sm-between align-items-sm-top align-items-between gap-3">
                             <div>
                                 <p class="mb-0 text-sm">Nama Izin</p>
-                                <h3 class="spacing-md">{{ str_capitalize($preview_izin->jenis_perizinan->nama, true) }}</h3>
-                                <h6 class="mb-0 spacing-normal">
+                                <h3 class="">{{ str_capitalize($preview_izin->jenis_perizinan->nama, true) }}</h3>
+                                <h6 class="mb-0 ">
                                     <i class="fa-solid fa-layer-group"></i>
                                     {{ $preview_izin->jenis_perizinan->kelompok_izin }}
                                 </h6>
-                                <h6 class="mb-0 spacing-normal">
+                                <h6 class="mb-0 ">
                                     <i class="fa-solid fa-hourglass-half mx-1"></i>
                                     Durasi pengerjaan {{ $preview_izin->jenis_perizinan->durasi }}
                                 </h6>
-                                <h6 class="mb-0 spacing-normal">
+                                <h6 class="mb-0 ">
                                     <i class="fa-regular fa-calendar-check mx-1"></i>
                                     Masa berlaku izin {{ $preview_izin->jenis_perizinan->masa_berlaku }}
                                 </h6>

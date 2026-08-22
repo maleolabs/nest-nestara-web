@@ -24,7 +24,7 @@ interface PengaturanService {
      * @param bool $hidden (Opsional) Apakah pengaturan harus disembunyikan.
      * @return Pengaturan|null Objek Pengaturan yang diperbarui atau dibuat, atau null jika gagal.
      */
-    function updateOrCreate(string $nama, $value, string $group = null, $user_id = null, bool $hidden = false): ?Pengaturan;
+    function updateOrCreate(string $nama, $value, ?string $group = null, $user_id = null, bool $hidden = false): ?Pengaturan;
 
     /**
      * Menemukan pengaturan berdasarkan nama.

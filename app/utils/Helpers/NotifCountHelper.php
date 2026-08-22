@@ -8,14 +8,26 @@ use App\utils\enums\StatusIzinProgressEnum;
 if (!function_exists('countByProcess')) {
     function countByProcess($process)
     {
+        // memo per-request — badge dipanggil berkali-kali di layout
+        static $memo = [];
+
+        if (array_key_exists($process, $memo)) {
+            return $memo[$process];
+        }
+
         $perizinanService = app(PerizinanService::class);
         $status = getProcessStatus($process);
         $progress = getProcessProgress($process);
         $keterangan = getProcessKeterangan($process);
 
-        $count = $perizinanService->getCount($status, $progress, $keterangan);
+        // cache singkat antar request — badge tidak perlu real-time ketat
+        $count = cache()->remember(
+            "notif-count:{$process}:" . md5(serialize([$status, $progress, $keterangan])),
+            now()->addSeconds(30),
+            fn () => $perizinanService->getCount($status, $progress, $keterangan)
+        );
 
-        return $count > 0 ? $count : '';
+        return $memo[$process] = $count > 0 ? $count : '';
     }
 }
 

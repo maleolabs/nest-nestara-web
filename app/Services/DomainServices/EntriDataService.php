@@ -123,7 +123,7 @@ interface EntriDataService {
 	 * 
 	 * @return array|null Mengembalikan array data entri izin yang disimpan jika berhasil, atau null jika gagal.
 	 */
-	function saveEntriDataIzin($entri_data_izin, int $izin_id, string $value = null): ?array;
+	function saveEntriDataIzin($entri_data_izin, int $izin_id, ?string $value = null): ?array;
 
 	/**
 	 * Memeriksa apakah data entri izin sudah ada berdasarkan ID izin dan ID jenis perizinan.

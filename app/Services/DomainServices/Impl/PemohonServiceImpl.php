@@ -8,7 +8,7 @@ use App\Services\DomainServices\PemohonService;
 class PemohonServiceImpl implements PemohonService
 {
 
-    public function save(array $data_pemohon, int $user_id = null): ?Pemohon
+    public function save(array $data_pemohon, ?int $user_id = null): ?Pemohon
     {
         if ($user_id != null)
             $data_pemohon['user_id'] = $user_id;
@@ -33,15 +33,26 @@ class PemohonServiceImpl implements PemohonService
 
     public function getAll($search = '', ?int $limit = null): array
     {
-        $semua_pemohon = Pemohon::where('nomor_id', 'LIKE', '%' . $search . '%')
-        ->orWhereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%']);
+        // grouping diperbaiki: orWhere sebelumnya merusak filter nomor_id
+        $query = Pemohon::where(function ($query) use ($search) {
+            $query->where('nomor_id', 'LIKE', '%' . $search . '%')
+                ->orWhereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%']);
+        });
 
-        if ($limit)
-            $semua_pemohon = $semua_pemohon->take($limit);
-        
-        $semua_pemohon = $semua_pemohon->get();
-        
-        return $semua_pemohon->all();
+        // safety cap — hindari load seluruh tabel tanpa batas
+        $query->take($limit ?: 500);
+
+        return $query->get()->all();
+    }
+
+    public function getPaginated(string $search = '', int $per_page = 20, int $page = 1, string $page_name = 'page'): \Illuminate\Contracts\Pagination\LengthAwarePaginator
+    {
+        return Pemohon::where(function ($query) use ($search) {
+            $query->where('nomor_id', 'LIKE', '%' . $search . '%')
+                ->orWhereRaw('LOWER(nama_pemohon) LIKE ?', ['%' . strtolower($search) . '%']);
+        })
+            ->orderBy('created_at', 'desc')
+            ->paginate($per_page, ['*'], $page_name, $page);
     }
 
     public function getByNomorIdOrNamaPemohon(string $cari): array

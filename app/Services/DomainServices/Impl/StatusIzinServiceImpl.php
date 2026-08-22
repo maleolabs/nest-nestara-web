@@ -49,7 +49,7 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		DB::table('status_izin')->insert($status_izin_data);
 	}
 
-	public function updateStatusIzin(int $izin_id, string $status, string $progres, string $ket = null, int $pegawai_id = null, $updated_at = null, bool $new = false, bool $keep_pegawai = false): void
+	public function updateStatusIzin(int $izin_id, string $status, string $progres, ?string $ket = null, ?int $pegawai_id = null, $updated_at = null, bool $new = false, bool $keep_pegawai = false): void
 	{
 		$status_izin = StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->first();
 		if ($status_izin && !$new) {
@@ -86,7 +86,7 @@ class StatusIzinServiceImpl implements StatusIzinService {
 			$izin->touch();
 	}
 
-	public function updateStatusIzinWithDetailKeterangan(int $izin_id, string $status, string $progres, ?string $keterangan = null, string $detail_keterangan = null): void
+	public function updateStatusIzinWithDetailKeterangan(int $izin_id, string $status, string $progres, ?string $keterangan = null, ?string $detail_keterangan = null): void
 	{
 		$status_izin = StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->first();
 		if ($status_izin) {

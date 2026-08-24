@@ -27,10 +27,31 @@ interface OcrAPIService
 
     /**
      * Mengecek status dari request OCR
-     * 
-     * @param int $request_id ID dari request
+     *
+     * @param int|string $request_id ID dari request
      * @return OcrResponse|null
      */
     function checkOcrRequestStatus(int|string $request_id): ?OcrResponse;
+
+    /**
+     * Mengirim gambar KTP (isi file) untuk proses OCR tanpa terkait izin.
+     * Berbeda dengan sendOcrRequest: tidak membuat record ocr_requests
+     * (tidak ada izin_id) dan mengirim file pada part "image" sesuai
+     * kontrak vision service.
+     *
+     * @param string $image_contents isi file gambar KTP
+     * @param string|null $original_file_name nama asli file gambar
+     * @param array<string> $required_keys keys hasil ekstraksi yang diminta
+     * @return OcrResponse|null
+     */
+    function sendKtpImageRequest(string $image_contents, ?string $original_file_name, array $required_keys = []): ?OcrResponse;
+
+    /**
+     * Mengambil hasil OCR berdasarkan request id dari vision service.
+     *
+     * @param int|string $request_id ID dari request
+     * @return OcrResponse|null
+     */
+    function getOcrResultByRequestId(int|string $request_id): ?OcrResponse;
 
 }

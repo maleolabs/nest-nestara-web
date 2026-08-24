@@ -24,3 +24,4 @@ setup_nginx.sh
 /.anvil/artifacts/
 /.anvil/state/
 /storage/app/region/
+/storage/app/private_files/ocr_ktp

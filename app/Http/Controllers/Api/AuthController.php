@@ -73,7 +73,19 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
+            'profile_complete' => $this->profileComplete(),
         ]);
     }
-    
+
+    /**
+     * Profil dianggap lengkap ketika user sudah memiliki data pemohon.
+     * Menggunakan exists() pada relasi agar tetap murah (single query).
+     */
+    private function profileComplete(): bool
+    {
+        $user = Auth::guard('api')->user();
+
+        return (bool) $user?->pemohon()->exists();
+    }
+
 }

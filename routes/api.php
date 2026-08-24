@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AddressController;
 use App\Http\Controllers\Api\JenisPerizinanController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DataEntriController;
+use App\Http\Controllers\Api\OcrController;
 use App\Http\Controllers\Api\PemohonController;
 use App\Http\Controllers\Api\PerizinanController;
 use App\Http\Controllers\Api\TokenController;
@@ -37,6 +38,11 @@ Route::middleware(['jwt.auth'])->group(function() {
     Route::prefix('/pemohon')->group(function() {
         Route::post('/', [PemohonController::class, 'store']);
         Route::get('/', [PemohonController::class, 'find']);
+    });
+
+    Route::prefix('/ocr')->group(function() {
+        Route::post('/ktp', [OcrController::class, 'store']);
+        Route::get('/ktp/{request_id}', [OcrController::class, 'status'])->where('request_id', '[A-Za-z0-9-]+');
     });
 
     Route::prefix('/user')->group(function() {

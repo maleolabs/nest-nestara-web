@@ -29,7 +29,11 @@ class OcrAPIServiceImpl2 implements OcrAPIService
     private const APPLICATION_JSON = 'application/json';
     private const MULTIPART_FORM_DATA = 'multipart/form-data';
 
-    private const CACHE_TTL = 14400; // 12 hours
+    private const CACHE_TTL = 14400; // 4 hours
+
+    private const REQUEST_TIMEOUT_SECONDS = 25;
+    private const CONNECT_TIMEOUT_SECONDS = 5;
+    private const FETCH_TIMEOUT_SECONDS = 5;
 
     public function getEntriDataValueByIzinId(int $izin_id): ?OcrResponse
     {
@@ -74,9 +78,58 @@ class OcrAPIServiceImpl2 implements OcrAPIService
         try {
             $endpoint = "/ocr/check-status/{$request_id}";
 
-            return $this->fetchAndParseResponse($endpoint, [], false);
+            return $this->fetchAndParseResponse($endpoint, [], false, self::FETCH_TIMEOUT_SECONDS);
         } catch (Exception $e) {
             Log::channel('app')->error('failed to check ocr request status', ['error' => $e->getMessage()]);
+            return null;
+        }
+    }
+
+    public function sendKtpImageRequest(string $image_contents, ?string $original_file_name, array $required_keys = []): ?OcrResponse
+    {
+        try {
+            $endpoint = "/ocr/do-ocr";
+            $uri = $this->getBaseUrl() . $endpoint;
+            $headers = $this->getRequiredHeader();
+
+            $multipart = [
+                [
+                    'name' => 'image',
+                    'contents' => $image_contents,
+                    'filename' => $original_file_name ?: 'ktp.jpg'
+                ]
+            ];
+            foreach ($required_keys as $key) {
+                $multipart[] = [
+                    'name' => 'requiredKeys[]',
+                    'contents' => $key
+                ];
+            }
+
+            $response = Http::withHeaders($headers)
+                ->timeout(self::REQUEST_TIMEOUT_SECONDS)
+                ->connectTimeout(self::CONNECT_TIMEOUT_SECONDS)
+                ->asMultipart()
+                ->post($uri, $multipart);
+
+            return $this->parseJsonResponse($response->body());
+        } catch (ConnectionException $ce) {
+            Log::channel('app')->error('failed to send ktp ocr request, got connection exception', ['error' => $ce->getMessage()]);
+            return null;
+        } catch (Exception $e) {
+            Log::channel('app')->error('failed to send ktp ocr request', ['error' => $e->getMessage()]);
+            return null;
+        }
+    }
+
+    public function getOcrResultByRequestId(int|string $request_id): ?OcrResponse
+    {
+        try {
+            $endpoint = "/ocr/get-result/{$request_id}";
+
+            return $this->fetchAndParseResponse($endpoint, [], true, self::FETCH_TIMEOUT_SECONDS);
+        } catch (Exception $e) {
+            Log::channel('app')->error('failed to get ocr result by request id', ['error' => $e->getMessage()]);
             return null;
         }
     }
@@ -101,7 +154,7 @@ class OcrAPIServiceImpl2 implements OcrAPIService
         }
     }
 
-    private function fetchAndParseResponse(string $endpoint, array $additional_header = [], bool $cache = true)
+    private function fetchAndParseResponse(string $endpoint, array $additional_header = [], bool $cache = true, ?int $timeout_seconds = null)
     {
         $cacheKey = str_replace('/', '-', $endpoint);
 
@@ -116,15 +169,21 @@ class OcrAPIServiceImpl2 implements OcrAPIService
         $headers = array_merge($this->getRequiredHeader(), $additional_header);
 
         try {
-            $response = Http::withHeaders($headers)->get($uri);
+            $http = Http::withHeaders($headers);
+            if ($timeout_seconds !== null) {
+                $http = $http->timeout($timeout_seconds)->connectTimeout(self::CONNECT_TIMEOUT_SECONDS);
+            }
+
+            $response = $http->get($uri);
             $responseData = $response->body();
 
             $ocrResponse = $this->parseJsonResponse($responseData);
-            
-            if ($cache && $ocrResponse->getData()['status'] == 'DONE') {
+
+            // guard: body non-JSON (mis. 404 kosong) menghasilkan OcrResponse null
+            if ($cache && $ocrResponse !== null && ($ocrResponse->getData()['status'] ?? null) == 'DONE') {
                 $this->saveCacheData($cacheKey, $responseData);
             }
-            
+
             return $ocrResponse;
         } catch (RequestException $re) {
             return $this->handleRequestException($re);

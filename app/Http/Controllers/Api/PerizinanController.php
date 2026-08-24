@@ -71,7 +71,7 @@ class PerizinanController extends Controller
                 'success' => false,
                 'message' => 'Data pemohon tidak ditemukan',
                 'error' => 'Data pemohon tidak ditemukan'
-            ]);
+            ], Response::HTTP_BAD_REQUEST);
         }
 
         try {
@@ -92,6 +92,10 @@ class PerizinanController extends Controller
             ], Response::HTTP_BAD_REQUEST);
         } catch (Exception $e) {
             Log::channel('app')->error('error saving izin', ['error' => $e->getMessage()]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menyimpan pendaftaran izin'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return response()->json([

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\JenisPerizinanResource;
 use App\Http\Resources\SyaratIzinResource;
-use App\Models\JenisPerizinan;
 use App\Services\DomainServices\JenisPerizinanService;
 use Illuminate\Http\JsonResponse;
 
@@ -30,12 +29,6 @@ class JenisPerizinanController extends Controller
         $page = request()->query('page', 1);
         $limit = request()->query('limit', 10);
         $onlyTemplateExists = request()->query('available', false);
-
-        if ($limit <= 10) {
-            $totalData = JenisPerizinan::count();
-            $totalPage = ceil($totalData / $limit);
-            $page = rand(1, $totalPage);
-        }
 
         $data = $this->jenisPerizinanService->getAllPaginate($search, $page, $limit);
         $idsAvailabele = $this->jenisPerizinanService->getIdsWhereTemplateExists();

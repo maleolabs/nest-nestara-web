@@ -1,0 +1,9 @@
+# docker-compose.override.yml — copy ke docker-compose.override.yml untuk custom lokal
+# File ini auto-merge oleh docker compose (jangan commit override lokal).
+# Contoh: ganti DB password atau mount volume lain.
+
+# services:
+#   web:
+#     environment:
+#       - APP_DEBUG=true
+#       - OCR_API_BASE_URL=http://host.docker.internal:8080/api/

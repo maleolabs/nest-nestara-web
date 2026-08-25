@@ -19,8 +19,8 @@ use Illuminate\Support\Str;
 class OcrController extends Controller
 {
     private const KTP_FOLDER = 'ocr_ktp';
-    private const TOTAL_TIMEOUT_SECONDS = 20;
-    private const POLL_INTERVAL_SECONDS = 3;
+    private const TOTAL_TIMEOUT_SECONDS = 8;
+    private const POLL_INTERVAL_SECONDS = 2;
 
     private OcrAPIService $ocrAPIService;
 

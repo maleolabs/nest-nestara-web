@@ -15,6 +15,29 @@ class PemohonServiceImpl implements PemohonService
         return Pemohon::create($data_pemohon);
     }
 
+    public function findOrphanByNomorId(string $nomor_id): ?Pemohon
+    {
+        // pemohon yatim = baris pemohon yang user_id-nya NULL
+        // (pemilik akun lamanya sudah dihapus, FK SET NULL)
+        return Pemohon::whereNull('user_id')
+            ->where('nomor_id', $nomor_id)
+            ->first();
+    }
+
+    public function adopt(int $id, int $user_id, array $data_pemohon): ?Pemohon
+    {
+        $pemohon = Pemohon::find($id);
+        if (!$pemohon)
+            return null;
+
+        // klaim pemohon yatim: kaitkan ke akun baru lalu perbarui datanya
+        // dengan input terbaru (orang yang sama daftar ulang)
+        $data_pemohon['user_id'] = $user_id;
+        $pemohon->update($data_pemohon);
+
+        return $pemohon->fresh();
+    }
+
     public function update(int $id, array $data_pemohon): ?Pemohon
     {
         Pemohon::find($id)->update($data_pemohon);

@@ -48,6 +48,7 @@ Route::middleware(['jwt.auth'])->group(function() {
     Route::prefix('/user')->group(function() {
         Route::put('/update-profil', [UserController::class, 'updateProfil']);
         Route::put('/update-password', [UserController::class, 'updatePassword']);
+        Route::delete('/account', [UserController::class, 'deleteAccount']);
     });
 });
 

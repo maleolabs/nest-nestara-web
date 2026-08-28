@@ -23,5 +23,6 @@ yarn-error.log
 setup_nginx.sh
 /.anvil/artifacts/
 /.anvil/state/
+/.anvil/installers/
 /storage/app/region/
 /storage/app/private_files/ocr_ktp

@@ -31,6 +31,11 @@ class OcrRequest
         return $this->izinId;
     }
 
+    public function getSyaratIzinId()
+    {
+        return $this->syaratIzinId;
+    }
+
     public function getImageUrl()
     {
         return $this->imageUrl;

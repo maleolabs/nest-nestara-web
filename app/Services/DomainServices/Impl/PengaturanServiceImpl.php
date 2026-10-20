@@ -24,10 +24,17 @@ class PengaturanServiceImpl implements PengaturanService {
 
 	public function find(string $nama, $user_id = null): ?Pengaturan
 	{
+		// kolom pengaturan: user_id (nullable, FK users), bukan id (PK tabel) — WEB-F03.
+		// user_id null = baris global; dengan user_id terisi: override per-user dulu,
+		// fallback global (orderBy user_id DESC menempatkan NULL di urutan terakhir).
 		return Pengaturan::where('nama', $nama)
 				->where(function($user) use ($user_id) {
-					$user->where('id', $user_id)
-						->orWHereNull('user_id');
+					if ($user_id !== null) {
+						$user->where('user_id', $user_id)
+							->orWhereNull('user_id');
+					} else {
+						$user->whereNull('user_id');
+					}
 				})
 				->orderBy('user_id', 'DESC')
 				->first();

@@ -4,6 +4,7 @@ use App\Http\Middleware\DashboardMiddleware;
 use App\Http\Middleware\Izin\RevisiIzinMiddleware;
 use App\Http\Middleware\Izin\ShowIzinMiddleware;
 use App\Http\Middleware\ProfileMiddleware;
+use App\Http\Middleware\VerifySignedFileUrl;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -29,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'show_izin' => ShowIzinMiddleware::class,
             'revisi_izin' => RevisiIzinMiddleware::class,
             'profile' => ProfileMiddleware::class,
+            'signed-file' => VerifySignedFileUrl::class,
 
             'jwt.auth' => Authenticate::class,
             'jwt.refresh' => RefreshToken::class,

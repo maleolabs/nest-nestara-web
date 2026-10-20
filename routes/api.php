@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PerizinanController;
 use App\Http\Controllers\Api\TokenController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Helper\FileController;
+use App\Http\Middleware\VerifySignedFileUrl;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['jwt.auth'])->group(function() {
@@ -56,7 +57,7 @@ Route::prefix('data-entri')->group(function () {
     Route::get('/{jenis_perizinan_id}', [DataEntriController::class, 'getByJenisPerizinanId']);
 });
 
-Route::prefix('/files')->group(function () {
+Route::prefix('/files')->middleware(VerifySignedFileUrl::class)->group(function () {
     Route::get('/{file_name}', [FileController::class, 'render'])->name('api.render-file');
 });
 

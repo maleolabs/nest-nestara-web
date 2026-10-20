@@ -3,6 +3,7 @@
 namespace Tests\Feature\Security;
 
 use App\Models\Pengaturan;
+use App\Models\User;
 use App\Services\DomainServices\PengaturanService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -12,18 +13,34 @@ use Tests\TestCase;
  * kolom `id` (PK tabel) padahal yang dimaksud `user_id` (FK users, nullable).
  * Invarian: baris per-user menimpa baris global; user tanpa override → global.
  *
- * requires DB (MySQL) — MySQL tidak tersedia di sandbox; hanya berjalan di
- * env dengan DB. Semua pemanggil get_pengaturan saat ini memakai global
- * (tanpa user_id), jadi tidak ada caller yang meng-kompensasi bug ini.
+ * requires DB dengan migration terpasang (RefreshDatabase). Parent row users
+ * dibuat asli karena pengaturan.user_id = FK users. Semua pemanggil
+ * get_pengaturan saat ini memakai global (tanpa user_id), jadi tidak ada
+ * caller yang meng-kompensasi bug ini.
  */
 class PengaturanFindTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function tearDown(): void
+    private User $userWithOverride;
+
+    private User $userWithoutOverride;
+
+    protected function setUp(): void
     {
-        Pengaturan::query()->delete();
-        parent::tearDown();
+        parent::setUp();
+
+        // parent FK users asli (id dinamis, bukan literal 7/9)
+        $this->userWithOverride = User::create([
+            'name' => 'pemilik override',
+            'username' => 'override-user',
+            'password' => bcrypt('secret'),
+        ]);
+        $this->userWithoutOverride = User::create([
+            'name' => 'tanpa override',
+            'username' => 'plain-user',
+            'password' => bcrypt('secret'),
+        ]);
     }
 
     private function service(): PengaturanService
@@ -42,14 +59,14 @@ class PengaturanFindTest extends TestCase
         Pengaturan::create([
             'group' => 'ocr-api-setting-group',
             'nama' => 'ocr-api-key',
-            'value' => 'user-7-key',
-            'user_id' => 7,
+            'value' => 'override-key',
+            'user_id' => $this->userWithOverride->id,
         ]);
 
-        $found = $this->service()->find('ocr-api-key', 7);
+        $found = $this->service()->find('ocr-api-key', $this->userWithOverride->id);
 
         $this->assertNotNull($found);
-        $this->assertSame('user-7-key', $found->value);
+        $this->assertSame('override-key', $found->value);
     }
 
     public function test_find_falls_back_to_global_for_user_without_override(): void
@@ -61,7 +78,8 @@ class PengaturanFindTest extends TestCase
             'user_id' => null,
         ]);
 
-        $found = $this->service()->find('ocr-base-url', 8);
+        // bug lama: where id=<user_id> → baris global (id kecil) tak terjangkau
+        $found = $this->service()->find('ocr-base-url', $this->userWithoutOverride->id);
 
         $this->assertNotNull($found);
         $this->assertSame('global-url', $found->value);
@@ -70,7 +88,7 @@ class PengaturanFindTest extends TestCase
     public function test_find_without_user_id_returns_only_global(): void
     {
         Pengaturan::create(['group' => 'g', 'nama' => 'format-surat', 'value' => 'AA', 'user_id' => null]);
-        Pengaturan::create(['group' => 'g', 'nama' => 'format-surat', 'value' => 'BB', 'user_id' => 9]);
+        Pengaturan::create(['group' => 'g', 'nama' => 'format-surat', 'value' => 'BB', 'user_id' => $this->userWithOverride->id]);
 
         $found = $this->service()->find('format-surat', null);
 
@@ -81,7 +99,7 @@ class PengaturanFindTest extends TestCase
     {
         Pengaturan::create(['group' => 'g', 'nama' => 'only-global', 'value' => 'x', 'user_id' => null]);
 
-        $this->assertNull($this->service()->find('not-found', 5));
+        $this->assertNull($this->service()->find('not-found', $this->userWithoutOverride->id));
         $this->assertNull($this->service()->find('not-found', null));
     }
 }

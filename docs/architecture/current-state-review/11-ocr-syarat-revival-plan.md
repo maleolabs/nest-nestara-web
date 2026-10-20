@@ -13,7 +13,7 @@ Bagian dari *Current-State Architecture Review* Nestara — dokumen plan lanjuta
 
 | # | Aksi | Bukti/lokasi | Output | Status |
 |---|---|---|---|---|
-| 0.1 | Audit doc-type & kelayakan OCR: jenis_perizinan dengan syarat `img`, volume, kualitas sampel | DB live + sampling dokumen | Daftar doc-type + GO feasibility | PENDING (butuh DB) |
+| 0.1 | Audit doc-type & kelayakan OCR: jenis_perizinan dengan syarat `img`, volume, kualitas sampel | DB live + sampling dokumen | Daftar doc-type + GO feasibility | ✅ AUDIT DEV (2026-10-20): 865 syarat aktif — **hanya 1 bertipe `img`** (864 `pdf`), dipasang di 3 jenis_perizinan (2/33/167 via pivot); dokumen ter-upload di slot img = 6 baris, **5 `.pdf` (pipeline vision TIDAK punya penanganan PDF: grep pdf = 0 di Java+Python)**, 1 `.png`. **Verdict: ROI optimasi P3 rendah pada data dev** — investasi tambahan ditunda (defer) sampai data prod mengkonfirmasi; keputusan produk yang wajib: (a) tambahkan ingestion PDF (scope besar), (b) berhenti di revival minimal, atau (c) deprecate (D10). Test DB `nestara_test` dibuat untuk kebutuhan RefreshDatabase; dev `nestara_dev` tidak disentuh (batch 4) |
 | 0.2 | Konfirmasi owner alur entri-data back-office dipakai | Q5/UQ-10 (`10` §3) | GO/NO-GO formal | ✅ GO (user approval) |
 | 0.3 | Keputusan auth dokumen: signed URL vs push-upload | `OcrServiceImpl.php:51-80` (`getUrlDokumen`), D4 | Keputusan tertulis | ✅ Signed URL |
 
@@ -40,9 +40,9 @@ Bagian dari *Current-State Architecture Review* Nestara — dokumen plan lanjuta
 | 2.2 | Standardisasi error-shape vision (ApiResponse; tanpa `getLocalizedMessage`; 404 berbody) | XR-03/VIS-F04 | ✅ 404 selalu berbody ApiResponse; ErrorController detail hanya ke log; **perubahan kontrak failure**: do-ocr success kini return PROCESSING/WAITING langsung (bukan DONE sync); web tidak breaking (parser tidak throw 4xx; `pollUntilFinished` sekarang fail-fast pada 404 — perlu info ke mobile) |
 | 2.3 | Fix `PengaturanServiceImpl::find` (kolom `user_id`, bukan `id`) + regression test | WEB-F03 | ✅ `find` → per-user override + fallback global (`user_id IS NULL`, per-user menang); audit caller: tidak ada yang kompensasi bug; test `PengaturanFindTest` (requires DB) ditulis |
 | 2.4 | Retensi PII jalur dokumen (retention + cleanup scheduler + volume mount `uploads/`) | CR-02/VIS-F07/D5 | pending |
-| 2.5 | Kuota: fix dedupe scope-client, tentukan apakah doc-OCR mengonsumsi kuota, normalisasi WIB | XR-07/VIS-F13/D9 | parsial: scope-client ✅ (XR-07); ⏳ VIS-F13 race atomik + ⏳ D9 WIB |
-| 2.6 | Fix `@Async` self-invocation (VIS-F01) + `process.waitFor` timeout (VIS-F09) | VIS-F01/VIS-F09 | ✅ VIS-F01 (dispatcher bean + fast-return + pool AppConfig tetap; fail path updateStatus deterministik); ⏳ VIS-F09 (`PythonOcrExcecutor.waitFor` timeout) PENDING |
-| 2.7 | Rate-limit verifikasi akun vision + `hash_equals` | VIS-F05 | pending |
+| 2.5 | Kuota: fix dedupe scope-client, tentukan apakah doc-OCR mengonsumsi kuota, normalisasi WIB | XR-07/VIS-F13/D9 | ✅ XR-07 scope-client + VIS-F13 atomic conditional-UPDATE (pola INSERT-IGNORE dipilih anti-ambigu affected-rows; ⚠️ dedupe DB lama sebelum ALTER unique) + D9/VIS-F14 `QuotaDayKey` Asia/Jakarta + entity LocalDate; keputusan doc-OCR-mengonsumsi-kuota : tetap decision owner |
+| 2.6 | Fix `@Async` self-invocation (VIS-F01) + `process.waitFor` timeout (VIS-F09) | VIS-F01/VIS-F09 | ✅ keduanya: VIS-F01 (dispatcher bean) + VIS-F09 (waitFor deadline + destroy-grace-forcibly + 2 daemon stream-readers — memperbaiki juga deadlock pipe penuh); deferred: RapidOcr/Paddle ProcessBuilder tanpa timeout serupa |
+| 2.7 | Rate-limit verifikasi akun vision + `hash_equals` | VIS-F05 | ✅ rate-limit in-memory sliding-window (verify 5/m account + 30/m IP; resend 3/10m) 429 generik, reset on success; single-instance trade-off; (hash_equals sisi web sejak tranche 1) |
 
 ## P3 — Optimization (urut ROI)
 
@@ -67,7 +67,7 @@ Bagian dari *Current-State Architecture Review* Nestara — dokumen plan lanjuta
 | P1 | 3–4 d | dimulai |
 | P2 | 4–5 d | dimulai (2.3) |
 | P3 | 3–5 d | belum |
-| P4 | 2–3 d | belum |
+| P4 | 2–3 d | belum (test web 3 classes ✅ di `nestara_test`: PengaturanFind 4/4, Idempotency 3/3, SignedFileUrl 7/7; sisa 8 failure suite terverifikasi pre-existing) |
 
 Total ±2–3 minggu efektif setelah P0 complete. Payback: sebagian besar effort P1/P2 (D4, D6, XR-01) adalah infrastruktur yang juga dikonsumsi jalur KTP aktif — bukan sunk cost W9 saja.
 

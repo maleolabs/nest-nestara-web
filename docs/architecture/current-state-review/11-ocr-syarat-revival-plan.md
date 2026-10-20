@@ -36,12 +36,12 @@ Bagian dari *Current-State Architecture Review* Nestara — dokumen plan lanjuta
 
 | # | Aksi | Terkait | Status |
 |---|---|---|---|
-| 2.1 | SSRF guard pada `imageUrl` (whitelist host + https + blacklist IP internal) | S-07/VIS-F08 | pending |
-| 2.2 | Standardisasi error-shape vision (ApiResponse; tanpa `getLocalizedMessage`; 404 berbody) | XR-03/VIS-F04 | pending |
+| 2.1 | SSRF guard pada `imageUrl` (whitelist host + https + blacklist IP internal) | S-07/VIS-F08 | ✅ `ImageDownloadValidator` (DNS resolve + blokir private/loopback/link-local/CGNAT/240/4 + allowlist env + HttpClient no-redirect 12MB cap + time budget); residual DNS-rebinding TOCTOU didokumentasi — **prod wajib `OCR_FETCH_IMAGE_URL_ALLOWED_HOSTS` non-empty** |
+| 2.2 | Standardisasi error-shape vision (ApiResponse; tanpa `getLocalizedMessage`; 404 berbody) | XR-03/VIS-F04 | ✅ 404 selalu berbody ApiResponse; ErrorController detail hanya ke log; **perubahan kontrak failure**: do-ocr success kini return PROCESSING/WAITING langsung (bukan DONE sync); web tidak breaking (parser tidak throw 4xx; `pollUntilFinished` sekarang fail-fast pada 404 — perlu info ke mobile) |
 | 2.3 | Fix `PengaturanServiceImpl::find` (kolom `user_id`, bukan `id`) + regression test | WEB-F03 | ✅ `find` → per-user override + fallback global (`user_id IS NULL`, per-user menang); audit caller: tidak ada yang kompensasi bug; test `PengaturanFindTest` (requires DB) ditulis |
 | 2.4 | Retensi PII jalur dokumen (retention + cleanup scheduler + volume mount `uploads/`) | CR-02/VIS-F07/D5 | pending |
-| 2.5 | Kuota: fix dedupe scope-client, tentukan apakah doc-OCR mengonsumsi kuota, normalisasi WIB | XR-07/VIS-F13/D9 | pending |
-| 2.6 | Fix `@Async` self-invocation (VIS-F01) + `process.waitFor` timeout (VIS-F09) | VIS-F01/VIS-F09 | pending |
+| 2.5 | Kuota: fix dedupe scope-client, tentukan apakah doc-OCR mengonsumsi kuota, normalisasi WIB | XR-07/VIS-F13/D9 | parsial: scope-client ✅ (XR-07); ⏳ VIS-F13 race atomik + ⏳ D9 WIB |
+| 2.6 | Fix `@Async` self-invocation (VIS-F01) + `process.waitFor` timeout (VIS-F09) | VIS-F01/VIS-F09 | ✅ VIS-F01 (dispatcher bean + fast-return + pool AppConfig tetap; fail path updateStatus deterministik); ⏳ VIS-F09 (`PythonOcrExcecutor.waitFor` timeout) PENDING |
 | 2.7 | Rate-limit verifikasi akun vision + `hash_equals` | VIS-F05 | pending |
 
 ## P3 — Optimization (urut ROI)

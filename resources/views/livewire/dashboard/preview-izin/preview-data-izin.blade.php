@@ -198,10 +198,17 @@
                                                         Entri Data
                                                     </h6>
                                                     @if(get_pengaturan('CLIENT_TOKEN') != null)
-                                                        <button class="btn btn-sm bg-gradient-info text-capitalize" type="button" wire:click='automaticFill'>
-                                                            <span wire:loading.remove wire:target='automaticFill'>isi otomatis</span>
+                                                        <button class="btn btn-sm bg-gradient-info text-capitalize" type="button" wire:click='automaticFill' wire:loading.attr="disabled" wire:target="automaticFill" aria-describedby="ocr-prefill-status">
+                                                            <span wire:loading.remove wire:target='automaticFill'>Isi dari OCR</span>
                                                             <span class="spinner-border spinner-border-sm" role="status" wire:loading wire:target='automaticFill'></span>
+                                                            <span class="visually-hidden" wire:loading wire:target="automaticFill">Membaca dokumen...</span>
                                                         </button>
+                                                        <div id="ocr-prefill-status" class="small text-muted mt-1" role="status" aria-live="polite">
+                                                            <span wire:loading wire:target="automaticFill">Membaca dokumen. Nilai manual tetap aman.</span>
+                                                            @if (($ocr_prefill_status ?? null) === 'success')<span wire:loading.remove wire:target="automaticFill">Kandidat OCR dimuat. Periksa sebelum simpan.</span>@endif
+                                                            @if (($ocr_prefill_status ?? null) === 'empty')<span wire:loading.remove wire:target="automaticFill">Kandidat OCR tidak ditemukan.</span>@endif
+                                                            @if (($ocr_prefill_status ?? null) === 'error')<span class="text-danger" wire:loading.remove wire:target="automaticFill">OCR gagal. Coba lagi.</span>@endif
+                                                        </div>
                                                     @endif
                                                 </div>
                                                 @include('livewire.dashboard.preview-izin.form-entri-data')

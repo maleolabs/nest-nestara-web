@@ -21,6 +21,7 @@ trait EntriDataTrait
         $entri_data_izin = [],
         $entri_data_validate = [],
         $entri_data_placeholder = [],
+        $ocr_prefill_status = null,
         $is_entri_changed = false;
 
     public $edit_entri_data = false;
@@ -164,9 +165,18 @@ trait EntriDataTrait
 
     public function automaticFill()
     {
-        $entri_data_ocr = $this->getOcrService()->getEntriDataByIzinId($this->preview_izin_id);
+        $this->ocr_prefill_status = 'loading';
+
+        try {
+            $entri_data_ocr = $this->getOcrService()->getEntriDataByIzinId($this->preview_izin_id);
+        } catch (\Throwable $e) {
+            report($e);
+            $this->ocr_prefill_status = 'error';
+            return;
+        }
         
         if (!$entri_data_ocr) {
+            $this->ocr_prefill_status = 'empty';
             return;
         }
 
@@ -181,6 +191,7 @@ trait EntriDataTrait
         }
 
         $this->entri_data_placeholder = $entri_data_ocr;
+        $this->ocr_prefill_status = 'success';
     }
 
     public function setEntriValue($entri_id, $key)

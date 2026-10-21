@@ -34,7 +34,7 @@ class FileController extends Controller
         $file_name = $this->decode($file_name);
         try {
             $file_name_2 = explode('/', $file_name);
-            Log::channel('app')->info('FileController@render.file_name: ' . $file_name);
+            Log::channel('app')->info('FileController@render.file', ['name' => basename($file_name)]);
             if (count($file_name_2) > 1) {
                 $file = $this->fileService->fileManager()
                         ->getFile()
@@ -51,11 +51,13 @@ class FileController extends Controller
         $finfo = new finfo(FILEINFO_MIME_TYPE);
         $type = $finfo->buffer($file);
 
-        Log::channel('app')->info("FileController@render.finfo: {$file_name}. Type: {$type}");
+        Log::channel('app')->info('FileController@render.finfo', ['type' => $type]);
+        $downloadName = basename($file_name);
 
         return response($file, 200)
             ->header('Content-Type', $type)
-            ->header('Content-Disposition', 'inline; filename="'.$file_name.'"')
+            ->header('Content-Disposition', 'inline; filename="'.addcslashes($downloadName, "\\\"").'"')
+            ->header('X-Content-Type-Options', 'nosniff')
             ->header('Cache-Control', 'no-cache, must-revalidate')
             ->header('Pragma', 'no-cache');
     }

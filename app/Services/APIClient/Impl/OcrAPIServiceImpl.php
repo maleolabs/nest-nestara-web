@@ -43,7 +43,7 @@ class OcrAPIServiceImpl implements OcrAPIService
     public function getEntriDataValueByIzinId(int $izin_id): ?OcrResponse
     {
         $path = "ocr/find/$izin_id";
-        return $this->fetchDataAndParseResponse($path);
+        return $this->fetchDataAndParseResponse($path, false);
     }
 
     public function sendOcrRequest(OcrRequest $request, ?string $token = null): ?OcrResponse

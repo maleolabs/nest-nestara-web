@@ -167,6 +167,8 @@ trait EntriDataTrait
 
     public function automaticFill()
     {
+        // Auth middleware protects production Livewire requests; re-check actor when present.
+        if (auth()->check() && (!$this->hasPermission(\App\utils\enums\PreviewFeatureEnum::ENTRI_DATA) || !$this->canAccess())) abort(403);
         $this->ocr_prefill_status = 'loading';
         $this->entri_data_placeholder = [];
 

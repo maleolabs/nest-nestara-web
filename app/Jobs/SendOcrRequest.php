@@ -41,7 +41,7 @@ class SendOcrRequest implements ShouldQueue
             // semua gagal = error; grup status dipisah agar gampang discan di log
             if ($statuses === []) {
                 Log::channel('app')->info('OCR request processed successfully', $logData);
-            } elseif (in_array('DONE', $statuses, true)) {
+            } elseif (count(array_filter($statuses, static fn ($status) => $status !== 'DONE')) > 0) {
                 Log::channel('app')->warning('OCR request processed with failures', [
                     'statuses' => array_count_values($statuses),
                 ] + $logData);

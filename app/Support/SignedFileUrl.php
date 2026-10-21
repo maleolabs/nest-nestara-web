@@ -35,7 +35,7 @@ class SignedFileUrl
      */
     public static function make(string $fileName, ?int $ttl = null): string
     {
-        $encoded = base64_encode($fileName);
+        $encoded = rtrim(strtr(base64_encode($fileName), '+/', '-_'), '=');
         $exp = Carbon::now()->getTimestamp() + ($ttl ?? self::defaultTtl());
         $sig = self::signature($encoded, $exp);
 
@@ -81,6 +81,19 @@ class SignedFileUrl
         }
 
         return hash_equals(self::signature($file_name, $exp), $sig);
+    }
+
+    public static function decodeFileName(string $encoded): ?string
+    {
+        if ($encoded === '' || !preg_match('/^[A-Za-z0-9_-]+$/', $encoded)) {
+            return null;
+        }
+        $padded = strtr($encoded, '-_', '+/').str_repeat('=', (4 - strlen($encoded) % 4) % 4);
+        $decoded = base64_decode($padded, true);
+        if ($decoded === false || rtrim(strtr(base64_encode($decoded), '+/', '-_'), '=') !== $encoded) {
+            return null;
+        }
+        return $decoded;
     }
 
     private static function signature(string $encodedFileName, int $exp): string

@@ -71,6 +71,9 @@ class FileServiceImpl implements FileService {
 
     public function getPrivateFile($file_name): string
     {
+        if (! is_string($file_name) || $file_name === '' || str_contains($file_name, "\0") || str_contains($file_name, '/') || str_contains($file_name, '\\') || $file_name === '.' || $file_name === '..') {
+            throw new ItemNotFoundException('file tidak ditemukan');
+        }
         $path = self::PRIVATE_FOLDER_PATH . $file_name;
         if (Storage::exists($path))
             return Crypt::decrypt(Storage::get($path));

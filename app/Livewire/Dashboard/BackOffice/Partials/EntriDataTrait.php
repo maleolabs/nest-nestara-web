@@ -168,6 +168,7 @@ trait EntriDataTrait
     public function automaticFill()
     {
         $this->ocr_prefill_status = 'loading';
+        $this->entri_data_placeholder = [];
 
         try {
             $entri_data_ocr = $this->getOcrService()->getEntriDataByIzinId($this->preview_izin_id);
@@ -185,20 +186,25 @@ trait EntriDataTrait
         }
 
         $mapped = 0;
+        $normalized = [];
+        foreach ($entri_data_ocr as $key => $value) {
+            $normalized[mb_strtolower(trim((string) $key))] = $value;
+        }
         foreach($this->entri_data as $entri) {
             // OCR is candidate data only. Existing/manual input stays authoritative.
-            if (isset($entri_data_ocr[$entri->nama])
+            $key = mb_strtolower(trim($entri->nama));
+            if (array_key_exists($key, $normalized)
                 && (!array_key_exists($entri->id, $this->entri_data_izin)
                     || blank($this->entri_data_izin[$entri->id]))) {
-                $this->entri_data_izin[$entri->id] = $entri_data_ocr[$entri->nama];
-                unset($entri_data_ocr[$entri->nama]);
+                $this->entri_data_izin[$entri->id] = $normalized[$key];
+                unset($normalized[$key]);
                 $mapped++;
             }
         }
 
-        $this->entri_data_placeholder = $entri_data_ocr;
+        $this->entri_data_placeholder = $normalized;
         $this->ocr_prefill_mapped_count = $mapped;
-        $this->ocr_prefill_unmapped_count = count($entri_data_ocr);
+        $this->ocr_prefill_unmapped_count = count($normalized);
         $this->ocr_prefill_status = $mapped === 0 ? 'empty' : ($this->ocr_prefill_unmapped_count ? 'partial' : 'success');
     }
 

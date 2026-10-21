@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Helper;
 
 use App\Http\Controllers\Controller;
 use App\Services\AppService\FileService;
+use App\Support\SignedFileUrl;
 use finfo;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -22,7 +23,7 @@ class FileController extends Controller
     
     public function download($file_name): StreamedResponse
     {
-        $file_name = base64_decode($file_name);
+        $file_name = $this->decode($file_name);
         return response()->streamDownload(function() use ($file_name) {
             echo $this->fileService->getPrivateFile($file_name);
         }, $file_name);
@@ -30,7 +31,7 @@ class FileController extends Controller
 
     public function render($file_name): Response
     {
-        $file_name = base64_decode($file_name);
+        $file_name = $this->decode($file_name);
         try {
             $file_name_2 = explode('/', $file_name);
             Log::channel('app')->info('FileController@render.file_name: ' . $file_name);
@@ -57,6 +58,15 @@ class FileController extends Controller
             ->header('Content-Disposition', 'inline; filename="'.$file_name.'"')
             ->header('Cache-Control', 'no-cache, must-revalidate')
             ->header('Pragma', 'no-cache');
+    }
+
+    private function decode(string $encoded): string
+    {
+        $file_name = SignedFileUrl::decodeFileName($encoded);
+        if ($file_name === null || str_contains($file_name, "\0") || str_starts_with($file_name, '/') || preg_match('~(^|[\\/])\.\.?([\\/]|$)~', $file_name)) {
+            abort(404);
+        }
+        return $file_name;
     }
 
 }

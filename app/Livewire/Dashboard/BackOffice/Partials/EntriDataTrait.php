@@ -171,7 +171,10 @@ trait EntriDataTrait
         }
 
         foreach($this->entri_data as $entri) {
-            if (isset($entri_data_ocr[$entri->nama])) {
+            // OCR is candidate data only. Existing/manual input stays authoritative.
+            if (isset($entri_data_ocr[$entri->nama])
+                && (!array_key_exists($entri->id, $this->entri_data_izin)
+                    || blank($this->entri_data_izin[$entri->id]))) {
                 $this->entri_data_izin[$entri->id] = $entri_data_ocr[$entri->nama];
                 unset($entri_data_ocr[$entri->nama]);
             }

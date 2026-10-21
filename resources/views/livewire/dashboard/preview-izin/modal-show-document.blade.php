@@ -12,7 +12,7 @@
             </div>
             <div class="modal-body">
                 @if ($modalImgSource)
-                    <img src="{{ route('render-file', ['file_name' => $modalImgSource]) }}" class="img-fluid">
+                    <img src="{{ \App\Support\SignedFileUrl::make(base64_decode($modalImgSource, true) ?: $modalImgSource) }}" class="img-fluid">
                 @elseif($modalPdfSource)
                     <div class="d-flex justify-content-center">
                         <div id="pdf-container"></div>

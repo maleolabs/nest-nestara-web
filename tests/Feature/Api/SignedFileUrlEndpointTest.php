@@ -93,6 +93,15 @@ class SignedFileUrlEndpointTest extends TestCase
         $this->get($url)->assertStatus(401);
     }
 
+    public function test_response_is_private_and_not_stored(): void
+    {
+        $response = $this->get(SignedFileUrl::make(self::FILE_NAME, 300));
+
+        $this->assertStringContainsString('private', $response->headers->get('Cache-Control'));
+        $this->assertStringContainsString('no-store', $response->headers->get('Cache-Control'));
+        $response->assertHeader('X-Content-Type-Options', 'nosniff');
+    }
+
     public function test_signature_for_wrong_file_name_returns_401(): void
     {
         // sig sah untuk FILE_NAME, dipakai untuk file berbeda

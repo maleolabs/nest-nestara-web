@@ -51,7 +51,7 @@
                                                             <p class="mb-0">{{ str_capitalize($data['syarat_izin'], true) }}</p>
                                                         </div>
                                                         <div class="col-6 py-2 border-start">
-                                                            <a title="download" href="{{ route('download-file', ['file_name' => base64_encode($data['nama_file'])]) }}" class="text-decoration-underline" target="blank">
+                                                            <a title="download" href="{{ \App\Support\SignedFileUrl::make($data['nama_file']) }}" class="text-decoration-underline" target="blank">
                                                                 <i class="fa-solid fa-download me-1"></i>
                                                                 {{ $data['nama_file'] }}
                                                             </a>

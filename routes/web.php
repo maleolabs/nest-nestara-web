@@ -100,9 +100,6 @@ Route::middleware('auth')->group(function() use ($pemohonMiddleware, $adminMiddl
     });
     
 
-    Route::get('/files/download/{file_name}', [FileController::class, 'download'])->name('download-file');
-    Route::get('/files/{file_name}', [FileController::class, 'render'])->name('render-file');
-
     Route::middleware(['profile'])->group(function() {
         Route::get('/profile', function () { return 'profile'; })->name('profile');
         Route::get('/profile/admin', [ProfileController::class, 'admin'])->name('profile.admin');

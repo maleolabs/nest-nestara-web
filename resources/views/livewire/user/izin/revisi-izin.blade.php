@@ -33,7 +33,7 @@
                                 <div class="img-preview-container ipc-md">
                                     @php($img_preview_url = $persyaratan_tmp[$syarat->id] ?? null)
                                     @php($file_path = $syarat->tipe == 'img' ? $syarat->dokumen_pemohon->where('izin_id', $izin->id)->first()->nama_file : $syarat->dokumen_pemohon->where('izin_id', $izin->id)->first()->nama_file_alternatif)
-                                    <img src="{{ $img_preview_url ??  route('render-file', ['file_name' => base64_encode($file_path)]) }}" class="img-preview">
+                                    <img src="{{ $img_preview_url ?? \App\Support\SignedFileUrl::make($file_path) }}" class="img-preview">
                                     <div class="img-preview-content">
                                         <h5 class="img-title">{{ "{$syarat->nama} ({$syarat->tipe})" }}</h5>
                                         <div class="input-group input-group-outline mb-1 flex-column"
@@ -53,7 +53,7 @@
                                         @enderror
                                         <div class="d-flex justify-content-start align-items-center gap-1 mb-3">
                                             @if (!isset($persyaratan[$syarat->id]))
-                                                <a href="{{ route('download-file', ['file_name' => base64_encode($syarat->dokumen_pemohon->where('izin_id', $izin->id)->first()->nama_file)]) }}" class="btn btn-sm bg-gradient-info" title="download">
+                                                <a href="{{ \App\Support\SignedFileUrl::make($syarat->dokumen_pemohon->where('izin_id', $izin->id)->first()->nama_file) }}" class="btn btn-sm bg-gradient-info" title="download">
                                                     <i class="fa-solid fa-download text-sm"></i>
                                                 </a>
                                             @endif

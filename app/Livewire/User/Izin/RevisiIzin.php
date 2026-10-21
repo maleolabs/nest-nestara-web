@@ -6,6 +6,7 @@ use App\Services\AppService\FileService;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SyaratIzinService;
+use App\Support\SignedFileUrl;
 use App\utils\enums\StatusIzinProgressEnum;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\On;
@@ -40,7 +41,7 @@ class RevisiIzin extends Component
         foreach ($this->syarat_izin as $key => $syarat) {
             $syarat_dokumen = $syarat->dokumen_pemohon->first();
             $nama_file = $syarat_dokumen->nama_file_alternatif ?? $syarat_dokumen->nama_file;
-            $this->persyaratan_tmp[$key] = route('render-file', ['file_name' => base64_encode($nama_file)]);
+            $this->persyaratan_tmp[$key] = SignedFileUrl::make($nama_file);
         }
     }
 
@@ -102,7 +103,7 @@ class RevisiIzin extends Component
         $uploaded_temp_id = $data['syarat_id'];
         $uploaded_temp_img = $data['temp_file_path'];
         $this->persyarata_actual_tmp[$uploaded_temp_id] = $uploaded_temp_img;
-        $this->persyaratan_tmp[$uploaded_temp_id] = route('render-file', ['file_name' => base64_encode($uploaded_temp_img)]);
+        $this->persyaratan_tmp[$uploaded_temp_id] = SignedFileUrl::make($uploaded_temp_img);
         $this->dispatch('stop-loading', ['id' => $uploaded_temp_id]);
     }
 
@@ -119,7 +120,7 @@ class RevisiIzin extends Component
     {
         $path = $this->getLivewireTmp($lvw_temp_file);
         $base64TmpPath = $this->encode_file_path($path);
-        return route('render-file', ['file_name' => $base64TmpPath]);
+        return SignedFileUrl::make($path);
     }
 
     private function encode_file_path($path): string

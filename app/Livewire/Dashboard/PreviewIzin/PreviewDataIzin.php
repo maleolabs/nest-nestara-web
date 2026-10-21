@@ -198,7 +198,7 @@ class PreviewDataIzin extends Component
         } else if ($tipe == 'pdf') {
             $this->modalPdfSource = $path;
             $this->modalImgSource = null;
-            $path = route('render-file', ['file_name' => $path]);
+            $path = \App\Support\SignedFileUrl::make($path);
         }
         $this->dispatch('set-preview-img-modal', [
             'path' => $path,

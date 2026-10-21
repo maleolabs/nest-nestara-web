@@ -168,7 +168,7 @@ trait EntriDataTrait
     public function automaticFill()
     {
         // Auth middleware protects production Livewire requests; re-check actor when present.
-        if (auth()->check() && (!$this->hasPermission(\App\utils\enums\PreviewFeatureEnum::ENTRI_DATA) || !$this->canAccess())) abort(403);
+        if (!auth()->check() || !$this->hasPermission(\App\utils\enums\PreviewFeatureEnum::ENTRI_DATA) || !$this->canAccess()) abort(403);
         $this->ocr_prefill_status = 'loading';
         $this->entri_data_placeholder = [];
 
@@ -189,19 +189,32 @@ trait EntriDataTrait
 
         $mapped = 0;
         $normalized = [];
+        $collisions = [];
         foreach ($entri_data_ocr as $key => $value) {
-            $normalized[mb_strtolower(trim((string) $key))] = $value;
+            $normalizedKey = mb_strtolower(trim((string) $key));
+            if (array_key_exists($normalizedKey, $normalized)) {
+                $collisions[$normalizedKey] = true;
+                unset($normalized[$normalizedKey]);
+                continue;
+            }
+            if (!isset($collisions[$normalizedKey])) {
+                $normalized[$normalizedKey] = $value;
+            }
         }
         foreach($this->entri_data as $entri) {
             // OCR is candidate data only. Existing/manual input stays authoritative.
             $key = mb_strtolower(trim($entri->nama));
-            if (array_key_exists($key, $normalized)
+            if (array_key_exists($key, $normalized) && !isset($collisions[$key])
                 && (!array_key_exists($entri->id, $this->entri_data_izin)
                     || blank($this->entri_data_izin[$entri->id]))) {
                 $this->entri_data_izin[$entri->id] = $normalized[$key];
                 unset($normalized[$key]);
                 $mapped++;
             }
+        }
+
+        foreach ($collisions as $key => $_) {
+            $normalized[$key] = null;
         }
 
         $this->entri_data_placeholder = $normalized;

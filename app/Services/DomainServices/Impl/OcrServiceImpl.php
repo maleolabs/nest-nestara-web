@@ -200,7 +200,9 @@ class OcrServiceImpl implements OcrService
         }
 
         $request['status'] = $status;
-        $request['duration'] = $duration . 's';
+        // duration hanya tersedia pada status sukses (kontrak vision: Float saat DONE);
+        // failure path mengirim null — jangan diformat jadi string "s"
+        $request['duration'] = is_numeric($duration) ? $duration . 's' : null;
         $check_stats['requests'][] = $request;
 
         return $check_stats;

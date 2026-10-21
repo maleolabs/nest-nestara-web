@@ -23,14 +23,15 @@ Bagian dari *Current-State Architecture Review* Nestara — dokumen plan lanjuta
 
 | # | Aksi | Terkait | Effort | Status |
 |---|---|---|---|---|
-| 1.1 | Queue worker: service compose `queue:work` (dev) + catatan supervisor untuk prod; monitor `failed_jobs` | WEB-F05, D6 | 0.5 d | ✅ dev compose (`web-queue` service + `--tries=3 --max-time=3600`); prod supervisor = catatan di `docker-compose.yml`, PENDING |
-| 1.2 | Verifikasi reachability vision→web (dev compose `ocr-api`→`web:8000`; prod UNKNOWN → tulis network policy) | UQ-2 | 0.5 d | pending |
+| 1.1 | Queue worker: service compose `queue:work` (dev) + catatan supervisor untuk prod; monitor `failed_jobs` | WEB-F05, D6 | 0.5 d | ✅ dev compose (`web-queue` service + `--tries=3 --max-time=3600`); worker host-side sudah **dieksekusi nyata** 2026-10-20: `queue:work database --stop-when-empty` → job `SendOcrRequest` RUNNING→DONE, audit row `ocr_requests` ter-tulis (status `failed` — vision menolak fetch file; lihat W-OPS1). prod supervisor = catatan di `docker-compose.yml`, PENDING. Note fallback: bila web compose pakai php `:8.4-cli`, driver `pdo_mysql` TIDAK ter-install di image bawaan docker-php — install-on-start `docker-php-ext-install pdo_mysql` atau custom image; DB grant untuk client `172.17.0.x` wajib (user MySQL localhost-only = worker container tolak `1130 Host not allowed`) |
+| 1.2 | Verifikasi reachability vision→web (dev compose `ocr-api`→`web:8000`; prod UNKNOWN → tulis network policy) | UQ-2 | 0.5 d | ✅ dev E2E live (2026-10-20): vision (docker image, `--network host`) → `POST /api/ocr/do-ocr` (imageUrl = signed URL web `:8000`) → `WAITING` → **`DONE` 9 s**; rantai signed-URL (middleware → decrypt → `image/png` 1853 B HTTP 200) tervalidasi dari sisi container. Catatan: topologi dev-hidup wajar = `--network host` (bridge memblokir koneksi host-db from container, sesuai komentar compose vision); prod compose official perlu host alias `web:8000` in SSRF allowlist `OCR_FETCH_IMAGE_URL_ALLOWED_HOSTS`. Caveat: E2E memakai **image vision lama** (old image = sebelum batch 1b/2); build image baru butuh `mvn` di Docker (javac 17) → validasi kode vision baru PENDING di env dev user. ops-test ringkat di bawah |
 | 1.3 | Signed URL `/api/files` (HMAC + TTL ~15 m) untuk fetch oleh vision & mobile; cek ownership via token | D4/WEB-F01/XR-04 | 1 d | ✅ `SignedFileUrl` (HMAC-SHA256 + hkdf APP_KEY, TTL 900 s); middleware `signed-file` di routes; emisi tercover: `DokumenPemohonResource.url_file`, `UserResource.foto_url`, `OcrServiceImpl::getUrlDokumen`; 14 unit + 7 feature test (unit 14 ✅, feature membutuhkan run client-side); deferred: `FileController::download` (rute web auth) belum di-sign |
 | 1.4 | *(dibatalkan)* push-upload endpoint — digantikan oleh keputusan 0.3 | S-07 | — | — |
 | 1.5 | Persist `OcrRequest` **sebelum** diproses + idempotency key `(pemohon, syarat, izin)` — anti-orphan & anti-duplicate saat job retry | CR-01, XR-07 | 1 d | ✅ web-side: persist-first `requestOcrForNewRegistration` di `PerizinanServiceImpl` (dipanggil setelah dokumen tersimpan; sekaligus fix bug dispatch-*sebelum*-file-save dari XR-07), state machine `pending/processing/done/failed/failed_final` + `isBlockedForResend()`, unique index `(izin_id, syarat_izin_id)`, job rethrow + `failed()` hook. Migration `2026_10_20_000001` **belum di-run** (butuh MySQL) |
 | 1.6 | Multipart limit vision ≥ 4 MB | XR-01 | 0.1 d | ✅ `spring.servlet.multipart.max-file-size=4MB` / `max-request-size=6MB` (env-overridable) di `application.properties` |
 
 **Kriteria keluar P1:** flow E2E di dev: izin dibuat → queue job sukses → vision fetch dokumen (signed URL) → OCR sukses → `entri_data` ter-prefill di back-office.
+> Status E2E 2026-10-20: rantai **queue → do-ocr → signed-URL fetch → OCR `DONE (9 s)` terbukti live** (lihat P1.2). Langkah terakhir (pre-fill `entri_data`) tidak dieksekusi di sesi ini — dokumen PDF bawaan dev tidak didukung pipeline (P0.1); path `entri_data` sudah tercover unit/process test existing.
 
 ## P2 — Security & data-integrity hardening
 
@@ -70,6 +71,14 @@ Bagian dari *Current-State Architecture Review* Nestara — dokumen plan lanjuta
 | P4 | 2–3 d | belum (test web 3 classes ✅ di `nestara_test`: PengaturanFind 4/4, Idempotency 3/3, SignedFileUrl 7/7; sisa 8 failure suite terverifikasi pre-existing) |
 
 Total ±2–3 minggu efektif setelah P0 complete. Payback: sebagian besar effort P1/P2 (D4, D6, XR-01) adalah infrastruktur yang juga dikonsumsi jalur KTP aktif — bukan sunk cost W9 saja.
+
+## E2E evidence & ops notes — 2026-10-20
+
+- Signed-file fetch tervalidasi dari sisi vision: web `:8000` mengembalikan `image/png` 1853 B setelah HMAC verification + decrypt.
+- OCR live tervalidasi memakai vision image lama: `POST /api/ocr/do-ocr` → `WAITING` → `DONE` dalam 9 s; `get-result` juga `DONE`. Build image vision baru belum bisa dilakukan di sandbox karena `javac` tidak tersedia.
+- Failure historis sebelumnya berasal dari dua environment issue: `APP_URL=http://localhost` menunjuk nginx/static pada port 80, lalu storage worktree berisi file terenkripsi dengan key historis yang tidak bisa didecrypt. Dev `.env` sekarang memakai `APP_URL=http://localhost:8000`; file uji sintetis dibuat lalu dibersihkan.
+- Vision container harus memakai `--network host` pada topology dev ini. Bridge container tidak bisa mengakses host DB karena grant MySQL localhost-only (`1130 Host not allowed`). Prod wajib menetapkan topology/network policy eksplisit dan `OCR_FETCH_IMAGE_URL_ALLOWED_HOSTS` non-empty.
+- Patch observability web: duration kosong tidak lagi dicatat sebagai `"s"`; log job membedakan `info`/`warning`/`error` berdasarkan status OCR, typo `succcessfully` dihapus.
 
 ## Risiko utama
 

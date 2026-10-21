@@ -205,7 +205,8 @@
                                                         </button>
                                                         <div id="ocr-prefill-status" class="small text-muted mt-1" role="status" aria-live="polite">
                                                             <span wire:loading wire:target="automaticFill">Membaca dokumen. Nilai manual tetap aman.</span>
-                                                            @if (($ocr_prefill_status ?? null) === 'success')<span wire:loading.remove wire:target="automaticFill">Kandidat OCR dimuat. Periksa sebelum simpan.</span>@endif
+                                                            @if (in_array(($ocr_prefill_status ?? null), ['success', 'partial']))<span wire:loading.remove wire:target="automaticFill">Kandidat OCR: {{ $ocr_prefill_mapped_count ?? 0 }} terpetakan, {{ $ocr_prefill_unmapped_count ?? 0 }} belum terpetakan. Periksa sebelum simpan.</span>@endif
+                                                            @if (($ocr_prefill_status ?? null) === 'partial')<span class="text-warning" wire:loading.remove wire:target="automaticFill">Sebagian data OCR belum punya field tujuan.</span>@endif
                                                             @if (($ocr_prefill_status ?? null) === 'empty')<span wire:loading.remove wire:target="automaticFill">Kandidat OCR tidak ditemukan.</span>@endif
                                                             @if (($ocr_prefill_status ?? null) === 'error')<span class="text-danger" wire:loading.remove wire:target="automaticFill">OCR gagal. Coba lagi.</span>@endif
                                                         </div>

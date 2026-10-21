@@ -20,9 +20,11 @@ trait EntriDataTrait
         $jenis_perizinan_id,
         $entri_data_izin = [],
         $entri_data_validate = [],
-        $entri_data_placeholder = [],
-        $ocr_prefill_status = null,
-        $is_entri_changed = false;
+         $entri_data_placeholder = [],
+         $ocr_prefill_status = null,
+         $ocr_prefill_mapped_count = 0,
+         $ocr_prefill_unmapped_count = 0,
+         $is_entri_changed = false;
 
     public $edit_entri_data = false;
 
@@ -175,11 +177,14 @@ trait EntriDataTrait
             return;
         }
         
-        if (!$entri_data_ocr) {
+        if (!is_array($entri_data_ocr) || $entri_data_ocr === []) {
+            $this->ocr_prefill_mapped_count = 0;
+            $this->ocr_prefill_unmapped_count = 0;
             $this->ocr_prefill_status = 'empty';
             return;
         }
 
+        $mapped = 0;
         foreach($this->entri_data as $entri) {
             // OCR is candidate data only. Existing/manual input stays authoritative.
             if (isset($entri_data_ocr[$entri->nama])
@@ -187,11 +192,14 @@ trait EntriDataTrait
                     || blank($this->entri_data_izin[$entri->id]))) {
                 $this->entri_data_izin[$entri->id] = $entri_data_ocr[$entri->nama];
                 unset($entri_data_ocr[$entri->nama]);
+                $mapped++;
             }
         }
 
         $this->entri_data_placeholder = $entri_data_ocr;
-        $this->ocr_prefill_status = 'success';
+        $this->ocr_prefill_mapped_count = $mapped;
+        $this->ocr_prefill_unmapped_count = count($entri_data_ocr);
+        $this->ocr_prefill_status = $mapped === 0 ? 'empty' : ($this->ocr_prefill_unmapped_count ? 'partial' : 'success');
     }
 
     public function setEntriValue($entri_id, $key)

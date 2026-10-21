@@ -4,6 +4,7 @@ namespace App\Services\DomainServices\Impl;
 
 use App\Exceptions\InvalidTokenException;
 use App\Models\Izin;
+use App\Models\OcrRequest as OcrRequestModel;
 use App\Services\APIClient\dto\OcrRequest;
 use App\Services\APIClient\OcrAPIService;
 use App\Services\DomainServices\DokumenPemohonService;
@@ -11,6 +12,8 @@ use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\OcrService;
 use App\Services\DomainServices\SyaratIzinService;
 use App\Services\Security\TokenService;
+use App\Support\SignedFileUrl;
+use Illuminate\Database\QueryException;
 
 class OcrServiceImpl implements OcrService
 {
@@ -48,11 +51,15 @@ class OcrServiceImpl implements OcrService
 
         $entri_data = $this->entriDataService->getByJenisPerizinanId($izin->jenis_perizinan_id);
         $required_keys = array_column($entri_data, 'nama');
-        
-        $url_dokumen = $this->getUrlDokumen($persyaratan, $izin->pemohon_id, $izin->id);
+
+        // getUrlDokumen juga meng-claim baris OcrRequest (status pending → processing);
+        // tombol skip idempotency: syarat yang sudah done / in-progress tidak dikirim ulang.
+        [$url_dokumen, $ocr_rows] = $this->getUrlDokumen($persyaratan, $izin->pemohon_id, $izin->id);
+        if (empty($url_dokumen)) return null;
+
         $requests = $this->getRequests($url_dokumen, $izin->id, $izin->jenis_perizinan_id, $required_keys);
 
-        return $this->sendRequest($requests);
+        return $this->sendRequest($requests, $ocr_rows);
     }
 
     public function getEntriDataByIzinId(int $izin_id): ?array
@@ -72,15 +79,52 @@ class OcrServiceImpl implements OcrService
     private function getUrlDokumen($persyaratan, $pemohon_id, $izin_id): array
     {
         $url_dokumen = [];
+        $ocr_rows = [];
         foreach ($persyaratan as $syarat) {
             $dokumen = $this->dokumenPemohonService->findByPemohonAndSyaratAndIzin($pemohon_id, $syarat->id, $izin_id);
             if ($dokumen) {
-                $nama_file = base64_encode($dokumen->nama_file);
-                $url = route('api.render-file', ['file_name' => $nama_file]);
-                $url_dokumen[$syarat->id] = $url;
+                // klaim baris OCR untuk triple (pemohon, syarat, izin);
+                // null berarti sudah done / in-progress milik attempt lain → skip syarat ini
+                $claimed = $this->claimOcrRequestRow($pemohon_id, $syarat->id, $izin_id);
+                if (!$claimed) continue;
+
+                $url_dokumen[$syarat->id] = SignedFileUrl::make($dokumen->nama_file);
+                $ocr_rows[$syarat->id] = $claimed;
             }
         }
-        return $url_dokumen;
+        return [$url_dokumen, $ocr_rows];
+    }
+
+    /**
+     * Klaim baris OcrRequest untuk dikirim ke vision. Baris dibuat persist-first
+     * di PerizinanServiceImpl@requestOcrForNewRegistration; di sini dibuat ulang
+     * (firstOrCreate) hanya sebagai jaring pengaman job replay/manual.
+     * Setelah klaim sukses status = processing; request_id diisi setelah vision menerima.
+     */
+    private function claimOcrRequestRow(int $pemohon_id, int $syarat_izin_id, int $izin_id): ?OcrRequestModel
+    {
+        try {
+            $row = OcrRequestModel::firstOrCreate(
+                ['izin_id' => $izin_id, 'syarat_izin_id' => $syarat_izin_id],
+                ['pemohon_id' => $pemohon_id, 'status' => OcrRequestModel::STATUS_PENDING]
+            );
+        } catch (QueryException $e) {
+            // dua worker berebut + unique index (izin_id, syarat_izin_id): milik yang lain
+            return null;
+        }
+
+        if ($row->isBlockedForResend()) return null;
+
+        $row->status = OcrRequestModel::STATUS_PROCESSING;
+        $row->request_id = null;
+        $row->save();
+        return $row;
+    }
+
+    private function markOcrRequestRow(OcrRequestModel $row, string $status): void
+    {
+        $row->status = $status;
+        $row->save();
     }
 
     private function getRequests($url_dokumen, $izin_id, $jenis_perizinan_id, $required_keys): array
@@ -103,7 +147,7 @@ class OcrServiceImpl implements OcrService
         });
     }
 
-    private function sendRequest($requests): array
+    private function sendRequest($requests, $ocr_rows): array
     {
         $check_stats = [
             'total_request' => count($requests),
@@ -113,16 +157,27 @@ class OcrServiceImpl implements OcrService
 
         foreach ($requests as $request) {
             $response = $this->ocrAPIService->sendOcrRequest($request);
+            $row = $ocr_rows[$request->getSyaratIzinId()] ?? null;
+
             if ($response) {
                 $request_id = $response->getData()['requestId'];
-                $check_stats = $this->checkRequestStatus($request_id, $check_stats);
+                // request_id ditulis ke baris idempotency-nya sendiri; OcrAPIServiceImpl2
+                // tidak lagi membuat baris duplikat (persist-first milik pemanggil)
+                if ($row) {
+                    $row->request_id = $request_id;
+                    $row->save();
+                }
+                $check_stats = $this->checkRequestStatus($request_id, $check_stats, $row);
+            } elseif ($row) {
+                // vision tidak menerima request pada attempt ini → masih retryable
+                $this->markOcrRequestRow($row, OcrRequestModel::STATUS_FAILED);
             }
         }
 
         return $check_stats;
     }
 
-    private function checkRequestStatus($request_id, $check_stats): array
+    private function checkRequestStatus($request_id, $check_stats, ?OcrRequestModel $row = null): array
     {
         $request = [
             'request_id' => $request_id,
@@ -138,10 +193,18 @@ class OcrServiceImpl implements OcrService
             sleep(5);
         } while (in_array($status, ['WAITING', 'PROCESSING']));
 
+        // asumsi kontrak vision: WAITING/PROCESSING in-flight; DONE sukses;
+        // selain itu (mis. FAILED) = gagal (retryable sampai --tries habis → failed_final).
+        if ($row) {
+            $this->markOcrRequestRow($row, $status === 'DONE' ? OcrRequestModel::STATUS_DONE : OcrRequestModel::STATUS_FAILED);
+        }
+
         $request['status'] = $status;
-        $request['duration'] = $duration . 's';
+        // duration hanya tersedia pada status sukses (kontrak vision: Float saat DONE);
+        // failure path mengirim null — jangan diformat jadi string "s"
+        $request['duration'] = is_numeric($duration) ? $duration . 's' : null;
         $check_stats['requests'][] = $request;
-        
+
         return $check_stats;
     }
 

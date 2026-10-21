@@ -86,6 +86,13 @@ interface PerizinanService
     function saveRegistration(int $jenis_izin_id, int $pemohon_id): ?Izin;
 
     /**
+     * Membuat baris ocr_requests pending (persist-first, kunci idempotency
+     * pemohon/syarat/izin) lalu men-dispatch SendOcrRequest.
+     * HARUS dipanggil setelah dokumen pemohon tersimpan.
+     */
+    function requestOcrForNewRegistration(Izin $izin): void;
+
+    /**
      * Menyimpan data registrasi perizinan baru dengan persyaratan
      * 
      * @param int $jenis_izin_id ID jenis perizinan yang akan didaftarkan.

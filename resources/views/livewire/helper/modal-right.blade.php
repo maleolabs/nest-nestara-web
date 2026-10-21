@@ -52,7 +52,7 @@
                 @foreach ($selectedPreviewSyaratIzin as $syarat)
                     <h6 @if(!isset($syarat->dokumen_pemohon[0]))class="text-muted text-decoration-line-through"@endif>
                         @if (isset($syarat->dokumen_pemohon[0]))
-                            <a href="{{ route('download-file', ['file_name' => base64_encode($syarat->dokumen_pemohon[0]->nama_file)]) }}" class="text-decoration-none d-inline">
+                            <a href="{{ \App\Support\SignedFileUrl::make($syarat->dokumen_pemohon[0]->nama_file) }}" class="text-decoration-none d-inline">
                                 <i class="fa-solid fa-download me-1"></i>
                             </a>
                         @else

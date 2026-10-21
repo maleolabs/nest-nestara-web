@@ -5,7 +5,9 @@ namespace App\Services\DomainServices\Impl;
 use App\Exceptions\UnprocessableEntityException;
 use App\Jobs\SendOcrRequest;
 use App\Mail\RegistrationRevisionMail;
+use App\Models\DokumenPemohon;
 use App\Models\Izin;
+use App\Models\OcrRequest as OcrRequestModel;
 use App\Services\AppService\FileService;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\EntriDataService;
@@ -70,9 +72,35 @@ class PerizinanServiceImpl implements PerizinanService
         ]);
         $this->statusIzinService->save($izin->id, Status::DIDAFTARKAN);
 
-        SendOcrRequest::dispatch($izin);
-
         return $izin;
+    }
+
+    /**
+     * Persist-first OCR (plan 11 P1.5 / WEB-F05):
+     * baris ocr_requests (status pending, kunci idempotency pemohon-syarat-izin)
+     * dibuat SEBELUM SendOcrRequest di-dispatch, dan hanya SETELAH dokumen
+     * pemohon tersimpan (dulu: dispatch dulu baru save file → worker bisa
+     * berjalan sebelum dokumen ada). Hard failure job tidak menghilangkan
+     * jejak request; retry worker tidak mengirim dobel ke vision.
+     */
+    public function requestOcrForNewRegistration(Izin $izin): void
+    {
+        $dokumens = DokumenPemohon::where('pemohon_id', $izin->pemohon_id)
+            ->where('izin_id', $izin->id)
+            ->with('syarat_izin')
+            ->get();
+
+        foreach ($dokumens as $dokumen) {
+            // OcrServiceImpl hanya memproses syarat 'img' — paritas sengaja dipertahankan
+            if ($dokumen->syarat_izin?->tipe !== 'img') continue;
+
+            OcrRequestModel::firstOrCreate(
+                ['izin_id' => $izin->id, 'syarat_izin_id' => $dokumen->syarat_izin_id],
+                ['pemohon_id' => $izin->pemohon_id, 'status' => OcrRequestModel::STATUS_PENDING]
+            );
+        }
+
+        SendOcrRequest::dispatch($izin);
     }
 
     public function saveRegistrationWithPersyaratan($jenis_izin_id, $pemohon_id, array $persyaratan): ?Izin
@@ -112,6 +140,9 @@ class PerizinanServiceImpl implements PerizinanService
             $data_persyaratan = $this->fileService->savePrivately($persyaratan);
             $this->dokumenPemohonService->saveAll($pemohon_id, $izin->id, $data_persyaratan);
         }
+
+        // persist-first dispatch: dokumen sudah ada di DB saat baris pending dibuat
+        $this->requestOcrForNewRegistration($izin);
 
         return $izin;
     }

@@ -7,7 +7,7 @@
     </div>
     @foreach ($preview_izin_dokumen as $dokumen)
         <h6>
-            <a href="{{ route('download-file', ['file_name' => base64_encode($dokumen->nama_file)]) }}" class="text-decoration-none d-inline">
+            <a href="{{ \App\Support\SignedFileUrl::make($dokumen->nama_file) }}" class="text-decoration-none d-inline">
                 <i class="fa-solid fa-download me-1"></i>
             </a>
             <a href="javascript:;" class="text-decoration-none d-inline" wire:click="showImgModal('{{ $dokumen->syarat_izin->nama }}', '{{ base64_encode($dokumen->nama_file) }}', '{{ $dokumen->syarat_izin->tipe }}', {{ $dokumen->syarat_izin_id }})">

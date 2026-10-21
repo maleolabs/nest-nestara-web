@@ -59,12 +59,9 @@ class OcrAPIServiceImpl2 implements OcrAPIService
 
             $response = $this->postAndParseResponse($endpoint, $request);
 
-            if ($response) {
-                ModelsOcrRequest::create([
-                    'izin_id' => $request->getIzinId(),
-                    'request_id' => $response->getData()['requestId']
-                ]);
-            }
+            // catatan: record ocr_requests tidak dibuat di sini lagi —
+            // const record persist-first + idempotency dikelola oleh OcrServiceImpl
+            // (klaim baris per triple pemohon/syarat/izin, plan P1.5).
 
             return $response;
         } catch (Exception $e) {

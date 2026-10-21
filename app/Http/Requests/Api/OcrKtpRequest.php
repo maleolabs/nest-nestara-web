@@ -25,7 +25,7 @@ class OcrKtpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image' => ['required', 'file', 'image', 'mimes:jpg,jpeg,png', 'max:3072']
+            'image' => ['required', 'file', 'mimetypes:image/jpeg,image/png', 'image', 'mimes:jpg,jpeg,png', 'max:3072']
         ];
     }
 
@@ -36,6 +36,7 @@ class OcrKtpRequest extends FormRequest
             'image.file' => 'foto KTP harus berupa file',
             'image.image' => 'file yang diunggah harus berupa gambar',
             'image.mimes' => 'format foto KTP harus jpg, jpeg, atau png',
+            'image.mimetypes' => 'PDF tidak didukung. Unggah foto KTP dalam format JPG, JPEG, atau PNG',
             'image.max' => 'ukuran foto KTP maksimal 3MB'
         ];
     }

@@ -72,6 +72,18 @@ final class OcrKtpRequestTest extends TestCase
         $this->assertTrue($validator->fails());
     }
 
+    public function test_pdf_error_explicitly_says_pdf_is_unsupported(): void
+    {
+        $file = (new FileFactory())->createWithContent('ktp.pdf', '%PDF-1.4 dummy');
+        $validator = $this->validate(['image' => $file]);
+
+        $this->assertTrue($validator->fails());
+        $this->assertStringContainsString(
+            'PDF tidak didukung',
+            (new \App\Http\Requests\Api\OcrKtpRequest())->messages()['image.mimetypes']
+        );
+    }
+
     public function test_disallowed_mime_type_fails_validation(): void
     {
         $file = UploadedFile::fake()->createWithContent('ktp.gif', base64_decode('R0lGODlhAQABAAAAACw='));

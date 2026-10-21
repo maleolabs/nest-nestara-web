@@ -20,8 +20,11 @@ trait EntriDataTrait
         $jenis_perizinan_id,
         $entri_data_izin = [],
         $entri_data_validate = [],
-        $entri_data_placeholder = [],
-        $is_entri_changed = false;
+         $entri_data_placeholder = [],
+         $ocr_prefill_status = null,
+         $ocr_prefill_mapped_count = 0,
+         $ocr_prefill_unmapped_count = 0,
+         $is_entri_changed = false;
 
     public $edit_entri_data = false;
 
@@ -164,20 +167,60 @@ trait EntriDataTrait
 
     public function automaticFill()
     {
-        $entri_data_ocr = $this->getOcrService()->getEntriDataByIzinId($this->preview_izin_id);
+        // Auth middleware protects production Livewire requests; re-check actor when present.
+        if (!auth()->check() || !$this->hasPermission(\App\utils\enums\PreviewFeatureEnum::ENTRI_DATA) || !$this->canAccess()) abort(403);
+        $this->ocr_prefill_status = 'loading';
+        $this->entri_data_placeholder = [];
+
+        try {
+            $entri_data_ocr = $this->getOcrService()->getEntriDataByIzinId($this->preview_izin_id);
+        } catch (\Throwable $e) {
+            report($e);
+            $this->ocr_prefill_status = 'error';
+            return;
+        }
         
-        if (!$entri_data_ocr) {
+        if (!is_array($entri_data_ocr) || $entri_data_ocr === []) {
+            $this->ocr_prefill_mapped_count = 0;
+            $this->ocr_prefill_unmapped_count = 0;
+            $this->ocr_prefill_status = 'empty';
             return;
         }
 
+        $mapped = 0;
+        $normalized = [];
+        $collisions = [];
+        foreach ($entri_data_ocr as $key => $value) {
+            $normalizedKey = mb_strtolower(trim((string) $key));
+            if (array_key_exists($normalizedKey, $normalized)) {
+                $collisions[$normalizedKey] = true;
+                unset($normalized[$normalizedKey]);
+                continue;
+            }
+            if (!isset($collisions[$normalizedKey])) {
+                $normalized[$normalizedKey] = $value;
+            }
+        }
         foreach($this->entri_data as $entri) {
-            if (isset($entri_data_ocr[$entri->nama])) {
-                $this->entri_data_izin[$entri->id] = $entri_data_ocr[$entri->nama];
-                unset($entri_data_ocr[$entri->nama]);
+            // OCR is candidate data only. Existing/manual input stays authoritative.
+            $key = mb_strtolower(trim($entri->nama));
+            if (array_key_exists($key, $normalized) && !isset($collisions[$key])
+                && (!array_key_exists($entri->id, $this->entri_data_izin)
+                    || blank($this->entri_data_izin[$entri->id]))) {
+                $this->entri_data_izin[$entri->id] = $normalized[$key];
+                unset($normalized[$key]);
+                $mapped++;
             }
         }
 
-        $this->entri_data_placeholder = $entri_data_ocr;
+        foreach ($collisions as $key => $_) {
+            $normalized[$key] = null;
+        }
+
+        $this->entri_data_placeholder = $normalized;
+        $this->ocr_prefill_mapped_count = $mapped;
+        $this->ocr_prefill_unmapped_count = count($normalized);
+        $this->ocr_prefill_status = $mapped === 0 ? 'empty' : ($this->ocr_prefill_unmapped_count ? 'partial' : 'success');
     }
 
     public function setEntriValue($entri_id, $key)

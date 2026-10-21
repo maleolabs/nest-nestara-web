@@ -93,6 +93,8 @@ class CreateIzin extends Component
         $this->saveDataPemohon(auth()->user()->id);
         $izin = $this->getPerizinanService()->saveRegistration($this->selectedPerizinan->id, $this->pemohon_id);
         $this->saveDataIzin($izin->id);
+        // dispatch OCR setelah dokumen tersimpan + persist-first baris pending
+        $this->getPerizinanService()->requestOcrForNewRegistration($izin);
         return redirect()->route('user.izin');
     }
 

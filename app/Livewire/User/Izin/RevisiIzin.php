@@ -51,6 +51,10 @@ class RevisiIzin extends Component
         $mimes = ($syarat_mime =='img' || $syarat_mime ==  'image') ? 'mimes:jpg,png,jpeg' : 'mimes:pdf';
         $this->validate([
             "persyaratan.{$key}" => ['required',$mimes,'max:2048']
+        ], [
+            "persyaratan.{$key}.mimes" => ($syarat_mime == 'img' || $syarat_mime == 'image')
+                ? 'PDF tidak didukung untuk persyaratan gambar. Unggah JPG, JPEG, atau PNG.'
+                : 'Persyaratan harus berupa PDF.',
         ]);
         if (in_array($key, $this->syarat_tipe_pdf))
             $this->dispatch('start-loading', ['id' => $key]);

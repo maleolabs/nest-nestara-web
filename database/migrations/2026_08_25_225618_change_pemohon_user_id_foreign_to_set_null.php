@@ -25,6 +25,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // SQLite cannot drop named foreign keys. Its test schema already has
+        // the nullable column; keep migration deterministic without changing
+        // production MySQL behavior.
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            return;
+        }
+
         Schema::table('pemohon', function (Blueprint $table) {
             $table->dropForeign('pemohon_user_id_foreign');
             $table->foreign('user_id', 'pemohon_user_id_foreign')
@@ -39,6 +46,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (Schema::getConnection()->getDriverName() === 'sqlite') {
+            return;
+        }
+
         Schema::table('pemohon', function (Blueprint $table) {
             $table->dropForeign('pemohon_user_id_foreign');
             // kembalikan ke kondisi awal: FK polos tanpa onDelete (RESTRICT implisit)

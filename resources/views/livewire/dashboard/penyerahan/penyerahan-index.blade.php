@@ -26,23 +26,23 @@
         </div>
         <div class="flex items-center gap-2">
             <span class="rounded-full bg-nest-50 px-3 py-1.5 text-xs font-bold text-nest-700 ring-1 ring-nest-200">{{ $all_izin->total() }} izin</span>
-            <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="relative" id="helpPopoverWrap">
-                <button type="button" id="helpPopoverBtn" aria-haspopup="true" @click="open = !open" :aria-expanded="open.toString()"
+            <div x-data="{ open: false, previous: null, close() { this.open = false; this.$nextTick(() => $refs.trigger.focus()) } }" x-init="const restore = () => previous?.focus?.(); $watch('open', value => { if (value) $nextTick(() => $refs.close.focus()); else restore() }); return () => restore()" @click.outside="close()" @keydown.escape.window="if (open) close()" class="relative" id="helpPopoverWrap">
+                <button x-ref="trigger" type="button" id="helpPopoverBtn" aria-haspopup="true" aria-controls="helpPopoverPanel" @click="if (!open) previous = $event.currentTarget; open = !open" :aria-expanded="open.toString()"
                     class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink-200 bg-white text-ink-500 hover:border-nest-300 hover:text-nest-700 transition" title="Keterangan status">
                     <i class="fa-solid fa-circle-question"></i>
                 </button>
                 {{-- help popover --}}
-                <div id="helpPopoverPanel" x-show="open" x-cloak
+                <div id="helpPopoverPanel" role="dialog" aria-labelledby="helpPopoverTitle" x-show="open" x-cloak
                     class="absolute right-0 top-[calc(100%+10px)] w-[720px] max-w-[94vw] rounded-2xl bg-white shadow-[0_24px_64px_rgba(15,23,42,0.20)] ring-1 ring-ink-200 overflow-hidden z-50 animate-fadeIn">
                     {{-- header --}}
                     <div class="relative overflow-hidden bg-gradient-to-br from-nest-700 to-nest-800 px-6 py-4 text-white">
                         <div class="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/10 blur-xl"></div>
                         <div class="relative flex items-start justify-between gap-3">
                             <div>
-                                <p class="text-base font-extrabold tracking-tight"><i class="fa-solid fa-circle-info mr-2"></i>Panduan Status Izin</p>
+                             <p id="helpPopoverTitle" class="text-base font-extrabold tracking-tight"><i class="fa-solid fa-circle-info mr-2"></i>Panduan Status Izin</p>
                                 <p class="mt-0.5 text-xs text-white/75">Dua tahap akhir pada alur penyerahan dokumen perizinan.</p>
                             </div>
-                            <button type="button" id="helpPopoverClose" class="h-8 w-8 shrink-0 rounded-full bg-white/15 text-white grid place-items-center ring-1 ring-white/25 hover:bg-white/25 transition">
+                              <button x-ref="close" type="button" id="helpPopoverClose" @click="close()" aria-label="Tutup panduan status" class="h-8 w-8 shrink-0 rounded-full bg-white/15 text-white grid place-items-center ring-1 ring-white/25 hover:bg-white/25 transition">
                                 <i class="fa-solid fa-xmark text-sm"></i>
                             </button>
                         </div>
@@ -205,11 +205,3 @@
         <x-pagination-nestara :paginator="$all_izin" />
     </div>
 </div>
-
-        </div>
-    </div>
-
-@push('scripts')
-    <script>
-    </script>
-@endpush

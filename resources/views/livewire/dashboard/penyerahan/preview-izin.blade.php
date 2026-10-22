@@ -1,5 +1,5 @@
-<div x-data="{ open: @js((bool) $selectedPreview), previous: null, close() { this.open = false; $wire.closePreview() }, trap(event) { const f = [...$el.querySelectorAll('button,a,input,select,textarea,[tabindex]:not([tabindex=\"-1\"])')].filter(el => !el.disabled); if (event.key !== 'Tab' || !f.length) return; if (event.shiftKey && document.activeElement === f[0]) { event.preventDefault(); f.at(-1).focus() } else if (!event.shiftKey && document.activeElement === f.at(-1)) { event.preventDefault(); f[0].focus() } } }" x-init="previous = document.activeElement; const lock = value => document.body.classList.toggle('overflow-hidden', value); lock(open); $watch('open', value => { lock(value); if (value) $nextTick(() => $refs.close.focus()); else previous?.focus?.() }); return () => { lock(false); previous?.focus?.() }" x-effect="open = @js((bool) $selectedPreview)" x-show="open" x-cloak x-transition.opacity @keydown.escape.window="close()" @keydown.tab="trap($event)" @click.self="close()" class="fixed inset-0 z-50 bg-ink-900/40" role="dialog" aria-modal="true" aria-labelledby="penyerahanPreviewTitle">
-    <div class="flex max-h-full w-full max-w-3xl overflow-y-auto bg-white shadow-2xl">
+<div id="penyerahanPreviewDialog" x-data="{ open: @js((bool) $selectedPreview), previous: null, close() { this.open = false; $wire.closePreview() }, trap(event) { const f = [...$el.querySelectorAll('button,a,input,select,textarea,[tabindex]:not([tabindex=\"-1\"])')].filter(el => !el.disabled); if (event.key !== 'Tab' || !f.length) return; if (event.shiftKey && document.activeElement === f[0]) { event.preventDefault(); f.at(-1).focus() } else if (!event.shiftKey && document.activeElement === f.at(-1)) { event.preventDefault(); f[0].focus() } } }" x-init="const lock = value => document.body.classList.toggle('overflow-hidden', value); if (open) { previous = document.activeElement; $nextTick(() => $refs.close.focus()) }; lock(open); $watch('open', value => { lock(value); if (value) { previous = document.activeElement; $nextTick(() => $refs.close.focus()) } else previous?.focus?.() }); return () => { lock(false); previous?.focus?.() }" x-effect="open = @js((bool) $selectedPreview)" x-show="open" x-cloak x-transition.opacity.duration.150ms @keydown.escape.window="if (open) close()" @keydown.tab="trap($event)" @click.self="close()" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/50 p-4" role="dialog" aria-modal="true" aria-labelledby="penyerahanPreviewTitle">
+    <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2 scale-[.98]" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="relative flex max-h-[min(90vh,760px)] w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-ink-200">
         <div class="w-full h-full flex flex-col bg-white">
             {{-- header --}}
             <div class="flex items-center justify-between gap-3 border-b border-ink-100 px-5 py-4">
@@ -8,14 +8,14 @@
                     <h4 id="penyerahanPreviewTitle" class="font-display font-extrabold text-[18px] leading-tight text-ink-900">Preview Izin</h4>
                 </div>
                 <button x-ref="close" type="button" @click="close()"
-                    aria-label="Tutup preview penyerahan" aria-controls="penyerahanPreviewTitle"
+                    aria-label="Tutup preview penyerahan" aria-controls="penyerahanPreviewDialog"
                     class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink-50 text-ink-600 ring-1 ring-ink-200 hover:bg-ink-100 transition">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
 
             <div class="flex-1 overflow-y-auto p-5">
-                @if ($selectedPreview && $selectedPreview->status_izin->last()->nama === $statusIzin::PENYERAHAN && $selectedPreview->status_izin->last()->progres === $statusProgres::FINISHED)
+                @if ($selectedPreview && $selectedPreview->status_izin->last() && $selectedPreview->status_izin->last()->nama === $statusIzin::PENYERAHAN && $selectedPreview->status_izin->last()->progres === $statusProgres::FINISHED)
                         {{-- celebration --}}
                         <div class="flex flex-col items-center justify-center text-center py-8">
                             <img src="{{ asset('storage/web/celebration-sd.gif') }}" alt="" class="w-40 h-auto">
@@ -30,7 +30,7 @@
                         </div>
                 @endif
 
-                @if ($selectedPreview && $selectedPreview->status_izin->last()->nama !== $statusIzin::PENYERAHAN)
+                @if ($selectedPreview && $selectedPreview->status_izin->last() && $selectedPreview->status_izin->last()->nama !== $statusIzin::PENYERAHAN)
                         {{-- identitas izin --}}
                         <div class="rounded-2xl bg-gradient-to-br from-nest-700 to-nest-800 p-4 text-white">
                             <p class="text-[11px] font-bold tracking-widest uppercase text-white/70">Jenis Perizinan</p>
@@ -115,11 +115,6 @@
                  @endif
             </div>
         </div>
-
-          <button type="button" @click="close()" aria-label="Tutup preview penyerahan" aria-controls="penyerahanPreviewTitle"
-            class="absolute top-3 right-3 h-9 w-9 items-center justify-center rounded-full bg-white/90 text-ink-600 ring-1 ring-ink-200 md:hidden">
-            <i class="fa-solid fa-xmark"></i>
-        </button>
 
         {{-- loading overlay panel --}}
         <div wire:loading wire:target='previewDataIzin, penerbitanFinished, allDone'

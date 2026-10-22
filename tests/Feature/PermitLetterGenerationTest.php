@@ -9,6 +9,7 @@ use App\Models\Pegawai;
 use App\Models\PermitLetterGeneration;
 use App\Models\Pemohon;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use App\Models\StatusIzin;
 use App\utils\enums\StatusIzinEnum;
 use App\utils\enums\StatusIzinProgressEnum;
@@ -23,6 +24,7 @@ use Barryvdh\DomPDF\PDF as DomPdf;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 use Mockery;
 use Tests\TestCase;
 
@@ -59,6 +61,14 @@ class PermitLetterGenerationTest extends TestCase
         $surat->shouldReceive('getKopSurat')->andReturn([]);
         $surat->shouldReceive('getSuratContentByJenis')->andReturn([]);
         return [$perizinan, $encryption, $jenis, $entri, $surat];
+    }
+
+    private function backOfficeUser(): User
+    {
+        Role::firstOrCreate(['name' => BACK_OFFICE_ROLE, 'guard_name' => 'web']);
+        $user = User::create(['name' => 'Back Office', 'username' => 'backoffice', 'email' => 'bo@example.test', 'password' => Hash::make('password')]);
+        $user->assignRole(BACK_OFFICE_ROLE);
+        return $user;
     }
 
     public function test_job_persists_artifact_before_completion(): void
@@ -108,5 +118,46 @@ class PermitLetterGenerationTest extends TestCase
         $job = new GeneratePermitLetter($generation->id);
         $job->handle(Mockery::mock(PerizinanService::class), Mockery::mock(EncryptionService::class), Mockery::mock(JenisPerizinanService::class), Mockery::mock(EntriDataService::class), Mockery::mock(SuratService::class));
         $this->assertSame(0, $generation->refresh()->attempts);
+    }
+
+    public function test_controller_dispatches_only_for_eligible_back_office_user_and_reuses_active_generation(): void
+    {
+        Queue::fake();
+        $izin = $this->izin();
+        $this->eligible($izin);
+        $this->app->instance(EncryptionService::class, Mockery::mock(EncryptionService::class, function ($m) use ($izin) { $m->shouldReceive('decryptId')->with('encrypted')->andReturn($izin->id); }));
+        $this->actingAs($this->backOfficeUser());
+
+        $first = $this->postJson(route('pegawai.download-surat'), ['id' => 'encrypted']);
+        $first->assertAccepted()->assertJsonPath('status', PermitLetterGeneration::QUEUED);
+        Queue::assertPushed(GeneratePermitLetter::class);
+        $second = $this->postJson(route('pegawai.download-surat'), ['id' => 'encrypted']);
+        $second->assertAccepted()->assertJsonPath('id', $first->json('id'));
+        $this->assertDatabaseCount('permit_letter_generations', 1);
+    }
+
+    public function test_controller_rejects_ineligible_and_non_back_office_users(): void
+    {
+        $izin = $this->izin();
+        $this->app->instance(EncryptionService::class, Mockery::mock(EncryptionService::class, function ($m) use ($izin) { $m->shouldReceive('decryptId')->andReturn($izin->id); }));
+        $this->actingAs($this->backOfficeUser())->postJson(route('pegawai.download-surat'), ['id' => 'x'])->assertStatus(422);
+        Role::firstOrCreate(['name' => FRONT_OFFICE_ROLE, 'guard_name' => 'web']);
+        $front = User::create(['name' => 'Front', 'username' => 'front', 'email' => 'front@example.test', 'password' => Hash::make('password')]);
+        $front->assignRole(FRONT_OFFICE_ROLE);
+        $this->actingAs($front)->postJson(route('pegawai.download-surat'), ['id' => 'x'])->assertForbidden();
+        $this->getJson(route('pegawai.surat.status', 999))->assertUnauthorized();
+    }
+
+    public function test_status_and_download_require_completed_existing_file(): void
+    {
+        Storage::fake('local');
+        $izin = $this->izin();
+        $generation = PermitLetterGeneration::create(['izin_id' => $izin->id, 'status' => PermitLetterGeneration::COMPLETED, 'path' => 'permit-letters/x.pdf']);
+        $this->actingAs($this->backOfficeUser())->getJson(route('pegawai.surat.status', $generation->id))->assertOk()->assertJsonPath('status', 'completed');
+        $this->get(route('pegawai.surat.download', $generation->id))->assertNotFound();
+        Storage::disk('local')->put($generation->path, 'pdf');
+        $this->get(route('pegawai.surat.download', $generation->id))->assertOk()->assertDownload('IZIN-'.$izin->id.'.pdf');
+        $generation->update(['status' => PermitLetterGeneration::FAILED, 'path' => null]);
+        $this->get(route('pegawai.surat.download', $generation->id))->assertNotFound();
     }
 }

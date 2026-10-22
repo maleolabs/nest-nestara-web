@@ -78,7 +78,7 @@ class DashboardController extends Controller
 
     public function downloadSurat(Request $request)
     {
-        abort_unless(Auth::user()?->pegawai, Response::HTTP_FORBIDDEN);
+        abort_unless(Auth::user()?->hasRole(BACK_OFFICE_ROLE), Response::HTTP_FORBIDDEN);
         $id = $request->id;
         try {
             $id = $this->encryptionService->decryptId($id);
@@ -106,14 +106,14 @@ class DashboardController extends Controller
     public function letterStatus(int $generationId)
     {
         $generation = PermitLetterGeneration::with('izin')->findOrFail($generationId);
-        abort_unless(Auth::user()?->pegawai && $generation->izin, Response::HTTP_FORBIDDEN);
+        abort_unless(Auth::user()?->hasRole(BACK_OFFICE_ROLE) && $generation->izin, Response::HTTP_FORBIDDEN);
         return response()->json(['id' => $generation->id, 'status' => $generation->status, 'error' => $generation->error]);
     }
 
     public function downloadCompletedLetter(int $generationId)
     {
         $generation = PermitLetterGeneration::with('izin')->findOrFail($generationId);
-        abort_unless(Auth::user()?->pegawai && $generation->izin, Response::HTTP_FORBIDDEN);
+        abort_unless(Auth::user()?->hasRole(BACK_OFFICE_ROLE) && $generation->izin, Response::HTTP_FORBIDDEN);
         abort_unless($generation->status === PermitLetterGeneration::COMPLETED && $generation->path, Response::HTTP_NOT_FOUND);
         abort_unless(Storage::disk('local')->exists($generation->path), Response::HTTP_NOT_FOUND);
         return Storage::disk('local')->download($generation->path, "IZIN-{$generation->izin_id}.pdf");

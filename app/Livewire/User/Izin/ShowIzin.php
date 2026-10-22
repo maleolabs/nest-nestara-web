@@ -17,12 +17,15 @@ class ShowIzin extends Component
 
     public $to_confirm_delete = false,
         $delete_izin_id,
-        $confirm_delete;
+        $confirm_delete,
+        $to_confirm_cancel = false,
+        $cancel_izin_id,
+        $cancel_feedback;
 
     public function render()
     {
         $this->semua_izin = auth()->user()->pemohon
-            ? auth()->user()->pemohon->izin()->with(['jenis_perizinan', 'status_izin'])->paginate(10)
+            ? auth()->user()->pemohon->izin()->with(['jenis_perizinan', 'latestStatus'])->paginate(10)
             : new Collection();
 
         $selectedPreview = $this->selected_preview_id
@@ -64,7 +67,37 @@ class ShowIzin extends Component
 
     public function cancel(int $id)
     {
-        $this->getPerizinanService()->cancelRegistration($id);
+        $izin = $this->getPerizinanService()->find($id);
+        if (! $izin || ! auth()->user()->pemohon || $izin->pemohon_id !== auth()->user()->pemohon->id) {
+            $this->cancel_feedback = 'Permohonan tidak ditemukan atau bukan milik Anda.';
+            return;
+        }
+
+        $this->cancel_izin_id = $id;
+        $this->cancel_feedback = null;
+        $this->to_confirm_cancel = true;
+    }
+
+    public function confirmCancel()
+    {
+        $izin = $this->cancel_izin_id ? $this->getPerizinanService()->find($this->cancel_izin_id) : null;
+        if (! $izin || ! auth()->user()->pemohon || $izin->pemohon_id !== auth()->user()->pemohon->id) {
+            $this->cancel_feedback = 'Permohonan tidak ditemukan atau bukan milik Anda.';
+            return;
+        }
+
+        $cancelled = $this->getPerizinanService()->cancelRegistration($izin->id);
+        $this->cancel_feedback = $cancelled
+            ? 'Permohonan berhasil dibatalkan.'
+            : 'Permohonan tidak dapat dibatalkan karena status sudah berubah.';
+        $this->cancel_izin_id = null;
+        $this->to_confirm_cancel = false;
+    }
+
+    public function dismissCancel()
+    {
+        $this->cancel_izin_id = null;
+        $this->to_confirm_cancel = false;
     }
 
     public function delete(int $id)

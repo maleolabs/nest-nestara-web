@@ -104,9 +104,12 @@
                                     class="absolute z-20 mt-2 w-full overflow-hidden rounded-xl bg-white ring-1 ring-ink-200 shadow-[0_16px_40px_rgba(15,23,42,0.14)]">
                                     <ul class="max-h-64 overflow-y-auto p-1.5">
                                         @forelse ($filteredPerizinan as $perizinan)
-                                            <li>
+                                            <li wire:key="jenis-perizinan-option-{{ $perizinan->id }}">
                                                 <button type="button"
-                                                    wire:click='selectJenisIzin("{{ $perizinan->nama }}")'
+                                                    wire:click.stop="selectJenisIzin({{ (int) $perizinan->id }})"
+                                                    @click.stop="open = false"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="selectJenisIzin"
                                                     class="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-semibold transition {{ $data_izin_form->jenis_izin === $perizinan->nama ? 'bg-nest-50 text-nest-800' : 'text-ink-700 hover:bg-nest-50/60' }}">
                                                     <span class="min-w-0 truncate">{{ $perizinan->nama }}</span>
                                                     @if ($data_izin_form->jenis_izin === $perizinan->nama)

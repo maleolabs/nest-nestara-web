@@ -1,4 +1,25 @@
 <div class="mx-auto max-w-[960px] px-4 sm:px-6 lg:px-8 py-6">
+    @if ($cancel_feedback)
+        <div class="mb-4 rounded-xl bg-nest-50 px-4 py-3 text-sm font-semibold text-nest-800 ring-1 ring-nest-200" role="status">
+            {{ $cancel_feedback }}
+        </div>
+    @endif
+    @if ($to_confirm_cancel)
+        <div class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-ink-950/55 p-4 sm:p-6"
+            role="presentation" wire:click.self="dismissCancel" wire:keydown.escape.window="dismissCancel">
+            <div class="w-full max-w-[520px] rounded-2xl bg-white p-5 ring-1 ring-amber-200 shadow-[0_20px_60px_rgba(15,23,42,0.24)] sm:p-6"
+                role="alertdialog" aria-modal="true" aria-labelledby="cancel-title" aria-describedby="cancel-description" tabindex="-1">
+                <h2 id="cancel-title" class="font-display text-lg font-extrabold text-ink-900">Batalkan Permohonan?</h2>
+                <p id="cancel-description" class="mt-2 text-sm leading-relaxed text-ink-600">Permohonan akan berstatus batal dan tidak dapat diproses kembali. Lanjutkan?</p>
+                <div class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                    <button type="button" wire:click="dismissCancel" autofocus class="min-h-11 rounded-full bg-ink-100 px-4 py-2 text-sm font-bold text-ink-700 hover:bg-ink-200 focus:outline-none focus:ring-2 focus:ring-ink-400 focus:ring-offset-2">Jangan Batalkan</button>
+                    <button type="button" wire:click="confirmCancel" wire:loading.attr="disabled" wire:target="confirmCancel" class="min-h-11 rounded-full bg-red-600 px-4 py-2 text-sm font-bold text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50">
+                        <span wire:loading.remove wire:target="confirmCancel">Ya, Batalkan</span><span wire:loading wire:target="confirmCancel">Memproses…</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
     @if ($to_confirm_delete)
         <div class="mx-auto max-w-[520px]">
             <div class="rounded-2xl bg-white p-6 ring-1 ring-red-200 shadow-[0_8px_24px_rgba(15,23,42,0.06)]">
@@ -41,7 +62,7 @@
             @forelse ($semua_izin->reverse() as $izin)
                 @php
                     $is_izin_new = $izin->created_at >= \Carbon\Carbon::now()->subMinutes(30);
-                    $status = $izin->status_izin->last();
+                    $status = $izin->latestStatus;
                     $sc = getStatusIzinClasses($status);
                 @endphp
                 <div wire:key="izin-{{ $izin->id }}" class="rounded-2xl bg-white p-4 ring-1 ring-ink-200 shadow-[0_4px_20px_rgba(15,23,42,0.05)] {{ $is_izin_new ? 'ring-2 ring-nest-500' : '' }}">
@@ -71,7 +92,7 @@
                                 </button>
                                 <ul x-cloak x-show="open" x-transition class="absolute right-0 z-10 mt-2 w-56 rounded-xl border border-ink-200 bg-white p-1 shadow-lg" aria-labelledby="cancelIzinAction-{{ $izin->id }}" role="menu">
                                     <li>
-                                        <button type="button" class="w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-600 hover:bg-red-50" wire:click='cancel({{ $izin->id }})' role="menuitem">
+                                            <button type="button" wire:click="cancel({{ (int) $izin->id }})" wire:loading.attr="disabled" wire:target="cancel" class="w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-600 hover:bg-red-50" role="menuitem">
                                             <i class="fa-solid fa-circle-minus mr-2"></i> Batalkan Permohonan
                                         </button>
                                     </li>

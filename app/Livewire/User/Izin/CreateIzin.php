@@ -61,11 +61,15 @@ class CreateIzin extends Component
         $this->persyaratan = [];
     }
 
-    public function selectJenisIzin($nama)
+    public function selectJenisIzin(int $id)
     {
-        $this->data_izin_form->jenis_izin = $nama;
-        $this->jenis_izin_search = $nama;
-        $this->applyJenisIzin();
+        $this->selectedPerizinan = $this->getJenisPerizinanService()->find($id);
+        if (!$this->selectedPerizinan) {
+            return;
+        }
+        $this->data_izin_form->jenis_izin = $this->selectedPerizinan->nama;
+        $this->jenis_izin_search = $this->selectedPerizinan->nama;
+        $this->persyaratan = [];
         $this->dispatch('izin-selected');
     }
 

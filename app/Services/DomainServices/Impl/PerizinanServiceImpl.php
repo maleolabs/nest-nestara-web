@@ -368,25 +368,26 @@ class PerizinanServiceImpl implements PerizinanService
         ];
     }
 
-    public function cancelRegistration(int $izin_id, ?string $keterangan = null): void
+    public function cancelRegistration(int $izin_id, ?string $keterangan = null): bool
     {
         DB::beginTransaction();
         $izin = Izin::find($izin_id);
         if (!$izin) {
             DB::rollBack();
-            return;
+            return false;
         }
 
-        $izin_last_status = $izin->status_izin->last();
+        $izin_last_status = $izin->latestStatus;
 
-        if (!in_array($izin_last_status->nama, $this->getAllStatusCancelable())) {
+        if (!$izin_last_status || !in_array($izin_last_status->nama, $this->getAllStatusCancelable(), true)) {
             DB::rollBack();
-            return;
+            return false;
         }
 
         $this->statusIzinService->updateStatusIzin($izin_id, Status::BATAL, Progres::FINISHED, $keterangan);
 
         DB::commit();
+        return true;
     }
 
     public function delete(int $izin_id): void

@@ -55,7 +55,7 @@ use Illuminate\Support\Collection;
  * @method void rollbackRegistration(int $izin_id, string $keterangan, int $pegawai_id)
  * @method void saveRegistrationRevision(int $izin_id, ?string $detail_keterangan = null)
  * @method array getAllStatusCancelable()
- * @method void cancelRegistration(int $zin_id, ?string $keterangan = null)
+     * @method bool cancelRegistration(int $zin_id, ?string $keterangan = null)
  * @method void delete(int $izin_id)
  * @method void updateIzinStatusThatHaveBeenReviewed()
  * @method void updateAllIzinStatusWhenEntriDataHasChanged()
@@ -270,7 +270,7 @@ interface PerizinanService
      *
      * @return void
      */
-    function cancelRegistration(int $zin_id, ?string $keterangan = null): void;
+    function cancelRegistration(int $zin_id, ?string $keterangan = null): bool;
 
     /**
      * Menghapus data perizinan berdasarkan ID.

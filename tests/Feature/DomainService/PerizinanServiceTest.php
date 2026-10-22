@@ -37,15 +37,15 @@ class PerizinanServiceTest extends TestCase
         assertNotNull($pemohon);
         $pemohon2 = Pemohon::factory()->create();
 
-        $izin_penmas = JenisPerizinan::where('nama', 'IZIN PENELITIAN MAHASISWA')->first();
+        $izin_penmas = JenisPerizinan::create(['nama' => 'IZIN PENELITIAN MAHASISWA']);
 
         $izin = $this->perizinanService()->save($izin_penmas->id, $pemohon->id);
         assertSame($izin->pemohon_id, $pemohon->id);
         $izin2 = $this->perizinanService()->save($izin_penmas->id, $pemohon2->id);
 
-        $saved = $this->perizinanService()->saveRegistrationAction($izin->id, now(), fake()->company(), null, true);
+        $saved = $this->perizinanService()->saveRegistrationAction($izin->id, now(), fake()->company(), 'permohonan-selesai', null);
         assertTrue($saved);
-        $this->perizinanService()->saveRegistrationAction($izin2->id, now(), fake()->company(), null, true);
+        $this->perizinanService()->saveRegistrationAction($izin2->id, now(), fake()->company(), 'permohonan-selesai', null);
 
         $this->perizinanService()->updateIzinStatusThatHaveBeenReviewed();
 

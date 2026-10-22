@@ -56,12 +56,14 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		}
 
 		DB::transaction(function () use ($izin_id, $status, $progres, $ket, $pegawai_id, $updated_at, $new, $keep_pegawai): void {
+		// Serialize workflow changes per permit, then inspect only current status.
+		Izin::whereKey($izin_id)->lockForUpdate()->first();
 		$status_izin = StatusIzin::where('izin_id', $izin_id)->latest('created_at')->latest('id')->lockForUpdate()->first();
-		if ($status_izin && $status_izin->nama !== $status && !$new && !$this->canTransition($status_izin->nama, $status)) {
+		if ($status_izin && $status_izin->nama !== $status && !$this->canTransition($status_izin->nama, $status)) {
 			throw new \InvalidArgumentException("Invalid permit transition from {$status_izin->nama} to {$status}");
 		}
 
-		$target = !$new ? StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->lockForUpdate()->first() : null;
+		$target = !$new && $status_izin?->nama === $status ? $status_izin : null;
 		if ($target && $target->progres === $progres && $target->keterangan === $ket && ($keep_pegawai || $target->pegawai_id === $pegawai_id)) {
 			return; // Idempotent repeated UI action.
 		}
@@ -118,8 +120,17 @@ class StatusIzinServiceImpl implements StatusIzinService {
 
 	public function updateStatusIzinWithDetailKeterangan(int $izin_id, string $status, string $progres, ?string $keterangan = null, ?string $detail_keterangan = null): void
 	{
-		$status_izin = StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->first();
-		if ($status_izin) {
+		if (!in_array($status, StatusIzinEnum::all(), true) || !in_array($progres, Progres::all(), true)) {
+			throw new \InvalidArgumentException('Invalid status or progress');
+		}
+
+		DB::transaction(function () use ($izin_id, $status, $progres, $keterangan, $detail_keterangan): void {
+			Izin::whereKey($izin_id)->lockForUpdate()->first();
+			$status_izin = StatusIzin::where('izin_id', $izin_id)->latest('created_at')->latest('id')->lockForUpdate()->first();
+			if (!$status_izin || $status_izin->nama !== $status) {
+				throw new \InvalidArgumentException('Status is not current permit status');
+			}
+
 			$status_izin->progres = $progres;
 			
 			if ($keterangan)
@@ -130,7 +141,7 @@ class StatusIzinServiceImpl implements StatusIzinService {
 			
 			$status_izin->updated_at = now();
 			$status_izin->save();
-		}
+		});
 	}
 
 	public function deleteAllByIzinId(int $izin_id): void

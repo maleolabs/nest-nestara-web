@@ -179,11 +179,8 @@ class KtpFieldMapper
                 $val = str_ireplace($wrong, $right, $val);
             }
         }
-        // Title case but keep all-caps for short codes?
-        if (strlen($val) <= 4 && strtoupper($val) === $val) {
-            return $val;
-        }
-        return mb_convert_case($val, MB_CASE_TITLE, "UTF-8");
+        // Preserve OCR casing; API consumers and existing KTP contract expect source text.
+        return $val;
     }
 
     public static function mapStatus(?string $upstream_status): string

@@ -17,6 +17,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 use function PHPUnit\Framework\assertFalse;
@@ -30,14 +31,13 @@ class EntriDataServiceTest extends TestCase
 
     public function test_is_entri_data_izin_exists_by_izin_and_jenis_success(): void
     {
-        DB::statement("SET foreign_key_checks=0");
+        Schema::disableForeignKeyConstraints();
         Pemohon::truncate();
         Izin::truncate();
         EntriData::truncate();
         EntriDataIzin::truncate();
-        DB::statement("SET foreign_key_checks=1");
+        Schema::enableForeignKeyConstraints();
 
-        DB::statement("ALTER TABLE pemohon MODIFY no_telepon VARCHAR(20)");
 
         Artisan::call('db:seed', ['--class' => 'EntriPenMasSeeder']);
 
@@ -64,14 +64,13 @@ class EntriDataServiceTest extends TestCase
     
     public function test_is_entri_data_izin_exists_by_izin_and_jenis_failed(): void
     {
-        DB::statement("SET foreign_key_checks=0");
+        Schema::disableForeignKeyConstraints();
         Pemohon::truncate();
         Izin::truncate();
         EntriData::truncate();
         EntriDataIzin::truncate();
-        DB::statement("SET foreign_key_checks=1");
+        Schema::enableForeignKeyConstraints();
 
-        DB::statement("ALTER TABLE pemohon MODIFY no_telepon VARCHAR(20)");
 
         Artisan::call('db:seed', ['--class' => 'EntriPenMasSeeder']);
 

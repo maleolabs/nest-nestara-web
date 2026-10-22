@@ -7,6 +7,7 @@ use App\Models\JenisPerizinan;
 use App\Models\Pemohon;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 use function PHPUnit\Framework\assertNotNull;
@@ -32,12 +33,12 @@ class DeleteAccountTest extends TestCase
         parent::setUp();
 
         // pola pembersihan ala test existing: truncate manual dengan FK check off
-        DB::statement("SET foreign_key_checks=0");
+        Schema::disableForeignKeyConstraints();
         Pemohon::truncate();
         User::truncate();
         Izin::truncate();
         JenisPerizinan::truncate();
-        DB::statement("SET foreign_key_checks=1");
+        Schema::enableForeignKeyConstraints();
     }
 
     private function makeUser(string $username): User

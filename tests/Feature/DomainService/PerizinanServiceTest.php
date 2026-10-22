@@ -12,6 +12,7 @@ use App\utils\enums\StatusIzinProgressEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 use function PHPUnit\Framework\assertNotNull;
@@ -25,13 +26,12 @@ class PerizinanServiceTest extends TestCase
      */
     public function test_update_izin_status_that_have_been_reviewed(): void
     {
-        DB::statement("SET foreign_key_checks=0");
+        Schema::disableForeignKeyConstraints();
         Pemohon::truncate();
         Izin::truncate();
         StatusIzin::truncate();
-        DB::statement("SET foreign_key_checks=1");
+        Schema::enableForeignKeyConstraints();
 
-        DB::statement("ALTER TABLE pemohon MODIFY no_telepon VARCHAR(20)");
 
         $pemohon = Pemohon::factory()->create();
         assertNotNull($pemohon);

@@ -10,6 +10,7 @@ use App\Models\SyaratIzin;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PersyaratanIzinSeeder extends Seeder
@@ -19,11 +20,11 @@ class PersyaratanIzinSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::statement("SET foreign_key_checks=0");
+        Schema::disableForeignKeyConstraints();
         SyaratIzin::truncate();
         JenisPerizinan::truncate();
         DB::table('jenis_perizinan_syarat_izin')->delete();
-        DB::statement("SET foreign_key_checks=1");
+        Schema::enableForeignKeyConstraints();
 
         $data_folder = storage_path('app/private_files/data/');
 

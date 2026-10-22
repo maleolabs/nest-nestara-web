@@ -8,6 +8,7 @@ use Tests\TestCase;
 use App\Services\DomainServices\PemohonService;
 use App\Models\Pemohon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertIsArray;
@@ -20,9 +21,9 @@ class PemohonServiceTest extends TestCase
     
     public function test_save(): void
     {
-        DB::statement("SET foreign_key_checks=0");
+        Schema::disableForeignKeyConstraints();
         Pemohon::truncate();
-        DB::statement("SET foreign_key_checks=1");
+        Schema::enableForeignKeyConstraints();
         $data_pemohon = [
             'sumber_identitas' => 'ktp',
             'nomor_id' => '7498473987423',
@@ -117,9 +118,9 @@ class PemohonServiceTest extends TestCase
 
     public function test_get_by_nomor_id_or_nama_pemohon()
     {
-        DB::statement("SET foreign_key_checks=0");
+        Schema::disableForeignKeyConstraints();
         Pemohon::truncate();
-        DB::statement("SET foreign_key_checks=1");
+        Schema::enableForeignKeyConstraints();
         $data_pemohon = [
             'sumber_identitas' => 'ktp',
             'nomor_id' => '74984739874234',

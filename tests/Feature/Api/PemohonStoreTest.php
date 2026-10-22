@@ -5,6 +5,7 @@ namespace Tests\Feature\Api;
 use App\Models\Pemohon;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
@@ -31,10 +32,10 @@ class PemohonStoreTest extends TestCase
         parent::setUp();
 
         // pola pembersihan ala test existing: truncate manual dengan FK check off
-        DB::statement("SET foreign_key_checks=0");
+        Schema::disableForeignKeyConstraints();
         Pemohon::truncate();
         User::truncate();
-        DB::statement("SET foreign_key_checks=1");
+        Schema::enableForeignKeyConstraints();
     }
 
     private function makeUser(string $username): User

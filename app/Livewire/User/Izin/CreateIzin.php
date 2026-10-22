@@ -133,10 +133,14 @@ class CreateIzin extends Component
 
     public function nextStep()
     {
+        $this->form_step = max(self::FIRST_STEP, min(self::LAST_STEP, (int) $this->form_step));
         if ($this->form_step == self::FIRST_STEP)
             $this->form_data_pemohon->validate();
         elseif ($this->form_step == self::SECOND_STEP) {
             $this->data_izin_form->validate();
+            if (!$this->selectedPerizinan) {
+                throw ValidationException::withMessages(['data_izin_form.jenis_izin' => 'Jenis izin belum dipilih.']);
+            }
             $syarat_izin_ids = $this->selectedPerizinan->syarat_izin->pluck('id')->all();
             $missing_syarat_ids = array_diff($syarat_izin_ids, array_keys($this->persyaratan));
             if (!empty($missing_syarat_ids)) {
@@ -148,12 +152,12 @@ class CreateIzin extends Component
                 throw ValidationException::withMessages($missing_messages);
             }
         }
-        $this->form_step++;
+        $this->form_step = min(self::LAST_STEP, $this->form_step + 1);
     }
 
     public function prevStep()
     {
-        $this->form_step--;
+        $this->form_step = max(self::FIRST_STEP, (int) $this->form_step - 1);
     }
 
     private function getRegionService(): RegionAPIService

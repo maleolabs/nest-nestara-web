@@ -101,6 +101,7 @@ class PenyerahanIndex extends Component
 
     public function penerbitanFinished($izin_id)
     {
+        if (!$this->selectedPreview || (int) $this->selectedPreview->id !== (int) $izin_id) return;
         $auth_user = auth()->user();
         $pegawai_id = $auth_user->pegawai ? $auth_user->pegawai->id : null;
         $this->getPerizinanService()->penerbitanFinished($izin_id, $pegawai_id);
@@ -109,6 +110,7 @@ class PenyerahanIndex extends Component
 
     public function allDone($izin_id)
     {
+        if (!$this->selectedPreview || (int) $this->selectedPreview->id !== (int) $izin_id) return;
         $auth_user = auth()->user();
         $pegawai_id = $auth_user->pegawai ? $auth_user->pegawai->id : null;
         $this->getPerizinanService()->allDone($izin_id, $pegawai_id);

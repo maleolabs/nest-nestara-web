@@ -77,6 +77,18 @@ class RevisiIzin extends Component
 
     public function save()
     {
+        if (!$this->izin || !$this->canAccess()) {
+            throw ValidationException::withMessages(['persyaratan' => 'Permohonan tidak dapat diakses.']);
+        }
+        $missing = [];
+        foreach ($this->syarat_izin as $key => $syarat) {
+            if (!isset($this->persyaratan[$key]) && !isset($this->persyaratan_tmp[$key])) {
+                $missing["persyaratan.{$key}"] = "{$syarat->nama} diperlukan.";
+            }
+        }
+        if ($missing) {
+            throw ValidationException::withMessages($missing);
+        }
         if (count($this->persyaratan) > 0)
             $this->getDokumenPemohonService()->saveAllWithFile($this->izin->pemohon_id, $this->izin->id, $this->persyaratan, $this->persyarata_actual_tmp);
 

@@ -102,14 +102,16 @@
                         </div>
                 @endif
 
-                @if (! $selectedPreview)
+                 @if (! $selectedPreview)
                     {{-- empty state --}}
                     <div class="flex h-full flex-col items-center justify-center text-center py-12">
                         <div class="h-14 w-14 rounded-2xl bg-ink-50 grid place-items-center text-ink-400 ring-1 ring-ink-200"><i class="fa-solid fa-file-circle-question text-xl"></i></div>
                         <p class="mt-3 text-sm font-bold text-ink-900">Tidak ada izin dipilih</p>
                         <p class="mt-1 max-w-[30ch] text-xs leading-relaxed text-ink-500">Klik salah satu baris permohonan pada tabel untuk melihat preview di panel ini.</p>
                     </div>
-                @endif
+                 @elseif ($selectedPreview && !$selectedPreview->status_izin->last())
+                    <div role="alert" class="rounded-xl bg-red-50 p-4 text-sm text-red-800 ring-1 ring-red-200">Status izin tidak tersedia. Muat ulang atau hubungi administrator.</div>
+                 @endif
             </div>
         </div>
 

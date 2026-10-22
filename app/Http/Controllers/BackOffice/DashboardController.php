@@ -16,6 +16,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
@@ -75,6 +76,7 @@ class DashboardController extends Controller
 
     public function downloadSurat(Request $request)
     {
+        abort_unless(Auth::user()?->pegawai, Response::HTTP_FORBIDDEN);
         $id = $request->id;
         try {
             $id = $this->encryptionService->decryptId($id);
@@ -87,6 +89,8 @@ class DashboardController extends Controller
             abort(Response::HTTP_NOT_FOUND, 'Izin not found');
 
         $generation = DB::transaction(function () use ($izin) {
+            // Serialize on permit row; queue workers and HTTP requests cannot create duplicates.
+            $izin = $izin->newQuery()->lockForUpdate()->findOrFail($izin->id);
             $generation = PermitLetterGeneration::where('izin_id', $izin->id)->whereIn('status', [PermitLetterGeneration::QUEUED, PermitLetterGeneration::PROCESSING, PermitLetterGeneration::COMPLETED])->latest('id')->first();
             if ($generation && in_array($generation->status, [PermitLetterGeneration::QUEUED, PermitLetterGeneration::PROCESSING, PermitLetterGeneration::COMPLETED], true)) return $generation;
             return PermitLetterGeneration::create(['izin_id' => $izin->id, 'status' => PermitLetterGeneration::QUEUED]);
@@ -98,14 +102,14 @@ class DashboardController extends Controller
     public function letterStatus(int $generationId)
     {
         $generation = PermitLetterGeneration::with('izin')->findOrFail($generationId);
-        abort_unless($generation->izin, Response::HTTP_FORBIDDEN);
+        abort_unless(Auth::user()?->pegawai && $generation->izin, Response::HTTP_FORBIDDEN);
         return response()->json(['id' => $generation->id, 'status' => $generation->status, 'error' => $generation->error]);
     }
 
     public function downloadCompletedLetter(int $generationId)
     {
         $generation = PermitLetterGeneration::with('izin')->findOrFail($generationId);
-        abort_unless($generation->izin, Response::HTTP_FORBIDDEN);
+        abort_unless(Auth::user()?->pegawai && $generation->izin, Response::HTTP_FORBIDDEN);
         abort_unless($generation->status === PermitLetterGeneration::COMPLETED && $generation->path, Response::HTTP_NOT_FOUND);
         abort_unless(Storage::disk('local')->exists($generation->path), Response::HTTP_NOT_FOUND);
         return Storage::disk('local')->download($generation->path, "IZIN-{$generation->izin_id}.pdf");

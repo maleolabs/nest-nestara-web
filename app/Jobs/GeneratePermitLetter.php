@@ -26,15 +26,14 @@ class GeneratePermitLetter implements ShouldQueue
 
     public function handle(PerizinanService $perizinan, EncryptionService $encryption, JenisPerizinanService $jenis, EntriDataService $entri, SuratService $surat): void
     {
-        $generation = PermitLetterGeneration::findOrFail($this->generationId);
-        if ($generation->status === PermitLetterGeneration::COMPLETED) return;
-        $claimed = PermitLetterGeneration::whereKey($this->generationId)
-            ->where(function ($q) {
-                $q->where('status', PermitLetterGeneration::QUEUED)
-                    ->orWhere(function ($q) { $q->where('status', PermitLetterGeneration::PROCESSING)->where('processing_at', '<', now()->subMinutes(15)); });
-            })->update(['status' => PermitLetterGeneration::PROCESSING, 'processing_at' => now(), 'attempts' => DB::raw('attempts + 1'), 'error' => null]);
-        if (!$claimed) return;
-        $generation->refresh();
+        $generation = DB::transaction(function () {
+            $generation = PermitLetterGeneration::whereKey($this->generationId)->lockForUpdate()->firstOrFail();
+            if ($generation->status === PermitLetterGeneration::COMPLETED || $generation->status === PermitLetterGeneration::FAILED) return null;
+            if ($generation->status === PermitLetterGeneration::PROCESSING && $generation->processing_at?->gt(now()->subMinutes(15))) return null;
+            $generation->update(['status' => PermitLetterGeneration::PROCESSING, 'processing_at' => now(), 'attempts' => $generation->attempts + 1, 'error' => null]);
+            return $generation->fresh();
+        });
+        if (!$generation) return;
         try {
             $izin = $perizinan->find($generation->izin_id);
             if (!$izin) throw new \RuntimeException('Izin not found');
@@ -48,8 +47,15 @@ class GeneratePermitLetter implements ShouldQueue
             $generation->update(['status' => PermitLetterGeneration::COMPLETED, 'path' => $path]);
             $perizinan->updateCetakIzinStatus($izin->id, null);
         } catch (\Throwable $e) {
-            $generation->update(['status' => $this->attempts() >= $this->tries ? PermitLetterGeneration::FAILED : PermitLetterGeneration::QUEUED, 'error' => $e->getMessage(), 'processing_at' => null]);
+            $generation->update(['status' => $generation->attempts >= $this->tries ? PermitLetterGeneration::FAILED : PermitLetterGeneration::QUEUED, 'error' => $e->getMessage(), 'processing_at' => null]);
             throw $e;
         }
+    }
+
+    public function failed(\Throwable $e): void
+    {
+        PermitLetterGeneration::whereKey($this->generationId)
+            ->whereIn('status', [PermitLetterGeneration::QUEUED, PermitLetterGeneration::PROCESSING])
+            ->update(['status' => PermitLetterGeneration::FAILED, 'processing_at' => null, 'error' => $e->getMessage()]);
     }
 }

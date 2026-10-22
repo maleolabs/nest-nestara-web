@@ -172,7 +172,7 @@
                                                 </div>
 
                                                 @if ($type === 'file')
-                                                    <label for="syarat{{ $syarat->id }}"
+                                                    <label for="syarat-file-{{ $syarat->id }}"
                                                         class="mt-3 flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border-2 border-dashed px-4 py-5 text-center transition hover:bg-nest-50/60 {{ $uploaded ? 'border-nest-300 bg-nest-50/40' : 'border-ink-200 hover:border-nest-400' }}"
                                                         :class="uploading && 'pointer-events-none opacity-60'">
                                                         @if ($uploaded)
@@ -184,7 +184,7 @@
                                                             <p class="text-xs font-semibold text-ink-600">Klik untuk unggah berkas <span class="font-extrabold uppercase">{{ $syarat->tipe }}</span></p>
                                                         @endif
                                                     </label>
-                                                    <input type="file" id="syarat{{ $syarat->id }}" class="sr-only" wire:model='persyaratan.{{ $syarat->id }}'>
+                                                    <input type="file" id="syarat-file-{{ $syarat->id }}" class="sr-only" wire:model='persyaratan.{{ $syarat->id }}'>
 
                                                     <div x-show="uploading" x-cloak class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-ink-100">
                                                         <div class="h-full rounded-full bg-nest-700 transition-all duration-150" x-bind:style="`width: ${progress}%`"></div>
@@ -192,7 +192,7 @@
                                                     <p x-show="uploading" x-cloak class="mt-1.5 text-[11px] font-bold text-nest-700" x-text="`Mengunggah… ${Math.round(progress)}%`"></p>
                                                     <p x-show="failed" x-cloak class="mt-1.5 flex items-center gap-1.5 text-[11px] font-bold text-red-600"><i class="fa-solid fa-triangle-exclamation"></i> Unggah gagal, silakan coba lagi.</p>
                                                 @else
-                                                    <input type="text" id="syarat{{ $syarat->id }}" wire:model='persyaratan.{{ $syarat->id }}'
+                                                    <input type="text" id="syarat-text-{{ $syarat->id }}" wire:model='persyaratan.{{ $syarat->id }}'
                                                         class="mt-3 w-full rounded-xl border border-ink-200 bg-white px-4 py-2.5 text-sm font-medium text-ink-900 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
                                                 @endif
 

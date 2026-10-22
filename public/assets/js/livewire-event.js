@@ -94,7 +94,7 @@ Livewire.on('component-rendered', ({el, component}) => {
     setIconLineHeight()
 })
 
-window.onload = setIconLineHeight()
+window.addEventListener('load', setIconLineHeight)
 
 function setIconLineHeight() {
     const iconWraper = document.querySelectorAll('.icon-status-wraper')

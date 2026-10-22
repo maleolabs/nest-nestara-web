@@ -40,8 +40,8 @@
             </div>
             <div class="min-w-0 mb-3">
                 <div class="space-y-1">
-                    <label for="nama_pemohon" class="mb-1 block text-sm font-semibold text-ink-700 capitalize">nomor telepon</label>
-                    <input type="text" class="w-full rounded-xl border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100" id="nama_pemohon" wire:model='form_data_pemohon.no_telepon'>
+                    <label for="no_telepon" class="mb-1 block text-sm font-semibold text-ink-700 capitalize">nomor telepon</label>
+                    <input type="text" class="w-full rounded-xl border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100" id="no_telepon" wire:model='form_data_pemohon.no_telepon'>
                     @error('form_data_pemohon.no_telepon')
                         <div class="text-red-600 text-sm">{{ $message }}</div>
                     @enderror

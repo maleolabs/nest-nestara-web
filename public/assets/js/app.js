@@ -129,7 +129,7 @@
     })
   }
 
-  window.addEventListener('load', appModal())
+  window.addEventListener('load', appModal)
 
   function appModal() {
     let modalRight = select('.modal-right[data-legacy-modal]')

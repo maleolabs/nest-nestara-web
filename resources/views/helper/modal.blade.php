@@ -17,7 +17,7 @@
                         @php($field = $form['name'])
                         @if ($form['type'] == 'checkbox')
                             <label class="flex items-center gap-3 text-sm font-semibold text-ink-800">
-                                <input type="checkbox" id="{{ $field }}" name="{{ $field }}" @if($modal->isComponent()) wire:model="{{ $form['model'] . (isset($form['id']) && $form['id'] !== null ? '.' . $form['id'] : '') }}" @endif class="h-4 w-4 rounded border-ink-300 text-nest-700 focus:ring-nest-500">
+                                <input type="checkbox" id="{{ $modalId }}-{{ $loop->index }}-{{ $field }}" name="{{ $field }}" @if($modal->isComponent()) wire:model="{{ $form['model'] . (isset($form['id']) && $form['id'] !== null ? '.' . $form['id'] : '') }}" @endif class="h-4 w-4 rounded border-ink-300 text-nest-700 focus:ring-nest-500">
                                 {{ ucfirst($field) }}
                             </label>
                         @elseif ($form['type'] == 'radio' && $modal->isComponent())
@@ -29,11 +29,11 @@
                             <h3 class="font-bold text-ink-900">{{ $field }}</h3>
                         @else
                             @php($label = str_replace('_', ' ', $field))
-                            <label for="{{ $field }}" class="block text-sm font-semibold capitalize text-ink-800">{{ Lang::has('messages.' . $label) ? __('messages.' . $label) : $label }}</label>
+                            <label for="{{ $modalId }}-{{ $loop->index }}-{{ $field }}" class="block text-sm font-semibold capitalize text-ink-800">{{ Lang::has('messages.' . $label) ? __('messages.' . $label) : $label }}</label>
                             @if($form['type'] == 'textarea')
-                                <textarea rows="3" id="{{ $field }}" @if($modal->isComponent()) wire:model="{{ $form['model'] ?? $field }}" @else name="{{ $field }}" @endif class="mt-1 w-full rounded-lg border border-ink-300 px-3 py-2 text-sm focus:border-nest-600 focus:outline-none focus:ring-2 focus:ring-nest-100"></textarea>
+                                <textarea rows="3" id="{{ $modalId }}-{{ $loop->index }}-{{ $field }}" @if($modal->isComponent()) wire:model="{{ $form['model'] ?? $field }}" @else name="{{ $field }}" @endif class="mt-1 w-full rounded-lg border border-ink-300 px-3 py-2 text-sm focus:border-nest-600 focus:outline-none focus:ring-2 focus:ring-nest-100"></textarea>
                             @else
-                                <input type="{{ $form['type'] }}" id="{{ $field }}" @if($modal->isComponent()) wire:model="{{ $form['model'] ?? $field }}" @else name="{{ $field }}" @endif class="mt-1 w-full rounded-lg border border-ink-300 px-3 py-2 text-sm focus:border-nest-600 focus:outline-none focus:ring-2 focus:ring-nest-100">
+                                <input type="{{ $form['type'] }}" id="{{ $modalId }}-{{ $loop->index }}-{{ $field }}" @if($modal->isComponent()) wire:model="{{ $form['model'] ?? $field }}" @else name="{{ $field }}" @endif class="mt-1 w-full rounded-lg border border-ink-300 px-3 py-2 text-sm focus:border-nest-600 focus:outline-none focus:ring-2 focus:ring-nest-100">
                             @endif
                             @if($errors->has($field)) <p class="mt-1 text-xs italic text-red-600">{{ $errors->first($field) }}</p> @endif
                         @endif

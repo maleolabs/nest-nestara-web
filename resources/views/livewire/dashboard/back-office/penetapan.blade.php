@@ -22,12 +22,9 @@
         </div>
     </div>
 
-    <div>
-        @if ($preview_izin_id)
-            @livewire('dashboard.preview-izin.preview-data-izin', ['preview_izin_id' => $preview_izin_id])
-        @else
-            @include('livewire.dashboard.back-office.partials.penetapan-izin')
-        @endif
+    <div wire:key="penetapan-content-{{ $preview_izin_id ?: 'list' }}">
+        @include('livewire.dashboard.back-office.partials.pendataan-entri-data')
+        @include('livewire.dashboard.back-office.partials.penetapan-izin')
     </div>
 </div>
 @push('scripts')

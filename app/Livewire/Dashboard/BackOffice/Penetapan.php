@@ -25,8 +25,7 @@ class Penetapan extends Component
     private const PEMBUATAN = 'Pembuatan Izin';
     private const LAYANAN_DITOLAK = 'Layanan Ditolak';
 
-    public $preview_action,
-        $table_content;
+    public $table_content;
 
     public $active_menu;
 
@@ -42,7 +41,6 @@ class Penetapan extends Component
 
     public function mount()
     {
-        $this->preview_action = 'id="modalRightShowBtn"';
         $this->table_content = 'Nomor Surat';
 
         if ($this->tab) $this->selectMenu($this->tab); else $this->selectMenu(self::PENETAPAN); 

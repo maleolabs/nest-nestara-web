@@ -1,5 +1,5 @@
-<div class="modal-right hidden" role="dialog" aria-modal="true" aria-labelledby="modalRightTitle">
-    <div class="modal-right-content flex">
+<div x-data="{ open: @js((bool) $selectedPreview), previous: null, close() { this.open = false; $wire.closePreview() }, trap(event) { if (event.key !== 'Tab') return; const focusable = [...$el.querySelectorAll('button,a,input,select,textarea,[tabindex]:not([tabindex=\"-1\"])')].filter(el => !el.disabled); if (!focusable.length) return; const first = focusable[0], last = focusable[focusable.length - 1]; if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus() } else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() } } }" x-init="previous = document.activeElement; const lock = value => document.body.classList.toggle('overflow-hidden', value); lock(open); $watch('open', value => { lock(value); if (value) $nextTick(() => $refs.close.focus()); else previous?.focus?.() }); return () => { lock(false); previous?.focus?.() }" x-effect="open = @js((bool) $selectedPreview)" x-show="open" x-cloak x-transition.opacity @keydown.escape.window="close()" @keydown.tab="trap($event)" @click.self="close()" class="fixed inset-0 z-50 bg-ink-900/40" role="dialog" aria-modal="true" aria-labelledby="modalRightTitle">
+    <div class="flex max-h-full w-full max-w-xl overflow-y-auto bg-white p-5 shadow-2xl" @click.stop>
         <div class="w-full min-w-0">
             <h4 class="mb-5 border-b border-ink-100 pb-4 text-lg font-extrabold text-ink-900" id="modalRightTitle">Lihat pendaftaran izin</h4>
             @if ($selectedPreview)
@@ -68,7 +68,7 @@
             @endif
             <div class="h-3"></div>
         </div>
-        <button aria-label="Tutup preview" class="modal-right-close-btn ml-3 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-500 hover:bg-ink-50" wire:click='closePreview'>
+        <button x-ref="close" type="button" aria-label="Tutup preview" class="ml-3 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-500 hover:bg-ink-50" @click="close()">
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>

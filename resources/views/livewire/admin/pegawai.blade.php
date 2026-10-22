@@ -137,11 +137,11 @@
 </div>
 
 {{-- penandatangan edit popover panel --}}
-<div class="modal-right {{ !$selected_penandatangan ? 'hidden' : '' }}">
+<div x-data="{ open: @js((bool) $selected_penandatangan) }" x-init="$watch('open', value => document.body.classList.toggle('overflow-hidden', value))" x-show="open" x-cloak @keydown.escape.window="open = false; $wire.cancelEditPenandatangan()" @click.self="open = false; $wire.cancelEditPenandatangan()" class="fixed inset-0 z-50 bg-ink-900/40" role="dialog" aria-modal="true" aria-labelledby="pegawaiPenandatanganTitle">
     <div class="modal-right-content modal-right-content-minimalist p-0" style="right: {{ !$selected_penandatangan ? '-40%' : '0' }}">
         <div class="px-4 py-2 border-b flex justify-between items-center gap-2">
-            <h6 class="text-semibold mb-0">Penandatangan</h6>
-            <button class="ml-auto text-base inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition btn-transparent p-0 card-icon sticky-top-0 shadow-none modal-right-show-btn" id="modalRightCloseBtn">
+            <h6 id="pegawaiPenandatanganTitle" class="text-semibold mb-0">Penandatangan</h6>
+            <button type="button" @click="open = false; $wire.cancelEditPenandatangan()" class="ml-auto text-base inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition btn-transparent p-0 card-icon sticky-top-0 shadow-none">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -239,7 +239,7 @@
                         <span class="animate-spin spinner-border-sm" wire:loading wire:target='savePenandatangan'></span>
                     </button>
                 @endif
-                <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition px-3 py-1.5 text-xs bg-ink-100 text-ink-800 capitalize" type="button" id="modalRightCloseBtn" wire:click='cancelEditPenandatangan'>
+                <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition px-3 py-1.5 text-xs bg-ink-100 text-ink-800 capitalize" type="button" wire:click='cancelEditPenandatangan'>
                     batal
                 </button>
             </div>

@@ -45,7 +45,7 @@
                         $statusClasses = getStatusIzinProcessClasses($status);
                         $statusKeterangan = $status?->keterangan ?? 'Belum ada status';
                     @endphp
-                    <tr tabindex="0" role="button" aria-label="Buka permohonan {{ $izin->no_pendaftaran }}" class="cursor-pointer data-izin focus-within:bg-nest-50 hover:bg-ink-50 focus:bg-nest-50" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})' @keydown.enter="this.click()" @keydown.space.prevent="this.click()" @if(isset($preview_action)) {{ $preview_action }} @endif>
+                    <tr tabindex="0" role="button" aria-label="Buka permohonan {{ $izin->no_pendaftaran }}" class="cursor-pointer data-izin focus-within:bg-nest-50 hover:bg-ink-50 focus:bg-nest-50" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})' @keydown.enter="this.click()" @keydown.space.prevent="this.click()">
                         <td class="align-middle text-center text-sm">{{ $loop->iteration }}</td>
                         <td class="text-sm">
                             <p class="text-xs font-bold">{{ $izin->no_pendaftaran }}</p>

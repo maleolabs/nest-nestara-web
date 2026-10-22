@@ -132,8 +132,8 @@
   window.addEventListener('load', appModal())
 
   function appModal() {
-    let modalRight = select('.modal-right')
-    let modalRightContent = select('.modal-right-content')
+    let modalRight = select('.modal-right[data-legacy-modal]')
+    let modalRightContent = select('.modal-right[data-legacy-modal] .modal-right-content')
     let modalRightShowBtn = select('#modalRightShowBtn', true)
     document.addEventListener('click', function(event) {
       let isModalRightShowBtnClicked = Array.isArray(modalRightShowBtn) 

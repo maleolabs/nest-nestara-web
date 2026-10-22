@@ -1,13 +1,13 @@
-<div class="modal-right hidden">
-    <div class="modal-right-content modal-right-content-md flex">
+<div x-data="{ open: @js((bool) $selectedPreview), previous: null, close() { this.open = false; $wire.closePreview() }, trap(event) { const f = [...$el.querySelectorAll('button,a,input,select,textarea,[tabindex]:not([tabindex=\"-1\"])')].filter(el => !el.disabled); if (event.key !== 'Tab' || !f.length) return; if (event.shiftKey && document.activeElement === f[0]) { event.preventDefault(); f.at(-1).focus() } else if (!event.shiftKey && document.activeElement === f.at(-1)) { event.preventDefault(); f[0].focus() } } }" x-init="previous = document.activeElement; const lock = value => document.body.classList.toggle('overflow-hidden', value); lock(open); $watch('open', value => { lock(value); if (value) $nextTick(() => $refs.close.focus()); else previous?.focus?.() }); return () => { lock(false); previous?.focus?.() }" x-effect="open = @js((bool) $selectedPreview)" x-show="open" x-cloak x-transition.opacity @keydown.escape.window="close()" @keydown.tab="trap($event)" @click.self="close()" class="fixed inset-0 z-50 bg-ink-900/40" role="dialog" aria-modal="true" aria-labelledby="penyerahanPreviewTitle">
+    <div class="flex max-h-full w-full max-w-3xl overflow-y-auto bg-white shadow-2xl">
         <div class="w-full h-full flex flex-col bg-white">
             {{-- header --}}
             <div class="flex items-center justify-between gap-3 border-b border-ink-100 px-5 py-4">
                 <div>
                     <p class="text-[11px] font-extrabold tracking-widest text-nest-700 uppercase">Penyerahan</p>
-                    <h4 class="font-display font-extrabold text-[18px] leading-tight text-ink-900">Preview Izin</h4>
+                    <h4 id="penyerahanPreviewTitle" class="font-display font-extrabold text-[18px] leading-tight text-ink-900">Preview Izin</h4>
                 </div>
-                <button type="button" wire:click='closePreview' id="modalRightCloseBtn"
+                <button x-ref="close" type="button" @click="close()"
                     class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink-50 text-ink-600 ring-1 ring-ink-200 hover:bg-ink-100 transition">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -115,7 +115,7 @@
             </div>
         </div>
 
-        <button type="button" wire:click='closePreview' id="modalRightCloseBtnMobile"
+         <button type="button" wire:click='closePreview'
             class="absolute top-3 right-3 h-9 w-9 items-center justify-center rounded-full bg-white/90 text-ink-600 ring-1 ring-ink-200 md:hidden">
             <i class="fa-solid fa-xmark"></i>
         </button>

@@ -71,8 +71,12 @@ Livewire.hook('morph.updated', ({el, component}) => {
     setIconLineHeight()
 
     if ('selectedPreview' in component.snapshot.data && component.snapshot.data['selectedPreview'] !== null) {
-        document.querySelector('.modal-right').classList.remove('d-none')
-        document.querySelector('.modal-right-content').style.right = '0'
+        const modal = document.querySelector('.modal-right[data-legacy-modal]')
+        const modalContent = modal?.querySelector('.modal-right-content')
+        if (modal && modalContent) {
+            modal.classList.remove('d-none', 'hidden')
+            modalContent.style.right = '0'
+        }
     }
 
     var messageSuccessTip = $('.message-success-tip')

@@ -39,7 +39,7 @@ class RevisiIzinMiddleware
         }
         $izin = $this->perizinanService->find($izin_id);
         $last_status = $izin->status_izin->last();
-        if ($last_status->nama != StatusIzinEnum::REVISI_PERSYARATAN) {
+        if ($last_status?->nama != StatusIzinEnum::REVISI_PERSYARATAN) {
             return redirect()->back();
         }
         return $next($request);

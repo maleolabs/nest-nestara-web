@@ -37,7 +37,7 @@ class Izin extends Model
     /** Status terakhir — 1 baris per izin (untuk list/badge). */
     public function latestStatus(): HasOne
     {
-        return $this->hasOne(StatusIzin::class)->latestOfMany('created_at');
+        return $this->hasOne(StatusIzin::class)->ofMany(['created_at' => 'max', 'id' => 'max']);
     }
 
     /** Status awal pendaftaran — untuk kolom tanggal permohonan. */

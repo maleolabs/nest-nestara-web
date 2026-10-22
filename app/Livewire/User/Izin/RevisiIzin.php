@@ -33,7 +33,7 @@ class RevisiIzin extends Component
         if ($this->izin_id) {
             $this->izin = $this->getPerizinanService()->find($this->izin_id);
             $this->status = $this->izin->status_izin->last();
-            if ($this->status->progres == StatusIzinProgressEnum::FINISHED)
+            if ($this->status?->progres == StatusIzinProgressEnum::FINISHED)
                 $this->detail_keterangan = $this->status->detail_keterangan;
         }
         $this->setUpData();

@@ -29,7 +29,7 @@ class StatusIzinServiceImpl implements StatusIzinService {
 
 	public function findLastStatusByIzin(int $izin_id): ?StatusIzin
 	{
-		return StatusIzin::where('izin_id', $izin_id)->latest('created_at')->first();
+		return StatusIzin::where('izin_id', $izin_id)->latest('created_at')->latest('id')->first();
 	}
 
 	public function getRiwayatProses(int $status_id): array
@@ -54,7 +54,18 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		if (!in_array($status, StatusIzinEnum::all(), true) || !in_array($progres, Progres::all(), true)) {
 			throw new \InvalidArgumentException('Invalid status or progress');
 		}
-		$status_izin = StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->lockForUpdate()->first();
+
+		DB::transaction(function () use ($izin_id, $status, $progres, $ket, $pegawai_id, $updated_at, $new, $keep_pegawai): void {
+		$status_izin = StatusIzin::where('izin_id', $izin_id)->latest('created_at')->latest('id')->lockForUpdate()->first();
+		if ($status_izin && $status_izin->nama !== $status && !$new && !$this->canTransition($status_izin->nama, $status)) {
+			throw new \InvalidArgumentException("Invalid permit transition from {$status_izin->nama} to {$status}");
+		}
+
+		$target = !$new ? StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->lockForUpdate()->first() : null;
+		if ($target && $target->progres === $progres && $target->keterangan === $ket && ($keep_pegawai || $target->pegawai_id === $pegawai_id)) {
+			return; // Idempotent repeated UI action.
+		}
+		$status_izin = $target;
 		if ($status_izin && !$new) {
 			$status_izin->progres = $progres;
 			$status_izin->keterangan = $ket;
@@ -87,6 +98,22 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		$izin = Izin::find($izin_id);
 		if ($izin)
 			$izin->touch();
+		});
+	}
+
+	/** Workflow guard. Same-state updates remain valid for process detail changes. */
+	private function canTransition(string $from, string $to): bool
+	{
+		return match ($from) {
+			StatusIzinEnum::DIDAFTARKAN => in_array($to, [StatusIzinEnum::DITINJAU, StatusIzinEnum::REVISI_PERSYARATAN, StatusIzinEnum::BATAL], true),
+			StatusIzinEnum::DITINJAU => in_array($to, [StatusIzinEnum::PROSES, StatusIzinEnum::REVISI_PERSYARATAN, StatusIzinEnum::BATAL], true),
+			StatusIzinEnum::REVISI_PERSYARATAN => in_array($to, [StatusIzinEnum::DITINJAU, StatusIzinEnum::PROSES, StatusIzinEnum::BATAL], true),
+			StatusIzinEnum::PROSES => in_array($to, [StatusIzinEnum::PENERBITAN, StatusIzinEnum::BATAL], true),
+			StatusIzinEnum::PENERBITAN => in_array($to, [StatusIzinEnum::PENYERAHAN, StatusIzinEnum::BATAL], true),
+			StatusIzinEnum::PENYERAHAN => $to === StatusIzinEnum::BATAL,
+			StatusIzinEnum::BATAL => false,
+			default => in_array($to, StatusIzinEnum::all(), true),
+		};
 	}
 
 	public function updateStatusIzinWithDetailKeterangan(int $izin_id, string $status, string $progres, ?string $keterangan = null, ?string $detail_keterangan = null): void

@@ -13,8 +13,10 @@ return new class extends Migration {
             $table->string('status');
             $table->string('path')->nullable();
             $table->string('error')->nullable();
+            $table->unsignedTinyInteger('attempts')->default(0);
+            $table->timestamp('processing_at')->nullable();
             $table->timestamps();
-            $table->unique(['izin_id', 'status']);
+            $table->index(['izin_id', 'status']);
         });
     }
 

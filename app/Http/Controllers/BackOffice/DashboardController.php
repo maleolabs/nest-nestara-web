@@ -87,7 +87,7 @@ class DashboardController extends Controller
             abort(Response::HTTP_NOT_FOUND, 'Izin not found');
 
         $generation = DB::transaction(function () use ($izin) {
-            $generation = PermitLetterGeneration::where('izin_id', $izin->id)->latest()->first();
+            $generation = PermitLetterGeneration::where('izin_id', $izin->id)->whereIn('status', [PermitLetterGeneration::QUEUED, PermitLetterGeneration::PROCESSING, PermitLetterGeneration::COMPLETED])->latest('id')->first();
             if ($generation && in_array($generation->status, [PermitLetterGeneration::QUEUED, PermitLetterGeneration::PROCESSING, PermitLetterGeneration::COMPLETED], true)) return $generation;
             return PermitLetterGeneration::create(['izin_id' => $izin->id, 'status' => PermitLetterGeneration::QUEUED]);
         });
@@ -97,14 +97,15 @@ class DashboardController extends Controller
 
     public function letterStatus(int $generationId)
     {
-        $generation = PermitLetterGeneration::findOrFail($generationId);
-        abort_unless($generation->izin_id, Response::HTTP_FORBIDDEN);
+        $generation = PermitLetterGeneration::with('izin')->findOrFail($generationId);
+        abort_unless($generation->izin, Response::HTTP_FORBIDDEN);
         return response()->json(['id' => $generation->id, 'status' => $generation->status, 'error' => $generation->error]);
     }
 
     public function downloadCompletedLetter(int $generationId)
     {
-        $generation = PermitLetterGeneration::findOrFail($generationId);
+        $generation = PermitLetterGeneration::with('izin')->findOrFail($generationId);
+        abort_unless($generation->izin, Response::HTTP_FORBIDDEN);
         abort_unless($generation->status === PermitLetterGeneration::COMPLETED && $generation->path, Response::HTTP_NOT_FOUND);
         abort_unless(Storage::disk('local')->exists($generation->path), Response::HTTP_NOT_FOUND);
         return Storage::disk('local')->download($generation->path, "IZIN-{$generation->izin_id}.pdf");

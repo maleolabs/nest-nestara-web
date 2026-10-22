@@ -76,6 +76,7 @@ interface StatusIzinService {
 	 * @return void
 	 */
 	function updateStatusIzinWithDetailKeterangan(int $izin_id, string $status, string $progres, ?string $keterangan = null, ?string $detail_keterangan = null): void;
+	function appendStatusIzinWithDetail(int $izin_id, string $status, string $progres, string $keterangan, string $detail_keterangan, ?int $pegawai_id = null): void;
 
 	/**
 	 * Menghapus semua data status izin berdasarkan ID izin

@@ -144,6 +144,28 @@ class StatusIzinServiceImpl implements StatusIzinService {
 		});
 	}
 
+    public function appendStatusIzinWithDetail(int $izin_id, string $status, string $progres, string $keterangan, string $detail_keterangan, ?int $pegawai_id = null): void
+    {
+        if (!in_array($status, StatusIzinEnum::all(), true) || !in_array($progres, Progres::all(), true)) {
+            throw new \InvalidArgumentException('Invalid status or progress');
+        }
+
+        DB::transaction(function () use ($izin_id, $status, $progres, $keterangan, $detail_keterangan, $pegawai_id): void {
+            if (!Izin::whereKey($izin_id)->lockForUpdate()->exists()) {
+                throw new \InvalidArgumentException('Permit not found');
+            }
+            $current = StatusIzin::where('izin_id', $izin_id)->latest('created_at')->latest('id')->lockForUpdate()->first();
+            if (!$current || $current->nama !== $status || $current->progres !== $progres) {
+                throw new \InvalidArgumentException('Permit status is no longer eligible');
+            }
+            if ($current->keterangan === $keterangan && $current->detail_keterangan === $detail_keterangan) {
+                throw new \InvalidArgumentException('Recommendation already submitted');
+            }
+            $new = StatusIzin::create(['izin_id' => $izin_id, 'nama' => $status, 'progres' => $progres, 'keterangan' => $keterangan, 'detail_keterangan' => $detail_keterangan, 'pegawai_id' => $pegawai_id]);
+            RiwayatProsesIzin::create(['izin_id' => $izin_id, 'status_izin_id' => $new->id, 'pegawai_id' => $pegawai_id, 'progres' => $progres, 'keterangan' => $keterangan]);
+        });
+    }
+
 	public function deleteAllByIzinId(int $izin_id): void
 	{
 		StatusIzin::where('izin_id', $izin_id)->delete();

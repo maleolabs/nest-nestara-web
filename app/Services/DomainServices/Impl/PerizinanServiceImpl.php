@@ -8,6 +8,7 @@ use App\Mail\RegistrationRevisionMail;
 use App\Models\DokumenPemohon;
 use App\Models\Izin;
 use App\Models\OcrRequest as OcrRequestModel;
+use App\Models\StatusIzin;
 use App\Services\AppService\FileService;
 use App\Services\DomainServices\DokumenPemohonService;
 use App\Services\DomainServices\EntriDataService;
@@ -537,14 +538,14 @@ class PerizinanServiceImpl implements PerizinanService
 
     public function rekomendasiPermohonan(int $izin_id, int $pegawai_id, string $rekomendasi, string $jenis_kegiatan): void
     {
-        $izin = $this->find($izin_id);
-        if (!$izin)
-            return;
-        $izin_status = $izin->status_izin->last();
-        if ($izin_status->nama == Status::PROSES) {
-            $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, $rekomendasi, $pegawai_id);
-            $this->statusIzinService->updateStatusIzinWithDetailKeterangan($izin_id, Status::PROSES, Progres::PROCESSING, $rekomendasi, $jenis_kegiatan);
-        }
+        $user = auth()->user();
+        $actor = $user?->pegawai?->id;
+        if (!$actor || ($pegawai_id && $pegawai_id !== $actor)) throw new \UnauthorizedHttpException('Authenticated pegawai required');
+        if (!in_array($rekomendasi, [OfficeStatus::DIREKOM, OfficeStatus::TIDAK_DIREKOM, OfficeStatus::REKOM_CATATAN, OfficeStatus::BAHAS_LANJUT], true)) throw new \InvalidArgumentException('Invalid recommendation');
+        if (!in_array($jenis_kegiatan, [OfficeStatus::PERIKSA_BERKAS, OfficeStatus::SURVEY_LAPANGAN, OfficeStatus::RAPAT_TIM], true)) throw new \InvalidArgumentException('Invalid activity');
+        $status = StatusIzin::where('izin_id', $izin_id)->latest('created_at')->latest('id')->first();
+        if (!$status || $status->nama !== Status::PROSES || $status->progres !== Progres::PROCESSING || !in_array($status->keterangan, [OfficeStatus::SUDAH_ENTRI, OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN], true)) throw new \InvalidArgumentException('Permit is not ready for recommendation');
+        $this->statusIzinService->appendStatusIzinWithDetail($izin_id, Status::PROSES, Progres::PROCESSING, $rekomendasi, $jenis_kegiatan, $actor);
     }
 
     public function penetapanIzin(int $izin_id, int $pegawai_id, string $tindakan): void

@@ -27,9 +27,6 @@ class Rekomendasi extends Component
 
     public function mount()
     {
-        $pegawai_id = auth()->user()->pegawai ? auth()->user()->pegawai->id : null;
-        $this->getPerizinanService()->updateStatusAllIfTinjauanLapanganAlreadyEntered($pegawai_id);
-
         $this->start_date = Carbon::today()->subMonth()->toDateString();
         $this->end_date = Carbon::today()->toDateString();
     }
@@ -50,10 +47,9 @@ class Rekomendasi extends Component
         $all_izin = $this->getPerizinanService()->getAll($this->search, [StatusIzinEnum::PROSES], [StatusIzinProgressEnum::PROCESSING], $this->start_date, $this->end_date);
         $this->all_izin = array_filter($all_izin, function ($izin) {
             return in_array($izin->status_izin->last()->keterangan, [
-                BackOfficeStatusEnum::DIREKOM,
-                BackOfficeStatusEnum::TIDAK_DIREKOM,
-                BackOfficeStatusEnum::REKOM_CATATAN,
-                BackOfficeStatusEnum::BAHAS_LANJUT,
+                // Keep queue aligned with PerizinanServiceImpl::rekomendasiPermohonan.
+                BackOfficeStatusEnum::SUDAH_ENTRI,
+                BackOfficeStatusEnum::SUDAH_ENTRI_TINJAUAN_LAPANGAN,
             ]);
         });
     }

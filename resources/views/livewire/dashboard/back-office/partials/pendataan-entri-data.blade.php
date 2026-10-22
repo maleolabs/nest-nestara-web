@@ -2,7 +2,7 @@
     <div class="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <div>
             <h2 id="pendataan-filter-title" class="text-base font-bold text-ink-900">Daftar permohonan</h2>
-            <p class="text-sm text-ink-500">Pilih permohonan untuk membuka detail dan tindakan berikutnya.</p>
+        <p class="text-sm text-ink-500">Hanya permohonan siap rekomendasi yang tampil. Pilih baris untuk membuka detail.</p>
         </div>
         <span class="text-xs text-ink-500" wire:loading wire:target="start_date, end_date, search">Memuat data…</span>
     </div>
@@ -35,7 +35,7 @@
                     @if (isset($table_content))
                         <th class="uppercase text-ink-500 text-[10px] font-bold opacity-7">{{ $table_content }}</th>
                     @endif
-                    <th class="uppercase text-ink-500 text-[10px] font-bold opacity-7">Status</th>
+                    <th class="uppercase text-ink-500 text-[10px] font-bold opacity-7">Status siap</th>
                 </tr>
             </thead>
             <tbody>
@@ -105,8 +105,8 @@
             </tbody>
         </table>
         <div wire:loading wire:target='previewDataIzin, start_date, end_date, search'>
-            <div class="absolute top-0 left-0 h-full w-full flex items-center justify-center bg-ink-50 opacity-75">
-                <i class="fa-solid fa-ellipsis fa-fade text-2xl"></i>
+            <div class="absolute inset-0 flex items-center justify-center bg-white/75" aria-live="polite" aria-label="Memuat data">
+                <span class="rounded-full bg-white px-3 py-2 text-sm font-semibold text-ink-700 shadow-sm">Memuat antrean…</span>
             </div>
         </div>
     </div>

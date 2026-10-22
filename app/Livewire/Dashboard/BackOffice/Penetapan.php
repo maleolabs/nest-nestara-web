@@ -18,6 +18,9 @@ class Penetapan extends Component
     #[Url()]
     public $tab;
 
+    #[Url()]
+    public $preview_izin_id;
+
     private const PENETAPAN = 'Penetapan Izin';
     private const PEMBUATAN = 'Pembuatan Izin';
     private const LAYANAN_DITOLAK = 'Layanan Ditolak';
@@ -73,6 +76,7 @@ class Penetapan extends Component
 
     public function previewDataIzin(int $izin_id)
     {
+        $this->preview_izin_id = $izin_id;
         $this->selectedPreview = $this->getPerizinanService()->find($izin_id);
         $riwayat_proses_izin = $this->selectedPreview->riwayat_proses_izin->all();
         $this->previewRiwayatProses = [];
@@ -118,6 +122,7 @@ class Penetapan extends Component
     public function closePreview()
     {
         $this->selectedPreview = null;
+        $this->preview_izin_id = null;
     }
 
     protected function getTanggalPermohonan(int $izin_id): string

@@ -11,8 +11,7 @@ use Livewire\Component;
 class ShowIzin extends Component
 {
 
-    public $selectedPreview, 
-        $selectedPreviewSyaratIzin = [];
+    public $selected_preview_id;
 
     private $semua_izin = [];
 
@@ -25,8 +24,18 @@ class ShowIzin extends Component
         $this->semua_izin = auth()->user()->pemohon
             ? auth()->user()->pemohon->izin()->with(['jenis_perizinan', 'status_izin'])->paginate(10)
             : new Collection();
+
+        $selectedPreview = $this->selected_preview_id
+            ? $this->getPerizinanService()->find($this->selected_preview_id)
+            : null;
+        $selectedPreviewSyaratIzin = $selectedPreview && auth()->user()->pemohon
+            ? $this->getSyaratIzinService()->getByJenisAndPemohon($selectedPreview->jenis_perizinan_id, auth()->user()->pemohon->id)
+            : [];
+
         return view('livewire.user.izin.show-izin', [
             'semua_izin' => $this->semua_izin,
+            'selectedPreview' => $selectedPreview,
+            'selectedPreviewSyaratIzin' => $selectedPreviewSyaratIzin,
         ]);
     }
 
@@ -37,14 +46,20 @@ class ShowIzin extends Component
 
     public function preview(int $id)
     {
-        $this->selectedPreview = $this->getPerizinanService()->find($id);
-        $this->selectedPreviewSyaratIzin = $this->getSyaratIzinService()->getByJenisAndPemohon($this->selectedPreview->jenis_perizinan_id, auth()->user()->pemohon->id);
+        $preview = $this->getPerizinanService()->find($id);
+
+        if (! $preview || ! auth()->user()->pemohon || $preview->pemohon_id !== auth()->user()->pemohon->id) {
+            return;
+        }
+
+        $this->selected_preview_id = $preview->id;
+        $this->dispatch('izin-preview-opened');
     }
 
     public function closePreview()
     {
-        $this->selectedPreview = null;
-        $this->selectedPreviewSyaratIzin = [];
+        $this->selected_preview_id = null;
+        $this->dispatch('izin-preview-closed');
     }
 
     public function cancel(int $id)

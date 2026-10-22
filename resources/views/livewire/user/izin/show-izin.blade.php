@@ -44,9 +44,9 @@
                     $status = $izin->status_izin->last();
                     $sc = getStatusIzinClasses($status);
                 @endphp
-                <div class="rounded-2xl bg-white p-4 ring-1 ring-ink-200 shadow-[0_4px_20px_rgba(15,23,42,0.05)] {{ $is_izin_new ? 'ring-2 ring-nest-500' : '' }}">
+                <div wire:key="izin-{{ $izin->id }}" class="rounded-2xl bg-white p-4 ring-1 ring-ink-200 shadow-[0_4px_20px_rgba(15,23,42,0.05)] {{ $is_izin_new ? 'ring-2 ring-nest-500' : '' }}">
                     <div class="flex flex-wrap items-start justify-between gap-3">
-                            <button type="button" id="modalRightShowBtn-{{ $izin->id }}" wire:click='preview({{ $izin->id }})' class="min-w-0 flex-1 text-left group">
+                        <div class="min-w-0 flex-1">
                             <div class="flex items-center gap-2">
                                 <h3 class="font-bold text-[15px] text-ink-900 group-hover:text-nest-700 transition">{{ $izin->jenis_perizinan->nama }}</h3>
                                 @if ($is_izin_new)
@@ -57,6 +57,11 @@
                             <span class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-ink-50 px-2.5 py-1 text-[11px] font-bold ring-1 ring-ink-200 {{ $sc['textClass'] }}">
                                 <i class="{{ $sc['bgClass'] }} h-1.5 w-1.5 rounded-full"></i> {{ $status->nama }}
                             </span>
+                        </div>
+
+                        <button type="button" id="modalRightShowBtn-{{ $izin->id }}" wire:click="preview({{ $izin->id }})" class="inline-flex min-h-9 items-center gap-2 rounded-full bg-nest-700 px-3.5 py-2 text-xs font-extrabold text-white transition hover:bg-nest-800 focus:outline-none focus:ring-2 focus:ring-nest-500 focus:ring-offset-2" aria-label="Lihat detail {{ $izin->jenis_perizinan->nama }}">
+                            <i class="fa-solid fa-eye" aria-hidden="true"></i>
+                            <span class="hidden sm:inline">Lihat detail</span>
                         </button>
 
                         @if ($this->isIzinCancelable($status->nama))
@@ -90,6 +95,11 @@
             @endif
         </div>
 
-        @include('livewire.helper.modal-right')
+        <div wire:key="izin-preview-modal-{{ $selectedPreview?->id ?? 'closed' }}">
+            @include('livewire.helper.modal-right', [
+                'selectedPreview' => $selectedPreview,
+                'selectedPreviewSyaratIzin' => $selectedPreviewSyaratIzin,
+            ])
+        </div>
     @endif
 </div>

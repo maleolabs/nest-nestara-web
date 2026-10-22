@@ -1,104 +1,62 @@
 @if(isset($modal))
-<div class="dash-modal-container" style="{{ $modal->isShow() || $errors->any() ? 'display: flex;' : 'display: none;' }}" id="modal">
-    <div class="dash-modal position-relative {{ !$modal->isClosable() ? 'dash-modal-fixed' : 'dash-modal-closable' }}">
-        <div class="py-3 border-bottom sticky-top-0 bg-white" style="z-index: 9">
-            <h5 class="text-center">{{ $modal->getTitle() }}</h5>
+@php($modalOpen = $modal->isShow() || $errors->any())
+@php($modalId = 'modal-' . substr(md5(($modal->getTitle() ?? 'modal') . '-' . spl_object_id($modal)), 0, 10))
+<div x-data="{ open: @js($modalOpen) }" x-init="$watch('open', value => document.body.classList.toggle('overflow-hidden', value))" x-show="open" x-cloak
+    @keydown.escape.window="if (@js($modal->isClosable())) open = false"
+    @click.self="if (@js($modal->isClosable())) open = false"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/50 p-4" role="dialog" aria-modal="true" aria-labelledby="{{ $modalId }}-title">
+    <div x-show="open" x-transition.opacity class="relative max-h-[min(90vh,720px)] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl ring-1 ring-ink-200 {{ !$modal->isClosable() ? 'pointer-events-auto' : '' }}">
+        <div class="sticky top-0 z-10 border-b border-ink-200 bg-white px-6 py-4">
+            <h2 id="{{ $modalId }}-title" class="text-center text-lg font-extrabold text-ink-900">{{ $modal->getTitle() }}</h2>
         </div>
-        <div class="dash-modal-body position-relative p-4">
+        <div class="relative p-6">
             @if(count($modal->getForm()) > 0)
-                <form @if($modal->isComponent())wire:submit.prevent="{{ $modal->getSubmitFunction() }}" @else action="{{ $modal->getSubmitFunction() }}" @endif>
+                <form @if($modal->isComponent()) wire:submit.prevent="{{ $modal->getSubmitFunction() }}" @else action="{{ $modal->getSubmitFunction() }}" method="POST" @endif class="space-y-4">
                     @csrf
                     @foreach ($modal->getForm() as $form)
-                        <div class="row justify-content-center mb-3">
-                            @if ($form['type'] == 'checkbox')
-                                <div class="form-check col-sm-10">
-                                    <input type="checkbox" class="form-check-input" id="{{ $form['name'] }}" @if($modal->isComponent()) wire:model="{{ $form['model'] . (isset($form['id']) && $form['id'] !== null ? '.' . $form['id'] : '') }}" @endif>
-                                    <label for="{{ $form['name'] }}" class="form-check-label" style="text-transform: capitalize">{{ $form['name'] }}</label>
-                                </div>
-                                @if($modal->isComponent())
-                                    @if($errors->has($form['model']))
-                                        <small class="text-danger"><i>{{ $errors->first($form['model']) }}</i></small>
-                                    @endif
-                                @else
-                                    @if($errors->has($form['name']))
-                                        <small class="text-danger"><i>{{ $errors->first($form['name']) }}</i></small>
-                                    @endif
-                                @endif
-                            @elseif($form['type'] == 'radio')
-                                @if($modal->isComponent())
-                                    <div class="col-sm-10">
-                                        @php
-                                            $var = $form['model'];
-                                            $var2 = $$var;
-                                        @endphp
-                                        <div class="form-check app-form-check w-100 flex-column {{ $var2 == $form['value'] ? 'active' : '' }}">
-                                            <input class="form-check-input app-form-check-input" type="radio" name="{{ $form['name'] }}" wire:model.live='{{ $form['model'] }}' value="{{ $form['value'] }}" id="{{ $form['id'] . '-' . $loop->iteration }}">
-                                            <label class="form-check-label fw-semibold d-block" for="{{ $form['id'] . '-' . $loop->iteration }}">
-                                                {{ $form['value'] }}
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div wire:loading>
-                                        <div class="position-absolute top-0 start-0 end-0 bottom-0 bg-white opacity-75 d-flex align-items-center justify-content-center">
-                                            <div class="spinner-border" role="status"></div>
-                                            <span role="status">Loading...</span>
-                                        </div>
-                                    </div>
-                                @endif
-                            @elseif($form['type'] == 'sub-form')
-                                <h6 class="col-sm-10 fw-bold">{{ $form['name'] }}</h6>
-                            @elseif($form['type'] == 'textarea')
-                                @php($label = str_replace('_', ' ', $form['name']))
-                                <label for="{{ $form['name'] }}" class="col-sm-10 form-label" style="text-transform: capitalize">{{ Lang::has('messages.' . $label) ? __('messages.' . $label) : $label }}</label>
-                                <div class="col-sm-10">
-                                    <textarea rows="3" id="{{ $form['name'] }}" @if($modal->isComponent())wire:model="{{ isset($form['model']) ? $form['model'] : $form['name'] }}" @else name="{{ $form['name'] }}" @endif class="form-control"></textarea>
-                                    @if($errors->has($form['name']))
-                                        <small class="text-danger"><i>{{ $errors->first($form['name']) }}</i></small>
-                                    @endif
-                                </div>
+                        @php($field = $form['name'])
+                        @if ($form['type'] == 'checkbox')
+                            <label class="flex items-center gap-3 text-sm font-semibold text-ink-800">
+                                <input type="checkbox" id="{{ $field }}" name="{{ $field }}" @if($modal->isComponent()) wire:model="{{ $form['model'] . (isset($form['id']) && $form['id'] !== null ? '.' . $form['id'] : '') }}" @endif class="h-4 w-4 rounded border-ink-300 text-nest-700 focus:ring-nest-500">
+                                {{ ucfirst($field) }}
+                            </label>
+                        @elseif ($form['type'] == 'radio' && $modal->isComponent())
+                            @php($var = $form['model']) @php($var2 = $$var)
+                            <label class="block rounded-xl border p-3 text-sm font-semibold {{ $var2 == $form['value'] ? 'border-nest-600 bg-nest-50' : 'border-ink-200' }}">
+                                <input type="radio" name="{{ $field }}" wire:model.live="{{ $form['model'] }}" value="{{ $form['value'] }}" class="mr-2 text-nest-700">{{ $form['value'] }}
+                            </label>
+                        @elseif ($form['type'] == 'sub-form')
+                            <h3 class="font-bold text-ink-900">{{ $field }}</h3>
+                        @else
+                            @php($label = str_replace('_', ' ', $field))
+                            <label for="{{ $field }}" class="block text-sm font-semibold capitalize text-ink-800">{{ Lang::has('messages.' . $label) ? __('messages.' . $label) : $label }}</label>
+                            @if($form['type'] == 'textarea')
+                                <textarea rows="3" id="{{ $field }}" @if($modal->isComponent()) wire:model="{{ $form['model'] ?? $field }}" @else name="{{ $field }}" @endif class="mt-1 w-full rounded-lg border border-ink-300 px-3 py-2 text-sm focus:border-nest-600 focus:outline-none focus:ring-2 focus:ring-nest-100"></textarea>
                             @else
-                                @php($label = str_replace('_', ' ', $form['name']))
-                                <label for="{{ $form['name'] }}" class="col-sm-10 form-label" style="text-transform: capitalize">{{ Lang::has('messages.' . $label) ? __('messages.' . $label) : $label }}</label>
-                                <div class="col-sm-10">
-                                    <input type="{{ $form['type'] }}" id="{{ $form['name'] }}" @if($modal->isComponent())wire:model="{{ isset($form['model']) ? $form['model'] : $form['name'] }}" @else name="{{ $form['name'] }}" @endif class="form-control">
-                                    @if($errors->has($form['name']))
-                                        <small class="text-danger"><i>{{ $errors->first($form['name']) }}</i></small>
-                                    @endif
-                                </div>
+                                <input type="{{ $form['type'] }}" id="{{ $field }}" @if($modal->isComponent()) wire:model="{{ $form['model'] ?? $field }}" @else name="{{ $field }}" @endif class="mt-1 w-full rounded-lg border border-ink-300 px-3 py-2 text-sm focus:border-nest-600 focus:outline-none focus:ring-2 focus:ring-nest-100">
                             @endif
-                        </div>
+                            @if($errors->has($field)) <p class="mt-1 text-xs italic text-red-600">{{ $errors->first($field) }}</p> @endif
+                        @endif
                     @endforeach
-                    <div class="row justify-content-center mt-2">
-                        <div class="col-sm-10">
-                            <div class="d-flex align-items-center justify-content-center">
-                                <button class="btn btn-secondary shadow-none" @if($modal->isComponent()) wire:click='{{ $modal->getCancelFunction() }}' @else onclick="document.querySelector('.dash-modal-container').style.display='none'" @endif type="button">{{ $modal->getCancelButton() }}</button>
-                                <button class="ms-2 btn btn-app-primary" type="submit">{{ $modal->getApplyButton() }}</button>
-                            </div>
-                        </div>
+                    <div class="flex justify-center gap-2 pt-2">
+                        <button type="button" @if($modal->isComponent()) wire:click="{{ $modal->getCancelFunction() }}" @else @click="open = false" @endif class="rounded-lg bg-ink-100 px-4 py-2 text-sm font-bold text-ink-700 hover:bg-ink-200">{{ $modal->getCancelButton() }}</button>
+                        <button type="submit" class="rounded-lg bg-nest-700 px-4 py-2 text-sm font-bold text-white hover:bg-nest-800">{{ $modal->getApplyButton() }}</button>
                     </div>
                 </form>
             @elseif(count($modal->getConfirms()) > 0)
-                <div class="row justify-content-center">
-                    @foreach ($modal->getConfirms() as $confirm)
-                        @if($confirm['key'] == 'decision')
-                            <p class="col-sm-10 text-center">{{ $confirm['value'] }}</p>
-                        @else
-                            <div class="col-sm-10">{{ __('messages.' . $confirm['key']) }}</div>
-                            <div class="fw-semibold col-sm-10 mb-3">{{ $confirm['value'] }}</div>
-                        @endif
-                    @endforeach
-                </div>
-                <div class="d-flex align-items-center justify-content-center mt-2">
-                    <button class="btn btn-secondary shadow-none" @if($modal->isComponent()) wire:click='{{ $modal->getCancelFunction() }}' @else onclick="document.querySelector('.dash-modal-container').style.display='none'" @endif type="button">{{ $modal->getCancelButton() }}</button>
-                    <button class="ms-2 btn {{ $modal->getApplyButtonBgColor() ? $modal->getApplyButtonBgColor() : 'btn-app-primary' }}" wire:click='{{ $modal->getSubmitFunction() }}'>{{ $modal->getApplyButton() }}</button>
-                </div>
+                <div class="space-y-3 text-sm text-ink-800">@foreach ($modal->getConfirms() as $confirm)<div class="{{ $confirm['key'] == 'decision' ? 'text-center' : '' }}">{{ $confirm['key'] == 'decision' ? $confirm['value'] : __('messages.' . $confirm['key']) . ': ' . $confirm['value'] }}</div>@endforeach</div>
+                @if($modal->isComponent())
+                    <div class="mt-5 flex justify-center gap-2"><button type="button" @click="open = false" class="rounded-lg bg-ink-100 px-4 py-2 text-sm font-bold text-ink-700">{{ $modal->getCancelButton() }}</button><button type="button" wire:click="{{ $modal->getSubmitFunction() }}" class="rounded-lg bg-nest-700 px-4 py-2 text-sm font-bold text-white">{{ $modal->getApplyButton() }}</button></div>
+                @else
+                    <form action="{{ $modal->getSubmitFunction() }}" method="POST" class="mt-5 flex justify-center gap-2">
+                        @csrf
+                        <button type="button" @click="open = false" class="rounded-lg bg-ink-100 px-4 py-2 text-sm font-bold text-ink-700">{{ $modal->getCancelButton() }}</button>
+                        <button type="submit" class="rounded-lg bg-nest-700 px-4 py-2 text-sm font-bold text-white">{{ $modal->getApplyButton() }}</button>
+                    </form>
+                @endif
             @else
-                <div class="text-center">
-                    @if($modal->isSuccess())<i class="text-success fs-2 fa-solid fa-circle-check"></i>@else<i class="text-danger fs-2 fa-solid fa-circle-xmark"></i>@endif<p class="mt-3">{{ $modal->getMessage() }}</p>
-                </div>
-                <div class="d-flex justify-content-center align-items-center">
-                    <button class="btn btn-secondary" @if($modal->isComponent()) wire:click="{{ $modal->getCancelFunction() }}" @endif @if($modal->getCancelFunction()) wire:click='{{ $modal->getCancelFunction() }}' @else onclick="document.querySelector('.dash-modal-container').style.display='none'" @endif>{{ $modal->getCancelButton() }}</button>
-                </div>
+                <div class="text-center"><p class="text-3xl {{ $modal->isSuccess() ? 'text-emerald-600' : 'text-red-600' }}">{{ $modal->isSuccess() ? '✓' : '×' }}</p><p class="mt-3 text-sm text-ink-700">{{ $modal->getMessage() }}</p></div>
+                <div class="mt-5 flex justify-center"><button type="button" @if($modal->isComponent() && $modal->getCancelFunction()) wire:click="{{ $modal->getCancelFunction() }}" @else @click="open = false" @endif class="rounded-lg bg-ink-100 px-4 py-2 text-sm font-bold text-ink-700">{{ $modal->getCancelButton() }}</button></div>
             @endif
         </div>
     </div>

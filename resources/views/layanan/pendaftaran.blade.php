@@ -3,14 +3,14 @@
     <li class="text-xs font-semibold text-ink-600">/ Pendaftaran</li>
 @endpush
 @push('nav-dashboard-content')
-    <div class="relative" id="tambahDropdownWrap">
-        <button type="button" id="navbarDropdownMenuLink2"
+    <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="relative" id="tambahDropdownWrap">
+        <button type="button" id="navbarDropdownMenuLink2" @click="open = !open" :aria-expanded="open.toString()"
             class="inline-flex items-center gap-2 rounded-full bg-nest-700 px-4 py-2 text-sm font-bold text-white shadow-[0_8px_20px_rgba(15,118,110,0.25)] hover:bg-nest-800 transition"
-            aria-haspopup="true" aria-expanded="false">
+            aria-haspopup="true">
             <i class="fa-solid fa-square-plus text-xs"></i> Tambah
             <i class="fa-solid fa-chevron-down text-[10px] opacity-70"></i>
         </button>
-        <div id="tambahDropdownMenu"
+        <div id="tambahDropdownMenu" x-show="open" x-cloak
             class="hidden absolute right-0 top-[calc(100%+8px)] w-56 rounded-2xl bg-white shadow-[0_16px_40px_rgba(15,23,42,0.14)] ring-1 ring-ink-200 p-1.5 z-50 animate-fadeIn">
             <a href="{{ route('layanan.pendaftaran.create', ['type' => 'data-pemohon']) }}"
                 class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-ink-700 hover:bg-nest-50 hover:text-nest-800 transition">
@@ -35,27 +35,5 @@
             if (pendaftaranSubBread) pendaftaranSubBread.textContent = event[0].menu
         })
 
-        // Tambah dropdown (popover)
-        document.addEventListener('DOMContentLoaded', () => {
-            const wrap = document.getElementById('tambahDropdownWrap')
-            const dropdownToggle = document.getElementById('navbarDropdownMenuLink2')
-            const menu = document.getElementById('tambahDropdownMenu')
-            if (!wrap || !dropdownToggle || !menu) return
-            const toggle = (e) => {
-                e?.preventDefault(); e?.stopPropagation()
-                menu.classList.toggle('hidden')
-                dropdownToggle.setAttribute('aria-expanded', String(!menu.classList.contains('hidden')))
-            }
-            dropdownToggle.addEventListener('click', toggle)
-            document.addEventListener('click', (e) => {
-                if (!wrap.contains(e.target)) {
-                    menu.classList.add('hidden')
-                    dropdownToggle.setAttribute('aria-expanded', 'false')
-                }
-            })
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') { menu.classList.add('hidden'); dropdownToggle.setAttribute('aria-expanded', 'false') }
-            })
-        })
     </script>
 @endpush

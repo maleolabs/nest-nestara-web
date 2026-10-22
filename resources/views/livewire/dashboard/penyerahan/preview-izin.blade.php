@@ -8,6 +8,7 @@
                     <h4 id="penyerahanPreviewTitle" class="font-display font-extrabold text-[18px] leading-tight text-ink-900">Preview Izin</h4>
                 </div>
                 <button x-ref="close" type="button" @click="close()"
+                    aria-label="Tutup preview penyerahan" aria-controls="penyerahanPreviewTitle"
                     class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-ink-50 text-ink-600 ring-1 ring-ink-200 hover:bg-ink-100 transition">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -115,7 +116,7 @@
             </div>
         </div>
 
-         <button type="button" wire:click='closePreview'
+          <button type="button" @click="close()" aria-label="Tutup preview penyerahan" aria-controls="penyerahanPreviewTitle"
             class="absolute top-3 right-3 h-9 w-9 items-center justify-center rounded-full bg-white/90 text-ink-600 ring-1 ring-ink-200 md:hidden">
             <i class="fa-solid fa-xmark"></i>
         </button>

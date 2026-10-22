@@ -26,14 +26,14 @@
         </div>
         <div class="flex items-center gap-2">
             <span class="rounded-full bg-nest-50 px-3 py-1.5 text-xs font-bold text-nest-700 ring-1 ring-nest-200">{{ $all_izin->total() }} izin</span>
-            <div class="relative" id="helpPopoverWrap">
-                <button type="button" id="helpPopoverBtn" aria-haspopup="true" aria-expanded="false"
+            <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="relative" id="helpPopoverWrap">
+                <button type="button" id="helpPopoverBtn" aria-haspopup="true" @click="open = !open" :aria-expanded="open.toString()"
                     class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink-200 bg-white text-ink-500 hover:border-nest-300 hover:text-nest-700 transition" title="Keterangan status">
                     <i class="fa-solid fa-circle-question"></i>
                 </button>
                 {{-- help popover --}}
-                <div id="helpPopoverPanel"
-                    class="hidden absolute right-0 top-[calc(100%+10px)] w-[720px] max-w-[94vw] rounded-2xl bg-white shadow-[0_24px_64px_rgba(15,23,42,0.20)] ring-1 ring-ink-200 overflow-hidden z-50 animate-fadeIn">
+                <div id="helpPopoverPanel" x-show="open" x-cloak
+                    class="absolute right-0 top-[calc(100%+10px)] w-[720px] max-w-[94vw] rounded-2xl bg-white shadow-[0_24px_64px_rgba(15,23,42,0.20)] ring-1 ring-ink-200 overflow-hidden z-50 animate-fadeIn">
                     {{-- header --}}
                     <div class="relative overflow-hidden bg-gradient-to-br from-nest-700 to-nest-800 px-6 py-4 text-white">
                         <div class="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/10 blur-xl"></div>
@@ -211,40 +211,5 @@
 
 @push('scripts')
     <script>
-        // Help popover — event delegation agar tetap jalan setelah Livewire morph
-        document.addEventListener('click', function (e) {
-            const wrap = document.getElementById('helpPopoverWrap');
-            const panel = document.getElementById('helpPopoverPanel');
-            const helpPopoverBtn = document.getElementById('helpPopoverBtn');
-            if (!wrap || !panel || !helpPopoverBtn) return;
-
-            const openBtn = e.target.closest('#helpPopoverBtn');
-            const closeBtn = e.target.closest('#helpPopoverClose');
-
-            if (openBtn) {
-                e.preventDefault();
-                panel.classList.toggle('hidden');
-                helpPopoverBtn.setAttribute('aria-expanded', String(!panel.classList.contains('hidden')));
-                return;
-            }
-            if (closeBtn) {
-                panel.classList.add('hidden');
-                helpPopoverBtn.setAttribute('aria-expanded', 'false');
-                return;
-            }
-            if (!wrap.contains(e.target)) {
-                panel.classList.add('hidden');
-                helpPopoverBtn.setAttribute('aria-expanded', 'false');
-            }
-        });
-        document.addEventListener('keydown', function (e) {
-            if (e.key !== 'Escape') return;
-            const panel = document.getElementById('helpPopoverPanel');
-            const helpPopoverBtn = document.getElementById('helpPopoverBtn');
-            if (panel && !panel.classList.contains('hidden')) {
-                panel.classList.add('hidden');
-                helpPopoverBtn?.setAttribute('aria-expanded', 'false');
-            }
-        });
     </script>
 @endpush

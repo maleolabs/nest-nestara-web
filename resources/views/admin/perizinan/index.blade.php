@@ -5,16 +5,16 @@
 @push('nav-dashboard-content')
     <div class="flex items-center gap-2">
         {{-- Filter dropdown --}}
-        <div class="relative" id="filterDropdownWrap">
+        <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="relative" id="filterDropdownWrap">
             <button type="button" id="filterBtn"
                 class="inline-flex items-center gap-2 rounded-full border border-ink-200 bg-white px-4 py-2 text-sm font-bold text-ink-700 hover:border-nest-300 hover:bg-nest-50 transition"
-                aria-haspopup="true" aria-expanded="false">
+                aria-haspopup="true" @click="open = !open" :aria-expanded="open.toString()">
                 <i class="fa-solid fa-filter text-xs text-nest-700"></i>
                 <span id="filterBtnLabel">Semua</span>
                 <i class="fa-solid fa-chevron-down text-[10px] text-ink-400"></i>
             </button>
-            <div id="filterMenu"
-                class="hidden absolute right-0 top-[calc(100%+8px)] w-52 rounded-2xl bg-white shadow-[0_16px_40px_rgba(15,23,42,0.14)] ring-1 ring-ink-200 p-1.5 z-50 animate-fadeIn">
+            <div id="filterMenu" x-show="open" x-cloak
+                class="absolute right-0 top-[calc(100%+8px)] w-52 rounded-2xl bg-white shadow-[0_16px_40px_rgba(15,23,42,0.14)] ring-1 ring-ink-200 p-1.5 z-50 animate-fadeIn">
                 <button type="button" data-filter="semua"
                     class="filter-option w-full flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold text-ink-700 hover:bg-ink-50 transition">
                     <span class="flex items-center gap-2"><i class="fa-solid fa-layer-group w-4 text-ink-400"></i> Semua</span>

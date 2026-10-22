@@ -51,7 +51,10 @@ class StatusIzinServiceImpl implements StatusIzinService {
 
 	public function updateStatusIzin(int $izin_id, string $status, string $progres, ?string $ket = null, ?int $pegawai_id = null, $updated_at = null, bool $new = false, bool $keep_pegawai = false): void
 	{
-		$status_izin = StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->first();
+		if (!in_array($status, StatusIzinEnum::all(), true) || !in_array($progres, Progres::all(), true)) {
+			throw new \InvalidArgumentException('Invalid status or progress');
+		}
+		$status_izin = StatusIzin::where('izin_id', $izin_id)->where('nama', $status)->lockForUpdate()->first();
 		if ($status_izin && !$new) {
 			$status_izin->progres = $progres;
 			$status_izin->keterangan = $ket;

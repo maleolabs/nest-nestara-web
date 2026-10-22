@@ -33,7 +33,7 @@ class PerizinanController extends Controller
     public function find(int $id): JsonResponse
     {
         $izin = $this->perizinanService->find($id);
-        if (empty($izin)) {
+        if (empty($izin) || $izin->pemohon_id !== optional(Auth::guard('api')->user()->pemohon)->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Izin tidak ditemukan'
@@ -106,7 +106,7 @@ class PerizinanController extends Controller
     public function getPersyaratan(int $id): JsonResponse
     {
         $izin = $this->perizinanService->find($id);
-        if (empty($izin)) {
+        if (empty($izin) || $izin->pemohon_id !== optional(Auth::guard('api')->user()->pemohon)->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Izin tidak ditemukan'
@@ -122,11 +122,15 @@ class PerizinanController extends Controller
     {
         $authUser = Auth::guard('api')->user();
         $izin = $this->perizinanService->find($id);
-        if (empty($izin)) {
+        if (empty($izin) || $izin->pemohon_id !== optional($authUser->pemohon)->id) {
             return response()->json([
                 'success' => false,
                 'error' => 'izin tidak ditemukan'
             ], Response::HTTP_NOT_FOUND);
+        }
+
+        if ($izin->status_izin->last()?->nama === 'dibatalkan') {
+            return response()->json(['success' => false, 'message' => 'Izin sudah dibatalkan'], Response::HTTP_CONFLICT);
         }
 
         $description = 'Izin ini telah dibatalkan oleh ' . $authUser->username;
@@ -142,7 +146,7 @@ class PerizinanController extends Controller
     {
         $authUser = Auth::guard('api')->user();
         $izin = $this->perizinanService->find($id);
-        if (empty($izin)) {
+        if (empty($izin) || $izin->pemohon_id !== optional($authUser->pemohon)->id) {
             return response()->json([
                 'success' => false,
                 'error' => 'izin tidak ditemukan'

@@ -1,42 +1,42 @@
-<div class="vh-30 position-relative">
-    <div class="position-absolute z-1 inset-0 w-100 h-100 p-4 vh-30 overflow-hidden">
-        <h5 class="text-bold mb-1">
-            <i class="fa-regular fa-circle-right me-1"></i>
+<div class="min-h-[30vh] relative">
+    <div class="absolute z-1 inset-0 w-full h-full p-4 min-h-[30vh] overflow-hidden">
+        <h5 class="mb-1 font-bold">
+            <i class="fa-regular fa-circle-right mr-1"></i>
             Entri Data
         </h5>
-        <div class="row">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
             @foreach ($entri_data as $entri)
                 @if ($entri->tipe == 'textarea')
-                    <div class="col-12 mb-3">
-                        <div class="input-group input-group-outline">
-                            <label class="form-label">
+            <div class="mb-3 min-w-0">
+                        <div class="space-y-1">
+                            <label class="mb-1 block text-sm font-semibold text-ink-700">
                                 {{ $entri->nama }}
                                 @if ($entri->mandatori)
-                                    <span class="text-danger ms-1">*</span>
+                                    <span class="text-red-600 ml-1">*</span>
                                 @endif
                             </label>
-                            <textarea class="form-control"></textarea>
+                            <textarea class="w-full rounded-xl border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100"></textarea>
                         </div>
                     </div>
                 @else
-                    <div class="col-md-6 mb-3">
-                        <div class="input-group input-group-outline">
-                            <label class="form-label">
+            <div class="mb-3 min-w-0">
+                        <div class="space-y-1">
+                            <label class="mb-1 block text-sm font-semibold text-ink-700">
                                 {{ $entri->nama }}
                                 @if ($entri->mandatori)
-                                    <span class="text-danger ms-1">*</span>
+                                    <span class="text-red-600 ml-1">*</span>
                                 @endif
                             </label>
-                            <input type="{{ $entri->tipe }}" class="form-control">
+                            <input type="{{ $entri->tipe }}" class="w-full rounded-xl border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
                         </div>
                     </div>
                 @endif
             @endforeach
         </div>
     </div>
-    <div class="position-absolute inset-0 w-100 h-100 z-2 d-flex flex-column gap-2 align-items-center justify-content-center bg-gradient-danger-up-bottom rounded-3">
-        <i class="fa-solid fa-xmark-circle fs-4 text-danger"></i>
-        <p class="text-center text-bold text-danger">
+    <div class="absolute inset-0 w-full h-full z-2 flex flex-col gap-2 items-center justify-center bg-gradient-danger-up-bottom rounded-xl">
+            <i class="fa-solid fa-xmark-circle text-xl text-red-600"></i>
+        <p class="text-center font-bold text-red-600">
             Permohonan izin ini sedang dientri oleh pegawai lain. Anda tidak dapat mengisi formulir ini!
         </p>
     </div>

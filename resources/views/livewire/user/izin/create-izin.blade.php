@@ -33,7 +33,7 @@
                     {{ $label }}
                 </span>
                 @if (! $loop->last)
-                    <span class="flex-1 h-0.5 rounded {{ $done || $active ? 'bg-nest-300' : 'bg-ink-200' }}"></span>
+                    <span class="flex-1 h-0.5 rounded-lg {{ $done || $active ? 'bg-nest-300' : 'bg-ink-200' }}"></span>
                 @endif
             </li>
         @endforeach
@@ -62,7 +62,7 @@
                         </div>
                     </div>
                 @endif
-                <div class="card p-4 mb-0 {{ $user_already_has_data_pemohon && $form_step == self::FIRST_STEP && !$edit_existing_data_pemohon ? 'd-none' : '' }}">
+                <div class="rounded-2xl border border-ink-200 bg-white shadow-sm p-4 mb-0 {{ $user_already_has_data_pemohon && $form_step == self::FIRST_STEP && !$edit_existing_data_pemohon ? 'hidden' : '' }}">
                     @if ($form_step == self::FIRST_STEP)
                         @if (!$user_already_has_data_pemohon || $edit_existing_data_pemohon)
                             @include('livewire.dashboard.pendaftaran.partials.data-pemohon-form-field')
@@ -147,7 +147,7 @@
                                                     'img' => 'fa-file-image',
                                                     default => 'fa-file-lines',
                                                 };
-                                                $badge = match ($syarat->tipe) {
+                                                $typeClass = match ($syarat->tipe) {
                                                     'pdf' => 'bg-rose-50 text-rose-600',
                                                     'img' => 'bg-sky-50 text-sky-600',
                                                     default => 'bg-ink-100 text-ink-600',
@@ -161,12 +161,12 @@
                                                 x-on:livewire-upload-error="uploading = false; failed = true"
                                                 x-on:livewire-upload-progress="progress = $event.detail.progress">
                                                 <div class="flex items-start gap-3">
-                                                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg {{ $badge }}">
+                                                    <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg {{ $typeClass }}">
                                                         <i class="fa-solid {{ $icon }}"></i>
                                                     </span>
                                                     <div class="min-w-0 flex-1">
                                                         <p class="text-sm font-bold leading-snug text-ink-900">{{ $syarat->nama }}</p>
-                                                        <span class="mt-1 inline-flex items-center rounded-full {{ $badge }} px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide">{{ $syarat->tipe }}</span>
+                                                        <span class="mt-1 inline-flex items-center rounded-full {{ $typeClass }} px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide">{{ $syarat->tipe }}</span>
                                                     </div>
                                                     <span class="shrink-0 text-[11px] font-extrabold text-ink-300">#{{ $loop->iteration }}</span>
                                                 </div>
@@ -325,8 +325,8 @@
                         <button type="button" wire:click='nextStep' class="btn-next-step w-full inline-flex items-center justify-center gap-2 rounded-full bg-nest-700 px-5 py-3 text-sm font-extrabold text-white hover:bg-nest-800 transition">Berikutnya <i class="fa-solid fa-arrow-right"></i></button>
                         <button class="w-full inline-flex items-center justify-center gap-2 rounded-full border border-ink-200 bg-white px-5 py-3 text-sm font-bold text-ink-700 hover:bg-ink-50 transition" type="button" wire:click='prevStep'><i class="fa-solid fa-arrow-left"></i> Sebelumnya</button>
                     @elseif ($form_step == self::LAST_STEP)
-                        <h6 class="text-md">Info</h6>
-                        <p class="text-xs text-secondary">
+                        <h6 class="text-base">Info</h6>
+                        <p class="text-xs text-ink-500">
                             Pastikan semua data yang Anda masukkan sudah benar sebelum menekan tombol "Daftar". Setelah menekan tombol "Daftar", data akan diproses dan disimpan dalam sistem.  
                         </p>
                         <hr class="mb-2 mt-0">

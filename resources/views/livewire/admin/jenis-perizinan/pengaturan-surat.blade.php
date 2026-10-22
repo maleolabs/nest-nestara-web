@@ -55,7 +55,7 @@
                     @endif
                 </p>
                 <p class="mt-2 flex items-center gap-1.5 text-xs text-ink-400">
-                    <i class="fa-solid fa-circle-info"></i> Tekan <kbd class="rounded bg-white px-1.5 py-0.5 font-bold text-ink-600 ring-1 ring-ink-200">Enter</kbd> pada kolom untuk menyimpan.
+                    <i class="fa-solid fa-circle-info"></i> Tekan <kbd class="rounded-lg bg-white px-1.5 py-0.5 font-bold text-ink-600 ring-1 ring-ink-200">Enter</kbd> pada kolom untuk menyimpan.
                 </p>
             </div>
         </div>

@@ -1,21 +1,21 @@
-<div class="modal-right d-none">
-    <div class="modal-right-content d-flex">
-        <div>
-            <h4 class="mb-4 ">Lihat pendaftaran izin</h4>
+<div class="modal-right hidden" role="dialog" aria-modal="true" aria-labelledby="modalRightTitle">
+    <div class="modal-right-content flex">
+        <div class="w-full min-w-0">
+            <h4 class="mb-5 border-b border-ink-100 pb-4 text-lg font-extrabold text-ink-900" id="modalRightTitle">Lihat pendaftaran izin</h4>
             @if ($selectedPreview)
-                <p class="mb-0 text-sm">Nama Izin</p>
-                <h3 class="">{{ str_capitalize($selectedPreview->jenis_perizinan->nama, true) }}</h3>
-                <p class="mb-0 text-sm">Kelompok Izin</p>
-                <h6 class="text-capitalize">{{ $selectedPreview->jenis_perizinan->kelompok_izin }}</h6>
-                <h6 class="mb-0">
-                    <i class="fa-solid fa-hourglass-half me-1"></i>
+                <p class="text-xs font-bold uppercase tracking-wide text-ink-500">Nama Izin</p>
+                <h3 class="mt-1 text-lg font-extrabold text-ink-900">{{ str_capitalize($selectedPreview->jenis_perizinan->nama, true) }}</h3>
+                <p class="mt-4 text-xs font-bold uppercase tracking-wide text-ink-500">Kelompok Izin</p>
+                <h6 class="mt-1 capitalize text-sm font-bold text-ink-800">{{ $selectedPreview->jenis_perizinan->kelompok_izin }}</h6>
+                <h6 class="mt-4 flex items-center gap-2 text-sm font-semibold text-ink-700">
+                    <i class="fa-solid fa-hourglass-half mr-1"></i>
                     Durasi pengerjaan {{ $selectedPreview->jenis_perizinan->durasi }}
                 </h6>
-                <h6 class="mb-0">
-                    <i class="fa-regular fa-calendar-check me-1"></i>
+                <h6 class="mt-2 flex items-center gap-2 text-sm font-semibold text-ink-700">
+                    <i class="fa-regular fa-calendar-check mr-1"></i>
                     Masa berlaku izin {{ $selectedPreview->jenis_perizinan->masa_berlaku }}
                 </h6>
-                <p class="mt-3 mb-0 text-muted">Status izin</p>
+                <p class="mt-5 mb-2 text-xs font-bold uppercase tracking-wide text-ink-500">Status izin</p>
                 <div>
                     @foreach ($selectedPreview->status_izin as $status)
                         {!! renderStatusIzinWithIconAndDetails($status, false, $this->isIzinCancelable($status->nama) , false) !!}
@@ -23,58 +23,58 @@
                 </div>
                 @php($izin_last_status = $selectedPreview->status_izin->last())
                 @if ($izin_last_status->nama == App\utils\enums\StatusIzinEnum::BATAL)
-                    <div class="p-3">
-                        <p class="text-dark mb-0">Permohonan izin ini telah dibatalkan. Anda dapat menghapusnya.</p>
-                        <button class="btn bg-gradient-danger d-flex align-items-center" type="button" wire:click='delete({{ $selectedPreview->id }})'>
+                    <div class="mt-4 rounded-xl bg-red-50 p-4 text-sm text-red-800 ring-1 ring-red-200">
+                        <p>Permohonan izin ini telah dibatalkan. Anda dapat menghapusnya.</p>
+                        <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition bg-red-600 text-white flex items-center" type="button" wire:click='delete({{ $selectedPreview->id }})'>
                             <span wire:loading.remove wire:target='delete'>hapus permohonan izin</span>
-                            <div class="spinner-border spinner-border-sm ms-1" role="status" wire:loading wire:target='delete'>
-                                <span class="visually-hidden">Loading...</span>
+                            <div class="ml-1 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" role="status" wire:loading wire:target='delete'>
+                                <span class="sr-only">Memuat</span>
                             </div>
                         </button>
                     </div>
                 @elseif ($izin_last_status->nama == App\utils\enums\StatusIzinEnum::REVISI_PERSYARATAN)
-                    <div class="p-3">
-                        <p class="text-dark mb-0">{{ $izin_last_status->keterangan }}</p>
-                        <a href="{{ route('user.revisi-izin', ['izin_id' => encrypt_id($selectedPreview->id)]) }}" class="btn bg-gradient-warning">
+                    <div class="mt-4 rounded-xl bg-amber-50 p-4 text-sm text-amber-900 ring-1 ring-amber-200">
+                        <p>{{ $izin_last_status->keterangan }}</p>
+                        <a href="{{ route('user.revisi-izin', ['izin_id' => encrypt_id($selectedPreview->id)]) }}" class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition bg-amber-500 text-white">
                             buka halaman perbaikan
-                            <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i>
+                            <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
                         </a>
                     </div>
                 @else
-                    <div class="rounded-3 bg-nest-50 text-nest-700 ring-1 ring-nest-200 p-3 mt-3">
+                    <div class="mt-4 rounded-xl bg-nest-50 p-4 text-sm text-nest-700 ring-1 ring-nest-200">
                         <strong>Informasi:</strong>
                         <p class="mb-0">
                             Dokumen Anda akan divalidasi terlebih dahulu, kemudian akan diproses oleh petugas, dan izin Anda akan diterbitkan setelah semua tahap selesai.
                         </p>
                     </div>  
                 @endif
-                <p class="mt-3 mb-0 text-muted">Persyaratan</p>
+                <p class="mt-5 mb-2 text-xs font-bold uppercase tracking-wide text-ink-500">Persyaratan</p>
                 @foreach ($selectedPreviewSyaratIzin as $syarat)
-                    <h6 @if(!isset($syarat->dokumen_pemohon[0]))class="text-muted text-decoration-line-through"@endif>
+                            <h6 class="flex items-center gap-2 border-b border-ink-100 py-2 text-sm @if(!isset($syarat->dokumen_pemohon[0]))text-ink-500 line-through @else text-ink-800 @endif">
                         @if (isset($syarat->dokumen_pemohon[0]))
-                            <a href="{{ \App\Support\SignedFileUrl::make($syarat->dokumen_pemohon[0]->nama_file) }}" class="text-decoration-none d-inline">
-                                <i class="fa-solid fa-download me-1"></i>
+                                <a href="{{ \App\Support\SignedFileUrl::make($syarat->dokumen_pemohon[0]->nama_file) }}" class="inline">
+                                    <i class="fa-solid fa-download mr-1"></i>
                             </a>
                         @else
-                            <i class="fa-solid fa-download me-1"></i>
+                            <i class="fa-solid fa-download mr-1"></i>
                         @endif
                         {{ $syarat->nama }}
                     </h6>
                 @endforeach
                 <a href="javascript:;">
-                    lihat semua dokumen anda
-                    <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i>
+                    lihat semua dokumen Anda
+                    <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i>
                 </a>
             @endif
-            <div class="p-3"></div>
+            <div class="h-3"></div>
         </div>
-        <button class="ms-auto text-md btn p-0 card-icon rounded-circle" wire:click='closePreview' id="modalRightCloseBtn">
+        <button aria-label="Tutup preview" class="modal-right-close-btn ml-3 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-500 hover:bg-ink-50" wire:click='closePreview'>
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
     <div wire:loading wire:target='preview'>
-        <div class="position-absolute top-0 end-0 bottom-0 bg-white opacity-75 d-flex align-items-center justify-content-center modal-right-loading">
-            <i class="fa-solid fa-ellipsis fa-fade fs-1"></i>
+        <div class="absolute top-0 right-0 bottom-0 bg-white opacity-75 flex items-center justify-center modal-right-loading">
+            <i class="fa-solid fa-spinner fa-spin text-xl text-nest-700" aria-hidden="true"></i>
         </div>
     </div>
 </div>

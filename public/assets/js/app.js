@@ -151,9 +151,9 @@
         }
       }
     })
-    let modalRightCloseBtn = select('#modalRightCloseBtn')
+    let modalRightCloseBtn = select('.modal-right-close-btn', true)
     if (modalRightCloseBtn) {
-      modalRightCloseBtn.addEventListener('click', function() {
+      const closeModalRight = function() {
         if (modalRight && modalRightContent) {
           modalRight.classList.add('d-none')
           if (modalRightContent.classList.contains('modal-right-content-md')) {
@@ -162,7 +162,8 @@
             modalRightContent.style.right = '-50%'
           }
         }
-      })
+      }
+      ;(Array.isArray(modalRightCloseBtn) ? modalRightCloseBtn : [modalRightCloseBtn]).forEach(btn => btn.addEventListener('click', closeModalRight))
     }
     if (modalRightShowBtn) {
       if (Array.isArray(modalRightShowBtn)) {

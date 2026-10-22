@@ -12,23 +12,23 @@
             <p class="text-xs text-ink-500">Pilih kategori untuk dikelola</p>
         </div>
         <nav class="p-2 space-y-1">
-            <button type="button" wire:click="selectTab('{{ self::FRONT_OFFICE_TAB }}')" onclick="switchTab('{{ self::FRONT_OFFICE_TAB }}')"
+            <button type="button" role="tab" aria-selected="{{ $current_tab == self::FRONT_OFFICE_TAB ? 'true' : 'false' }}" wire:click="selectTab('{{ self::FRONT_OFFICE_TAB }}')" onclick="switchTab('{{ self::FRONT_OFFICE_TAB }}')"
                 class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition {{ $current_tab == self::FRONT_OFFICE_TAB ? 'bg-nest-700 text-white shadow-sm' : 'text-ink-700 hover:bg-ink-50' }}">
                 <span class="h-8 w-8 grid place-items-center rounded-lg {{ $current_tab == self::FRONT_OFFICE_TAB ? 'bg-white/15' : 'bg-sky-50 text-sky-600' }}"><i class="fa-solid fa-headset text-xs"></i></span>
                 Front Office
             </button>
-            <button type="button" wire:click="selectTab('{{ self::BACK_OFFICE_TAB }}')" onclick="switchTab('{{ self::BACK_OFFICE_TAB }}')"
+            <button type="button" role="tab" aria-selected="{{ $current_tab == self::BACK_OFFICE_TAB ? 'true' : 'false' }}" wire:click="selectTab('{{ self::BACK_OFFICE_TAB }}')" onclick="switchTab('{{ self::BACK_OFFICE_TAB }}')"
                 class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition {{ $current_tab == self::BACK_OFFICE_TAB ? 'bg-nest-700 text-white shadow-sm' : 'text-ink-700 hover:bg-ink-50' }}">
                 <span class="h-8 w-8 grid place-items-center rounded-lg {{ $current_tab == self::BACK_OFFICE_TAB ? 'bg-white/15' : 'bg-violet-50 text-violet-600' }}"><i class="fa-solid fa-briefcase text-xs"></i></span>
                 Back Office
             </button>
-            <button type="button" wire:click="selectTab('{{ self::PENANDATANGAN_TAB }}')" onclick="switchTab('{{ self::PENANDATANGAN_TAB }}')"
+            <button type="button" role="tab" aria-selected="{{ $current_tab == self::PENANDATANGAN_TAB ? 'true' : 'false' }}" wire:click="selectTab('{{ self::PENANDATANGAN_TAB }}')" onclick="switchTab('{{ self::PENANDATANGAN_TAB }}')"
                 class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition {{ $current_tab == self::PENANDATANGAN_TAB ? 'bg-nest-700 text-white shadow-sm' : 'text-ink-700 hover:bg-ink-50' }}">
                 <span class="h-8 w-8 grid place-items-center rounded-lg {{ $current_tab == self::PENANDATANGAN_TAB ? 'bg-white/15' : 'bg-amber-50 text-amber-600' }}"><i class="fa-solid fa-signature text-xs"></i></span>
                 Penandatangan
             </button>
             <div class="my-2 border-t border-ink-100"></div>
-            <button type="button" wire:click="selectTab('{{ self::NEW_PEGAWAI_TAB }}')" onclick="switchTab('{{ self::NEW_PEGAWAI_TAB }}')"
+            <button type="button" role="tab" aria-selected="{{ $current_tab == self::NEW_PEGAWAI_TAB ? 'true' : 'false' }}" wire:click="selectTab('{{ self::NEW_PEGAWAI_TAB }}')" onclick="switchTab('{{ self::NEW_PEGAWAI_TAB }}')"
                 class="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition {{ $current_tab == self::NEW_PEGAWAI_TAB ? 'bg-ink-900 text-white shadow-sm' : 'text-nest-700 bg-nest-50 ring-1 ring-nest-200 hover:bg-nest-100' }}">
                 <span class="h-8 w-8 grid place-items-center rounded-lg {{ $current_tab == self::NEW_PEGAWAI_TAB ? 'bg-white/15' : 'bg-nest-700 text-white' }}"><i class="fa-solid fa-user-plus text-xs"></i></span>
                 Buat Pegawai Baru
@@ -137,109 +137,109 @@
 </div>
 
 {{-- penandatangan edit popover panel --}}
-<div class="modal-right {{ !$selected_penandatangan ? 'd-none' : '' }}">
+<div class="modal-right {{ !$selected_penandatangan ? 'hidden' : '' }}">
     <div class="modal-right-content modal-right-content-minimalist p-0" style="right: {{ !$selected_penandatangan ? '-40%' : '0' }}">
-        <div class="px-4 py-2 border-bottom d-flex justify-content-between align-items-center gap-2">
+        <div class="px-4 py-2 border-b flex justify-between items-center gap-2">
             <h6 class="text-semibold mb-0">Penandatangan</h6>
-            <button class="ms-auto text-md btn btn-transparent p-0 card-icon sticky-top-0 shadow-none modal-right-show-btn" id="modalRightCloseBtn">
+            <button class="ml-auto text-base inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition btn-transparent p-0 card-icon sticky-top-0 shadow-none modal-right-show-btn" id="modalRightCloseBtn">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
         <div class="px-4 py-3 overflow-auto">
             <div wire:loading.remove wire:target='selectPenandatangan'>
                 @if ($selected_penandatangan)
-                    <div class="row">
-                        <div class="col-5 mb-3">
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div class="mb-3">
                             <p class="text-sm text-medium mb-0">Avatar</p>
                         </div>
-                        <div class="col-7 mb-3">
-                            <input type="radio" class="btn-check" name="gender" wire:model='penandatangan_form.gender' value="male" id="male" autocomplete="off">
-                            <label class="btn btn-outline-primary rounded-3 text-capitalize" for="male">
+                        <div class="mb-3">
+                            <input type="radio" class="peer sr-only" name="gender" wire:model='penandatangan_form.gender' value="male" id="pegawai-gender-male" autocomplete="off">
+                            <label class="inline-flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold capitalize ring-1 ring-ink-200 peer-checked:ring-2 peer-checked:ring-nest-600" for="pegawai-gender-male">
                                 <img src="{{ asset('storage/web/male.png') }}" alt="male" class="img-rounded">
                             </label>
 
-                            <input type="radio" class="btn-check" name="gender" wire:model='penandatangan_form.gender' value="female" id="female" autocomplete="off">
-                            <label class="btn btn-outline-primary rounded-3 text-capitalize" for="female">
+                            <input type="radio" class="peer sr-only" name="gender" wire:model='penandatangan_form.gender' value="female" id="pegawai-gender-female" autocomplete="off">
+                            <label class="inline-flex cursor-pointer items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold capitalize ring-1 ring-ink-200 peer-checked:ring-2 peer-checked:ring-nest-600" for="pegawai-gender-female">
                                 <img src="{{ asset('storage/web/female.png') }}" alt="female" class="img-rounded">
                             </label>
                         </div>
-                        <div class="col-5 mb-3">
+                        <div class="mb-3">
                             <p class="text-sm text-medium mb-0">Nama</p>
                         </div>
-                        <div class="col-7 mb-3">
-                            <div class="input-group input-group-sm border rounded-3">
-                                <input type="text" class="form-control border-0 rounded-3" wire:model='penandatangan_form.nama' placeholder="masukkan nama">
+                        <div class="mb-3">
+                            <div class="input-group input-group-sm border rounded-xl">
+                                <input type="text" class="w-full rounded-xl border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100 border-0 rounded-xl" wire:model='penandatangan_form.nama' placeholder="masukkan nama">
                             </div>
                         </div>
-                        <div class="col-5 mb-3">
+                        <div class="mb-3">
                             <p class="text-sm text-medium mb-0">Jabatan</p>
                         </div>
-                        <div class="col-7 mb-3">
-                            <div class="input-group input-group-sm border rounded-3">
-                                <input type="text" class="form-control border-0 rounded-3" wire:model='penandatangan_form.jabatan' placeholder="masukkan jabatan">
+                        <div class="mb-3">
+                            <div class="input-group input-group-sm border rounded-xl">
+                                <input type="text" class="w-full rounded-xl border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100 border-0 rounded-xl" wire:model='penandatangan_form.jabatan' placeholder="masukkan jabatan">
                             </div>
                         </div>
-                        <div class="col-5 mb-3">
+                        <div class="mb-3">
                             <p class="text-sm text-medium mb-0">Pangkat</p>
                         </div>
-                        <div class="col-7 mb-3">
-                            <div class="input-group input-group-sm border rounded-3">
-                                <input type="text" class="form-control border-0 rounded-3" wire:model='penandatangan_form.pangkat' placeholder="masukkan pangkat">
+                        <div class="mb-3">
+                            <div class="input-group input-group-sm border rounded-xl">
+                                <input type="text" class="w-full rounded-xl border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100 border-0 rounded-xl" wire:model='penandatangan_form.pangkat' placeholder="masukkan pangkat">
                             </div>
                         </div>
-                        <div class="col-5 mb-3">
+                        <div class="mb-3">
                             <p class="text-sm text-medium mb-0">NIP</p>
                         </div>
-                        <div class="col-7 mb-3">
-                            <div class="input-group input-group-sm border rounded-3">
-                                <input type="text" class="form-control border-0 rounded-3" wire:model='penandatangan_form.nip' placeholder="masukkan nip">
+                        <div class="mb-3">
+                            <div class="input-group input-group-sm border rounded-xl">
+                                <input type="text" class="w-full rounded-xl border border-ink-200 bg-white px-3 py-2 text-sm text-ink-900 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100 border-0 rounded-xl" wire:model='penandatangan_form.nip' placeholder="masukkan nip">
                             </div>
                         </div>
                     </div>
                 @endif
             </div>
-            <div wire:loading.class='row' wire:target='selectPenandatangan'>
-                <div class="col-6 mb-3" wire:loading wire:target='selectPenandatangan'>
+            <div wire:loading.class='grid grid-cols-1 gap-4' wire:target='selectPenandatangan'>
+                <div class="min-w-0 mb-3" wire:loading wire:target='selectPenandatangan'>
                     <div class="loading-line"></div>
                 </div>
-                <div class="col-6 mb-3" wire:loading wire:target='selectPenandatangan'>
+                <div class="min-w-0 mb-3" wire:loading wire:target='selectPenandatangan'>
                     <div class="loading-line"></div>
                 </div>
-                <div class="col-6 mb-3" wire:loading wire:target='selectPenandatangan'>
+                <div class="min-w-0 mb-3" wire:loading wire:target='selectPenandatangan'>
                     <div class="loading-line"></div>
                 </div>
-                <div class="col-6 mb-3" wire:loading wire:target='selectPenandatangan'>
+                <div class="min-w-0 mb-3" wire:loading wire:target='selectPenandatangan'>
                     <div class="loading-line"></div>
                 </div>
-                <div class="col-6 mb-3" wire:loading wire:target='selectPenandatangan'>
+                <div class="min-w-0 mb-3" wire:loading wire:target='selectPenandatangan'>
                     <div class="loading-line"></div>
                 </div>
-                <div class="col-6 mb-3" wire:loading wire:target='selectPenandatangan'>
+                <div class="min-w-0 mb-3" wire:loading wire:target='selectPenandatangan'>
                     <div class="loading-line"></div>
                 </div>
-                <div class="col-6 mb-3" wire:loading wire:target='selectPenandatangan'>
+                <div class="min-w-0 mb-3" wire:loading wire:target='selectPenandatangan'>
                     <div class="loading-line"></div>
                 </div>
-                <div class="col-6 mb-3" wire:loading wire:target='selectPenandatangan'>
+                <div class="min-w-0 mb-3" wire:loading wire:target='selectPenandatangan'>
                     <div class="loading-line"></div>
                 </div>
-                <div class="col-6" wire:loading wire:target='selectPenandatangan'>
+                <div class="min-w-0" wire:loading wire:target='selectPenandatangan'>
                     <div class="loading-line"></div>
                 </div>
-                <div class="col-6" wire:loading wire:target='selectPenandatangan'>
+                <div class="min-w-0" wire:loading wire:target='selectPenandatangan'>
                     <div class="loading-line"></div>
                 </div>
             </div>
         </div>
-        <div class="modal-right-footer px-4 py-2 border-top d-flex justify-content-between z-2 bg-white">
-            <div class="ms-auto d-flex align-items-center gap-2">
+        <div class="modal-right-footer border-t border-ink-200 px-4 py-2 flex justify-between z-2 bg-white">
+            <div class="ml-auto flex items-center gap-2">
                 @if ($selected_penandatangan)
-                    <button class="btn btn-sm bg-gradient-primary text-capitalize" type="button" wire:click='savePenandatangan'>
+                    <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition px-3 py-1.5 text-xs bg-nest-700 text-white capitalize" type="button" wire:click='savePenandatangan'>
                         <span wire:loading.remove wire:target='savePenandatangan'>simpan</span>
-                        <span class="spinner-border spinner-border-sm" wire:loading wire:target='savePenandatangan'></span>
+                        <span class="animate-spin spinner-border-sm" wire:loading wire:target='savePenandatangan'></span>
                     </button>
                 @endif
-                <button class="btn btn-sm bg-gradient-light text-capitalize" type="button" id="modalRightCloseBtn" wire:click='cancelEditPenandatangan'>
+                <button class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition px-3 py-1.5 text-xs bg-ink-100 text-ink-800 capitalize" type="button" id="modalRightCloseBtn" wire:click='cancelEditPenandatangan'>
                     batal
                 </button>
             </div>

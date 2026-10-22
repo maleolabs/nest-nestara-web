@@ -47,7 +47,7 @@
                             </td>
                             <td class="px-4 py-3 text-center">
                                 <input type="checkbox" {{ $properti_entri_mandatori ? 'checked' : '' }} wire:model.live='properti_entri_mandatori.{{ $data_entri->id }}'
-                                    class="h-4 w-4 rounded border-ink-300 text-nest-700 focus:ring-nest-600">
+                                    class="h-4 w-4 rounded-lg border-ink-300 text-nest-700 focus:ring-nest-600">
                             </td>
                         </tr>
                     @empty
@@ -56,7 +56,7 @@
                 </tbody>
             </table>
             <p class="flex items-center gap-1.5 border-t border-ink-100 bg-ink-50/50 px-4 py-2.5 text-xs text-ink-400">
-                <i class="fa-solid fa-circle-info"></i> Tekan <kbd class="rounded bg-white px-1.5 py-0.5 font-bold text-ink-600 ring-1 ring-ink-200">Enter</kbd> pada kolom untuk menyimpan.
+                <i class="fa-solid fa-circle-info"></i> Tekan <kbd class="rounded-lg bg-white px-1.5 py-0.5 font-bold text-ink-600 ring-1 ring-ink-200">Enter</kbd> pada kolom untuk menyimpan.
             </p>
         @endif
     </div>
@@ -100,7 +100,7 @@
                             class="mt-1.5 w-full rounded-xl border border-ink-200 bg-white px-3 py-2.5 text-sm font-medium text-ink-900 focus:border-nest-600 focus:outline-none focus:ring-4 focus:ring-nest-100">
                     </div>
                     <label class="flex items-center gap-2 pb-3 text-xs font-bold text-ink-700">
-                        <input type="checkbox" wire:model.live='properti_data_form.mandatori' class="h-4 w-4 rounded border-ink-300 text-nest-700 focus:ring-nest-600">
+                        <input type="checkbox" wire:model.live='properti_data_form.mandatori' class="h-4 w-4 rounded-lg border-ink-300 text-nest-700 focus:ring-nest-600">
                         Mandatori
                     </label>
                     <div class="flex items-center gap-2 pb-0.5">

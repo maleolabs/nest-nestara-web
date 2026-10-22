@@ -1,8 +1,8 @@
-@push('breadcrumb-item')
-    <li class="text-xs font-semibold text-ink-600">/ <a href="{{ route('admin.jenis-perizinan.index') }}" class="hover:text-nest-700">Jenis Perizinan</a></li>
-    <li class="text-xs font-bold text-nest-700">{{ Str::limit(str_capitalize($preview_jenis->nama, true), 70) }}</li>
-@endpush
-<div class="row">
+<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    @push('breadcrumb-item')
+        <li class="text-xs font-semibold text-ink-600">/ <a href="{{ route('admin.jenis-perizinan.index') }}" class="hover:text-nest-700">Jenis Perizinan</a></li>
+        <li class="text-xs font-bold text-nest-700">{{ Str::limit(str_capitalize($preview_jenis->nama, true), 70) }}</li>
+    @endpush
     <md-linear-progress wire:loading wire:target='selectTab' class="fixed top-0 left-0 w-full" id="pendaftaran-progress" indeterminate style="--md-linear-progress-active-indicator-color: #0f766e; z-index: 9999"></md-linear-progress>
 
     @php

@@ -99,14 +99,14 @@
                     {{-- footer --}}
                     <div class="flex items-center justify-between border-t border-ink-100 bg-ink-50/50 px-6 py-3">
                         <p class="text-xs font-semibold text-ink-500">Butuh bantuan lebih? Hubungi admin sistem.</p>
-                        <p class="text-xs text-ink-400"><kbd class="rounded bg-white px-2 py-1 font-bold text-ink-600 ring-1 ring-ink-200">Esc</kbd> tutup</p>
+                        <p class="text-xs text-ink-400"><kbd class="rounded-lg bg-white px-2 py-1 font-bold text-ink-600 ring-1 ring-ink-200">Esc</kbd> tutup</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- filter card --}}
+    {{-- filter rounded-2xl border border-ink-200 bg-white shadow-sm --}}
     <div class="rounded-2xl bg-white p-4 ring-1 ring-ink-200 shadow-[0_4px_20px_rgba(15,23,42,0.05)]">
         <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-[180px_180px_1fr]">
             <div>
@@ -152,7 +152,7 @@
                             $status = $izin->latestStatus;
                             $statusClasses = getStatusIzinClasses($status)
                         @endphp
-                        <tr class="cursor-pointer data-izin transition hover:bg-nest-50/60" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})' id="modalRightShowBtn">
+                        <tr tabindex="0" role="button" aria-label="Buka permohonan {{ $izin->no_pendaftaran }}" class="cursor-pointer data-izin transition hover:bg-nest-50/60 focus:bg-nest-50" data-izin-id="{{ $izin->id }}" wire:click='previewDataIzin({{ $izin->id }})' @keydown.enter="this.click()" @keydown.space.prevent="this.click()">
                             <td class="px-5 py-3.5 text-sm font-semibold text-ink-400">{{ $loop->iteration }}</td>
                             <td class="whitespace-nowrap px-4 py-3.5 text-sm font-bold text-ink-900">{{ $izin->no_pendaftaran }}</td>
                             <td class="whitespace-nowrap px-4 py-3.5 text-sm font-semibold text-ink-700">{{ $izin->pemohon->nomor_id }}</td>
@@ -215,8 +215,8 @@
         document.addEventListener('click', function (e) {
             const wrap = document.getElementById('helpPopoverWrap');
             const panel = document.getElementById('helpPopoverPanel');
-            const btn = document.getElementById('helpPopoverBtn');
-            if (!wrap || !panel || !btn) return;
+            const helpPopoverBtn = document.getElementById('helpPopoverBtn');
+            if (!wrap || !panel || !helpPopoverBtn) return;
 
             const openBtn = e.target.closest('#helpPopoverBtn');
             const closeBtn = e.target.closest('#helpPopoverClose');
@@ -224,26 +224,26 @@
             if (openBtn) {
                 e.preventDefault();
                 panel.classList.toggle('hidden');
-                btn.setAttribute('aria-expanded', String(!panel.classList.contains('hidden')));
+                helpPopoverBtn.setAttribute('aria-expanded', String(!panel.classList.contains('hidden')));
                 return;
             }
             if (closeBtn) {
                 panel.classList.add('hidden');
-                btn.setAttribute('aria-expanded', 'false');
+                helpPopoverBtn.setAttribute('aria-expanded', 'false');
                 return;
             }
             if (!wrap.contains(e.target)) {
                 panel.classList.add('hidden');
-                btn.setAttribute('aria-expanded', 'false');
+                helpPopoverBtn.setAttribute('aria-expanded', 'false');
             }
         });
         document.addEventListener('keydown', function (e) {
             if (e.key !== 'Escape') return;
             const panel = document.getElementById('helpPopoverPanel');
-            const btn = document.getElementById('helpPopoverBtn');
+            const helpPopoverBtn = document.getElementById('helpPopoverBtn');
             if (panel && !panel.classList.contains('hidden')) {
                 panel.classList.add('hidden');
-                btn?.setAttribute('aria-expanded', 'false');
+                helpPopoverBtn?.setAttribute('aria-expanded', 'false');
             }
         });
     </script>

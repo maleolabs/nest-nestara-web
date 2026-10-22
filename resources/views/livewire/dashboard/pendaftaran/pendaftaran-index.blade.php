@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        {{-- filter card --}}
+        {{-- filter rounded-2xl border border-ink-200 bg-white shadow-sm --}}
         <div class="rounded-2xl bg-white p-4 ring-1 ring-ink-200 shadow-[0_4px_20px_rgba(15,23,42,0.05)]">
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-[180px_180px_1fr]">
                 <div>
@@ -70,16 +70,9 @@
     @endif
 </div>
 
-        </div>
-    </div>
 
 @push('scripts')
     <script>
-        const btnCloseModal = $('#btn-close-modal')
-        if (btnCloseModal) {
-            Livewire.dispatch('refresh-component')
-        }
-
         $('.data-izin').each(function(index, elemen) {
             $(elemen).on('click', function() {
                 const izinId = $(this).attr('data-izin-id')

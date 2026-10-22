@@ -84,6 +84,13 @@ class PreviewDataIzin extends Component
         }
     }
 
+    public function setActiveTab(string $tab): void
+    {
+        if (in_array($tab, [self::PERSYARATAN, self::TINDAKAN], true)) {
+            $this->active_tab = $tab;
+        }
+    }
+
     public function render()
     {
         if (!$this->preview_page) {
@@ -162,7 +169,7 @@ class PreviewDataIzin extends Component
             [StatusIzinEnum::DITINJAU, StatusIzinProgressEnum::PROCESSING]
         ];
 
-        return in_array([$this->last_izin_status->nama, $this->last_izin_status->progres], $allowedStatuses);    }
+        return $this->last_izin_status && in_array([$this->last_izin_status->nama, $this->last_izin_status->progres], $allowedStatuses, true);    }
 
     private function getRegionValue($type, $id): string
     {

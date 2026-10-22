@@ -1,6 +1,6 @@
-<div class="modal-right d-none">
-    <div class="modal-right-content modal-right-content-md d-flex">
-        <div class="w-100 h-100 flex flex-col bg-white">
+<div class="modal-right hidden">
+    <div class="modal-right-content modal-right-content-md flex">
+        <div class="w-full h-full flex flex-col bg-white">
             {{-- header --}}
             <div class="flex items-center justify-between gap-3 border-b border-ink-100 px-5 py-4">
                 <div>

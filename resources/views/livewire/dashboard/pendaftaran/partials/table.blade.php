@@ -1,4 +1,4 @@
-<div class="table-responsive relative">
+<div class="overflow-x-auto relative">
     <table class="w-full text-left">
         <thead>
             <tr class="border-b border-ink-200 bg-ink-50/60">

@@ -38,23 +38,23 @@
         // Tambah dropdown (popover)
         document.addEventListener('DOMContentLoaded', () => {
             const wrap = document.getElementById('tambahDropdownWrap')
-            const btn = document.getElementById('navbarDropdownMenuLink2')
+            const dropdownToggle = document.getElementById('navbarDropdownMenuLink2')
             const menu = document.getElementById('tambahDropdownMenu')
-            if (!wrap || !btn || !menu) return
+            if (!wrap || !dropdownToggle || !menu) return
             const toggle = (e) => {
                 e?.preventDefault(); e?.stopPropagation()
                 menu.classList.toggle('hidden')
-                btn.setAttribute('aria-expanded', String(!menu.classList.contains('hidden')))
+                dropdownToggle.setAttribute('aria-expanded', String(!menu.classList.contains('hidden')))
             }
-            btn.addEventListener('click', toggle)
+            dropdownToggle.addEventListener('click', toggle)
             document.addEventListener('click', (e) => {
                 if (!wrap.contains(e.target)) {
                     menu.classList.add('hidden')
-                    btn.setAttribute('aria-expanded', 'false')
+                    dropdownToggle.setAttribute('aria-expanded', 'false')
                 }
             })
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') { menu.classList.add('hidden'); btn.setAttribute('aria-expanded', 'false') }
+                if (e.key === 'Escape') { menu.classList.add('hidden'); dropdownToggle.setAttribute('aria-expanded', 'false') }
             })
         })
     </script>

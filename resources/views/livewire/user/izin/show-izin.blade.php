@@ -11,7 +11,7 @@
                 </div>
                 <div class="mt-4 rounded-xl border-2 border-dashed border-ink-200 p-4">
                     <label class="flex items-center gap-2.5 text-sm font-semibold text-ink-700 cursor-pointer">
-                        <input type="checkbox" wire:model.live='confirm_delete' class="h-4 w-4 rounded border-ink-300 text-red-600 focus:ring-red-200">
+                        <input type="checkbox" wire:model.live='confirm_delete' class="h-4 w-4 rounded-lg border-ink-300 text-red-600 focus:ring-red-200">
                         Saya memahami konsekuensi penghapusan ini
                     </label>
                     <button type="button" wire:click='confirmDelete' {{ !$confirm_delete ? 'disabled' : '' }}
@@ -46,7 +46,7 @@
                 @endphp
                 <div class="rounded-2xl bg-white p-4 ring-1 ring-ink-200 shadow-[0_4px_20px_rgba(15,23,42,0.05)] {{ $is_izin_new ? 'ring-2 ring-nest-500' : '' }}">
                     <div class="flex flex-wrap items-start justify-between gap-3">
-                        <button type="button" id="modalRightShowBtn" wire:click='preview({{ $izin->id }})' class="min-w-0 flex-1 text-left group">
+                            <button type="button" id="modalRightShowBtn-{{ $izin->id }}" wire:click='preview({{ $izin->id }})' class="min-w-0 flex-1 text-left group">
                             <div class="flex items-center gap-2">
                                 <h3 class="font-bold text-[15px] text-ink-900 group-hover:text-nest-700 transition">{{ $izin->jenis_perizinan->nama }}</h3>
                                 @if ($is_izin_new)
@@ -60,15 +60,15 @@
                         </button>
 
                         @if ($this->isIzinCancelable($status->nama))
-                            <div class="dropdown relative">
-                                <button class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-ink-500 ring-1 ring-ink-200 hover:bg-ink-50 transition" data-bs-toggle="dropdown" id="cancelIzinAction" aria-expanded="false">
+                            <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
+                                <button type="button" @click="open = !open" class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-ink-500 ring-1 ring-ink-200 hover:bg-ink-50 transition" id="cancelIzinAction-{{ $izin->id }}" :aria-expanded="open.toString()" aria-haspopup="menu">
                                     <i class="fa-solid fa-ellipsis-vertical text-sm"></i>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="cancelIzinAction">
+                                <ul x-cloak x-show="open" x-transition class="absolute right-0 z-10 mt-2 w-56 rounded-xl border border-ink-200 bg-white p-1 shadow-lg" aria-labelledby="cancelIzinAction-{{ $izin->id }}" role="menu">
                                     <li>
-                                        <a class="dropdown-item text-danger" href="javascript:;" wire:click='cancel({{ $izin->id }})'>
-                                            <i class="fa-solid fa-circle-minus me-2"></i> Batalkan Permohonan
-                                        </a>
+                                        <button type="button" class="w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-red-600 hover:bg-red-50" wire:click='cancel({{ $izin->id }})' role="menuitem">
+                                            <i class="fa-solid fa-circle-minus mr-2"></i> Batalkan Permohonan
+                                        </button>
                                     </li>
                                 </ul>
                             </div>

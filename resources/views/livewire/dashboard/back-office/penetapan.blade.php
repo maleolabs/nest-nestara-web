@@ -11,6 +11,7 @@
         <div class="flex flex-wrap rounded-full bg-white p-1 ring-1 ring-ink-200 shadow-sm">
             @foreach ([['tab' => self::PENETAPAN, 'icon' => 'fa-stamp'], ['tab' => self::PEMBUATAN, 'icon' => 'fa-print'], ['tab' => self::LAYANAN_DITOLAK, 'icon' => 'fa-file-circle-xmark']] as $t)
                 <button type="button" wire:click="selectMenu('{{ $t['tab'] }}')" onclick="switchTab('{{ $t['tab'] }}')"
+                    role="tab" aria-selected="{{ $active_menu == $t['tab'] ? 'true' : 'false' }}"
                     class="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold transition {{ $active_menu == $t['tab'] ? 'bg-ink-900 text-white' : 'text-ink-600 hover:bg-ink-50' }}">
                     <i class="fa-solid {{ $t['icon'] }} text-xs"></i> {{ $t['tab'] }}
                     @if (isset($count_tabs[$t['tab']]) && $count_tabs[$t['tab']] > 0)

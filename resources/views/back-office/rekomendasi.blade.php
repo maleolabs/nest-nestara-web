@@ -5,7 +5,7 @@
             Rekomendasi
         </a>
     </li>
-    <li class="breadcrumb-item active d-none" id="rekomendasi-sub-breadcrumb"></li>
+    <li class="breadcrumb-item active hidden" id="rekomendasi-sub-breadcrumb"></li>
 @endpush
 @section('main')
     @livewire('dashboard.back-office.rekomendasi')
@@ -14,7 +14,7 @@
     <script>
         let rekomSubBread = document.getElementById("rekomendasi-sub-breadcrumb")
         Livewire.on('preview-selected', function (event) {
-            rekomSubBread.classList.remove("d-none")
+            rekomSubBread.classList.remove("hidden")
             rekomSubBread.textContent = event[0].preview
         })
     </script>

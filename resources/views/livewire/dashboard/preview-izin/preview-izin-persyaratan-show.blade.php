@@ -1,33 +1,35 @@
 @if (count($preview_izin_dokumen) > 0)
-    <div class="rounded-3 border border-danger bg-danger-light p-3 my-3 text-danger">
-        <strong>Penting:</strong>
-        <p class="mb-0">
+    <div class="my-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
+        <strong class="font-bold">Penting:</strong>
+        <p class="mt-1  leading-relaxed">
             Dokumen ini bersifat sangat sensitif dan rahasia. Pastikan untuk tidak menyimpan atau mengunduhnya di tempat yang tidak aman atau diakses oleh pihak yang tidak berwenang.
         </p>
     </div>
     @foreach ($preview_izin_dokumen as $dokumen)
-        <h6>
-            <a href="{{ \App\Support\SignedFileUrl::make($dokumen->nama_file) }}" class="text-decoration-none d-inline">
-                <i class="fa-solid fa-download me-1"></i>
+        <div class="flex items-center justify-between gap-3 border-b border-ink-100 py-3 last:border-0">
+            <p class=" min-w-0 text-sm font-semibold text-ink-800">{{ $dokumen->syarat_izin->nama }}</p>
+            <div class="flex shrink-0 items-center gap-1">
+            <a aria-label="Unduh {{ $dokumen->syarat_izin->nama }}" href="{{ \App\Support\SignedFileUrl::make($dokumen->nama_file) }}" class="grid h-9 w-9 place-items-center rounded-lg text-ink-500 hover:bg-ink-50 hover:text-nest-700">
+                <i class="fa-solid fa-download text-sm"></i>
             </a>
-            <a href="javascript:;" class="text-decoration-none d-inline" wire:click="showImgModal('{{ $dokumen->syarat_izin->nama }}', '{{ base64_encode($dokumen->nama_file) }}', '{{ $dokumen->syarat_izin->tipe }}', {{ $dokumen->syarat_izin_id }})">
-                <i class="fa-solid fa-eye me-1"></i>
+            <a aria-label="Lihat {{ $dokumen->syarat_izin->nama }}" href="javascript:;" class="grid h-9 w-9 place-items-center rounded-lg text-ink-500 hover:bg-ink-50 hover:text-nest-700" wire:click="showImgModal('{{ $dokumen->syarat_izin->nama }}', '{{ base64_encode($dokumen->nama_file) }}', '{{ $dokumen->syarat_izin->tipe }}', {{ $dokumen->syarat_izin_id }})">
+                <i class="fa-solid fa-eye text-sm"></i>
             </a>
-            <button type="button" id="btnShowPreviewModal" data-bs-toggle="modal" data-bs-target="#showDocumentImgModal" class="opacity-0"></button>
-            {{ $dokumen->syarat_izin->nama }}
-        </h6>
+            </div>
+        </div>
     @endforeach
     @foreach ($preview_izin_syarat_izin as $syarat)
-        <h6 class="text-muted text-decoration-line-through">
-            <i class="fa-solid fa-download me-1"></i>
-            <i class="fa-solid fa-eye me-1"></i>
-            {{ $syarat->nama }}>
-        </h6>
+        <div class="flex items-center gap-3 border-b border-ink-100 py-3 text-sm text-ink-400 line-through last:border-0">
+            <i class="fa-solid fa-download mr-1"></i>
+            <i class="fa-solid fa-eye mr-1"></i>
+            {{ $syarat->nama }}
+            <span>{{ $syarat->nama }}</span>
+        </div>
     @endforeach
 @else
-    <div class="alert alert-light">
-        <p class="mt-3 text-muted">
-            <i class="fa-solid fa-circle-info me-1"></i>
+    <div class="rounded-xl border border-dashed border-ink-200 bg-ink-50 p-4" role="status">
+        <p class=" text-sm text-ink-500">
+            <i class="fa-solid fa-circle-info mr-1"></i>
             Tidak ada persyaratan untuk perizinan ini!
         </p>
     </div>

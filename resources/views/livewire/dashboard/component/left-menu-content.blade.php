@@ -4,18 +4,18 @@
         <li class="nav-item">
 
             <a href="{{ route('preview-izin', ['izin_id' => $this->encryptId($izin->id)]) }}" class="nav-link">
-                <div class="d-flex justify-content-between align-items-center w-100">
+                <div class="flex justify-between items-center w-full">
                     <div>
-                        <span class="text-sm text-bold d-block">{{ Str::limit(str_capitalize($izin->jenis_perizinan->nama, true), 30) }}</span>
-                        <small class="text-xs d-block">{{ Str::limit($izin->pemohon->nama_pemohon, 30) }}</small>
+                        <span class="text-sm font-bold block">{{ Str::limit(str_capitalize($izin->jenis_perizinan->nama, true), 30) }}</span>
+                        <small class="text-xs block">{{ Str::limit($izin->pemohon->nama_pemohon, 30) }}</small>
                         {!! renderStatusIzinWithIcon($izin->status_izin->last(), '', true, true) !!}
-                        <small class="text-xs text-muted d-block ps-3">{{ $izin->updated_at->diffForHumans() }}</small>
+                        <small class="text-xs text-ink-500 block ps-3">{{ $izin->updated_at->diffForHumans() }}</small>
                     </div>
                 </div>
             </a>
         </li>
     @endforeach
     <li class="nav-item px-3">
-        <a href="{{ route('izin.index') }}" class="btn btn-light btn-sm text-capitalize w-100">Lihat semua</a>
+        <a href="{{ route('izin.index') }}" class="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition border border-ink-200 bg-white text-ink-800 hover:bg-ink-50 px-3 py-1.5 text-xs capitalize w-full">Lihat semua</a>
     </li>
 </div>

@@ -504,7 +504,7 @@ class PerizinanServiceImpl implements PerizinanService
             $izin->penandatangan_id = $penandatangan_id;
             $izin->save();
     
-            $izin_status = $izin->status_izin->last();
+            $izin_status = $izin->latestStatus;
             $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN, $izin_status->pegawai_id);
     
             $nomor_surat_parts = explode('/', $nomor_surat);
@@ -556,7 +556,7 @@ class PerizinanServiceImpl implements PerizinanService
                 return;
             if (!in_array($tindakan, [OfficeStatus::DIIZINKAN, OfficeStatus::LAYANAN_DITOLAK]))
                 return;
-            $izin_status = $izin->status_izin->last();
+            $izin_status = $izin->latestStatus;
             if ($izin_status->nama == Status::PROSES) {
                 $this->statusIzinService->updateStatusIzin($izin_id, Status::PROSES, Progres::PROCESSING, $tindakan, $pegawai_id);
             }
@@ -615,8 +615,8 @@ class PerizinanServiceImpl implements PerizinanService
             $izin = $this->find($izin_id);
             if (!$izin)
                 return;
-            $izin_status = $izin->status_izin->last();
-            if ($izin_status->nama == Status::PENERBITAN) {
+            $izin_status = $izin->latestStatus;
+            if ($izin_status?->nama == Status::PENERBITAN) {
                 $this->statusIzinService->updateStatusIzin($izin_id, Status::PENERBITAN, Progres::FINISHED, OfficeStatus::IZIN_TELAH_DITERBITKAN, null, null, false, true);
                 $this->statusIzinService->updateStatusIzin($izin_id, Status::PENYERAHAN, Progres::PROCESSING, null, $pegawai_id);
             }
@@ -629,8 +629,8 @@ class PerizinanServiceImpl implements PerizinanService
             $izin = $this->find($izin_id);
             if (!$izin)
                 return;
-            $izin_status = $izin->status_izin->last();
-            if ($izin_status->nama == Status::PENYERAHAN) {
+            $izin_status = $izin->latestStatus;
+            if ($izin_status?->nama == Status::PENYERAHAN) {
                 $this->statusIzinService->updateStatusIzin($izin_id, Status::PENYERAHAN, Progres::FINISHED, OfficeStatus::IZIN_TELAH_DISERAHKAN, $pegawai_id);
             }
         });

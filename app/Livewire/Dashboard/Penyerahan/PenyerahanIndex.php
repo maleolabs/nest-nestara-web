@@ -18,8 +18,7 @@ class PenyerahanIndex extends Component
 
     /** Paginator tidak boleh public — Livewire tidak bisa dehydrate. Dikirim via render(). */
     protected $all_izin;
-    public $preview_izin_id,
-        $selectedPreview;
+    public $preview_izin_id;
 
     public $search = '',
         $start_date,
@@ -37,8 +36,14 @@ class PenyerahanIndex extends Component
     {
         $this->setData();
         $this->buildTanggalPermohonanMap();
+        // Keep Eloquent models out of Livewire state. Models with nested relations
+        // cannot be dehydrated reliably between requests.
+        $selectedPreview = $this->preview_izin_id
+            ? $this->getPerizinanService()->find($this->preview_izin_id)
+            : null;
         return view('livewire.dashboard.penyerahan.penyerahan-index', [
             'all_izin' => $this->all_izin,
+            'selectedPreview' => $selectedPreview,
         ]);
     }
 
@@ -90,18 +95,16 @@ class PenyerahanIndex extends Component
     public function previewDataIzin($izin_id)
     {
         $this->preview_izin_id = $izin_id;
-        $this->selectedPreview = $this->getPerizinanService()->find($izin_id);
     }
 
     public function closePreview()
     {
         $this->preview_izin_id = null;
-        $this->selectedPreview = null;
     }
 
     public function penerbitanFinished($izin_id)
     {
-        if (!$this->selectedPreview || (int) $this->selectedPreview->id !== (int) $izin_id) return;
+        if ((int) $this->preview_izin_id !== (int) $izin_id) return;
         $auth_user = auth()->user();
         $pegawai_id = $auth_user->pegawai ? $auth_user->pegawai->id : null;
         $this->getPerizinanService()->penerbitanFinished($izin_id, $pegawai_id);
@@ -110,10 +113,11 @@ class PenyerahanIndex extends Component
 
     public function allDone($izin_id)
     {
-        if (!$this->selectedPreview || (int) $this->selectedPreview->id !== (int) $izin_id) return;
+        if ((int) $this->preview_izin_id !== (int) $izin_id) return;
         $auth_user = auth()->user();
         $pegawai_id = $auth_user->pegawai ? $auth_user->pegawai->id : null;
         $this->getPerizinanService()->allDone($izin_id, $pegawai_id);
+        // Keep selection: completed item remains in query and preview must show receipt summary.
         $this->setData();
     }
 

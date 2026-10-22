@@ -1,5 +1,6 @@
-<div id="penyerahanPreviewDialog" x-data="{ open: @js((bool) $selectedPreview), previous: null, close() { this.open = false; $wire.closePreview() }, trap(event) { const f = [...$el.querySelectorAll('button,a,input,select,textarea,[tabindex]:not([tabindex=\"-1\"])')].filter(el => !el.disabled); if (event.key !== 'Tab' || !f.length) return; if (event.shiftKey && document.activeElement === f[0]) { event.preventDefault(); f.at(-1).focus() } else if (!event.shiftKey && document.activeElement === f.at(-1)) { event.preventDefault(); f[0].focus() } } }" x-init="const lock = value => document.body.classList.toggle('overflow-hidden', value); if (open) { previous = document.activeElement; $nextTick(() => $refs.close.focus()) }; lock(open); $watch('open', value => { lock(value); if (value) { previous = document.activeElement; $nextTick(() => $refs.close.focus()) } else previous?.focus?.() }); return () => { lock(false); previous?.focus?.() }" x-effect="open = @js((bool) $selectedPreview)" x-show="open" x-cloak x-transition.opacity.duration.150ms @keydown.escape.window="if (open) close()" @keydown.tab="trap($event)" @click.self="close()" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/50 p-4" role="dialog" aria-modal="true" aria-labelledby="penyerahanPreviewTitle">
-    <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2 scale-[.98]" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="relative flex max-h-[min(90vh,760px)] w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-ink-200">
+@if ($selectedPreview)
+<div wire:key="penyerahan-preview-{{ $selectedPreview->id }}" id="penyerahanPreviewDialog" x-data="{ open: true, previous: null, close() { $wire.closePreview() }, trap(event) { const f = [...$el.querySelectorAll('button,a,input,select,textarea,[tabindex]')].filter(el => !el.disabled && el.getAttribute('tabindex') !== '-1'); if (event.key !== 'Tab' || !f.length) return; if (event.shiftKey && document.activeElement === f[0]) { event.preventDefault(); f.at(-1).focus() } else if (!event.shiftKey && document.activeElement === f.at(-1)) { event.preventDefault(); f[0].focus() } } }" x-init="previous = document.activeElement; document.body.classList.add('overflow-hidden'); $nextTick(() => $refs.close.focus()); return () => { document.body.classList.remove('overflow-hidden'); previous?.focus?.() }" @keydown.escape.window="close()" @keydown.tab="trap($event)" @click.self="close()" class="fixed inset-0 z-50 flex items-center justify-center bg-ink-900/50 p-4" role="dialog" aria-modal="true" aria-labelledby="penyerahanPreviewTitle">
+    <div x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2 scale-[.98]" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="relative flex max-h-[min(90vh,760px)] w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl ring-1 ring-ink-200">
         <div class="w-full h-full flex flex-col bg-white">
             {{-- header --}}
             <div class="flex items-center justify-between gap-3 border-b border-ink-100 px-5 py-4">
@@ -15,7 +16,11 @@
             </div>
 
             <div class="flex-1 overflow-y-auto p-5">
-                @if ($selectedPreview && $selectedPreview->status_izin->last() && $selectedPreview->status_izin->last()->nama === $statusIzin::PENYERAHAN && $selectedPreview->status_izin->last()->progres === $statusProgres::FINISHED)
+                @php
+                    $previewStatus = $selectedPreview?->latestStatus;
+                @endphp
+
+                @if ($previewStatus && $previewStatus->nama === $statusIzin::PENYERAHAN && $previewStatus->progres === $statusProgres::FINISHED)
                         {{-- celebration --}}
                         <div class="flex flex-col items-center justify-center text-center py-8">
                             <img src="{{ asset('storage/web/celebration-sd.gif') }}" alt="" class="w-40 h-auto">
@@ -23,14 +28,26 @@
                                 <i class="fa-solid fa-circle-check"></i> Izin telah diserahkan
                             </span>
                             <p class="mt-2 max-w-[36ch] text-xs leading-relaxed text-ink-500">Proses penyerahan dokumen ini sudah selesai dan tercatat dalam arsip sistem.</p>
-                            <a href="{{ route('preview-izin', ['izin_id' => encrypt_id($selectedPreview->id)]) }}"
-                                class="mt-5 inline-flex items-center gap-2 rounded-full bg-nest-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-nest-800 transition">
-                                Lihat Detail Izin <i class="fa-solid fa-arrow-right text-xs"></i>
-                            </a>
+                            <div class="mt-5 flex flex-wrap justify-center gap-2">
+                                <a href="{{ route('preview-izin', ['izin_id' => encrypt_id($selectedPreview->id)]) }}"
+                                    class="inline-flex items-center gap-2 rounded-full bg-nest-700 px-5 py-2.5 text-sm font-bold text-white hover:bg-nest-800 transition">
+                                    Lihat Detail Izin <i class="fa-solid fa-arrow-right text-xs"></i>
+                                </a>
+                                <button type="button" @click="close()"
+                                    class="inline-flex items-center gap-2 rounded-full bg-ink-100 px-5 py-2.5 text-sm font-bold text-ink-700 hover:bg-ink-200 transition">
+                                    Tutup
+                                </button>
+                            </div>
                         </div>
+                @elseif ($previewStatus && $previewStatus->nama === $statusIzin::PENYERAHAN)
+                    <div class="flex flex-col items-center justify-center text-center py-12">
+                        <div class="h-14 w-14 rounded-2xl bg-emerald-50 grid place-items-center text-emerald-600 ring-1 ring-emerald-200"><i class="fa-solid fa-hand-holding-heart text-xl"></i></div>
+                        <p class="mt-3 text-sm font-bold text-ink-900">Surat izin siap diserahkan</p>
+                        <p class="mt-1 max-w-[34ch] text-xs leading-relaxed text-ink-500">Dokumen sudah terbit dan menunggu penyerahan kepada pemohon.</p>
+                    </div>
                 @endif
 
-                @if ($selectedPreview && $selectedPreview->status_izin->last() && $selectedPreview->status_izin->last()->nama !== $statusIzin::PENYERAHAN)
+                @if ($previewStatus && $previewStatus->nama !== $statusIzin::PENYERAHAN)
                         {{-- identitas izin --}}
                         <div class="rounded-2xl bg-gradient-to-br from-nest-700 to-nest-800 p-4 text-white">
                             <p class="text-[11px] font-bold tracking-widest uppercase text-white/70">Jenis Perizinan</p>
@@ -40,7 +57,7 @@
                             @endphp
                             <span class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-[11px] font-extrabold">
                                 <i class="{{ $sc['bgClass'] }} h-1.5 w-1.5 rounded-full {{ $previewStatus->nama == $statusIzin::PENERBITAN ? 'bg-white' : '' }}"></i>
-                                {{ $selectedPreview->status_izin->last()->nama }}
+                                {{ $previewStatus->nama }}
                             </span>
                         </div>
 
@@ -73,7 +90,7 @@
                         </dl>
 
                         {{-- aksi status --}}
-                        @if ($selectedPreview->status_izin->last()->nama === $statusIzin::PENERBITAN)
+                        @if ($previewStatus->nama === $statusIzin::PENERBITAN)
                             <div class="mt-5 rounded-xl bg-amber-50 p-4 ring-1 ring-amber-200">
                                 <p class="text-sm font-bold text-amber-800"><i class="fa-solid fa-pen-nib mr-1.5"></i>Proses penandatanganan berlangsung</p>
                                 <p class="mt-1 text-xs leading-relaxed text-amber-800/80">Pastikan seluruh informasi pada surat izin telah diverifikasi sebelum melanjutkan.</p>
@@ -110,7 +127,7 @@
                         <p class="mt-3 text-sm font-bold text-ink-900">Tidak ada izin dipilih</p>
                         <p class="mt-1 max-w-[30ch] text-xs leading-relaxed text-ink-500">Klik salah satu baris permohonan pada tabel untuk melihat preview di panel ini.</p>
                     </div>
-                 @elseif ($selectedPreview && !$selectedPreview->status_izin->last())
+                  @elseif ($selectedPreview && !$previewStatus)
                     <div role="alert" class="rounded-xl bg-red-50 p-4 text-sm text-red-800 ring-1 ring-red-200">Status izin tidak tersedia. Muat ulang atau hubungi administrator.</div>
                  @endif
             </div>
@@ -126,3 +143,4 @@
         </div>
     </div>
 </div>
+@endif

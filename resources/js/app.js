@@ -1,10 +1,14 @@
 import './bootstrap';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import Alpine from 'alpinejs';
 import '../icons/fontawesome-free-6.4.2-web/css/all.min.css';
 import '../../node_modules/pdfjs-dist/build/pdf.min.mjs';
 import '../../node_modules/pdfjs-dist/build/pdf.worker.min.mjs';
 
 import '@material/web/progress/linear-progress.js';
+
+window.Alpine = Alpine;
+Alpine.start();
 
 // modern interactions
 document.addEventListener('DOMContentLoaded', () => {

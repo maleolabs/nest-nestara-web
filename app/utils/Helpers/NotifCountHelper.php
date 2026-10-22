@@ -85,9 +85,6 @@ if (!function_exists('getProcessKeterangan')) {
             'penetapan' => [
                 BackOfficeStatusEnum::DIREKOM,
                 BackOfficeStatusEnum::REKOM_CATATAN,
-                BackOfficeStatusEnum::DIIZINKAN,
-                BackOfficeStatusEnum::TIDAK_DIIZINKAN,
-                BackOfficeStatusEnum::LAYANAN_DITOLAK
             ]
         ];
 

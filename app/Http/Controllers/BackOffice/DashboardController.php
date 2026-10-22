@@ -18,6 +18,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\utils\enums\StatusIzinEnum;
+use App\utils\enums\BackOfficeStatusEnum;
 
 class DashboardController extends Controller
 {
@@ -87,6 +89,8 @@ class DashboardController extends Controller
         $izin = $this->perizinanService->find($id);
         if (!$izin)
             abort(Response::HTTP_NOT_FOUND, 'Izin not found');
+        $latest = $izin->latestStatus()->first();
+        abort_unless($latest && $latest->nama === StatusIzinEnum::PROSES && $latest->keterangan === BackOfficeStatusEnum::DIIZINKAN, Response::HTTP_UNPROCESSABLE_ENTITY, 'Permit is not eligible for letter generation');
 
         $generation = DB::transaction(function () use ($izin) {
             // Serialize on permit row; queue workers and HTTP requests cannot create duplicates.

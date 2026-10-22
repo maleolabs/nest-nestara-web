@@ -16,6 +16,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use App\utils\enums\StatusIzinEnum;
+use App\utils\enums\BackOfficeStatusEnum;
 
 class GeneratePermitLetter implements ShouldQueue
 {
@@ -37,6 +39,10 @@ class GeneratePermitLetter implements ShouldQueue
         try {
             $izin = $perizinan->find($generation->izin_id);
             if (!$izin) throw new \RuntimeException('Izin not found');
+            $latest = $izin->latestStatus()->first();
+            if (!$latest || $latest->nama !== StatusIzinEnum::PROSES || $latest->keterangan !== BackOfficeStatusEnum::DIIZINKAN) {
+                throw new \RuntimeException('Permit is not eligible for letter generation');
+            }
             $view = $jenis->getPdfTemplate($izin->jenis_perizinan_id);
             $data = $entri->getDataIzinGroupByNama($izin->id, $izin->jenis_perizinan_id);
             if (!$view || count($data) === 0) throw new \RuntimeException('Permit data incomplete');

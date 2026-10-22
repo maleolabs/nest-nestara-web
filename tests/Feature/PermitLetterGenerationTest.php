@@ -9,6 +9,10 @@ use App\Models\Pegawai;
 use App\Models\PermitLetterGeneration;
 use App\Models\Pemohon;
 use App\Models\User;
+use App\Models\StatusIzin;
+use App\utils\enums\StatusIzinEnum;
+use App\utils\enums\StatusIzinProgressEnum;
+use App\utils\enums\BackOfficeStatusEnum;
 use App\Services\AppService\EncryptionService;
 use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\JenisPerizinanService;
@@ -35,6 +39,11 @@ class PermitLetterGenerationTest extends TestCase
         ]);
     }
 
+    private function eligible(Izin $izin): void
+    {
+        StatusIzin::create(['izin_id' => $izin->id, 'nama' => StatusIzinEnum::PROSES, 'progres' => StatusIzinProgressEnum::PROCESSING, 'keterangan' => BackOfficeStatusEnum::DIIZINKAN]);
+    }
+
     private function services(Izin $izin, bool $complete = true): array
     {
         $perizinan = Mockery::mock(PerizinanService::class);
@@ -59,6 +68,7 @@ class PermitLetterGenerationTest extends TestCase
         $pdf->shouldReceive('output')->andReturn('pdf');
         Pdf::shouldReceive('loadView')->andReturn($pdf);
         $izin = $this->izin();
+        $this->eligible($izin);
         $generation = PermitLetterGeneration::create(['izin_id' => $izin->id, 'status' => PermitLetterGeneration::QUEUED]);
         [$p, $e, $j, $d, $s] = $this->services($izin);
 
@@ -72,6 +82,7 @@ class PermitLetterGenerationTest extends TestCase
     public function test_failure_requeues_then_failed_and_failed_callback_is_final(): void
     {
         $izin = $this->izin();
+        $this->eligible($izin);
         $generation = PermitLetterGeneration::create(['izin_id' => $izin->id, 'status' => PermitLetterGeneration::QUEUED]);
         [$p, $e, $j, $d, $s] = $this->services($izin, false);
         try { (new GeneratePermitLetter($generation->id))->handle($p, $e, $j, $d, $s); } catch (\Throwable) {}

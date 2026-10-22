@@ -6,8 +6,13 @@ use App\Models\Izin;
 use App\Models\JenisPerizinan;
 use App\Models\Pemohon;
 use App\Models\User;
+use App\Models\Pegawai;
+use App\Models\Pengaturan;
+use App\Models\OcrKtpRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
 use function PHPUnit\Framework\assertNotNull;
@@ -31,10 +36,16 @@ class DeleteAccountTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Config::set('permission.table_names.model_has_roles', 'model_has_roles');
+        Config::set('permission.table_names.model_has_permissions', 'model_has_permissions');
+        Config::set('permission.column_names.model_morph_key', 'model_id');
 
         // pola pembersihan ala test existing: truncate manual dengan FK check off
         Schema::disableForeignKeyConstraints();
         Pemohon::truncate();
+        Pegawai::truncate();
+        Pengaturan::truncate();
+        OcrKtpRequest::truncate();
         User::truncate();
         Izin::truncate();
         JenisPerizinan::truncate();
@@ -66,7 +77,7 @@ class DeleteAccountTest extends TestCase
             'no_pendaftaran' => 1,
         ]);
 
-        $response = $this->actingAs($user, 'api')->deleteJson('/api/user/account');
+        $response = $this->withToken(JWTAuth::fromUser($user))->deleteJson('/api/user/account');
 
         $response->assertStatus(200)->assertJson([
             'success' => true,

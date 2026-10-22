@@ -13,9 +13,6 @@ use App\utils\enums\StatusIzinEnum;
 use App\utils\enums\StatusIzinProgressEnum;
 use App\Services\DomainServices\EntriDataService;
 use Carbon\Carbon;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
@@ -39,17 +36,16 @@ class EntriDataServiceTest extends TestCase
         Schema::enableForeignKeyConstraints();
 
 
-        Artisan::call('db:seed', ['--class' => 'EntriPenMasSeeder']);
+        $izin_penmas = JenisPerizinan::create(['nama' => 'IZIN PENELITIAN MAHASISWA']);
+        EntriData::create(['jenis_perizinan_id' => $izin_penmas->id, 'nama' => 'judul penelitian', 'tipe' => 'text', 'mandatori' => true, 'max' => 100]);
 
         $pemohon = Pemohon::factory()->create();
         assertNotNull($pemohon);
 
-        $izin_penmas = JenisPerizinan::where('nama', 'IZIN PENELITIAN MAHASISWA')->first();
-
         $izin = $this->perizinanService()->save($izin_penmas->id, $pemohon->id);
         assertSame($izin->pemohon_id, $pemohon->id);
 
-        $saved = $this->perizinanService()->saveRegistrationAction($izin->id, now(), fake()->company(), null, true);
+        $saved = $this->perizinanService()->saveRegistrationAction($izin->id, now()->toDateTimeString(), fake()->company(), 'permohonan-selesai');
         assertTrue($saved);
 
         $entri_data = $this->entriDataService()->getByJenisPerizinanId($izin_penmas->id);
@@ -72,17 +68,16 @@ class EntriDataServiceTest extends TestCase
         Schema::enableForeignKeyConstraints();
 
 
-        Artisan::call('db:seed', ['--class' => 'EntriPenMasSeeder']);
+        $izin_penmas = JenisPerizinan::create(['nama' => 'IZIN PENELITIAN MAHASISWA']);
+        EntriData::create(['jenis_perizinan_id' => $izin_penmas->id, 'nama' => 'judul penelitian', 'tipe' => 'text', 'mandatori' => true, 'max' => 100]);
 
         $pemohon = Pemohon::factory()->create();
         assertNotNull($pemohon);
 
-        $izin_penmas = JenisPerizinan::where('nama', 'IZIN PENELITIAN MAHASISWA')->first();
-
         $izin = $this->perizinanService()->save($izin_penmas->id, $pemohon->id);
         assertSame($izin->pemohon_id, $pemohon->id);
 
-        $saved = $this->perizinanService()->saveRegistrationAction($izin->id, now(), fake()->company(), null, true);
+        $saved = $this->perizinanService()->saveRegistrationAction($izin->id, now()->toDateTimeString(), fake()->company(), 'permohonan-selesai');
         assertTrue($saved);
 
         $entri_data = $this->entriDataService()->getByJenisPerizinanId($izin_penmas->id);
@@ -91,7 +86,9 @@ class EntriDataServiceTest extends TestCase
             $this->entriDataService()->saveEntriDataIzin($entri->id, $izin->id, $value);
         }
 
-        Artisan::call('db:seed', ['--class' => 'EntriPenMasSeeder']);
+        EntriData::where('jenis_perizinan_id', $izin_penmas->id)->delete();
+        EntriDataIzin::where('izin_id', $izin->id)->delete();
+        EntriData::create(['jenis_perizinan_id' => $izin_penmas->id, 'nama' => 'judul penelitian baru', 'tipe' => 'text', 'mandatori' => true, 'max' => 100]);
 
         assertFalse($this->entriDataService()->isEntriDataIzinExistsByIzinAndJenis($izin->id, $izin_penmas->id));
     }

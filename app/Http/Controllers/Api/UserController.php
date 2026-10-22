@@ -10,6 +10,7 @@ use App\Models\OcrKtpRequest;
 use App\Models\Pegawai;
 use App\Models\Pengaturan;
 use App\Models\User;
+use App\Models\Pemohon;
 use App\Services\DomainServices\UserService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -96,6 +97,9 @@ class UserController extends Controller
             DB::transaction(function () use ($authUser, $userId) {
                 // pegawai: lepas kaitan akun, data kelembagaan tetap hidup
                 Pegawai::where('user_id', $userId)->update(['user_id' => null]);
+                // Explicit cleanup keeps account deletion portable on SQLite and
+                // older databases where FK ON DELETE SET NULL is absent.
+                Pemohon::where('user_id', $userId)->update(['user_id' => null]);
 
                 // pengaturan: preferensi pribadi ikut akun
                 Pengaturan::where('user_id', $userId)->delete();

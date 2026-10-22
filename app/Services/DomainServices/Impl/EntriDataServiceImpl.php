@@ -146,7 +146,7 @@ class EntriDataServiceImpl implements EntriDataService {
 			->whereIn('entri_data_id', $entri_data)
 			->pluck('entri_data_id');
 
-		return $entri_data_izin->diff($entri_data)->isEmpty();
+		return $entri_data->isNotEmpty() && $entri_data->diff($entri_data_izin)->isEmpty();
 	}
 
 	public function getOldEntriDataByIzin(\App\Models\Izin $izin): array

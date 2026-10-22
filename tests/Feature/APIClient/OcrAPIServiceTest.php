@@ -7,6 +7,8 @@ use App\Services\APIClient\OcrAPIService;
 use App\Services\DomainServices\EntriDataService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Http;
+use App\Services\APIClient\Impl\OcrAPIServiceImpl2;
 use Tests\TestCase;
 
 use function PHPUnit\Framework\assertNotNull;
@@ -19,6 +21,11 @@ class OcrAPIServiceTest extends TestCase
 
     public function test_send_ocr_request(): void
     {
+        Http::fake([
+            '*' => Http::response(['success' => true, 'data' => ['status' => 'DONE', 'requestId' => 42, 'duration' => 1]], 200),
+        ]);
+        set_pengaturan(OCR_BASE_URL, 'http://ocr.test', OCR_API_SETT_GROUP);
+        set_pengaturan(OCR_API_KEY, 'test-key', OCR_API_SETT_GROUP);
         $entriDataService = app(EntriDataService::class);
         $apiService = app(OcrAPIService::class);
 
@@ -62,7 +69,7 @@ class OcrAPIServiceTest extends TestCase
 
             $checkCount++;
 
-            sleep(5);
+            // external OCR is faked; no polling delay needed
         } while ($requestStatus == 'WAITING' || $requestStatus == 'PROCESSING');
 
         assertSame('DONE', $requestStatus);

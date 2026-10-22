@@ -8,12 +8,15 @@ use App\Services\AppService\EncryptionService;
 use App\Services\DomainServices\EntriDataService;
 use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\PemohonService;
+use App\Jobs\GeneratePermitLetter;
+use App\Models\PermitLetterGeneration;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\SuratService;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class DashboardController extends Controller
 {
@@ -83,34 +86,28 @@ class DashboardController extends Controller
         if (!$izin)
             abort(Response::HTTP_NOT_FOUND, 'Izin not found');
 
-        $templateView = $this->jenisPerizinanService->getPdfTemplate($izin->jenis_perizinan_id);
-        if (!$templateView)
-            abort(Response::HTTP_BAD_REQUEST, 'Template not found');
+        $generation = DB::transaction(function () use ($izin) {
+            $generation = PermitLetterGeneration::where('izin_id', $izin->id)->latest()->first();
+            if ($generation && in_array($generation->status, [PermitLetterGeneration::QUEUED, PermitLetterGeneration::PROCESSING, PermitLetterGeneration::COMPLETED], true)) return $generation;
+            return PermitLetterGeneration::create(['izin_id' => $izin->id, 'status' => PermitLetterGeneration::QUEUED]);
+        });
+        if ($generation->status === PermitLetterGeneration::QUEUED) GeneratePermitLetter::dispatch($generation->id)->afterCommit();
+        return response()->json(['id' => $generation->id, 'status' => $generation->status], Response::HTTP_ACCEPTED);
+    }
 
-        $data_izin = $this->entriDataService->getDataIzinGroupByNama($izin->id, $izin->jenis_perizinan_id);
-        if (count($data_izin) == 0)
-            abort(Response::HTTP_BAD_REQUEST, 'Data izin not found');
+    public function letterStatus(int $generationId)
+    {
+        $generation = PermitLetterGeneration::findOrFail($generationId);
+        abort_unless($generation->izin_id, Response::HTTP_FORBIDDEN);
+        return response()->json(['id' => $generation->id, 'status' => $generation->status, 'error' => $generation->error]);
+    }
 
-        $title = "IZIN-{$izin->no_pendaftaran}";
-
-        $encrypt_id = $this->encryptionService->encryptId($id);
-        $qrcode_data = route('confirm.izin', ['izin_id' => $encrypt_id]);
-        $qrcode_uri = generate_qrcode_as_uri($qrcode_data, 130);
-
-        $pdf = Pdf::loadView($templateView, [
-            'title' => $title,
-            'izin' => $izin,
-            'qrcode' => $qrcode_uri,
-            'kop_surat' => $this->suratService->getKopSurat(),
-            'data_izin' => $data_izin,
-            'konten' => $this->suratService->getSuratContentByJenis($izin->jenis_perizinan_id)
-        ]);
-
-        $auth_user = auth()->user();
-        $pegawai_id = $auth_user->pegawai ? $auth_user->pegawai->id : null;
-        $this->perizinanService->updateCetakIzinStatus($izin->id, $pegawai_id);
-
-        return $pdf->download("{$title}.pdf");
+    public function downloadCompletedLetter(int $generationId)
+    {
+        $generation = PermitLetterGeneration::findOrFail($generationId);
+        abort_unless($generation->status === PermitLetterGeneration::COMPLETED && $generation->path, Response::HTTP_NOT_FOUND);
+        abort_unless(Storage::disk('local')->exists($generation->path), Response::HTTP_NOT_FOUND);
+        return Storage::disk('local')->download($generation->path, "IZIN-{$generation->izin_id}.pdf");
     }
     
 }

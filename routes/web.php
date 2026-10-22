@@ -85,7 +85,9 @@ Route::middleware('auth')->group(function() use ($pemohonMiddleware, $adminMiddl
             Route::get('/rekomendasi', [BackOfficeDashboardController::class, 'rekomendasi'])->name('pegawai.rekomendasi');
             Route::get('/penetapan', [BackOfficeDashboardController::class, 'penetapan'])->name('pegawai.penetapan');
 
-            Route::post('download-surat', [BackOfficeDashboardController::class, 'downloadSurat'])->name('pegawai.download-surat');
+             Route::post('download-surat', [BackOfficeDashboardController::class, 'downloadSurat'])->name('pegawai.download-surat');
+             Route::get('surat/{generationId}', [BackOfficeDashboardController::class, 'letterStatus'])->name('pegawai.surat.status');
+             Route::get('surat/{generationId}/download', [BackOfficeDashboardController::class, 'downloadCompletedLetter'])->name('pegawai.surat.download');
         });
     });
 

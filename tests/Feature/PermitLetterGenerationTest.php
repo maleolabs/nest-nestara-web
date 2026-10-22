@@ -145,7 +145,7 @@ class PermitLetterGenerationTest extends TestCase
         $front = User::create(['name' => 'Front', 'username' => 'front', 'email' => 'front@example.test', 'password' => Hash::make('password')]);
         $front->assignRole(FRONT_OFFICE_ROLE);
         $this->actingAs($front)->postJson(route('pegawai.download-surat'), ['id' => 'x'])->assertForbidden();
-        $this->getJson(route('pegawai.surat.status', 999))->assertUnauthorized();
+        $this->getJson(route('pegawai.surat.status', 999))->assertForbidden();
     }
 
     public function test_status_and_download_require_completed_existing_file(): void

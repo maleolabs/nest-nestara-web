@@ -96,11 +96,18 @@
                         <footer class="sticky bottom-0 -mx-4 mt-4 border-t border-ink-200 bg-white px-4 pt-4"><button type="submit" class="w-full rounded-xl bg-nest-700 px-4 py-3 text-sm font-bold text-white hover:bg-nest-800 focus:outline-none focus:ring-2 focus:ring-nest-600 focus:ring-offset-2">Simpan keputusan</button></footer>
                     </form>
                 @elseif ($latestStatus?->keterangan == App\utils\enums\BackOfficeStatusEnum::DIIZINKAN || !$this->isAlreadyPrinted())
-                    <form action="{{ route('pegawai.download-surat') }}" method="POST" class="mt-6">@csrf<input type="hidden" name="id" value="{{ encrypt_id($selectedPreview->id) }}"><button type="submit" class="w-full rounded-xl bg-sky-600 px-4 py-3 text-sm font-bold text-white hover:bg-sky-700"><i class="fa-solid fa-print mr-2" aria-hidden="true"></i>Cetak surat izin</button></form>
+                    <form x-data="permitLetter({postUrl:@js(route('pegawai.download-surat')),statusUrl:@js(route('pegawai.surat.status',['generationId'=>'__ID__'])),downloadUrl:@js(route('pegawai.surat.download',['generationId'=>'__ID__'])),csrf:@js(csrf_token()),id:@js(encrypt_id($selectedPreview->id))})" x-on:submit.prevent="start()" action="{{ route('pegawai.download-surat') }}" method="POST" class="mt-6 rounded-2xl border border-ink-200 p-4">
+                        @csrf<input type="hidden" name="id" value="{{ encrypt_id($selectedPreview->id) }}">
+                        <p x-show="status" x-text="message" class="mb-3 text-sm font-semibold" :class="status === 'failed' ? 'text-red-600' : 'text-ink-700'" role="status" aria-live="polite"></p>
+                        <button type="submit" :disabled="busy" class="w-full rounded-xl bg-sky-600 px-4 py-3 text-sm font-bold text-white hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-600 focus:ring-offset-2 disabled:cursor-wait disabled:opacity-60"><i class="fa-solid fa-print mr-2" aria-hidden="true"></i><span x-text="busy ? 'Menyiapkan surat…' : (status === 'failed' ? 'Coba lagi' : 'Cetak surat izin')"></span></button>
+                    </form>
                 @endif
             </div>
 
             <div wire:loading wire:target="previewDataIzin, save" class="absolute inset-0 z-10 grid place-items-center bg-white/80" role="status" aria-live="polite"><span class="text-sm font-semibold text-ink-700">Memproses…</span></div>
         </section>
     @endif
+    <script>
+        function permitLetter(c){return{...c,busy:false,status:'',message:'',timer:null,async start(){if(this.busy)return;this.busy=true;this.status='queued';this.message='Surat masuk antrean…';try{let r=await fetch(this.postUrl,{method:'POST',headers:{'X-CSRF-TOKEN':this.csrf,'Accept':'application/json'},body:new URLSearchParams({id:this.id})});if(!r.ok)throw Error('Gagal membuat surat');this.poll((await r.json()).id)}catch(e){this.fail(e.message)}},async poll(id){try{let r=await fetch(this.statusUrl.replace('__ID__',id),{headers:{'Accept':'application/json'}});if(!r.ok)throw Error('Gagal membaca status surat');let d=await r.json();this.status=d.status;if(d.status==='completed'){this.message='Surat selesai. Mengunduh…';location.assign(this.downloadUrl.replace('__ID__',id));this.busy=false;return}if(d.status==='failed'){this.fail(d.error||'Pembuatan surat gagal.');return}this.message=d.status==='processing'?'Surat sedang diproses…':'Surat masuk antrean…';this.timer=setTimeout(()=>this.poll(id),1500)}catch(e){this.fail(e.message)}},fail(m){clearTimeout(this.timer);this.busy=false;this.status='failed';this.message=m}}}
+    </script>
 </div>

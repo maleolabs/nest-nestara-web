@@ -84,6 +84,7 @@ interface PerizinanService
      * @return \App\Models\Izin|null Objek perizinan yang baru didaftarkan, atau null jika gagal.
      */
     function saveRegistration(int $jenis_izin_id, int $pemohon_id): ?Izin;
+    function save(int $jenis_izin_id, int $pemohon_id): ?Izin;
 
     /**
      * Membuat baris ocr_requests pending (persist-first, kunci idempotency

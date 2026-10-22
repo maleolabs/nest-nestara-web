@@ -5,6 +5,7 @@ namespace Tests\Feature\Api;
 use App\Models\Pemohon;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
 
 use function PHPUnit\Framework\assertNotNull;
@@ -59,7 +60,7 @@ class PemohonStoreTest extends TestCase
 
         $user = $this->makeUser('pendaftar_adopt');
 
-        $response = $this->actingAs($user, 'api')->postJson('/api/pemohon', $this->dataPemohon);
+        $response = $this->withToken(JWTAuth::fromUser($user))->postJson('/api/pemohon', $this->dataPemohon);
 
         // adopsi → 200 (bukan 201); body hanya berisi id pemohon yatim
         $response->assertStatus(200);
@@ -85,7 +86,7 @@ class PemohonStoreTest extends TestCase
 
         $pendaftarBaru = $this->makeUser('pendaftar_baru');
 
-        $response = $this->actingAs($pendaftarBaru, 'api')->postJson('/api/pemohon', $this->dataPemohon);
+        $response = $this->withToken(JWTAuth::fromUser($pendaftarBaru))->postJson('/api/pemohon', $this->dataPemohon);
 
         $response->assertStatus(422)->assertJson([
             'success' => false,

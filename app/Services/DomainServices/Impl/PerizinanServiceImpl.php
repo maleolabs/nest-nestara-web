@@ -64,6 +64,11 @@ class PerizinanServiceImpl implements PerizinanService
         $this->fileService = $fileService;
     }
     
+    public function save(int $jenis_izin_id, int $pemohon_id): ?Izin
+    {
+        return $this->saveRegistration($jenis_izin_id, $pemohon_id);
+    }
+
     public function saveRegistration(int $jenis_izin_id, int $pemohon_id): ?Izin
     {
         $izin = Izin::create([

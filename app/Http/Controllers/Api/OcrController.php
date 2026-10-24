@@ -19,7 +19,9 @@ use Illuminate\Support\Str;
 class OcrController extends Controller
 {
     private const KTP_FOLDER = 'ocr_ktp';
+
     private const TOTAL_TIMEOUT_SECONDS = 8;
+
     private const POLL_INTERVAL_SECONDS = 2;
 
     private OcrAPIService $ocrAPIService;
@@ -49,11 +51,11 @@ class OcrController extends Controller
                 KtpFieldMapper::requiredKeys()
             );
 
-            if (!$response || !$response->isSuccess()) {
+            if (! $response || ! $response->isSuccess()) {
                 // catat pesan error upstream (tanpa header/URL/kredensial)
                 // sebelum membalas dengan pesan generik
                 Log::channel('app')->warning('vision service menolak permintaan OCR KTP', [
-                    'error_message' => $response?->getErrorMessage()
+                    'error_message' => $response?->getErrorMessage(),
                 ]);
                 $this->deleteStoredFile($path);
 
@@ -92,10 +94,12 @@ class OcrController extends Controller
             return response()->json([
                 'data' => $fields,
                 'ocr_request_id' => $request_id,
-                'status' => $status
+                'status' => $status,
+                'profile_unlocked' => KtpFieldMapper::unlocksProfile($status, $fields),
             ]);
         } catch (Exception $e) {
             Log::channel('app')->error('Gagal memproses OCR KTP', ['error' => $e->getMessage()]);
+
             return $this->serviceUnavailable();
         }
     }
@@ -112,21 +116,21 @@ class OcrController extends Controller
             $record = ModelsOcrKtpRequest::where('user_id', $user->id)
                 ->where('request_id', $request_id)
                 ->first();
-            if (!$record) {
+            if (! $record) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'hasil OCR tidak ditemukan'
+                    'message' => 'hasil OCR tidak ditemukan',
                 ], Response::HTTP_NOT_FOUND);
             }
 
             $check = $this->ocrAPIService->checkOcrRequestStatus($request_id);
-            if (!$check) {
+            if (! $check) {
                 return $this->serviceUnavailable();
             }
-            if (!$check->isSuccess()) {
+            if (! $check->isSuccess()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'hasil OCR tidak ditemukan'
+                    'message' => 'hasil OCR tidak ditemukan',
                 ], Response::HTTP_NOT_FOUND);
             }
 
@@ -150,10 +154,12 @@ class OcrController extends Controller
             return response()->json([
                 'data' => $fields,
                 'ocr_request_id' => $request_id,
-                'status' => $status
+                'status' => $status,
+                'profile_unlocked' => KtpFieldMapper::unlocksProfile($status, $fields),
             ]);
         } catch (Exception $e) {
             Log::channel('app')->error('Gagal mengecek status OCR KTP', ['error' => $e->getMessage()]);
+
             return $this->serviceUnavailable();
         }
     }
@@ -169,12 +175,12 @@ class OcrController extends Controller
     private function storeAndGetContents($file): array
     {
         $extension = strtolower((string) $file->getClientOriginalExtension());
-        if (!in_array($extension, ['jpg', 'jpeg', 'png'])) {
+        if (! in_array($extension, ['jpg', 'jpeg', 'png'])) {
             $extension = 'jpg';
         }
 
         $contents = $file->getContent();
-        $path = 'private_files/' . self::KTP_FOLDER . '/' . Str::random(40) . '.' . $extension;
+        $path = 'private_files/'.self::KTP_FOLDER.'/'.Str::random(40).'.'.$extension;
 
         Storage::put($path, Crypt::encrypt($contents));
 
@@ -215,7 +221,7 @@ class OcrController extends Controller
     private function fetchDoneFields(string $request_id): ?array
     {
         $result = $this->ocrAPIService->getOcrResultByRequestId($request_id);
-        if (!$result || !$result->isSuccess()) {
+        if (! $result || ! $result->isSuccess()) {
             return null;
         }
 
@@ -231,7 +237,7 @@ class OcrController extends Controller
             return;
         }
 
-        if (!Storage::delete($path)) {
+        if (! Storage::delete($path)) {
             Log::channel('app')->warning('Gagal menghapus file KTP dari storage', ['path' => $path]);
         }
     }
@@ -240,7 +246,7 @@ class OcrController extends Controller
     {
         return response()->json([
             'success' => false,
-            'message' => 'layanan OCR tidak dapat dihubungi, silakan coba beberapa saat lagi'
+            'message' => 'layanan OCR tidak dapat dihubungi, silakan coba beberapa saat lagi',
         ], Response::HTTP_BAD_GATEWAY);
     }
 }

@@ -2,119 +2,132 @@
 
 namespace App\Services\DomainServices\Impl;
 
-use App\Services\DomainServices\DokumenPemohonService;
 use App\Models\DokumenPemohon;
 use App\Services\AppService\FileService;
+use App\Services\DomainServices\DokumenPemohonService;
+use Illuminate\Support\Facades\Storage;
 
-class DokumenPemohonServiceImpl implements DokumenPemohonService {
+class DokumenPemohonServiceImpl implements DokumenPemohonService
+{
+    protected FileService $fileService;
 
-	protected FileService $fileService;
-
-	public function __construct(FileService $fileService)
-	{
-		$this->fileService = $fileService;
-	}
+    public function __construct(FileService $fileService)
+    {
+        $this->fileService = $fileService;
+    }
 
     public function save(array $data_dokumenpemohon): ?DokumenPemohon
-	{
-		return DokumenPemohon::create($data_dokumenpemohon);
-	}
+    {
+        return DokumenPemohon::create($data_dokumenpemohon);
+    }
 
-	public function saveAll(int $pemohon_id, int $izin_id, array $data_persyaratan): void
-	{
-		foreach ($data_persyaratan as $syarat_id => $nama_file) {
-			DokumenPemohon::create([
-				'pemohon_id' => $pemohon_id,
-				'syarat_izin_id' => $syarat_id,
-				'izin_id' => $izin_id,
-				'nama_file' => $nama_file
-			]);
-		}
-	}
+    public function saveAll(int $pemohon_id, int $izin_id, array $data_persyaratan): void
+    {
+        foreach ($data_persyaratan as $syarat_id => $nama_file) {
+            DokumenPemohon::create([
+                'pemohon_id' => $pemohon_id,
+                'syarat_izin_id' => $syarat_id,
+                'izin_id' => $izin_id,
+                'nama_file' => $nama_file,
+            ]);
+        }
+    }
 
-	public function saveAllWithFile(int $pemohon_id, int $izin_id, array $persyaratan_dokumen, array $alternates_files = []): void
-	{
-		foreach ($persyaratan_dokumen as $syarat_id => $file) {
-			$nama_file = $this->fileService->fileManager()
-				->saveFile()
-				->fileData($file)
-				->disk('private_files')
-				->folder('dokumen_persyaratan_izin')
-				->encrypt()
-				->save()
-				->getFileName();
+    public function saveAllWithFile(int $pemohon_id, int $izin_id, array $persyaratan_dokumen, array $alternates_files = []): void
+    {
+        foreach ($persyaratan_dokumen as $syarat_id => $file) {
+            $nama_file = $this->fileService->fileManager()
+                ->saveFile()
+                ->fileData($file)
+                ->disk('private_files')
+                ->folder('dokumen_persyaratan_izin')
+                ->encrypt()
+                ->save()
+                ->getFileName();
 
-			$nama_file_alternatif = null;
-			if (isset($alternates_files[$syarat_id])) {
-				$nama_file_alternatif = $this->fileService->fileManager()
-					->moveFile()
-					->from($alternates_files[$syarat_id])
-					->toPublic('dokumen_persyaratan')
-					->move();
-			}
-			DokumenPemohon::updateOrCreate(
-				['pemohon_id' => $pemohon_id,'syarat_izin_id' => $syarat_id, 'izin_id' => $izin_id],
-				['nama_file' => $nama_file, 'nama_file_alternatif' => $nama_file_alternatif]
-			);
-		}
-	}
+            $nama_file_alternatif = null;
+            if (isset($alternates_files[$syarat_id])) {
+                $nama_file_alternatif = $this->fileService->fileManager()
+                    ->moveFile()
+                    ->from($alternates_files[$syarat_id])
+                    ->toPublic('dokumen_persyaratan')
+                    ->move();
+            }
+            try {
+                DokumenPemohon::updateOrCreate(
+                    ['pemohon_id' => $pemohon_id, 'syarat_izin_id' => $syarat_id, 'izin_id' => $izin_id],
+                    ['nama_file' => $nama_file, 'nama_file_alternatif' => $nama_file_alternatif]
+                );
+            } catch (\Throwable $e) {
+                if ($nama_file) {
+                    Storage::disk('private_files')->delete($nama_file);
+                }
+                if ($nama_file_alternatif) {
+                    Storage::disk('public')->delete($nama_file_alternatif);
+                }
+                throw $e;
+            }
+        }
+    }
 
-	public function saveFileAlternates(int $pemohon_id, int $syarat_izin_id, int $izin_id, string $nama_file_alternatif): ?DokumenPemohon
-	{
-		$dokumen = DokumenPemohon::where('pemohon_id', $pemohon_id)->where('syarat_izin_id', $syarat_izin_id)->where('izin_id', $izin_id)->first();
-		if (!$dokumen)
-			return null;
-		$dokumen->nama_file_alternatif = $nama_file_alternatif;
-		$dokumen->save();
-		return $dokumen;
-	}
+    public function saveFileAlternates(int $pemohon_id, int $syarat_izin_id, int $izin_id, string $nama_file_alternatif): ?DokumenPemohon
+    {
+        $dokumen = DokumenPemohon::where('pemohon_id', $pemohon_id)->where('syarat_izin_id', $syarat_izin_id)->where('izin_id', $izin_id)->first();
+        if (! $dokumen) {
+            return null;
+        }
+        $dokumen->nama_file_alternatif = $nama_file_alternatif;
+        $dokumen->save();
 
-	public function saveAllFileAlternates(int $pemohon_id, int $izin_id, array $alt_files): void
-	{
-		foreach ($alt_files as $syarat_id => $nama_file) {
-			// $nama_file = $this->fileService->;
-			$this->saveFileAlternates($pemohon_id, $syarat_id, $izin_id, $nama_file);
-		}
-	}
+        return $dokumen;
+    }
 
-	public function find(int $id): ?DokumenPemohon
-	{
-		return DokumenPemohon::find($id);
-	}
+    public function saveAllFileAlternates(int $pemohon_id, int $izin_id, array $alt_files): void
+    {
+        foreach ($alt_files as $syarat_id => $nama_file) {
+            // $nama_file = $this->fileService->;
+            $this->saveFileAlternates($pemohon_id, $syarat_id, $izin_id, $nama_file);
+        }
+    }
 
-	public function findByPemohonAndSyaratAndIzin(int $pemohon_id, int $syarat_izin_id, int $izin_id): ?DokumenPemohon
-	{
-		return DokumenPemohon::where('pemohon_id', $pemohon_id)->where('syarat_izin_id', $syarat_izin_id)->where('izin_id', $izin_id)->first();
-	}
+    public function find(int $id): ?DokumenPemohon
+    {
+        return DokumenPemohon::find($id);
+    }
 
-	public function getAllByPemohonAndSyaratAndIzin(int $pemohon_id, int $jenis_perizinan_id, int $izin_id): array
-	{
-		$semua_dokumen = DokumenPemohon::
-			with(['syarat_izin' => function ($syarat_izin) use ($jenis_perizinan_id) {
-				$syarat_izin->whereHas('jenis_perizinan', function($jenis_perizinan) use ($jenis_perizinan_id) {
-					$jenis_perizinan->where('jenis_perizinan.id', $jenis_perizinan_id);
-				});
-			}])
-			->where('pemohon_id', $pemohon_id)
-			->where('izin_id', $izin_id)
-			->get();
-		$result = [];
-		foreach ($semua_dokumen as $dokumen) {
-			$result[$dokumen->syarat_izin_id] = $dokumen;
-		}
-		return $result;
-	}
+    public function findByPemohonAndSyaratAndIzin(int $pemohon_id, int $syarat_izin_id, int $izin_id): ?DokumenPemohon
+    {
+        return DokumenPemohon::where('pemohon_id', $pemohon_id)->where('syarat_izin_id', $syarat_izin_id)->where('izin_id', $izin_id)->first();
+    }
 
-	public function deleteByPemohonAndSyaratIzin(int $pemohon_id, int $syarat_izin_id): bool
-	{
-		$semua_dokumen = DokumenPemohon::where('pemohon_id', $pemohon_id)->where('syarat_izin_id', $syarat_izin_id)->get();
-		foreach ($semua_dokumen as $dokumen) {
-			$nama_file = $dokumen->nama_file;
-			$nama_file_alternate = $dokumen->nama_file_alternate;
-			$dokumen->delete();
-			// todo: delete file from storage
-		}
-		return count($semua_dokumen) > 0;
-	}
+    public function getAllByPemohonAndSyaratAndIzin(int $pemohon_id, int $jenis_perizinan_id, int $izin_id): array
+    {
+        $semua_dokumen = DokumenPemohon::with(['syarat_izin' => function ($syarat_izin) use ($jenis_perizinan_id) {
+            $syarat_izin->whereHas('jenis_perizinan', function ($jenis_perizinan) use ($jenis_perizinan_id) {
+                $jenis_perizinan->where('jenis_perizinan.id', $jenis_perizinan_id);
+            });
+        }])
+            ->where('pemohon_id', $pemohon_id)
+            ->where('izin_id', $izin_id)
+            ->get();
+        $result = [];
+        foreach ($semua_dokumen as $dokumen) {
+            $result[$dokumen->syarat_izin_id] = $dokumen;
+        }
 
+        return $result;
+    }
+
+    public function deleteByPemohonAndSyaratIzin(int $pemohon_id, int $syarat_izin_id): bool
+    {
+        $semua_dokumen = DokumenPemohon::where('pemohon_id', $pemohon_id)->where('syarat_izin_id', $syarat_izin_id)->get();
+        foreach ($semua_dokumen as $dokumen) {
+            $nama_file = $dokumen->nama_file;
+            $nama_file_alternate = $dokumen->nama_file_alternate;
+            $dokumen->delete();
+            // todo: delete file from storage
+        }
+
+        return count($semua_dokumen) > 0;
+    }
 }

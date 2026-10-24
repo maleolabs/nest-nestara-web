@@ -11,6 +11,8 @@ class OcrKtpRequest extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = ['public_check_id' => 'string', 'result' => 'array'];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

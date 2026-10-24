@@ -17,14 +17,18 @@ use Illuminate\Database\QueryException;
 
 class OcrServiceImpl implements OcrService
 {
-
     private TokenService $tokenService;
+
     private OcrAPIService $ocrAPIService;
+
     private SyaratIzinService $syaratIzinService;
+
     private DokumenPemohonService $dokumenPemohonService;
+
     private EntriDataService $entriDataService;
 
     private $retry_max;
+
     private $retry_delay;
 
     public function __construct(
@@ -47,7 +51,9 @@ class OcrServiceImpl implements OcrService
     public function doOcrRequestForNewDataRegistation(Izin $izin): ?array
     {
         $persyaratan = $this->syaratIzinService->getByTypeAndJenisPerizinan('img', $izin->jenis_perizinan_id);
-        if (empty($persyaratan)) return null;
+        if (empty($persyaratan)) {
+            return null;
+        }
 
         $entri_data = $this->entriDataService->getByJenisPerizinanId($izin->jenis_perizinan_id);
         $required_keys = array_column($entri_data, 'nama');
@@ -55,7 +61,9 @@ class OcrServiceImpl implements OcrService
         // getUrlDokumen juga meng-claim baris OcrRequest (status pending → processing);
         // tombol skip idempotency: syarat yang sudah done / in-progress tidak dikirim ulang.
         [$url_dokumen, $ocr_rows] = $this->getUrlDokumen($persyaratan, $izin->pemohon_id, $izin->id);
-        if (empty($url_dokumen)) return null;
+        if (empty($url_dokumen)) {
+            return null;
+        }
 
         $requests = $this->getRequests($url_dokumen, $izin->id, $izin->jenis_perizinan_id, $required_keys);
 
@@ -64,11 +72,12 @@ class OcrServiceImpl implements OcrService
 
     public function getEntriDataByIzinId(int $izin_id): ?array
     {
-        return $this->excecuteWithRetry(function() use ($izin_id) {
+        return $this->excecuteWithRetry(function () use ($izin_id) {
             $data = $this->ocrAPIService->getEntriDataValueByIzinId($izin_id)?->getData()['extractedTexts'] ?? [];
-            
+
             if (is_object($data)) {
                 $data = get_object_vars($data);
+
                 return $data;
             }
 
@@ -86,12 +95,15 @@ class OcrServiceImpl implements OcrService
                 // klaim baris OCR untuk triple (pemohon, syarat, izin);
                 // null berarti sudah done / in-progress milik attempt lain → skip syarat ini
                 $claimed = $this->claimOcrRequestRow($pemohon_id, $syarat->id, $izin_id);
-                if (!$claimed) continue;
+                if (! $claimed) {
+                    continue;
+                }
 
                 $url_dokumen[$syarat->id] = SignedFileUrl::make($dokumen->nama_file);
                 $ocr_rows[$syarat->id] = $claimed;
             }
         }
+
         return [$url_dokumen, $ocr_rows];
     }
 
@@ -113,11 +125,14 @@ class OcrServiceImpl implements OcrService
             return null;
         }
 
-        if ($row->isBlockedForResend()) return null;
+        if ($row->isBlockedForResend()) {
+            return null;
+        }
 
         $row->status = OcrRequestModel::STATUS_PROCESSING;
         $row->request_id = null;
         $row->save();
+
         return $row;
     }
 
@@ -129,7 +144,7 @@ class OcrServiceImpl implements OcrService
 
     private function getRequests($url_dokumen, $izin_id, $jenis_perizinan_id, $required_keys): array
     {
-        return array_map(function($syarat_id, $url) use ($izin_id, $jenis_perizinan_id, $required_keys) {
+        return array_map(function ($syarat_id, $url) use ($izin_id, $jenis_perizinan_id, $required_keys) {
             return OcrRequest::builder()
                 ->setIzinId($izin_id)
                 ->setJenisPerizinanId($jenis_perizinan_id)
@@ -142,7 +157,7 @@ class OcrServiceImpl implements OcrService
 
     private function sendRequestWithRetry($requests): array
     {
-        return $this->excecuteWithRetry(function() use ($requests) {
+        return $this->excecuteWithRetry(function () use ($requests) {
             return $this->sendRequest($requests);
         });
     }
@@ -152,7 +167,7 @@ class OcrServiceImpl implements OcrService
         $check_stats = [
             'total_request' => count($requests),
             'checks_count' => 0,
-            'requests' => []
+            'requests' => [],
         ];
 
         foreach ($requests as $request) {
@@ -182,12 +197,12 @@ class OcrServiceImpl implements OcrService
         $request = [
             'request_id' => $request_id,
             'status' => null,
-            'duration' => null
+            'duration' => null,
         ];
 
         do {
             $response = $this->ocrAPIService->checkOcrRequestStatus($request_id);
-            $status = $response->getData()['status'];
+            $status = $response->getData()['status'] ?? null;
             $duration = $response->getData()['duration'];
             $check_stats['checks_count']++;
             sleep(5);
@@ -195,17 +210,34 @@ class OcrServiceImpl implements OcrService
 
         // asumsi kontrak vision: WAITING/PROCESSING in-flight; DONE sukses;
         // selain itu (mis. FAILED) = gagal (retryable sampai --tries habis → failed_final).
-        if ($row) {
-            $this->markOcrRequestRow($row, $status === 'DONE' ? OcrRequestModel::STATUS_DONE : OcrRequestModel::STATUS_FAILED);
+        $result = $status === 'DONE'
+            ? $this->ocrAPIService->getOcrResultByRequestId($request_id)
+            : null;
+        $hasResult = $result?->isSuccess() === true
+            && $this->hasExtractedTexts($result->getData()['extractedTexts'] ?? null);
+
+        if ($row && $status === 'DONE' && $hasResult) {
+            $this->markOcrRequestRow($row, OcrRequestModel::STATUS_DONE);
+        } elseif ($row && ($status === 'DONE' || in_array($status, ['FAILED', 'FAILURE'], true))) {
+            $this->markOcrRequestRow($row, OcrRequestModel::STATUS_FAILED);
         }
 
         $request['status'] = $status;
         // duration hanya tersedia pada status sukses (kontrak vision: Float saat DONE);
         // failure path mengirim null — jangan diformat jadi string "s"
-        $request['duration'] = is_numeric($duration) ? $duration . 's' : null;
+        $request['duration'] = is_numeric($duration) ? $duration.'s' : null;
         $check_stats['requests'][] = $request;
 
         return $check_stats;
+    }
+
+    private function hasExtractedTexts(mixed $value): bool
+    {
+        if (is_object($value)) {
+            $value = get_object_vars($value);
+        }
+
+        return is_array($value) && $value !== [];
     }
 
     private function excecuteWithRetry(callable $callback): ?array
@@ -224,13 +256,14 @@ class OcrServiceImpl implements OcrService
             }
             sleep($this->retry_delay);
         }
+
         return null;
     }
 
     private function shouldRetry(): bool
     {
         $token_invalid = get_pengaturan('CLIENT_TOKEN_INVALID');
+
         return in_array($token_invalid, ['TOKEN_EXPIRES', 'TOKEN_MISMATCH']);
     }
-
 }

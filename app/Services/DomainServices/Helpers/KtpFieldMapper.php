@@ -26,19 +26,30 @@ class KtpFieldMapper
         'provinsi', 'kabupaten', 'kota', 'nik', 'nama', 'tempat/tgl lahir',
         'jenis kelamin', 'gol. darah', 'alamat', 'rt/rw', 'kelurahan',
         'kecamatan', 'agama', 'status perkawinan', 'pekerjaan',
-        'kewarganegaraan', 'berlaku hingga'
+        'kewarganegaraan', 'berlaku hingga',
     ];
 
-    // For generic docs, allow any key but still normalize
+    // Generic documents still use explicit fields; never pass through upstream metadata.
     public const GENERIC_KEYS = [
         'nama', 'nik', 'nomor', 'alamat', 'tempat/tgl lahir', 'tanggal lahir',
         'jenis kelamin', 'agama', 'pekerjaan', 'status', 'kewarganegaraan',
-        'provinsi', 'kabupaten', 'kota', 'kecamatan', 'kelurahan', 'rt/rw'
+        'provinsi', 'kabupaten', 'kota', 'kecamatan', 'kelurahan', 'rt/rw',
     ];
 
     public const STATUS_DONE = 'done';
+
     public const STATUS_PENDING = 'pending';
+
     public const STATUS_FAILED = 'failed';
+
+    public const STATUS_MANUAL_REVIEW = 'manual_review';
+
+    /** Document/status pair accepted by mobile profile gate. */
+    public static function unlocksProfile(string $status, array $result): bool
+    {
+        return $status === self::STATUS_DONE
+            && in_array(strtoupper((string) ($result['_document_type'] ?? '')), ['KTP', 'SIM'], true);
+    }
 
     public static function requiredKeys(): array
     {
@@ -49,6 +60,7 @@ class KtpFieldMapper
     {
         $key = strtolower(trim($key));
         $key = (string) preg_replace('/[^a-z0-9]+/', '_', $key);
+
         return trim($key, '_');
     }
 
@@ -73,7 +85,7 @@ class KtpFieldMapper
         // detect doc type from payload if present
         $docType = null;
         foreach ($pairs as $k => $v) {
-            if (strtolower((string)$k) === '_document_type' && is_string($v)) {
+            if (strtolower((string) $k) === '_document_type' && is_string($v)) {
                 $docType = strtoupper(trim($v));
                 break;
             }
@@ -88,34 +100,36 @@ class KtpFieldMapper
             foreach (self::GENERIC_KEYS as $gk) {
                 $allowed[self::normalizeKey($gk)] = true;
             }
-            // also allow any key that looks like region
-            // leave allowed open for generic raw_text handling below
         }
 
         $fields = [];
         $rawText = null;
 
         foreach ($pairs as $key => $value) {
-            if ($key === '_document_type' || $key === '_document_type_normalized') continue;
+            if ($key === '_document_type' || $key === '_document_type_normalized') {
+                continue;
+            }
             if ($key === 'raw_text') {
                 $rawText = $value;
+
                 continue;
             }
-            if (!is_string($key) || !is_scalar($value)) {
+            if (! is_string($key) || ! is_scalar($value)) {
                 continue;
             }
-            $valueStr = trim((string)$value);
-            if ($valueStr === '') continue;
+            $valueStr = trim((string) $value);
+            if ($valueStr === '') {
+                continue;
+            }
 
             $normalized = self::normalizeKey($key);
 
-            // For KTP: strict whitelist; for generic: allow anything
-            if (!$isGeneric && !isset($allowed[$normalized])) {
+            if (! isset($allowed[$normalized])) {
                 continue;
             }
 
             // Clean region values: title case, remove OCR artifacts like "GORGNTALG"
-            if (in_array($normalized, ['provinsi','kabupaten','kota','kecamatan','kelurahan','alamat'], true)) {
+            if (in_array($normalized, ['provinsi', 'kabupaten', 'kota', 'kecamatan', 'kelurahan', 'alamat'], true)) {
                 $valueStr = self::cleanRegionValue($valueStr);
             }
 
@@ -127,7 +141,7 @@ class KtpFieldMapper
                 }
             }
 
-            if (!isset($fields[$normalized]) || strlen($valueStr) > strlen($fields[$normalized])) {
+            if (! isset($fields[$normalized]) || strlen($valueStr) > strlen($fields[$normalized])) {
                 $fields[$normalized] = $valueStr;
             }
         }
@@ -135,7 +149,7 @@ class KtpFieldMapper
         // If generic and no field passed whitelist, try to parse raw_text
         if (empty($fields) && $rawText !== null) {
             // fallback: return raw_text as single field for manual review
-            return ['raw_text' => (string)$rawText, '_document_type' => $docType ?? 'GENERIC'];
+            return ['raw_text' => (string) $rawText, '_document_type' => $docType ?? 'GENERIC'];
         }
 
         // Preserve _document_type for client to know how to handle region IDs
@@ -152,7 +166,7 @@ class KtpFieldMapper
         }
         // append any extra generic fields not in KTP order
         foreach ($fields as $k => $v) {
-            if (!array_key_exists($k, $ordered)) {
+            if (! array_key_exists($k, $ordered)) {
                 $ordered[$k] = $v;
             }
         }
@@ -163,7 +177,7 @@ class KtpFieldMapper
     private static function cleanRegionValue(string $val): string
     {
         $val = trim($val);
-        // remove leading :.- 
+        // remove leading :.-
         $val = preg_replace('/^[\s:;\-\.]+/', '', $val);
         $val = preg_replace('/\s+/', ' ', $val);
         $val = trim($val, " :.-\t");
@@ -179,6 +193,7 @@ class KtpFieldMapper
                 $val = str_ireplace($wrong, $right, $val);
             }
         }
+
         // Preserve OCR casing; API consumers and existing KTP contract expect source text.
         return $val;
     }
@@ -187,8 +202,10 @@ class KtpFieldMapper
     {
         return match (strtoupper((string) $upstream_status)) {
             'DONE' => self::STATUS_DONE,
+            'FAILED', 'FAILURE', 'ERROR' => self::STATUS_FAILED,
+            'MANUAL_REVIEW', 'REVIEW', 'NEEDS_REVIEW' => self::STATUS_MANUAL_REVIEW,
             'WAITING', 'PROCESSING' => self::STATUS_PENDING,
-            default => self::STATUS_FAILED,
+            default => self::STATUS_PENDING,
         };
     }
 
@@ -197,7 +214,7 @@ class KtpFieldMapper
         if (is_object($extracted_texts)) {
             $extracted_texts = get_object_vars($extracted_texts);
         }
-        if (!is_array($extracted_texts)) {
+        if (! is_array($extracted_texts)) {
             return [];
         }
         foreach ($extracted_texts as $item) {
@@ -205,6 +222,7 @@ class KtpFieldMapper
                 return self::fromListFormat($extracted_texts);
             }
         }
+
         return $extracted_texts;
     }
 
@@ -216,6 +234,7 @@ class KtpFieldMapper
         if (is_array($item)) {
             return isset($item['textKey']);
         }
+
         return false;
     }
 
@@ -224,11 +243,12 @@ class KtpFieldMapper
         $pairs = [];
         foreach ($items as $item) {
             $obj = is_object($item) ? get_object_vars($item) : (is_array($item) ? $item : null);
-            if ($obj === null || !isset($obj['textKey'])) {
+            if ($obj === null || ! isset($obj['textKey'])) {
                 continue;
             }
             $pairs[$obj['textKey']] = $obj['textValue'] ?? null;
         }
+
         return $pairs;
     }
 }

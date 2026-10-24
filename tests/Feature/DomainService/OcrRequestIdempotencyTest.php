@@ -92,6 +92,8 @@ class OcrRequestIdempotencyTest extends TestCase
             ->andReturn(new OcrResponse(['requestId' => 'req-1', 'status' => 'WAITING'], true, null));
         $ocrAPI->shouldReceive('checkOcrRequestStatus')->times($send_times)
             ->andReturn(new OcrResponse(['status' => 'DONE', 'duration' => 1.2], true, null));
+        $ocrAPI->shouldReceive('getOcrResultByRequestId')->times($send_times)
+            ->andReturn(new OcrResponse(['extractedTexts' => ['nik' => '123']], true, null));
         $this->app->instance(OcrAPIService::class, $ocrAPI);
     }
 

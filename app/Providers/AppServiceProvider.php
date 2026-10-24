@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Services\APIClient\IdentityDocumentAPIService;
 use App\Services\APIClient\Impl\EmsifaAPIService;
+use App\Services\APIClient\Impl\IdentityDocumentAPIServiceImpl;
 use App\Services\APIClient\Impl\OcrAPIServiceImpl2;
 use App\Services\APIClient\OcrAPIService;
 use App\Services\APIClient\RegionAPIService;
@@ -22,7 +24,6 @@ use App\Services\DomainServices\Impl\EntriDataServiceImpl;
 use App\Services\DomainServices\Impl\JenisPerizinanServiceImpl;
 use App\Services\DomainServices\Impl\OcrServiceImpl;
 use App\Services\DomainServices\Impl\PegawaiServiceImpl;
-use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\Impl\PemohonServiceImpl;
 use App\Services\DomainServices\Impl\PengaturanServiceImpl;
 use App\Services\DomainServices\Impl\PerizinanServiceImpl;
@@ -34,6 +35,7 @@ use App\Services\DomainServices\Impl\UserServiceImpl;
 use App\Services\DomainServices\JenisPerizinanService;
 use App\Services\DomainServices\OcrService;
 use App\Services\DomainServices\PegawaiService;
+use App\Services\DomainServices\PemohonService;
 use App\Services\DomainServices\PengaturanService;
 use App\Services\DomainServices\PerizinanService;
 use App\Services\DomainServices\RoleService;
@@ -100,15 +102,16 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
         $this->app->singleton(FileManager::class, LocalStorageFileManager::class);
         // Active OCR binding uses Impl2 (DB-driven X-API-KEY via get_pengaturan + Http) — Impl (Guzzle+TokenService+config api-client.ocr_api.base_url) is deprecated legacy, kept for reference only
         $this->app->singleton(OcrAPIService::class, OcrAPIServiceImpl2::class);
+        $this->app->singleton(IdentityDocumentAPIService::class, IdentityDocumentAPIServiceImpl::class);
         $this->app->singleton(TokenService::class, ClientTokenService::class);
         $this->app->singleton(OcrService::class, OcrServiceImpl::class);
 
         $this->app->singleton(GetIzin::class, function () {
-            return new GetIzin();
+            return new GetIzin;
         });
 
         $this->app->singleton(Client::class, function () {
-            return new Client();
+            return new Client;
         });
     }
 

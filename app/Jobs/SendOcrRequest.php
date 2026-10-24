@@ -7,17 +7,25 @@ use App\Models\OcrRequest;
 use App\Services\DomainServices\OcrService;
 use Exception;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class SendOcrRequest implements ShouldQueue
+class SendOcrRequest implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected Izin $izin;
+
+    public int $uniqueFor = 900;
+
+    public function uniqueId(): string
+    {
+        return 'ocr:izin:'.$this->izin->id;
+    }
 
     /**
      * Create a new job instance.

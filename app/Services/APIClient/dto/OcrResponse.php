@@ -4,7 +4,6 @@ namespace App\Services\APIClient\dto;
 
 class OcrResponse
 {
-
     private array $data;
 
     private bool $success;
@@ -18,16 +17,23 @@ class OcrResponse
         $this->errorMessage = $errorMessage;
     }
 
+    public static function failure(?string $message = null): self
+    {
+        return new self([], false, $message);
+    }
+
     public static function fromJson($json): ?OcrResponse
     {
-        if (is_null($json)) return null;
+        if (is_null($json)) {
+            return null;
+        }
 
         $success = $json->success ?? false;
         $errorMessage = $json->errorMessage ?? null;
 
         $data = [];
 
-        if (!is_null($json->data)) {
+        if (! is_null($json->data)) {
             foreach ($json->data as $k => $v) {
                 $data[$k] = $v;
             }
@@ -56,8 +62,7 @@ class OcrResponse
         return [
             'data' => $this->data,
             'success' => $this->success,
-            'errorMessage' => $this->errorMessage
+            'errorMessage' => $this->errorMessage,
         ];
     }
-
 }

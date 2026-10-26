@@ -6,6 +6,7 @@ use App\Models\OcrKtpRequest;
 use App\Models\User;
 use App\Services\APIClient\dto\OcrResponse;
 use App\Services\APIClient\IdentityDocumentAPIService;
+use App\Services\APIClient\Impl\IdentityDocumentAPIServiceImpl;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -14,6 +15,11 @@ use Tests\TestCase;
 class IdentityDocumentTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_identity_document_api_service_resolves_from_container(): void
+    {
+        $this->assertInstanceOf(IdentityDocumentAPIServiceImpl::class, $this->app->make(IdentityDocumentAPIService::class));
+    }
 
     private function apiUser(): User
     {

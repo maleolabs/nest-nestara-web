@@ -72,6 +72,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
             EncryptionService::class,
             PdfTemplateService::class,
             FileManager::class,
+            IdentityDocumentAPIService::class,
             OcrAPIService::class,
             TokenService::class,
             OcrService::class,

@@ -58,12 +58,17 @@ final class IdentityDocumentAPIServiceImpl implements IdentityDocumentAPIService
                 ->timeout(30)->connectTimeout(5)->get($baseUrl.'/identity-document-checks/'.rawurlencode((string) $requestId));
             $payload = $response->json();
             if (! $response->successful()) {
-                Log::channel('app')->warning('vision identity status failed', ['status' => $response->status()]);
+                Log::channel('app')->warning('vision identity status failed', [
+                    'status' => $response->status(), 'request_id' => (string) $requestId,
+                    'message' => is_array($payload) ? ($payload['message'] ?? null) : null,
+                ]);
             }
             if (! is_array($payload)) {
                 return null;
             }
             $data = is_array($payload['data'] ?? null) ? $payload['data'] : $payload;
+            // Keep identity status payload intact, including fields returned by Vision.
+            // Do not reshape it into generic OCR response semantics.
 
             return new OcrResponse($data, $response->successful(), $response->successful() ? null : ($payload['message'] ?? null));
         } catch (\Throwable $exception) {

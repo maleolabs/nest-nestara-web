@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\OcrKtpRequest;
 use App\Models\OcrKtpRequest as IdentityDocument;
 use App\Services\APIClient\IdentityDocumentAPIService;
-use App\Services\APIClient\OcrAPIService;
 use App\Services\DomainServices\Helpers\KtpFieldMapper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
@@ -17,7 +16,7 @@ use Illuminate\Support\Str;
 
 class IdentityDocumentController extends Controller
 {
-    public function __construct(private OcrAPIService $vision, private IdentityDocumentAPIService $identityVision) {}
+    public function __construct(private IdentityDocumentAPIService $identityVision) {}
 
     public function store(OcrKtpRequest $request): JsonResponse
     {
@@ -70,14 +69,13 @@ class IdentityDocumentController extends Controller
             if (! $check || ! $check->isSuccess()) {
                 return response()->json(['code' => 'vision_unavailable'], Response::HTTP_BAD_GATEWAY);
             }
-            $status = KtpFieldMapper::mapStatus($check->getData()['status'] ?? null);
+            $checkData = $check->getData();
+            $status = KtpFieldMapper::mapStatus($checkData['status'] ?? null);
             $record->status = $status;
             if (in_array($status, [KtpFieldMapper::STATUS_DONE, KtpFieldMapper::STATUS_MANUAL_REVIEW], true)) {
-                $result = $this->vision->getOcrResultByRequestId($record->request_id);
-                if (! $result || ! $result->isSuccess()) {
-                    return response()->json(['code' => 'vision_unavailable'], Response::HTTP_BAD_GATEWAY);
-                }
-                $extracted = $result->getData()['extractedTexts'] ?? null;
+                // Identity status is source of truth. Never fall back to generic OCR:
+                // its result can belong to a different contract/request lifecycle.
+                $extracted = $checkData['extractedTexts'] ?? $checkData['extractedFields'] ?? null;
                 if (! is_array($extracted) && ! is_object($extracted)) {
                     return response()->json(['code' => 'vision_invalid_result'], Response::HTTP_BAD_GATEWAY);
                 }
@@ -87,7 +85,8 @@ class IdentityDocumentController extends Controller
                 }
                 $record->result = KtpFieldMapper::mapExtractedTexts($extracted);
             } elseif ($status === KtpFieldMapper::STATUS_FAILED) {
-                $record->error = 'vision_processing_failed';
+                $reason = $checkData['reasonCode'] ?? $checkData['reason'] ?? $checkData['decision'] ?? null;
+                $record->error = is_string($reason) && $reason !== '' ? Str::limit($reason, 100, '') : 'vision_processing_failed';
             }
             $record->save();
             if ($status !== KtpFieldMapper::STATUS_PENDING && $record->file_path) {

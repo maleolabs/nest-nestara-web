@@ -6,7 +6,6 @@ use App\Models\OcrKtpRequest;
 use App\Models\User;
 use App\Services\APIClient\dto\OcrResponse;
 use App\Services\APIClient\IdentityDocumentAPIService;
-use App\Services\APIClient\OcrAPIService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -45,9 +44,10 @@ class IdentityDocumentTest extends TestCase
         $record = OcrKtpRequest::create(['user_id' => $owner->id, 'request_id' => 'req-2', 'public_check_id' => '11111111-1111-4111-8111-111111111111', 'file_path' => 'private_files/ktp', 'status' => 'pending']);
         Storage::put($record->file_path, 'encrypted');
         $vision = $this->mock(IdentityDocumentAPIService::class);
-        $vision->shouldReceive('status')->andReturn(new OcrResponse(['status' => 'DONE'], true, null));
-        $ocr = $this->mock(OcrAPIService::class);
-        $ocr->shouldReceive('getOcrResultByRequestId')->andReturn(new OcrResponse(['extractedTexts' => ['nama' => 'Budi', 'secret' => 'nope']], true, null));
+        $vision->shouldReceive('status')->andReturn(new OcrResponse([
+            'status' => 'DONE',
+            'extractedTexts' => ['nama' => 'Budi', 'secret' => 'nope'],
+        ], true, null));
 
         $response = $this->getJson('/api/identity-documents/'.$record->public_check_id);
         $response->assertOk()->assertJsonPath('status', 'done')->assertJsonPath('data.nama', 'Budi')->assertJsonMissingPath('data.secret');

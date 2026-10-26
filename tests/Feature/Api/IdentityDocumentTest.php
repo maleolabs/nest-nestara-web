@@ -42,7 +42,7 @@ final class IdentityDocumentTest extends TestCase
         Storage::put($record->file_path, 'encrypted');
         $identityVision = Mockery::mock(IdentityDocumentAPIService::class);
         $payload = ['status' => $upstream];
-        if (in_array($expected, ['done', 'manual_review'], true)) {
+        if (in_array($expected, ['accepted', 'manual_review'], true)) {
             $payload['extractedTexts'] = ['_document_type' => 'KTP', 'nama' => 'BUDI'];
         }
         $identityVision->shouldReceive('status')->once()->with('req-'.$expected)
@@ -51,7 +51,7 @@ final class IdentityDocumentTest extends TestCase
 
         $this->withToken(JWTAuth::fromUser($user))->getJson('/api/identity-documents/'.$record->public_check_id)
             ->assertOk()->assertJsonPath('status', $expected)
-            ->assertJsonPath('profile_unlocked', $expected === 'done');
+            ->assertJsonPath('profile_unlocked', $expected === 'accepted');
         $this->assertDatabaseHas('ocr_ktp_requests', ['id' => $record->id, 'status' => $expected, 'file_path' => null]);
         Storage::assertMissing('private_files/test.enc');
     }
@@ -78,6 +78,11 @@ final class IdentityDocumentTest extends TestCase
 
     public static function terminalStatuses(): array
     {
-        return [['DONE', 'done'], ['MANUAL_REVIEW', 'manual_review'], ['FAILURE', 'failed']];
+        return [
+            ['ACCEPTED', 'accepted'],
+            ['MANUAL_REVIEW', 'manual_review'],
+            ['REJECTED', 'rejected'],
+            ['FAILURE', 'failed'],
+        ];
     }
 }

@@ -69,7 +69,7 @@ class IdentityDocumentController extends Controller
             $check = $this->identityVision->status($record->request_id);
             if (! $check || ! $check->isSuccess()) {
                 $record->refresh();
-                if (in_array($record->status, [KtpFieldMapper::STATUS_DONE, KtpFieldMapper::STATUS_MANUAL_REVIEW, KtpFieldMapper::STATUS_FAILED], true)) {
+                if (in_array($record->status, [KtpFieldMapper::STATUS_DONE, KtpFieldMapper::STATUS_MANUAL_REVIEW, KtpFieldMapper::STATUS_REJECTED, KtpFieldMapper::STATUS_FAILED, 'done'], true)) {
                     Log::info('identity_document.status_fallback', [
                         'check_id' => $checkId,
                         'status' => $record->status,
@@ -86,21 +86,21 @@ class IdentityDocumentController extends Controller
                 return response()->json(['code' => 'vision_unavailable'], Response::HTTP_BAD_GATEWAY);
             }
             $checkData = $check->getData();
-            $status = KtpFieldMapper::mapStatus($checkData['status'] ?? null);
+            $status = KtpFieldMapper::mapStatus($checkData['decision'] ?? $checkData['status'] ?? null);
             $record->status = $status;
-            if (in_array($status, [KtpFieldMapper::STATUS_DONE, KtpFieldMapper::STATUS_MANUAL_REVIEW], true)) {
+            if (in_array($status, [KtpFieldMapper::STATUS_DONE, KtpFieldMapper::STATUS_MANUAL_REVIEW, KtpFieldMapper::STATUS_REJECTED], true)) {
                 // Identity status is source of truth. Never fall back to generic OCR:
                 // its result can belong to a different contract/request lifecycle.
                 $extracted = $checkData['extractedTexts'] ?? $checkData['extractedFields'] ?? null;
                 if (! is_array($extracted) && ! is_object($extracted)) {
-                    return response()->json(['code' => 'vision_invalid_result'], Response::HTTP_BAD_GATEWAY);
+                    $extracted = [];
                 }
                 $extracted = is_object($extracted) ? get_object_vars($extracted) : $extracted;
-                if ($extracted === []) {
-                    return response()->json(['code' => 'vision_invalid_result'], Response::HTTP_BAD_GATEWAY);
+                if (isset($checkData['documentType']) || isset($checkData['document_type'])) {
+                    $extracted['_document_type'] = $checkData['documentType'] ?? $checkData['document_type'];
                 }
                 $record->result = KtpFieldMapper::mapExtractedTexts($extracted);
-            } elseif ($status === KtpFieldMapper::STATUS_FAILED) {
+            } elseif (in_array($status, [KtpFieldMapper::STATUS_FAILED, KtpFieldMapper::STATUS_REJECTED], true)) {
                 $reason = $checkData['reasonCode'] ?? $checkData['reason'] ?? $checkData['decision'] ?? null;
                 $record->error = is_string($reason) && $reason !== '' ? Str::limit($reason, 100, '') : 'vision_processing_failed';
             }
@@ -131,7 +131,9 @@ class IdentityDocumentController extends Controller
             'check_id' => $checkId,
             'status' => $record->status,
             'data' => $data,
-            'profile_unlocked' => KtpFieldMapper::unlocksProfile($record->status, $data),
+            'document_type' => $data['_document_type'] ?? null,
+            'reason_code' => $record->error,
+            'profile_unlocked' => $record->status === KtpFieldMapper::STATUS_DONE,
         ]);
     }
 }

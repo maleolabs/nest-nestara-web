@@ -10,6 +10,7 @@ use App\Services\APIClient\Impl\IdentityDocumentAPIServiceImpl;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class IdentityDocumentTest extends TestCase
@@ -43,7 +44,7 @@ class IdentityDocumentTest extends TestCase
         $this->assertDatabaseHas('ocr_ktp_requests', ['request_id' => 'req-1', 'status' => 'pending']);
     }
 
-    public function test_status_is_ownership_bound_and_maps_result(): void
+    public function test_status_maps_accepted_result(): void
     {
         Storage::fake('local');
         $owner = $this->apiUser();
@@ -51,14 +52,40 @@ class IdentityDocumentTest extends TestCase
         Storage::put($record->file_path, 'encrypted');
         $vision = $this->mock(IdentityDocumentAPIService::class);
         $vision->shouldReceive('status')->andReturn(new OcrResponse([
-            'status' => 'DONE',
+            'status' => 'ACCEPTED',
             'extractedTexts' => ['nama' => 'Budi', 'secret' => 'nope'],
         ], true, null));
 
         $response = $this->getJson('/api/identity-documents/'.$record->public_check_id);
-        $response->assertOk()->assertJsonPath('status', 'done')->assertJsonPath('data.nama', 'Budi')->assertJsonMissingPath('data.secret');
+        $response->assertOk()->assertJsonPath('status', 'accepted')->assertJsonPath('data.nama', 'Budi')->assertJsonMissingPath('data.secret');
         Storage::assertMissing($record->file_path);
         $this->assertNull($record->refresh()->file_path);
+    }
+
+    #[DataProvider('terminalVisionResponses')]
+    public function test_terminal_vision_response_without_fields_is_not_502(array $payload, string $status): void
+    {
+        $user = $this->apiUser();
+        $record = OcrKtpRequest::create([
+            'user_id' => $user->id, 'request_id' => 'req-'.$status,
+            'public_check_id' => '33333333-3333-4333-8333-333333333333', 'status' => 'pending',
+        ]);
+        $vision = $this->mock(IdentityDocumentAPIService::class);
+        $vision->shouldReceive('status')->once()->andReturn(new OcrResponse($payload, true, null));
+
+        $response = $this->getJson('/api/identity-documents/'.$record->public_check_id);
+
+        $response->assertOk()->assertJsonPath('status', $status)->assertJsonPath('data', []);
+    }
+
+    public static function terminalVisionResponses(): array
+    {
+        return [
+            [['status' => 'ACCEPTED'], 'accepted'],
+            [['status' => 'UNSUPPORTED_DOCUMENT'], 'rejected'],
+            [['status' => 'MANUAL_REVIEW'], 'manual_review'],
+            [['status' => 'FAILED', 'reasonCode' => 'OCR_FAILURE'], 'failed'],
+        ];
     }
 
     public function test_status_hides_record_from_other_user(): void

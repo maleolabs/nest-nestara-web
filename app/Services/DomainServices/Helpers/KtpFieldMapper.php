@@ -36,7 +36,7 @@ class KtpFieldMapper
         'provinsi', 'kabupaten', 'kota', 'kecamatan', 'kelurahan', 'rt/rw',
     ];
 
-    public const STATUS_DONE = 'done';
+    public const STATUS_DONE = 'accepted';
 
     public const STATUS_PENDING = 'pending';
 
@@ -44,11 +44,12 @@ class KtpFieldMapper
 
     public const STATUS_MANUAL_REVIEW = 'manual_review';
 
+    public const STATUS_REJECTED = 'rejected';
+
     /** Document/status pair accepted by mobile profile gate. */
     public static function unlocksProfile(string $status, array $result): bool
     {
-        return $status === self::STATUS_DONE
-            && in_array(strtoupper((string) ($result['_document_type'] ?? '')), ['KTP', 'SIM'], true);
+        return $status === self::STATUS_DONE;
     }
 
     public static function requiredKeys(): array
@@ -201,7 +202,8 @@ class KtpFieldMapper
     public static function mapStatus(?string $upstream_status): string
     {
         return match (strtoupper((string) $upstream_status)) {
-            'DONE' => self::STATUS_DONE,
+            'ACCEPTED', 'DONE' => self::STATUS_DONE,
+            'REJECTED', 'UNSUPPORTED_DOCUMENT', 'UNSUPPORTED' => self::STATUS_REJECTED,
             'FAILED', 'FAILURE', 'ERROR' => self::STATUS_FAILED,
             'MANUAL_REVIEW', 'REVIEW', 'NEEDS_REVIEW' => self::STATUS_MANUAL_REVIEW,
             'WAITING', 'PROCESSING' => self::STATUS_PENDING,

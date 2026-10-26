@@ -34,7 +34,7 @@ class IdentityDocumentController extends Controller
             throw $exception;
         }
         $data = $response?->getData() ?? [];
-        $requestId = $data['checkId'] ?? null;
+        $requestId = $data['requestId'] ?? null;
 
         if (! $response?->isSuccess() || ! is_string($requestId) || $requestId === '') {
             Storage::delete($path);
@@ -66,7 +66,7 @@ class IdentityDocumentController extends Controller
         }
 
         if ($record->status === KtpFieldMapper::STATUS_PENDING) {
-            $check = $this->vision->checkOcrRequestStatus($record->request_id);
+            $check = $this->identityVision->status($record->request_id);
             if (! $check || ! $check->isSuccess()) {
                 return response()->json(['code' => 'vision_unavailable'], Response::HTTP_BAD_GATEWAY);
             }

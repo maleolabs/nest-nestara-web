@@ -34,6 +34,4 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-    'vision' => ['base_url' => env('VISION_BASE_URL'), 'credential' => env('VISION_CREDENTIAL')],
-
 ];

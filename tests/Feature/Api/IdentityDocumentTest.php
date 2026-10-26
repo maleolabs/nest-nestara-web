@@ -5,6 +5,7 @@ namespace Tests\Feature\Api;
 use App\Models\OcrKtpRequest;
 use App\Models\User;
 use App\Services\APIClient\dto\OcrResponse;
+use App\Services\APIClient\IdentityDocumentAPIService;
 use App\Services\APIClient\OcrAPIService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
@@ -41,11 +42,15 @@ final class IdentityDocumentTest extends TestCase
         ]);
         Storage::put($record->file_path, 'encrypted');
         $vision = Mockery::mock(OcrAPIService::class);
-        $vision->shouldReceive('checkOcrRequestStatus')->once()->andReturn(new OcrResponse(['status' => $upstream], true, null));
+
         if (in_array($expected, ['done', 'manual_review'], true)) {
             $vision->shouldReceive('getOcrResultByRequestId')->once()->andReturn(new OcrResponse(['extractedTexts' => ['_document_type' => 'KTP', 'nama' => 'BUDI']], true, null));
         }
         $this->app->instance(OcrAPIService::class, $vision);
+        $identityVision = Mockery::mock(IdentityDocumentAPIService::class);
+        $identityVision->shouldReceive('status')->once()->with('req-'.$expected)
+            ->andReturn(new OcrResponse(['status' => $upstream], true, null));
+        $this->app->instance(IdentityDocumentAPIService::class, $identityVision);
 
         $this->withToken(JWTAuth::fromUser($user))->getJson('/api/identity-documents/'.$record->public_check_id)
             ->assertOk()->assertJsonPath('status', $expected)

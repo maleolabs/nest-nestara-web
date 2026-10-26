@@ -22,24 +22,29 @@ use Illuminate\Support\Facades\Log;
  */
 class OcrAPIServiceImpl2 implements OcrAPIService
 {
-
     private const AUTHORIZATION_HEADER = 'X-API-KEY';
+
     private const ACCEPT_HEADER = 'Accept';
+
     private const CONTENT_TYPE_HEADER = 'Content-Type';
+
     private const APPLICATION_JSON = 'application/json';
+
     private const MULTIPART_FORM_DATA = 'multipart/form-data';
 
     private const CACHE_TTL = 14400; // 4 hours
 
     private const REQUEST_TIMEOUT_SECONDS = 25;
+
     private const CONNECT_TIMEOUT_SECONDS = 5;
+
     private const FETCH_TIMEOUT_SECONDS = 5;
 
     public function getEntriDataValueByIzinId(int $izin_id): ?OcrResponse
     {
         try {
             $ocrRequest = ModelsOcrRequest::where('izin_id', $izin_id)->orderByDesc('created_at')->first();
-            if (!$ocrRequest) {
+            if (! $ocrRequest) {
                 return null;
             }
 
@@ -48,6 +53,7 @@ class OcrAPIServiceImpl2 implements OcrAPIService
             return $this->fetchAndParseResponse($endpoint);
         } catch (Exception $e) {
             Log::channel('app')->error('failed to get ocr results by izin id', ['error' => $e->getMessage()]);
+
             return null;
         }
     }
@@ -55,7 +61,7 @@ class OcrAPIServiceImpl2 implements OcrAPIService
     public function sendOcrRequest(OcrRequest $request, ?string $token = null): ?OcrResponse
     {
         try {
-            $endpoint = "/ocr/do-ocr";
+            $endpoint = '/ocr/do-ocr';
 
             $response = $this->postAndParseResponse($endpoint, $request);
 
@@ -66,6 +72,7 @@ class OcrAPIServiceImpl2 implements OcrAPIService
             return $response;
         } catch (Exception $e) {
             Log::channel('app')->error('failed to send ocr request', ['error' => $e->getMessage()]);
+
             return null;
         }
     }
@@ -78,6 +85,7 @@ class OcrAPIServiceImpl2 implements OcrAPIService
             return $this->fetchAndParseResponse($endpoint, [], false, self::FETCH_TIMEOUT_SECONDS);
         } catch (Exception $e) {
             Log::channel('app')->error('failed to check ocr request status', ['error' => $e->getMessage()]);
+
             return null;
         }
     }
@@ -85,21 +93,21 @@ class OcrAPIServiceImpl2 implements OcrAPIService
     public function sendKtpImageRequest(string $image_contents, ?string $original_file_name, array $required_keys = []): ?OcrResponse
     {
         try {
-            $endpoint = "/ocr/do-ocr";
-            $uri = $this->getBaseUrl() . $endpoint;
+            $endpoint = '/ocr/do-ocr';
+            $uri = $this->getBaseUrl().$endpoint;
             $headers = $this->getRequiredHeader();
 
             $multipart = [
                 [
                     'name' => 'image',
                     'contents' => $image_contents,
-                    'filename' => $original_file_name ?: 'ktp.jpg'
-                ]
+                    'filename' => $original_file_name ?: 'ktp.jpg',
+                ],
             ];
             foreach ($required_keys as $key) {
                 $multipart[] = [
                     'name' => 'requiredKeys[]',
-                    'contents' => $key
+                    'contents' => $key,
                 ];
             }
 
@@ -112,9 +120,11 @@ class OcrAPIServiceImpl2 implements OcrAPIService
             return $this->parseJsonResponse($response->body());
         } catch (ConnectionException $ce) {
             Log::channel('app')->error('failed to send ktp ocr request, got connection exception', ['error' => $ce->getMessage()]);
+
             return null;
         } catch (Exception $e) {
             Log::channel('app')->error('failed to send ktp ocr request', ['error' => $e->getMessage()]);
+
             return null;
         }
     }
@@ -127,13 +137,14 @@ class OcrAPIServiceImpl2 implements OcrAPIService
             return $this->fetchAndParseResponse($endpoint, [], true, self::FETCH_TIMEOUT_SECONDS);
         } catch (Exception $e) {
             Log::channel('app')->error('failed to get ocr result by request id', ['error' => $e->getMessage()]);
+
             return null;
         }
     }
 
     private function postAndParseResponse(string $endpoint, OcrRequest $request, array $additional_header = [])
     {
-        $uri = $this->getBaseUrl() . $endpoint;
+        $uri = $this->getBaseUrl().$endpoint;
         $headers = array_merge($this->getRequiredHeader(), $additional_header);
 
         try {
@@ -147,6 +158,7 @@ class OcrAPIServiceImpl2 implements OcrAPIService
             return $this->handleRequestException($re);
         } catch (ConnectionException $ce) {
             Log::channel('app')->error('failed to post request, got connection exception', ['error' => $ce->getMessage()]);
+
             return null;
         }
     }
@@ -162,7 +174,7 @@ class OcrAPIServiceImpl2 implements OcrAPIService
             }
         }
 
-        $uri = $this->getBaseUrl(). $endpoint;
+        $uri = $this->getBaseUrl().$endpoint;
         $headers = array_merge($this->getRequiredHeader(), $additional_header);
 
         try {
@@ -186,6 +198,7 @@ class OcrAPIServiceImpl2 implements OcrAPIService
             return $this->handleRequestException($re);
         } catch (ConnectionException $ce) {
             Log::channel('app')->error('failed to fetch data from endpoint', ['error' => $ce->getMessage()]);
+
             return null;
         }
     }
@@ -197,7 +210,7 @@ class OcrAPIServiceImpl2 implements OcrAPIService
 
         if ($statusCode === 400) {
             return $this->parseJsonResponse($response->getBody()->getContents());
-        } else if ($statusCode === 401) {
+        } elseif ($statusCode === 401) {
             throw new InvalidTokenException('Unauthorized', 401);
         } else {
             Log::channel('app')->error('request exception with unknown error', ['error' => $re->getMessage()]);
@@ -213,7 +226,7 @@ class OcrAPIServiceImpl2 implements OcrAPIService
 
     private function saveCacheData($key, $data)
     {
-        Cache::remember($key, self::CACHE_TTL, function() use ($data) {
+        Cache::remember($key, self::CACHE_TTL, function () use ($data) {
             return $data;
         });
     }
@@ -222,27 +235,30 @@ class OcrAPIServiceImpl2 implements OcrAPIService
     {
         if (is_string($json)) {
             $json = json_decode($json);
-        } else if (is_array($json)) {
+        } elseif (is_array($json)) {
             $json = (object) $json;
         }
+
         return OcrResponse::fromJson($json);
     }
 
-    private function getApiKey(): string
+    public function getApiKey(): string
     {
         $api_key = get_pengaturan(OCR_API_KEY);
-        if (!$api_key) {
+        if (! $api_key) {
             throw new Exception('api key for ocr service is not set');
         }
+
         return $api_key;
     }
 
-    private function getBaseUrl(): string
+    public function getBaseUrl(): string
     {
         $base_url = get_pengaturan(OCR_BASE_URL);
-        if (!$base_url) {
+        if (! $base_url) {
             throw new Exception('base url for ocr service is not set');
         }
+
         return $base_url;
     }
 
@@ -250,8 +266,7 @@ class OcrAPIServiceImpl2 implements OcrAPIService
     {
         return [
             self::AUTHORIZATION_HEADER => $this->getApiKey(),
-            self::ACCEPT_HEADER => self::APPLICATION_JSON
+            self::ACCEPT_HEADER => self::APPLICATION_JSON,
         ];
     }
-
 }

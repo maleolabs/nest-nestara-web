@@ -30,7 +30,7 @@ class IdentityDocumentTest extends TestCase
         Storage::fake('local');
         $this->apiUser();
         $vision = $this->mock(IdentityDocumentAPIService::class);
-        $vision->shouldReceive('check')->once()->andReturn(new OcrResponse(['checkId' => 'req-1'], true, null));
+        $vision->shouldReceive('check')->once()->andReturn(new OcrResponse(['requestId' => 'req-1'], true, null));
 
         $response = $this->postJson('/api/identity-documents', ['image' => UploadedFile::fake()->image('ktp.jpg')]);
 
@@ -44,9 +44,10 @@ class IdentityDocumentTest extends TestCase
         $owner = $this->apiUser();
         $record = OcrKtpRequest::create(['user_id' => $owner->id, 'request_id' => 'req-2', 'public_check_id' => '11111111-1111-4111-8111-111111111111', 'file_path' => 'private_files/ktp', 'status' => 'pending']);
         Storage::put($record->file_path, 'encrypted');
-        $vision = $this->mock(OcrAPIService::class);
-        $vision->shouldReceive('checkOcrRequestStatus')->andReturn(new OcrResponse(['status' => 'DONE'], true, null));
-        $vision->shouldReceive('getOcrResultByRequestId')->andReturn(new OcrResponse(['extractedTexts' => ['nama' => 'Budi', 'secret' => 'nope']], true, null));
+        $vision = $this->mock(IdentityDocumentAPIService::class);
+        $vision->shouldReceive('status')->andReturn(new OcrResponse(['status' => 'DONE'], true, null));
+        $ocr = $this->mock(OcrAPIService::class);
+        $ocr->shouldReceive('getOcrResultByRequestId')->andReturn(new OcrResponse(['extractedTexts' => ['nama' => 'Budi', 'secret' => 'nope']], true, null));
 
         $response = $this->getJson('/api/identity-documents/'.$record->public_check_id);
         $response->assertOk()->assertJsonPath('status', 'done')->assertJsonPath('data.nama', 'Budi')->assertJsonMissingPath('data.secret');

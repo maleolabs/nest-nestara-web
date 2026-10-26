@@ -56,6 +56,26 @@ final class IdentityDocumentTest extends TestCase
         Storage::assertMissing('private_files/test.enc');
     }
 
+    public function test_vision_failure_returns_persisted_terminal_state(): void
+    {
+        $user = User::factory()->create(['username' => 'identity-fallback']);
+        $record = OcrKtpRequest::create([
+            'user_id' => $user->id, 'request_id' => 'req-fallback',
+            'public_check_id' => '33333333-3333-4333-8333-333333333333', 'status' => 'pending',
+        ]);
+        $identityVision = Mockery::mock(IdentityDocumentAPIService::class);
+        $identityVision->shouldReceive('status')->once()->with('req-fallback')
+            ->andReturnUsing(function () use ($record): OcrResponse {
+                $record->update(['status' => 'done', 'result' => ['nama' => 'BUDI']]);
+
+                return new OcrResponse([], false, 'upstream failure');
+            });
+        $this->app->instance(IdentityDocumentAPIService::class, $identityVision);
+
+        $this->withToken(JWTAuth::fromUser($user))->getJson('/api/identity-documents/'.$record->public_check_id)
+            ->assertOk()->assertJsonPath('status', 'done')->assertJsonPath('data.nama', 'BUDI');
+    }
+
     public static function terminalStatuses(): array
     {
         return [['DONE', 'done'], ['MANUAL_REVIEW', 'manual_review'], ['FAILURE', 'failed']];

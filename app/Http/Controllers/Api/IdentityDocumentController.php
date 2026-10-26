@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -67,6 +68,21 @@ class IdentityDocumentController extends Controller
         if ($record->status === KtpFieldMapper::STATUS_PENDING) {
             $check = $this->identityVision->status($record->request_id);
             if (! $check || ! $check->isSuccess()) {
+                $record->refresh();
+                if (in_array($record->status, [KtpFieldMapper::STATUS_DONE, KtpFieldMapper::STATUS_MANUAL_REVIEW, KtpFieldMapper::STATUS_FAILED], true)) {
+                    Log::info('identity_document.status_fallback', [
+                        'check_id' => $checkId,
+                        'status' => $record->status,
+                    ]);
+
+                    return $this->statusResponse($checkId, $record);
+                }
+
+                Log::warning('identity_document.vision_unavailable', [
+                    'check_id' => $checkId,
+                    'request_id_present' => $record->request_id !== null,
+                ]);
+
                 return response()->json(['code' => 'vision_unavailable'], Response::HTTP_BAD_GATEWAY);
             }
             $checkData = $check->getData();
@@ -90,11 +106,25 @@ class IdentityDocumentController extends Controller
             }
             $record->save();
             if ($status !== KtpFieldMapper::STATUS_PENDING && $record->file_path) {
-                Storage::delete($record->file_path);
-                $record->update(['file_path' => null]);
+                $filePath = $record->file_path;
+                try {
+                    Storage::delete($filePath);
+                    $record->update(['file_path' => null]);
+                } catch (\Throwable $exception) {
+                    Log::warning('identity_document.cleanup_failed', [
+                        'check_id' => $checkId,
+                        'status' => $record->status,
+                        'exception' => $exception::class,
+                    ]);
+                }
             }
         }
 
+        return $this->statusResponse($checkId, $record);
+    }
+
+    private function statusResponse(string $checkId, IdentityDocument $record): JsonResponse
+    {
         $data = $record->result ?? [];
 
         return response()->json([

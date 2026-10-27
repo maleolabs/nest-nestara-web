@@ -534,8 +534,9 @@ class PerizinanServiceImpl implements PerizinanService
     {
         DB::transaction(function () use ($izin_id, $penandatangan_id, $nomor_surat) {
             $izin = $this->find($izin_id);
-            if (!$izin)
-                return;
+            if (!$izin) {
+                throw new \InvalidArgumentException('Permit does not exist');
+            }
     
             if (!$nomor_surat)
                 $nomor_surat = $this->suratService->generateNomorSurat($izin->jenis_perizinan_id);
@@ -598,8 +599,9 @@ class PerizinanServiceImpl implements PerizinanService
     {
         DB::transaction(function () use ($izin_id, $pegawai_id, $tindakan) {
             $izin = $this->find($izin_id);
-            if (!$izin)
-                return;
+            if (!$izin) {
+                throw new \InvalidArgumentException('Permit does not exist');
+            }
             if (!in_array($tindakan, [OfficeStatus::DIIZINKAN, OfficeStatus::LAYANAN_DITOLAK]))
                 return;
             $izin_status = $izin->latestStatus;

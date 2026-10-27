@@ -109,15 +109,15 @@ class PenyerahanIndex extends Component
     public function penerbitanFinished($izin_id)
     {
         if ((int) $this->preview_izin_id !== (int) $izin_id) return;
-        $status = $this->getPerizinanService()->find($izin_id)?->latestStatus;
-        if (!$status || $status->nama !== StatusIzinEnum::PENERBITAN || $status->progres !== StatusIzinProgressEnum::PROCESSING) {
+        try {
+            $auth_user = auth()->user();
+            $this->getPerizinanService()->penerbitanFinished($izin_id, $auth_user?->pegawai?->id);
+            $this->preview_izin_id = null;
+            $this->dispatch('handover-feedback', type: 'success', message: 'Izin siap diserahkan.');
+            $this->setData();
+        } catch (\InvalidArgumentException $e) {
             $this->dispatch('handover-feedback', type: 'error', message: 'Izin tidak berada pada tahap penerbitan.');
-            return;
         }
-        $auth_user = auth()->user();
-        $pegawai_id = $auth_user->pegawai ? $auth_user->pegawai->id : null;
-        $this->getPerizinanService()->penerbitanFinished($izin_id, $pegawai_id);
-        $this->setData();
     }
 
     public function printedPermitReadyForHandover($izin_id)
@@ -126,6 +126,8 @@ class PenyerahanIndex extends Component
         try {
             $auth_user = auth()->user();
             $this->getPerizinanService()->printedPermitReadyForHandover($izin_id, $auth_user->pegawai?->id);
+            $this->preview_izin_id = null;
+            $this->dispatch('handover-feedback', type: 'success', message: 'Izin siap diserahkan.');
             $this->setData();
         } catch (\InvalidArgumentException $e) {
             $this->dispatch('handover-feedback', type: 'error', message: 'Izin tidak memenuhi syarat untuk diserahkan.');
@@ -139,19 +141,15 @@ class PenyerahanIndex extends Component
             return;
         }
 
-        $izin = $this->getPerizinanService()->find($izin_id);
-        $status = $izin?->latestStatus;
-        if (!$status || $status->nama !== StatusIzinEnum::PENYERAHAN || $status->progres !== StatusIzinProgressEnum::PROCESSING) {
+        try {
+            $auth_user = auth()->user();
+            $this->getPerizinanService()->allDone($izin_id, $auth_user?->pegawai?->id);
+            $this->preview_izin_id = null;
+            $this->dispatch('handover-feedback', type: 'success', message: 'Izin berhasil ditandai telah diserahkan.');
+            $this->setData();
+        } catch (\InvalidArgumentException $e) {
             $this->dispatch('handover-feedback', type: 'error', message: 'Izin sudah selesai atau tidak bisa diserahkan.');
-            return;
         }
-
-        $auth_user = auth()->user();
-        $pegawai_id = $auth_user->pegawai ? $auth_user->pegawai->id : null;
-        $this->getPerizinanService()->allDone($izin_id, $pegawai_id);
-        $this->preview_izin_id = null;
-        $this->dispatch('handover-feedback', type: 'success', message: 'Izin berhasil ditandai telah diserahkan.');
-        $this->setData();
     }
 
     protected function getTanggalPermohonan($izin): string

@@ -5,6 +5,7 @@ namespace App\Services\DomainServices\Impl;
 use App\Exceptions\UnprocessableEntityException;
 use App\Jobs\SendOcrRequest;
 use App\Mail\RegistrationRevisionMail;
+use App\Mail\PermitReadyForHandoverMail;
 use App\Models\DokumenPemohon;
 use App\Models\Izin;
 use App\Models\OcrRequest as OcrRequestModel;
@@ -688,6 +689,24 @@ class PerizinanServiceImpl implements PerizinanService
 
             $this->statusIzinService->updateStatusIzin($izin_id, Status::PENERBITAN, Progres::FINISHED, OfficeStatus::IZIN_TELAH_DITERBITKAN, null, null, false, true);
             $this->statusIzinService->updateStatusIzin($izin_id, Status::PENYERAHAN, Progres::PROCESSING, null, $pegawai_id);
+
+            $notification = DB::table('permit_ready_notifications')->insertOrIgnore([
+                'izin_id' => $izin_id,
+                'event' => 'ready_for_handover',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            if ($notification) {
+                DB::afterCommit(function () use ($izin_id) {
+                    $izin = Izin::with(['pemohon.user', 'jenis_perizinan'])->find($izin_id);
+                    $email = $izin?->pemohon?->user?->email;
+                    if (!$email) {
+                        Log::warning('Permit handover notification skipped: applicant email missing', ['izin_id' => $izin_id]);
+                        return;
+                    }
+                    Mail::to($email)->queue(new PermitReadyForHandoverMail($izin));
+                });
+            }
         });
     }
 

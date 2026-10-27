@@ -175,7 +175,8 @@
                             </td>
                             <td class="px-4 py-3.5 text-center">
                                 <span class="inline-flex items-center gap-1.5 rounded-full bg-ink-50 px-2.5 py-1 text-[11px] font-bold ring-1 ring-ink-200 {{ $statusClasses['textClass'] }}" title="{{ $status->progres }}">
-                                    <i class="{{ $statusClasses['bgClass'] }} h-1.5 w-1.5 rounded-full"></i> {{ Str::limit($status->nama, 16) }}
+                                    <i class="{{ $statusClasses['bgClass'] }} h-1.5 w-1.5 rounded-full"></i>
+                                    {{ $status->progres === $statusProgres::FINISHED && $status->keterangan === \App\utils\enums\BackOfficeStatusEnum::IZIN_TELAH_DISERAHKAN ? 'Izin telah diserahkan' : Str::limit($status->nama, 16) }}
                                 </span>
                                 <p class="mt-0.5 text-[11px] text-ink-400">{{ $izin->updated_at->diffForHumans() }}</p>
                             </td>

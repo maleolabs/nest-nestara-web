@@ -27,7 +27,7 @@ class OcrKtpRequest extends FormRequest
     {
         return [
             'image' => ['required', 'file', 'mimetypes:image/jpeg,image/png', 'image', 'mimes:jpg,jpeg,png', 'max:3072'],
-            'documentType' => ['nullable', 'string', 'max:32'],
+            'documentType' => ['nullable', 'string', 'in:KTP,SIM'],
         ];
     }
 

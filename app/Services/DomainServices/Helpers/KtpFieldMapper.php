@@ -36,6 +36,9 @@ class KtpFieldMapper
         'provinsi', 'kabupaten', 'kota', 'kecamatan', 'kelurahan', 'rt/rw',
     ];
 
+    /** Document types supported by mobile identity verification contract. */
+    public const SUPPORTED_DOCUMENT_TYPES = ['KTP', 'SIM'];
+
     public const STATUS_DONE = 'accepted';
 
     public const STATUS_PENDING = 'pending';
@@ -63,7 +66,7 @@ class KtpFieldMapper
     /** Document/status pair accepted by mobile profile gate. */
     public static function unlocksProfile(string $status, array $result): bool
     {
-        return self::isIdentityAccepted($status);
+        return self::isReady($status);
     }
 
     public static function requiredKeys(): array

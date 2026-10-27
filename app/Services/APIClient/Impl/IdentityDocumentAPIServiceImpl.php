@@ -12,7 +12,7 @@ final class IdentityDocumentAPIServiceImpl implements IdentityDocumentAPIService
 {
     public function __construct(private OcrAPIService $ocrAPIService) {}
 
-    public function check(string $contents, string $filename, string $documentType): ?OcrResponse
+    public function check(string $contents, string $filename, string $documentType = 'KTP'): ?OcrResponse
     {
         try {
             $baseUrl = rtrim($this->ocrAPIService->getBaseUrl(), '/');

@@ -12,6 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -22,6 +23,34 @@ class IdentityDocumentTest extends TestCase
     public function test_identity_document_api_service_resolves_from_container(): void
     {
         $this->assertInstanceOf(IdentityDocumentAPIServiceImpl::class, $this->app->make(IdentityDocumentAPIService::class));
+    }
+
+    public function test_identity_check_sends_document_type_as_multipart_field(): void
+    {
+        Http::fake(['http://vision.test/*' => Http::response(['requestId' => 'req-sim', 'documentType' => 'SIM'])]);
+        config(['services.ocr.base_url' => 'http://vision.test', 'services.ocr.api_key' => 'test-key']);
+
+        $response = app(IdentityDocumentAPIService::class)->check('image-content', 'sim.jpg', 'SIM');
+
+        $this->assertTrue($response->isSuccess());
+        Http::assertSent(function ($request): bool {
+            return $request->url() === 'http://vision.test/identity-document-checks'
+                && $request->method() === 'POST'
+                && $request->data()['documentType'] === 'SIM'
+                && str_contains($request->body(), 'name="documentType"');
+        });
+    }
+
+    public function test_identity_check_defaults_document_type_to_ktp(): void
+    {
+        Http::fake(['http://vision.test/*' => Http::response(['requestId' => 'req-ktp', 'documentType' => 'KTP'])]);
+        config(['services.ocr.base_url' => 'http://vision.test', 'services.ocr.api_key' => 'test-key']);
+
+        $response = app(IdentityDocumentAPIService::class)->check('image-content', 'ktp.jpg');
+
+        $this->assertTrue($response->isSuccess());
+        Http::assertSent(fn ($request): bool => $request->data()['documentType'] === 'KTP'
+            && str_contains($request->body(), 'name="documentType"'));
     }
 
     private function apiUser(): User

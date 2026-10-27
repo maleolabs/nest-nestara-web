@@ -4,17 +4,17 @@ namespace Tests\Feature\Api;
 
 use App\Models\Pemohon;
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Services\APIClient\RegionAPIService;
 use Illuminate\Support\Facades\Schema;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use Mockery;
 use Tests\TestCase;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertSame;
 
 class PemohonStoreTest extends TestCase
 {
-
     private array $dataPemohon = [
         'sumber_identitas' => 'ktp',
         'nomor_id' => '7498473990001',
@@ -92,8 +92,8 @@ class PemohonStoreTest extends TestCase
         $response->assertStatus(422)->assertJson([
             'success' => false,
             'errors' => [
-                'nomor_id' => ['Nomor identitas sudah terdaftar pada akun lain.']
-            ]
+                'nomor_id' => ['Nomor identitas sudah terdaftar pada akun lain.'],
+            ],
         ]);
 
         // pemohon milik pemilik lama tidak berubah tangan
@@ -102,4 +102,33 @@ class PemohonStoreTest extends TestCase
         assertNotNull($pemilikLama->pemohon);
     }
 
+    public function test_create_ditolak_jika_hirarki_alamat_tidak_valid(): void
+    {
+        $this->mockRegions();
+        $user = $this->makeUser('invalid_region');
+        $data = array_merge($this->dataPemohon, ['kabupaten' => 7505]);
+
+        $this->withToken(JWTAuth::fromUser($user))->postJson('/api/pemohon', $data)
+            ->assertStatus(422)
+            ->assertJsonPath('errors.kabupaten.0', 'Kabupaten tidak sesuai dengan provinsi.');
+    }
+
+    public function test_create_menerima_hirarki_alamat_valid(): void
+    {
+        $this->mockRegions();
+        $user = $this->makeUser('valid_region');
+
+        $this->withToken(JWTAuth::fromUser($user))->postJson('/api/pemohon', $this->dataPemohon)
+            ->assertStatus(201);
+    }
+
+    private function mockRegions(): void
+    {
+        $regions = Mockery::mock(RegionAPIService::class);
+        $regions->shouldReceive('getProvinces')->andReturn([['id' => 75]]);
+        $regions->shouldReceive('getRegenciesByProvince')->with(75)->andReturn([['id' => 7504]]);
+        $regions->shouldReceive('getDistrictsByRegency')->with(7504)->andReturn([['id' => 7504030]]);
+        $regions->shouldReceive('getVillagesByDistrict')->with(7504030)->andReturn([['id' => 7504030023]]);
+        $this->app->instance(RegionAPIService::class, $regions);
+    }
 }

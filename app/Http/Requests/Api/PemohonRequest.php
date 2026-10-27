@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Services\APIClient\RegionAPIService;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -20,7 +22,7 @@ class PemohonRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -34,14 +36,56 @@ class PemohonRequest extends FormRequest
             'kecamatan' => ['required'],
             'kelurahan' => ['required'],
             'detail_alamat' => ['required'],
-            'alamat_luar_negeri' => ['nullable']
+            'alamat_luar_negeri' => ['nullable'],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            if ($validator->errors()->isNotEmpty()) {
+                return;
+            }
+
+            $province = (int) $this->input('provinsi');
+            $regency = (int) $this->input('kabupaten');
+            $district = (int) $this->input('kecamatan');
+            $village = (int) $this->input('kelurahan');
+            $regions = app(RegionAPIService::class);
+
+            if (! $this->containsId($regions->getProvinces(), $province)) {
+                $validator->errors()->add('provinsi', 'Provinsi tidak ditemukan.');
+
+                return;
+            }
+
+            if (! $this->containsId($regions->getRegenciesByProvince($province), $regency)) {
+                $validator->errors()->add('kabupaten', 'Kabupaten tidak sesuai dengan provinsi.');
+
+                return;
+            }
+
+            if (! $this->containsId($regions->getDistrictsByRegency($regency), $district)) {
+                $validator->errors()->add('kecamatan', 'Kecamatan tidak sesuai dengan kabupaten.');
+
+                return;
+            }
+
+            if (! $this->containsId($regions->getVillagesByDistrict($district), $village)) {
+                $validator->errors()->add('kelurahan', 'Kelurahan tidak sesuai dengan kecamatan.');
+            }
+        });
+    }
+
+    private function containsId(array $regions, int $id): bool
+    {
+        return collect($regions)->contains(fn (array $region): bool => (int) ($region['id'] ?? 0) === $id);
     }
 
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
-            'errors' => $validator->errors()
+            'errors' => $validator->errors(),
         ], Response::HTTP_UNPROCESSABLE_ENTITY));
     }
 }

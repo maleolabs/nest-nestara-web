@@ -80,6 +80,7 @@ final class IdentityDocumentTest extends TestCase
 
         $this->withToken(JWTAuth::fromUser($user))->getJson('/api/identity-documents/'.$record->public_check_id)
             ->assertOk()->assertJsonPath('status', 'ready')->assertJsonPath('ready', true)
+            ->assertJsonPath('profile_unlocked', true)
             ->assertJsonPath('data.nama', 'BUDI');
         Storage::assertMissing($record->file_path);
     }

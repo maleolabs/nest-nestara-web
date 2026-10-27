@@ -8,7 +8,7 @@
 <section class="rounded-xl border border-ink-200 p-4">
     <h6 class="text-xs font-extrabold tracking-widest text-ink-500 uppercase">Sumber Identitas</h6>
     <div class="mt-3 flex flex-wrap gap-2">
-        @foreach (['ktp' => 'KTP', 'sim' => 'SIM', 'passport' => 'Paspor'] as $val => $label)
+        @foreach (['ktp' => 'KTP', 'sim' => 'SIM'] as $val => $label)
             <label for="src_{{ $val }}"
                 class="cursor-pointer inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-bold transition
                     {{ $form_data_pemohon->sumber_identitas === $val ? 'bg-nest-700 text-white border-nest-700 shadow-sm' : 'bg-white text-ink-700 border-ink-200 hover:border-nest-300 hover:bg-nest-50' }}">

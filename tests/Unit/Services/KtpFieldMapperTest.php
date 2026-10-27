@@ -139,6 +139,13 @@ final class KtpFieldMapperTest extends TestCase
         $this->assertSame(KtpFieldMapper::STATUS_PENDING, KtpFieldMapper::mapStatus('processing'));
     }
 
+    public function test_profile_unlock_requires_completed_ocr(): void
+    {
+        $this->assertTrue(KtpFieldMapper::unlocksProfile('ready', ['nama' => 'BUDI']));
+        $this->assertFalse(KtpFieldMapper::unlocksProfile('accepted', ['nama' => 'BUDI']));
+        $this->assertFalse(KtpFieldMapper::unlocksProfile('extracting', ['nama' => 'BUDI']));
+    }
+
     #[DataProvider('identityDocumentTypes')]
     public function test_preserves_identity_document_classification(string $type): void
     {
@@ -154,6 +161,12 @@ final class KtpFieldMapperTest extends TestCase
     public static function identityDocumentTypes(): array
     {
         return [['KTP'], ['SIM'], ['UNKNOWN']];
+    }
+
+    public function test_mobile_identity_types_include_ktp_and_sim_only(): void
+    {
+        $this->assertSame(['KTP', 'SIM'], KtpFieldMapper::SUPPORTED_DOCUMENT_TYPES);
+        $this->assertNotContains('PASPOR', KtpFieldMapper::SUPPORTED_DOCUMENT_TYPES);
     }
 
     public function test_generic_documents_never_expose_secrets_or_upstream_metadata(): void

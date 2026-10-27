@@ -161,7 +161,9 @@ class Penetapan extends Component
 
                     $status_cetak = $this->getStatusCetak($izin);
                     $last_status = $izin->status_izin->last();
-                    return ($last_status->keterangan == BackOfficeStatusEnum::DIIZINKAN || !$this->isAlreadyPrinted($status_cetak ?? $last_status)) && !in_array($last_status->keterangan, $disallowed_status);
+                    // Printed permits stay available for reprint. Hiding them after
+                    // eight hours made back-office recovery depend on stale time.
+                    return ($last_status->keterangan == BackOfficeStatusEnum::DIIZINKAN || $status_cetak !== null) && !in_array($last_status->keterangan, $disallowed_status);
                 });
                 break;
 

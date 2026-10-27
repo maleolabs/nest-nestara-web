@@ -67,6 +67,9 @@ class PenyerahanIndex extends Component
     private function setData()
     {
         $filter_status = [
+            // A permit can still be in the print workflow when handover is
+            // opened; keep printed records visible instead of dropping them.
+            StatusIzinEnum::PROSES,
             StatusIzinEnum::PENERBITAN,
             StatusIzinEnum::PENYERAHAN,
         ];

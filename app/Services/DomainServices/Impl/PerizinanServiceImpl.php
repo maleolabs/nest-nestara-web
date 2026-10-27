@@ -198,12 +198,6 @@ class PerizinanServiceImpl implements PerizinanService
                     });
             });
         }
-        if (in_array(OfficeStatus::DICETAK, $filter_keterangan, true)) {
-            $semua_izin->whereExists(fn ($generation) => $generation
-                ->selectRaw('1')->from('permit_letter_generations as plg')
-                ->whereColumn('plg.izin_id', 'izin.id')
-                ->where('plg.status', PermitLetterGeneration::COMPLETED));
-        }
         if ($search !== '') {
             $semua_izin->where(function ($query) use ($search) {
                 $query->whereHas('jenis_perizinan', function ($jenis_perizinan) use ($search) {

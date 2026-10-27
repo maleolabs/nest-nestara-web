@@ -194,7 +194,10 @@ class PerizinanServiceImpl implements PerizinanService
                 })
                     ->orWhere(function ($query) {
                         $query->where('ls.nama', Status::PROSES)
-                            ->whereIn('ls.keterangan', [OfficeStatus::DICETAK, OfficeStatus::IZIN_AKAN_DITERBITKAN]);
+                            ->whereIn('ls.keterangan', [
+                                OfficeStatus::DICETAK,
+                                OfficeStatus::IZIN_AKAN_DITERBITKAN,
+                            ]);
                     });
             });
         }
@@ -584,7 +587,13 @@ class PerizinanServiceImpl implements PerizinanService
         if (!$actor || ($pegawai_id && $pegawai_id !== $actor)) throw new \UnauthorizedHttpException('Authenticated pegawai required');
         if (!in_array($rekomendasi, [OfficeStatus::DIREKOM, OfficeStatus::TIDAK_DIREKOM, OfficeStatus::REKOM_CATATAN, OfficeStatus::BAHAS_LANJUT], true)) throw new \InvalidArgumentException('Invalid recommendation');
         if (!in_array($jenis_kegiatan, [OfficeStatus::PERIKSA_BERKAS, OfficeStatus::SURVEY_LAPANGAN, OfficeStatus::RAPAT_TIM], true)) throw new \InvalidArgumentException('Invalid activity');
-        $status = StatusIzin::where('izin_id', $izin_id)->latest('created_at')->latest('id')->first();
+            $status = StatusIzin::where('izin_id', $izin_id)->latest('created_at')->latest('id')->first();
+        if ($status && $status->nama === Status::PROSES
+            && $status->progres === Progres::PROCESSING
+            && $status->keterangan === $rekomendasi
+            && $status->detail_keterangan === $jenis_kegiatan) {
+            return;
+        }
         if (!$status || $status->nama !== Status::PROSES || $status->progres !== Progres::PROCESSING || !in_array($status->keterangan, [OfficeStatus::SUDAH_ENTRI, OfficeStatus::SUDAH_ENTRI_TINJAUAN_LAPANGAN], true)) throw new \InvalidArgumentException('Permit is not ready for recommendation');
         $this->statusIzinService->appendStatusIzinWithDetail($izin_id, Status::PROSES, Progres::PROCESSING, $rekomendasi, $jenis_kegiatan, $actor);
     }

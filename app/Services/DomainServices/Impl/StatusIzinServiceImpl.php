@@ -156,10 +156,16 @@ class StatusIzinServiceImpl implements StatusIzinService {
             }
             $current = StatusIzin::where('izin_id', $izin_id)->latest('created_at')->latest('id')->lockForUpdate()->first();
             if (!$current || $current->nama !== $status || $current->progres !== $progres) {
+                // Repeated submit after first request already appended result.
+                // Keep operation UX-safe; current recommendation is terminal for this action.
+                if ($current && $current->nama === $status && $current->progres === $progres
+                    && $current->keterangan === $keterangan && $current->detail_keterangan === $detail_keterangan) {
+                    return;
+                }
                 throw new \InvalidArgumentException('Permit status is no longer eligible');
             }
             if ($current->keterangan === $keterangan && $current->detail_keterangan === $detail_keterangan) {
-                throw new \InvalidArgumentException('Recommendation already submitted');
+                return;
             }
             $new = StatusIzin::create(['izin_id' => $izin_id, 'nama' => $status, 'progres' => $progres, 'keterangan' => $keterangan, 'detail_keterangan' => $detail_keterangan, 'pegawai_id' => $pegawai_id]);
             RiwayatProsesIzin::create(['izin_id' => $izin_id, 'status_izin_id' => $new->id, 'pegawai_id' => $pegawai_id, 'progres' => $progres, 'keterangan' => $keterangan]);

@@ -34,4 +34,19 @@ class PenetapanTest extends TestCase
 
         self::assertCount(1, $method->invoke($component, 'Pembuatan Izin'));
     }
+
+    public function test_printed_permit_with_completed_letter_is_handover_eligible(): void
+    {
+        $component = new \App\Livewire\Dashboard\Penyerahan\PenyerahanIndex;
+        $property = new \ReflectionProperty($component, 'all_izin');
+        $property->setAccessible(true);
+        $property->setValue($component, collect([(object) [
+            'status_izin' => new Collection([(object) ['keterangan' => BackOfficeStatusEnum::DICETAK]]),
+            'permitLetterGenerations' => new Collection([
+                new PermitLetterGeneration(['status' => PermitLetterGeneration::COMPLETED, 'path' => 'x.pdf']),
+            ]),
+        ]]));
+
+        self::assertCount(1, $property->getValue($component));
+    }
 }

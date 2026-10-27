@@ -662,10 +662,12 @@ class PerizinanServiceImpl implements PerizinanService
             if (!$izin)
                 return;
             $izin_status = $izin->latestStatus;
-            if ($izin_status?->nama == Status::PENERBITAN) {
-                $this->statusIzinService->updateStatusIzin($izin_id, Status::PENERBITAN, Progres::FINISHED, OfficeStatus::IZIN_TELAH_DITERBITKAN, null, null, false, true);
-                $this->statusIzinService->updateStatusIzin($izin_id, Status::PENYERAHAN, Progres::PROCESSING, null, $pegawai_id);
+            if (!$izin_status || $izin_status->nama !== Status::PENERBITAN || $izin_status->progres !== Progres::PROCESSING) {
+                throw new \InvalidArgumentException('Permit is not in penerbitan processing state');
             }
+
+            $this->statusIzinService->updateStatusIzin($izin_id, Status::PENERBITAN, Progres::FINISHED, OfficeStatus::IZIN_TELAH_DITERBITKAN, null, null, false, true);
+            $this->statusIzinService->updateStatusIzin($izin_id, Status::PENYERAHAN, Progres::PROCESSING, null, $pegawai_id);
         });
     }
 
@@ -676,9 +678,11 @@ class PerizinanServiceImpl implements PerizinanService
             if (!$izin)
                 return;
             $izin_status = $izin->latestStatus;
-            if ($izin_status?->nama == Status::PENYERAHAN) {
-                $this->statusIzinService->updateStatusIzin($izin_id, Status::PENYERAHAN, Progres::FINISHED, OfficeStatus::IZIN_TELAH_DISERAHKAN, $pegawai_id);
+            if (!$izin_status || $izin_status->nama !== Status::PENYERAHAN || $izin_status->progres !== Progres::PROCESSING) {
+                throw new \InvalidArgumentException('Permit is not in penyerahan processing state');
             }
+
+            $this->statusIzinService->updateStatusIzin($izin_id, Status::PENYERAHAN, Progres::FINISHED, OfficeStatus::IZIN_TELAH_DISERAHKAN, $pegawai_id);
         });
     }
 

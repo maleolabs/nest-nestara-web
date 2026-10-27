@@ -90,7 +90,7 @@
                         </dl>
 
                         {{-- aksi status --}}
-                        @if ($previewStatus->nama === $statusIzin::PENERBITAN)
+                        @if ($previewStatus->nama === $statusIzin::PENERBITAN && $previewStatus->progres === $statusProgres::PROCESSING)
                             <div class="mt-5 rounded-xl bg-amber-50 p-4 ring-1 ring-amber-200">
                                 <p class="text-sm font-bold text-amber-800"><i class="fa-solid fa-pen-nib mr-1.5"></i>Proses penandatanganan berlangsung</p>
                                 <p class="mt-1 text-xs leading-relaxed text-amber-800/80">Pastikan seluruh informasi pada surat izin telah diverifikasi sebelum melanjutkan.</p>
@@ -101,7 +101,7 @@
                                     <span wire:loading wire:target='penerbitanFinished'><i class="fa-solid fa-spinner fa-spin"></i> Memperbarui…</span>
                                 </button>
                             </div>
-                        @else
+                        @elseif ($previewStatus->nama === $statusIzin::PENYERAHAN && $previewStatus->progres === $statusProgres::PROCESSING)
                             <div class="mt-5 rounded-xl bg-emerald-50 p-4 ring-1 ring-emerald-200">
                                 <p class="text-sm font-bold text-emerald-800"><i class="fa-solid fa-hand-holding-heart mr-1.5"></i>Surat izin siap diserahkan</p>
                                 <p class="mt-1 text-xs leading-relaxed text-emerald-800/80">Serahkan dokumen kepada pemohon, lalu tandai selesai agar proses terdokumentasi.</p>

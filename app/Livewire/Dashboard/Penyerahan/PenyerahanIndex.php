@@ -109,6 +109,11 @@ class PenyerahanIndex extends Component
     public function penerbitanFinished($izin_id)
     {
         if ((int) $this->preview_izin_id !== (int) $izin_id) return;
+        $status = $this->getPerizinanService()->find($izin_id)?->latestStatus;
+        if (!$status || $status->nama !== StatusIzinEnum::PENERBITAN || $status->progres !== StatusIzinProgressEnum::PROCESSING) {
+            $this->dispatch('handover-feedback', type: 'error', message: 'Izin tidak berada pada tahap penerbitan.');
+            return;
+        }
         $auth_user = auth()->user();
         $pegawai_id = $auth_user->pegawai ? $auth_user->pegawai->id : null;
         $this->getPerizinanService()->penerbitanFinished($izin_id, $pegawai_id);
@@ -124,7 +129,7 @@ class PenyerahanIndex extends Component
 
         $izin = $this->getPerizinanService()->find($izin_id);
         $status = $izin?->latestStatus;
-        if (!$status || $status->nama !== StatusIzinEnum::PENYERAHAN || $status->progres === StatusIzinProgressEnum::FINISHED) {
+        if (!$status || $status->nama !== StatusIzinEnum::PENYERAHAN || $status->progres !== StatusIzinProgressEnum::PROCESSING) {
             $this->dispatch('handover-feedback', type: 'error', message: 'Izin sudah selesai atau tidak bisa diserahkan.');
             return;
         }

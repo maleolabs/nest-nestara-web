@@ -144,6 +144,31 @@ class PerizinanServiceTest extends TestCase
 
         $this->assertTrue($permits->contains('id', $izin->id));
     }
+
+    public function test_handover_transitions_penerbitan_to_penyerahan_to_completed(): void
+    {
+        $jenis = JenisPerizinan::create(['nama' => 'IZIN HANDOVER TRANSITION TEST']);
+        $izin = Izin::create(['jenis_perizinan_id' => $jenis->id, 'pemohon_id' => Pemohon::factory()->create()->id, 'no_pendaftaran' => 100]);
+        StatusIzin::create(['izin_id' => $izin->id, 'nama' => StatusIzinEnum::PENERBITAN, 'progres' => StatusIzinProgressEnum::PROCESSING]);
+
+        $service = $this->perizinanService();
+        $service->penerbitanFinished($izin->id);
+        $this->assertSame(StatusIzinEnum::PENYERAHAN, $izin->fresh()->latestStatus->nama);
+        $this->assertSame(StatusIzinProgressEnum::PROCESSING, $izin->fresh()->latestStatus->progres);
+
+        $service->allDone($izin->id);
+        $this->assertSame(StatusIzinProgressEnum::FINISHED, $izin->fresh()->latestStatus->progres);
+    }
+
+    public function test_handover_rejects_invalid_or_repeated_transitions(): void
+    {
+        $jenis = JenisPerizinan::create(['nama' => 'IZIN HANDOVER GUARD TEST']);
+        $izin = Izin::create(['jenis_perizinan_id' => $jenis->id, 'pemohon_id' => Pemohon::factory()->create()->id, 'no_pendaftaran' => 101]);
+        StatusIzin::create(['izin_id' => $izin->id, 'nama' => StatusIzinEnum::PENYERAHAN, 'progres' => StatusIzinProgressEnum::FINISHED]);
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->perizinanService()->allDone($izin->id);
+    }
  
     private function perizinanService(): PerizinanService
     {

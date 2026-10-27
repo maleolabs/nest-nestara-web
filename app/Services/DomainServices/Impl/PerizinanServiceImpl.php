@@ -8,6 +8,7 @@ use App\Mail\RegistrationRevisionMail;
 use App\Models\DokumenPemohon;
 use App\Models\Izin;
 use App\Models\OcrRequest as OcrRequestModel;
+use App\Models\PermitLetterGeneration;
 use App\Models\StatusIzin;
 use App\Services\AppService\FileService;
 use App\Services\DomainServices\DokumenPemohonService;
@@ -183,7 +184,14 @@ class PerizinanServiceImpl implements PerizinanService
         $this->joinLatestStatus($semua_izin, $filter_status, $filter_status_progress, $filter_keterangan);
         if ($handoverPrintedOnly) {
             $semua_izin->where(function ($query) {
-                $query->whereIn('ls.nama', [Status::PENERBITAN, Status::PENYERAHAN])
+                $query->where(function ($query) {
+                    $query->whereIn('ls.nama', [Status::PENERBITAN, Status::PENYERAHAN])
+                        ->whereExists(fn ($generation) => $generation
+                            ->selectRaw('1')
+                            ->from('permit_letter_generations as plg')
+                            ->whereColumn('plg.izin_id', 'izin.id')
+                            ->where('plg.status', PermitLetterGeneration::COMPLETED));
+                })
                     ->orWhere(function ($query) {
                         $query->where('ls.nama', Status::PROSES)
                             ->whereIn('ls.keterangan', [OfficeStatus::DICETAK, OfficeStatus::IZIN_AKAN_DITERBITKAN]);
@@ -293,6 +301,12 @@ class PerizinanServiceImpl implements PerizinanService
                 'm',
                 fn ($join) => $join->on('m.izin_id', '=', 's.izin_id')->on('m.max_created', '=', 's.created_at')
             )
+            ->whereNotExists(fn ($tie) => $tie
+                ->selectRaw('1')
+                ->from('status_izin as newer')
+                ->whereColumn('newer.izin_id', 's.izin_id')
+                ->whereColumn('newer.created_at', 's.created_at')
+                ->whereColumn('newer.id', '>', 's.id'))
             ->select('s.izin_id', 's.nama', 's.progres', 's.keterangan');
 
         $builder->joinSub($latest, 'ls', 'ls.izin_id', '=', 'izin.id');

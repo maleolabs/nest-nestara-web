@@ -77,7 +77,6 @@ class PenyerahanIndex extends Component
             StatusIzinProgressEnum::UNPROCESSED,
             StatusIzinProgressEnum::PROCESSING,
             StatusIzinProgressEnum::FINISHED,
-            StatusIzinProgressEnum::CANCELED,
         ];
 
         $this->all_izin = $this->getPerizinanService()->get(

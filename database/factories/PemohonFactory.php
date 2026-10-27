@@ -29,7 +29,7 @@ class PemohonFactory extends Factory
             'sumber_identitas' => 'ktp',
             'nomor_id' => fake()->randomNumber(),
             'nama_pemohon' => fake()->name(),
-            'no_telepon' => fake()->phoneNumber(),
+            'no_telepon' => fake()->numerify('08##########'),
             'provinsi' => 75,
             'kabupaten' => 7571,
             'kecamatan' => 7571030,

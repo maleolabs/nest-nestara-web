@@ -198,7 +198,7 @@ class PerizinanServiceImpl implements PerizinanService
                     });
             });
         }
-        if (in_array(BackOfficeStatusEnum::DICETAK, $filter_keterangan, true)) {
+        if (in_array(OfficeStatus::DICETAK, $filter_keterangan, true)) {
             $semua_izin->whereExists(fn ($generation) => $generation
                 ->selectRaw('1')->from('permit_letter_generations as plg')
                 ->whereColumn('plg.izin_id', 'izin.id')

@@ -207,7 +207,9 @@ class KtpFieldMapper
             'FAILED', 'FAILURE', 'ERROR' => self::STATUS_FAILED,
             'MANUAL_REVIEW', 'REVIEW', 'NEEDS_REVIEW' => self::STATUS_MANUAL_REVIEW,
             'WAITING', 'PROCESSING' => self::STATUS_PENDING,
-            default => self::STATUS_PENDING,
+            // Unknown or missing upstream values are terminal failures. Pending is
+            // reserved for statuses explicitly declared in-flight by Vision.
+            default => self::STATUS_FAILED,
         };
     }
 

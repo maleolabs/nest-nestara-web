@@ -40,7 +40,7 @@ final class IdentityDocumentAPIServiceImpl implements IdentityDocumentAPIService
                 'decision' => $data['decision'] ?? null,
                 'reasonCode' => $data['reasonCode'] ?? null,
                 'status' => $data['status'] ?? null,
-            ], $response->successful(), $response->successful() ? null : ($payload['message'] ?? null));
+            ], $response->successful(), $response->successful() ? null : ($payload['message'] ?? null), $response->status());
         } catch (\Throwable $exception) {
             Log::channel('app')->error('identity document check failed', [
                 'exception' => $exception::class,
@@ -70,7 +70,7 @@ final class IdentityDocumentAPIServiceImpl implements IdentityDocumentAPIService
             // Keep identity status payload intact, including fields returned by Vision.
             // Do not reshape it into generic OCR response semantics.
 
-            return new OcrResponse($data, $response->successful(), $response->successful() ? null : ($payload['message'] ?? null));
+            return new OcrResponse($data, $response->successful(), $response->successful() ? null : ($payload['message'] ?? null), $response->status());
         } catch (\Throwable $exception) {
             Log::channel('app')->error('vision identity status failed', ['exception' => $exception::class]);
 

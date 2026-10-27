@@ -21,15 +21,23 @@ class IdentityDocumentController extends Controller
 
     public function store(OcrKtpRequest $request): JsonResponse
     {
+        $startedAt = microtime(true);
         $userId = Auth::guard('api')->id();
+        $logContext = ['user_ref' => $this->hashRef($userId)];
         $file = $request->file('image');
         $path = 'private_files/identity-documents/'.Str::random(40).'.'.$file->getClientOriginalExtension();
         if (! Storage::put($path, Crypt::encrypt($file->getContent()))) {
+            Log::channel('app')->warning('identity.inbound.store_failed', $logContext + ['duration_ms' => $this->durationMs($startedAt)]);
+
             return response()->json(['code' => 'storage_unavailable'], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
+        Log::channel('app')->info('identity.inbound.stored', $logContext + ['duration_ms' => $this->durationMs($startedAt)]);
         try {
+            $visionStartedAt = microtime(true);
             $response = $this->identityVision->check($file->getContent(), $file->getClientOriginalName(), (string) $request->input('documentType', 'KTP'));
+            Log::channel('app')->info('identity.vision.outbound.response', $logContext + ['duration_ms' => $this->durationMs($visionStartedAt), 'http_status' => $response?->getHttpStatus(), 'success' => $response?->isSuccess()]);
         } catch (\Throwable $exception) {
+            Log::channel('app')->error('identity.vision.outbound.failure', $logContext + ['duration_ms' => $this->durationMs($visionStartedAt ?? $startedAt), 'exception' => $exception::class]);
             Storage::delete($path);
             throw $exception;
         }
@@ -37,6 +45,7 @@ class IdentityDocumentController extends Controller
         $requestId = $data['requestId'] ?? null;
 
         if (! $response?->isSuccess() || ! is_string($requestId) || $requestId === '') {
+            Log::channel('app')->warning('identity.vision.outbound.failure', $logContext + ['http_status' => $response?->getHttpStatus()]);
             Storage::delete($path);
 
             return response()->json(['code' => 'vision_unavailable', 'status' => 'failed'], Response::HTTP_BAD_GATEWAY);
@@ -55,18 +64,24 @@ class IdentityDocumentController extends Controller
             throw $exception;
         }
 
+        Log::channel('app')->info('identity.mapped.terminal_result', $logContext + ['request_ref' => $this->hashRef($requestId), 'status' => $record->status, 'duration_ms' => $this->durationMs($startedAt)]);
+
         return response()->json(['check_id' => $record->public_check_id, 'status' => $record->status], Response::HTTP_ACCEPTED);
     }
 
     public function status(string $checkId): JsonResponse
     {
+        $startedAt = microtime(true);
+        $logContext = ['check_ref' => $this->hashRef($checkId)];
         $record = IdentityDocument::where('user_id', Auth::guard('api')->id())->where('public_check_id', $checkId)->first();
         if (! $record) {
             return response()->json(['code' => 'not_found'], Response::HTTP_NOT_FOUND);
         }
 
         if ($record->status === KtpFieldMapper::STATUS_PENDING) {
+            $visionStartedAt = microtime(true);
             $check = $this->identityVision->status($record->request_id);
+            Log::channel('app')->info('identity.vision.outbound.status', $logContext + ['request_ref' => $this->hashRef($record->request_id), 'duration_ms' => $this->durationMs($visionStartedAt), 'http_status' => $check?->getHttpStatus(), 'success' => $check?->isSuccess()]);
             if (! $check || ! $check->isSuccess()) {
                 $record->refresh();
                 if (in_array($record->status, [KtpFieldMapper::STATUS_DONE, KtpFieldMapper::STATUS_MANUAL_REVIEW, KtpFieldMapper::STATUS_REJECTED, KtpFieldMapper::STATUS_FAILED, 'done'], true)) {
@@ -105,6 +120,9 @@ class IdentityDocumentController extends Controller
                 $record->error = is_string($reason) && $reason !== '' ? Str::limit($reason, 100, '') : 'vision_processing_failed';
             }
             $record->save();
+            if ($status !== KtpFieldMapper::STATUS_PENDING) {
+                Log::channel('app')->info('identity.mapped.terminal_result', $logContext + ['status' => $status, 'duration_ms' => $this->durationMs($startedAt)]);
+            }
             if ($status !== KtpFieldMapper::STATUS_PENDING && $record->file_path) {
                 $filePath = $record->file_path;
                 try {
@@ -121,6 +139,16 @@ class IdentityDocumentController extends Controller
         }
 
         return $this->statusResponse($checkId, $record);
+    }
+
+    private function hashRef(int|string|null $value): ?string
+    {
+        return $value === null ? null : hash('sha256', (string) $value);
+    }
+
+    private function durationMs(float $startedAt): int
+    {
+        return (int) round((microtime(true) - $startedAt) * 1000);
     }
 
     private function statusResponse(string $checkId, IdentityDocument $record): JsonResponse

@@ -76,6 +76,29 @@ final class IdentityDocumentTest extends TestCase
             ->assertOk()->assertJsonPath('status', 'done')->assertJsonPath('data.nama', 'BUDI');
     }
 
+    #[DataProvider('invalidVisionStatuses')]
+    public function test_unknown_or_missing_vision_status_is_persisted_as_failed(?string $upstream): void
+    {
+        $user = User::factory()->create(['username' => 'identity-invalid-status-'.($upstream ?? 'missing')]);
+        $record = OcrKtpRequest::create([
+            'user_id' => $user->id, 'request_id' => 'req-invalid',
+            'public_check_id' => '44444444-4444-4444-8444-444444444444', 'status' => 'pending',
+        ]);
+        $identityVision = Mockery::mock(IdentityDocumentAPIService::class);
+        $identityVision->shouldReceive('status')->once()->with('req-invalid')
+            ->andReturn(new OcrResponse($upstream === null ? [] : ['status' => $upstream], true, null));
+        $this->app->instance(IdentityDocumentAPIService::class, $identityVision);
+
+        $this->withToken(JWTAuth::fromUser($user))->getJson('/api/identity-documents/'.$record->public_check_id)
+            ->assertOk()->assertJsonPath('status', 'failed');
+        $this->assertDatabaseHas('ocr_ktp_requests', ['id' => $record->id, 'status' => 'failed']);
+    }
+
+    public static function invalidVisionStatuses(): array
+    {
+        return [['UNKNOWN'], [null]];
+    }
+
     public static function terminalStatuses(): array
     {
         return [

@@ -10,11 +10,14 @@ class OcrResponse
 
     private ?string $errorMessage;
 
-    public function __construct(array $data, bool $success, ?string $errorMessage)
+    private ?int $httpStatus;
+
+    public function __construct(array $data, bool $success, ?string $errorMessage, ?int $httpStatus = null)
     {
         $this->data = $data;
         $this->success = $success;
         $this->errorMessage = $errorMessage;
+        $this->httpStatus = $httpStatus;
     }
 
     public static function failure(?string $message = null): self
@@ -55,6 +58,11 @@ class OcrResponse
     public function getErrorMessage(): ?string
     {
         return $this->errorMessage;
+    }
+
+    public function getHttpStatus(): ?int
+    {
+        return $this->httpStatus;
     }
 
     public function toArray(): array

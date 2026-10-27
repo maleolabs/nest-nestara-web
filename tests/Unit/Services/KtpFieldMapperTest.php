@@ -129,8 +129,8 @@ final class KtpFieldMapperTest extends TestCase
         $this->assertSame(KtpFieldMapper::STATUS_PENDING, KtpFieldMapper::mapStatus('PROCESSING'));
         $this->assertSame(KtpFieldMapper::STATUS_DONE, KtpFieldMapper::mapStatus('DONE'));
         $this->assertSame(KtpFieldMapper::STATUS_FAILED, KtpFieldMapper::mapStatus('FAILURE'));
-        $this->assertSame(KtpFieldMapper::STATUS_PENDING, KtpFieldMapper::mapStatus(null));
-        $this->assertSame(KtpFieldMapper::STATUS_PENDING, KtpFieldMapper::mapStatus('UNKNOWN'));
+        $this->assertSame(KtpFieldMapper::STATUS_FAILED, KtpFieldMapper::mapStatus(null));
+        $this->assertSame(KtpFieldMapper::STATUS_FAILED, KtpFieldMapper::mapStatus('UNKNOWN'));
     }
 
     public function test_maps_status_case_insensitive(): void

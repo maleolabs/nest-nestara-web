@@ -184,14 +184,11 @@ class PerizinanServiceImpl implements PerizinanService
         $this->joinLatestStatus($semua_izin, $filter_status, $filter_status_progress, $filter_keterangan);
         if ($handoverPrintedOnly) {
             $semua_izin->where(function ($query) {
-                $query->where(function ($query) {
-                    $query->whereIn('ls.nama', [Status::PENERBITAN, Status::PENYERAHAN])
-                        ->whereExists(fn ($generation) => $generation
-                            ->selectRaw('1')
-                            ->from('permit_letter_generations as plg')
-                            ->whereColumn('plg.izin_id', 'izin.id')
-                            ->where('plg.status', PermitLetterGeneration::COMPLETED));
-                })
+                $query->whereExists(fn ($generation) => $generation
+                    ->selectRaw('1')
+                    ->from('permit_letter_generations as plg')
+                    ->whereColumn('plg.izin_id', 'izin.id')
+                    ->where('plg.status', PermitLetterGeneration::COMPLETED))
                     ->orWhere(function ($query) {
                         $query->where('ls.nama', Status::PROSES)
                             ->whereIn('ls.keterangan', [

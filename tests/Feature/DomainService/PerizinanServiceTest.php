@@ -5,6 +5,7 @@ namespace Tests\Feature\DomainService;
 use App\Models\Izin;
 use App\Models\JenisPerizinan;
 use App\Models\Pemohon;
+use App\Models\PermitLetterGeneration;
 use App\Models\StatusIzin;
 use App\Services\DomainServices\PerizinanService;
 use App\utils\enums\StatusIzinEnum;
@@ -68,6 +69,50 @@ class PerizinanServiceTest extends TestCase
         $this->assertTrue($this->perizinanService()->cancelRegistration($izin->id));
 
         $this->assertSame(StatusIzinEnum::BATAL, $izin->fresh()->latestStatus->nama);
+    }
+
+    public function test_handover_query_returns_two_permits_with_completed_letters(): void
+    {
+        $jenis = JenisPerizinan::create(['nama' => 'IZIN HANDOVER TEST']);
+
+        foreach (range(1, 2) as $number) {
+            $izin = Izin::create([
+                'jenis_perizinan_id' => $jenis->id,
+                'pemohon_id' => Pemohon::create([
+                    'sumber_identitas' => 'ktp',
+                    'nomor_id' => "handover-{$number}",
+                    'nama_pemohon' => "Handover {$number}",
+                    'no_telepon' => '081234567890',
+                    'provinsi' => 1,
+                    'kabupaten' => 1,
+                    'kecamatan' => 1,
+                    'kelurahan' => 1,
+                    'detail_alamat' => 'Test address',
+                ])->id,
+                'no_pendaftaran' => $number,
+            ]);
+            StatusIzin::create([
+                'izin_id' => $izin->id,
+                'nama' => StatusIzinEnum::PROSES,
+                'progres' => StatusIzinProgressEnum::PROCESSING,
+                'keterangan' => 'diizinkan',
+            ]);
+            PermitLetterGeneration::create([
+                'izin_id' => $izin->id,
+                'status' => PermitLetterGeneration::COMPLETED,
+                'path' => "permit-letters/{$number}.pdf",
+            ]);
+        }
+
+        $permits = $this->perizinanService()->get(
+            filter_status: [StatusIzinEnum::PROSES, StatusIzinEnum::PENERBITAN, StatusIzinEnum::PENYERAHAN],
+            filter_status_progress: [StatusIzinProgressEnum::UNPROCESSED, StatusIzinProgressEnum::PROCESSING, StatusIzinProgressEnum::FINISHED],
+            filter_start_date: now()->subDay()->toDateString(),
+            filter_end_date: now()->toDateString(),
+            handoverPrintedOnly: true,
+        );
+
+        $this->assertCount(2, $permits);
     }
  
     private function perizinanService(): PerizinanService

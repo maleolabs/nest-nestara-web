@@ -7,12 +7,15 @@ use App\Models\JenisPerizinan;
 use App\Models\Pemohon;
 use App\Models\PermitLetterGeneration;
 use App\Models\StatusIzin;
+use App\Models\User;
+use App\Mail\PermitReadyForHandoverMail;
 use App\Services\DomainServices\PerizinanService;
 use App\utils\enums\StatusIzinEnum;
 use App\utils\enums\StatusIzinProgressEnum;
 use App\utils\enums\BackOfficeStatusEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
@@ -172,6 +175,57 @@ class PerizinanServiceTest extends TestCase
 
         $this->assertSame(StatusIzinEnum::PENYERAHAN, $izin->fresh()->latestStatus->nama);
         $this->assertSame(StatusIzinProgressEnum::PROCESSING, $izin->fresh()->latestStatus->progres);
+    }
+
+    public function test_printed_permit_queues_ready_notification_after_commit_to_applicant_email(): void
+    {
+        Mail::fake();
+        $user = User::factory()->create(['username' => 'applicant-test', 'email' => 'applicant@example.test']);
+        $pemohon = Pemohon::factory()->create(['user_id' => $user->id]);
+        $jenis = JenisPerizinan::create(['nama' => 'IZIN NOTIFICATION TEST']);
+        $izin = Izin::create(['jenis_perizinan_id' => $jenis->id, 'pemohon_id' => $pemohon->id, 'no_pendaftaran' => 103]);
+        StatusIzin::create(['izin_id' => $izin->id, 'nama' => StatusIzinEnum::PROSES, 'progres' => StatusIzinProgressEnum::FINISHED, 'keterangan' => BackOfficeStatusEnum::DIIZINKAN]);
+        PermitLetterGeneration::create(['izin_id' => $izin->id, 'status' => PermitLetterGeneration::COMPLETED, 'path' => 'permit-letters/notification.pdf']);
+
+        $this->perizinanService()->printedPermitReadyForHandover($izin->id);
+
+        Mail::assertQueued(PermitReadyForHandoverMail::class, fn ($mail) => $mail->hasTo('applicant@example.test') && $mail->izin->is($izin));
+        $this->assertDatabaseHas('permit_ready_notifications', ['izin_id' => $izin->id, 'event' => 'ready_for_handover']);
+    }
+
+    public function test_printed_permit_does_not_queue_notification_when_applicant_email_missing(): void
+    {
+        Mail::fake();
+        $user = User::factory()->create(['username' => 'no-email-test', 'email' => null]);
+        $pemohon = Pemohon::factory()->create(['user_id' => $user->id]);
+        $jenis = JenisPerizinan::create(['nama' => 'IZIN NO EMAIL TEST']);
+        $izin = Izin::create(['jenis_perizinan_id' => $jenis->id, 'pemohon_id' => $pemohon->id, 'no_pendaftaran' => 104]);
+        StatusIzin::create(['izin_id' => $izin->id, 'nama' => StatusIzinEnum::PROSES, 'progres' => StatusIzinProgressEnum::FINISHED, 'keterangan' => BackOfficeStatusEnum::DIIZINKAN]);
+        PermitLetterGeneration::create(['izin_id' => $izin->id, 'status' => PermitLetterGeneration::COMPLETED, 'path' => 'permit-letters/no-email.pdf']);
+
+        $this->perizinanService()->printedPermitReadyForHandover($izin->id);
+
+        Mail::assertNothingQueued();
+        $this->assertDatabaseHas('permit_ready_notifications', ['izin_id' => $izin->id, 'event' => 'ready_for_handover']);
+    }
+
+    public function test_repeated_ready_event_does_not_queue_duplicate_notification(): void
+    {
+        Mail::fake();
+        $user = User::factory()->create(['username' => 'duplicate-test', 'email' => 'duplicate@example.test']);
+        $pemohon = Pemohon::factory()->create(['user_id' => $user->id]);
+        $jenis = JenisPerizinan::create(['nama' => 'IZIN DUPLICATE TEST']);
+        $izin = Izin::create(['jenis_perizinan_id' => $jenis->id, 'pemohon_id' => $pemohon->id, 'no_pendaftaran' => 105]);
+        StatusIzin::create(['izin_id' => $izin->id, 'nama' => StatusIzinEnum::PROSES, 'progres' => StatusIzinProgressEnum::FINISHED, 'keterangan' => BackOfficeStatusEnum::DIIZINKAN]);
+        PermitLetterGeneration::create(['izin_id' => $izin->id, 'status' => PermitLetterGeneration::COMPLETED, 'path' => 'permit-letters/duplicate.pdf']);
+        $service = $this->perizinanService();
+        $service->printedPermitReadyForHandover($izin->id);
+
+        $this->expectException(\InvalidArgumentException::class);
+        try { $service->printedPermitReadyForHandover($izin->id); } finally {
+            Mail::assertQueuedCount(1);
+            $this->assertDatabaseCount('permit_ready_notifications', 1);
+        }
     }
 
     public function test_handover_rejects_invalid_or_repeated_transitions(): void

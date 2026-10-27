@@ -47,7 +47,7 @@
                     </div>
                 @endif
 
-                @if ($previewStatus && $previewStatus->nama !== $statusIzin::PENYERAHAN)
+                @if ($previewStatus && ($previewStatus->nama !== $statusIzin::PENYERAHAN || $previewStatus->progres === $statusProgres::PROCESSING))
                         {{-- identitas izin --}}
                         <div class="rounded-2xl bg-gradient-to-br from-nest-700 to-nest-800 p-4 text-white">
                             <p class="text-[11px] font-bold tracking-widest uppercase text-white/70">Jenis Perizinan</p>

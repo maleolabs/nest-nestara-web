@@ -6,7 +6,9 @@ use App\Models\OcrKtpRequest;
 use App\Models\User;
 use App\Services\APIClient\dto\OcrResponse;
 use App\Services\APIClient\IdentityDocumentAPIService;
+use App\Services\APIClient\OcrAPIService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -39,7 +41,7 @@ final class IdentityDocumentTest extends TestCase
             'public_check_id' => '22222222-2222-4222-8222-222222222222', 'status' => 'pending',
             'file_path' => 'private_files/test.enc',
         ]);
-        Storage::put($record->file_path, 'encrypted');
+        Storage::put($record->file_path, Crypt::encrypt('image-content'));
         $identityVision = Mockery::mock(IdentityDocumentAPIService::class);
         $payload = ['status' => $upstream];
         if (in_array($expected, ['accepted', 'manual_review'], true)) {
@@ -48,12 +50,68 @@ final class IdentityDocumentTest extends TestCase
         $identityVision->shouldReceive('status')->once()->with('req-'.$expected)
             ->andReturn(new OcrResponse($payload, true, null));
         $this->app->instance(IdentityDocumentAPIService::class, $identityVision);
+        if ($expected === 'accepted') {
+            $ocr = Mockery::mock(OcrAPIService::class);
+            $ocr->shouldReceive('sendKtpImageRequest')->once()->withArgs(fn (): bool => true)->andReturn(new OcrResponse(['requestId' => 'ocr-'.$expected], true, null));
+            $ocr->shouldReceive('checkOcrRequestStatus')->never();
+            $this->app->instance(OcrAPIService::class, $ocr);
+        }
 
         $this->withToken(JWTAuth::fromUser($user))->getJson('/api/identity-documents/'.$record->public_check_id)
-            ->assertOk()->assertJsonPath('status', $expected)
-            ->assertJsonPath('profile_unlocked', $expected === 'accepted');
-        $this->assertDatabaseHas('ocr_ktp_requests', ['id' => $record->id, 'status' => $expected, 'file_path' => null]);
-        Storage::assertMissing('private_files/test.enc');
+            ->assertOk()->assertJsonPath('status', $expected === 'accepted' ? 'extracting' : $expected)
+            ->assertJsonPath('profile_unlocked', false);
+        $this->assertDatabaseHas('ocr_ktp_requests', ['id' => $record->id, 'status' => $expected === 'accepted' ? 'extracting' : $expected]);
+        if ($expected === 'accepted') {
+            Storage::assertExists('private_files/test.enc');
+        } else {
+            Storage::assertMissing('private_files/test.enc');
+        }
+    }
+
+    public function test_extraction_completion_returns_ready_and_cleans_file(): void
+    {
+        [$user, $record] = $this->extractionRecord('ready');
+        $ocr = Mockery::mock(OcrAPIService::class);
+        $ocr->shouldReceive('checkOcrRequestStatus')->once()->with('ocr-ready')
+            ->andReturn(new OcrResponse(['status' => 'DONE'], true, null));
+        $ocr->shouldReceive('getOcrResultByRequestId')->once()->with('ocr-ready')
+            ->andReturn(new OcrResponse(['extractedTexts' => ['nama' => 'BUDI']], true, null));
+        $this->app->instance(OcrAPIService::class, $ocr);
+
+        $this->withToken(JWTAuth::fromUser($user))->getJson('/api/identity-documents/'.$record->public_check_id)
+            ->assertOk()->assertJsonPath('status', 'ready')->assertJsonPath('ready', true)
+            ->assertJsonPath('data.nama', 'BUDI');
+        Storage::assertMissing($record->file_path);
+    }
+
+    public function test_extraction_failure_returns_extraction_failed_and_cleans_file(): void
+    {
+        [$user, $record] = $this->extractionRecord('failed');
+        $ocr = Mockery::mock(OcrAPIService::class);
+        $ocr->shouldReceive('checkOcrRequestStatus')->once()->with('ocr-failed')
+            ->andReturn(new OcrResponse(['status' => 'FAILURE'], true, null));
+        $this->app->instance(OcrAPIService::class, $ocr);
+
+        $this->withToken(JWTAuth::fromUser($user))->getJson('/api/identity-documents/'.$record->public_check_id)
+            ->assertOk()->assertJsonPath('status', 'extraction_failed')
+            ->assertJsonPath('reason_code', 'ocr_processing_failed');
+        Storage::assertMissing($record->file_path);
+    }
+
+    private function extractionRecord(string $suffix): array
+    {
+        Storage::fake('local');
+        $user = User::factory()->create(['username' => 'identity-extraction-'.$suffix]);
+        $path = 'private_files/extraction-'.$suffix.'.enc';
+        $record = OcrKtpRequest::create([
+            'user_id' => $user->id, 'request_id' => 'req-extraction-'.$suffix,
+            'extraction_request_id' => 'ocr-'.$suffix,
+            'public_check_id' => '55555555-5555-4555-8555-555555555555',
+            'status' => 'extracting', 'file_path' => $path,
+        ]);
+        Storage::put($path, Crypt::encrypt('image-content'));
+
+        return [$user, $record];
     }
 
     public function test_vision_failure_returns_persisted_terminal_state(): void

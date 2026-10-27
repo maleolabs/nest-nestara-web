@@ -216,7 +216,7 @@ class PerizinanServiceImpl implements PerizinanService
         }
         $semua_izin
             ->with(['pemohon.user', 'jenis_perizinan', 'latestStatus', 'permitLetterGenerations'])
-            ->orderBy($order_by, $sort);
+            ->orderBy('izin.' . $order_by, $sort)->orderBy('izin.id', $sort);
 
         if ($filter_start_date !== null) {
             $semua_izin->where('izin.created_at', '>=', $filter_start_date);
@@ -589,7 +589,7 @@ class PerizinanServiceImpl implements PerizinanService
         if (!$actor || ($pegawai_id && $pegawai_id !== $actor)) throw new \UnauthorizedHttpException('Authenticated pegawai required');
         if (!in_array($rekomendasi, [OfficeStatus::DIREKOM, OfficeStatus::TIDAK_DIREKOM, OfficeStatus::REKOM_CATATAN, OfficeStatus::BAHAS_LANJUT], true)) throw new \InvalidArgumentException('Invalid recommendation');
         if (!in_array($jenis_kegiatan, [OfficeStatus::PERIKSA_BERKAS, OfficeStatus::SURVEY_LAPANGAN, OfficeStatus::RAPAT_TIM], true)) throw new \InvalidArgumentException('Invalid activity');
-            $status = StatusIzin::where('izin_id', $izin_id)->latest('created_at')->latest('id')->first();
+            $status = StatusIzin::where('izin_id', $izin_id)->orderByDesc('created_at')->orderByDesc('id')->first();
         if ($status && $status->nama === Status::PROSES
             && $status->progres === Progres::PROCESSING
             && $status->keterangan === $rekomendasi

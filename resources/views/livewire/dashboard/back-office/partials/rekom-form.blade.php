@@ -22,7 +22,7 @@
             <form wire:submit.prevent='save'>
                 <fieldset class="mb-5"><legend class="mb-2 text-sm font-bold text-ink-900">Hasil rekomendasi</legend><div class="grid gap-2 sm:grid-cols-2">
                     <div class="flex items-center gap-2">
-                        <input type="radio" class="peer h-4 w-4 accent-nest-700" value="{{ App\utils\enums\BackOfficeStatusEnum::DIREKOM }}" name="rekomendasi" id="direkom" wire:model='rekomendasi'>
+                        <input type="radio" class="peer h-4 w-4 accent-nest-700" value="direkomendasikan" name="rekomendasi" id="direkom" wire:model='rekomendasi'>
                         <label for="direkom" class="flex cursor-pointer items-center gap-2 rounded-xl border border-ink-200 p-3 text-sm font-semibold text-ink-800 peer-checked:border-nest-600 peer-checked:bg-nest-50">Direkomendasikan</label>
                     </div>
                     <div class="flex items-center gap-2">

@@ -46,10 +46,24 @@ class KtpFieldMapper
 
     public const STATUS_REJECTED = 'rejected';
 
+    public const STATUS_READY = 'ready';
+
+    public const STATUS_EXTRACTION_FAILED = 'extraction_failed';
+
+    public static function isIdentityAccepted(string $status): bool
+    {
+        return $status === self::STATUS_DONE;
+    }
+
+    public static function isReady(string $status): bool
+    {
+        return $status === self::STATUS_READY;
+    }
+
     /** Document/status pair accepted by mobile profile gate. */
     public static function unlocksProfile(string $status, array $result): bool
     {
-        return $status === self::STATUS_DONE;
+        return self::isIdentityAccepted($status);
     }
 
     public static function requiredKeys(): array

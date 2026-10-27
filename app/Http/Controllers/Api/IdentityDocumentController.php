@@ -179,6 +179,19 @@ class IdentityDocumentController extends Controller
                 if ($result?->isSuccess()) {
                     $resultData = $result->getData();
                     $extracted = $resultData['extractedTexts'] ?? $resultData['extractedFields'] ?? $resultData['result'] ?? [];
+                    if (! is_array($extracted) && ! is_object($extracted)) {
+                        $extracted = [];
+                    }
+                    if (is_object($extracted)) {
+                        $extracted = get_object_vars($extracted);
+                    }
+                    if ($extracted === []) {
+                        $record->update(['status' => 'extraction_failed', 'error' => 'ocr_result_empty']);
+                        $this->deleteStoredFile($record, $checkId);
+                        $record->refresh();
+
+                        return $this->statusResponse($checkId, $record);
+                    }
                     $record->update(['status' => 'ready', 'result' => KtpFieldMapper::mapExtractedTexts($extracted), 'error' => null]);
                     $this->deleteStoredFile($record, $checkId);
                 } else {
@@ -240,7 +253,7 @@ class IdentityDocumentController extends Controller
             'document_type' => $data['_document_type'] ?? null,
             'reason_code' => $record->error,
             'ready' => $record->status === 'ready',
-            'profile_unlocked' => in_array($record->status, [KtpFieldMapper::STATUS_DONE, 'ready'], true),
+            'profile_unlocked' => KtpFieldMapper::unlocksProfile($record->status, $data),
         ]);
     }
 

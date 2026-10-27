@@ -32,7 +32,7 @@ final class IdentityDocumentAPIServiceImpl implements IdentityDocumentAPIService
                 return null;
             }
 
-            $data = is_array($payload['data'] ?? null) ? $payload['data'] : $payload;
+            $data = self::payloadData($payload);
 
             return new OcrResponse([
                 'requestId' => $data['requestId'] ?? $data['checkId'] ?? $data['id'] ?? null,
@@ -66,7 +66,7 @@ final class IdentityDocumentAPIServiceImpl implements IdentityDocumentAPIService
             if (! is_array($payload)) {
                 return null;
             }
-            $data = is_array($payload['data'] ?? null) ? $payload['data'] : $payload;
+            $data = self::payloadData($payload);
             // Keep identity status payload intact, including fields returned by Vision.
             // Do not reshape it into generic OCR response semantics.
 
@@ -76,5 +76,19 @@ final class IdentityDocumentAPIServiceImpl implements IdentityDocumentAPIService
 
             return OcrResponse::failure('vision_unavailable');
         }
+    }
+
+    /** Accept direct Vision payloads and common {data:{...}} / {result:{...}} envelopes. */
+    private static function payloadData(array $payload): array
+    {
+        $data = $payload;
+        foreach (['data', 'result', 'response'] as $key) {
+            if (is_array($data[$key] ?? null)) {
+                $data = $data[$key];
+                break;
+            }
+        }
+
+        return $data;
     }
 }

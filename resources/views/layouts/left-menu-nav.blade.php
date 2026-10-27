@@ -1,14 +1,14 @@
-<nav class="space-y-6">
+<nav aria-label="Navigasi operasional" class="space-y-6">
   @role(FRONT_OFFICE_ROLE)
     <div>
       <p class="px-3 text-[11px] font-extrabold tracking-widest text-ink-500 uppercase">Layanan</p>
       <div class="mt-2 space-y-1">
-        <a href="{{ route('layanan.pendaftaran') }}" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition {{ Route::currentRouteName() == 'layanan.pendaftaran' ? 'bg-nest-700 text-white shadow-sm' : 'text-ink-700 hover:bg-ink-50' }}">
+        <a aria-current="{{ Route::currentRouteName() == 'layanan.pendaftaran' ? 'page' : 'false' }}" href="{{ route('layanan.pendaftaran') }}" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-nest-700 {{ Route::currentRouteName() == 'layanan.pendaftaran' ? 'bg-nest-700 text-white shadow-sm' : 'text-ink-700 hover:bg-ink-50' }}">
           <span class="h-8 w-8 grid place-items-center rounded-lg {{ Route::currentRouteName() == 'layanan.pendaftaran' ? 'bg-white/15' : 'bg-ink-100' }}"><i class="fa-solid fa-book-open text-xs"></i></span>
           <span class="flex-1">Pendaftaran</span>
           <span class="rounded-full bg-red-500 px-2 py-0.5 text-xs font-bold text-white">{{ countByProcess('pendaftaran') }}</span>
         </a>
-        <a href="{{ route('layanan.penyerahan') }}" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition {{ Route::currentRouteName() == 'layanan.penyerahan' ? 'bg-nest-700 text-white shadow-sm' : 'text-ink-700 hover:bg-ink-50' }}">
+        <a aria-current="{{ Route::currentRouteName() == 'layanan.penyerahan' ? 'page' : 'false' }}" href="{{ route('layanan.penyerahan') }}" class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-nest-700 {{ Route::currentRouteName() == 'layanan.penyerahan' ? 'bg-nest-700 text-white shadow-sm' : 'text-ink-700 hover:bg-ink-50' }}">
           <span class="h-8 w-8 grid place-items-center rounded-lg {{ Route::currentRouteName() == 'layanan.penyerahan' ? 'bg-white/15' : 'bg-ink-100' }}"><i class="fa-solid fa-file-export text-xs"></i></span>
           <span class="flex-1">Penyerahan</span>
           <span class="rounded-full bg-red-500 px-2 py-0.5 text-xs font-bold text-white">{{ countByProcess('penyerahan') }}</span>

@@ -198,6 +198,12 @@ class PerizinanServiceImpl implements PerizinanService
                     });
             });
         }
+        if (in_array(BackOfficeStatusEnum::DICETAK, $filter_keterangan, true)) {
+            $semua_izin->whereExists(fn ($generation) => $generation
+                ->selectRaw('1')->from('permit_letter_generations as plg')
+                ->whereColumn('plg.izin_id', 'izin.id')
+                ->where('plg.status', PermitLetterGeneration::COMPLETED));
+        }
         if ($search !== '') {
             $semua_izin->where(function ($query) use ($search) {
                 $query->whereHas('jenis_perizinan', function ($jenis_perizinan) use ($search) {
@@ -209,8 +215,9 @@ class PerizinanServiceImpl implements PerizinanService
             });
         }
         $semua_izin
-            ->whereBetween('izin.created_at', [$filter_start_date, $filter_end_date])
-            ->with(['pemohon.user', 'jenis_perizinan', 'latestStatus'])
+            ->where('izin.created_at', '>=', $filter_start_date)
+            ->where('izin.created_at', '<', $filter_end_date)
+            ->with(['pemohon.user', 'jenis_perizinan', 'latestStatus', 'permitLetterGenerations'])
             ->orderBy($order_by, $sort);
 
         if ($paginate) {
@@ -255,7 +262,8 @@ class PerizinanServiceImpl implements PerizinanService
             });
         }
         $semua_izin
-        ->whereBetween('created_at', [$filter_start_date, $filter_end_date])
+        ->where('created_at', '>=', $filter_start_date)
+        ->where('created_at', '<', $filter_end_date)
         ->with(['pemohon.user', 'jenis_perizinan', 'latestStatus'])
         ->orderBy($order_by, $sort);
         if ($limit)

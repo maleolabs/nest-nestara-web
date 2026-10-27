@@ -90,7 +90,9 @@ class DashboardController extends Controller
         if (!$izin)
             abort(Response::HTTP_NOT_FOUND, 'Izin not found');
         $latest = $izin->latestStatus()->first();
-        abort_unless($latest && $latest->nama === StatusIzinEnum::PROSES && $latest->keterangan === BackOfficeStatusEnum::DIIZINKAN, Response::HTTP_UNPROCESSABLE_ENTITY, 'Permit is not eligible for letter generation');
+        $eligible = $latest && $latest->nama === StatusIzinEnum::PROSES
+            && in_array($latest->keterangan, [BackOfficeStatusEnum::DIIZINKAN, BackOfficeStatusEnum::DICETAK], true);
+        abort_unless($eligible, Response::HTTP_UNPROCESSABLE_ENTITY, 'Permit is not eligible for letter generation');
 
         $generation = DB::transaction(function () use ($izin) {
             // Serialize on permit row; queue workers and HTTP requests cannot create duplicates.

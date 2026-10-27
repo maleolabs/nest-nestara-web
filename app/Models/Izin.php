@@ -40,6 +40,11 @@ class Izin extends Model
         return $this->hasOne(StatusIzin::class)->ofMany(['created_at' => 'max', 'id' => 'max']);
     }
 
+    public function permitLetterGenerations(): HasMany
+    {
+        return $this->hasMany(PermitLetterGeneration::class, 'izin_id');
+    }
+
     /** Status awal pendaftaran — untuk kolom tanggal permohonan. */
     public function didaftarkanStatus(): HasOne
     {

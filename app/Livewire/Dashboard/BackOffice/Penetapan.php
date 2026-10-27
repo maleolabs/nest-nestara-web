@@ -162,11 +162,17 @@ class Penetapan extends Component
                     $last_status = $izin->status_izin->last();
                     // Only current, actionable print states qualify. Historical print
                     // rows must not resurrect unrelated terminal records.
+                    $generations = $izin instanceof \App\Models\Izin && $izin->relationLoaded('permitLetterGenerations')
+                        ? $izin->permitLetterGenerations : ($izin->permitLetterGenerations ?? collect());
+                    $hasCompletedArtifact = $generations->contains(fn ($generation) =>
+                            $generation->status === \App\Models\PermitLetterGeneration::COMPLETED && (bool) $generation->path)
+                        ;
+
                     return in_array($last_status->keterangan, [
-                        BackOfficeStatusEnum::DIIZINKAN,
-                        BackOfficeStatusEnum::DICETAK,
-                        BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN,
-                    ], true) && !in_array($last_status->keterangan, $disallowed_status, true);
+                         BackOfficeStatusEnum::DIIZINKAN,
+                         BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN,
+                     ], true) && !in_array($last_status->keterangan, $disallowed_status, true)
+                        || ($last_status->keterangan === BackOfficeStatusEnum::DICETAK && $hasCompletedArtifact);
                 });
                 break;
 

@@ -128,10 +128,10 @@ class PermitLetterGenerationTest extends TestCase
         $this->app->instance(EncryptionService::class, Mockery::mock(EncryptionService::class, function ($m) use ($izin) { $m->shouldReceive('decryptId')->with('encrypted')->andReturn($izin->id); }));
         $this->actingAs($this->backOfficeUser());
 
-        $first = $this->postJson(route('pegawai.download-surat'), ['id' => 'encrypted']);
+        $first = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class)->postJson(route('pegawai.download-surat'), ['id' => 'encrypted']);
         $first->assertAccepted()->assertJsonPath('status', PermitLetterGeneration::QUEUED);
         Queue::assertPushed(GeneratePermitLetter::class);
-        $second = $this->postJson(route('pegawai.download-surat'), ['id' => 'encrypted']);
+        $second = $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class)->postJson(route('pegawai.download-surat'), ['id' => 'encrypted']);
         $second->assertAccepted()->assertJsonPath('id', $first->json('id'));
         $this->assertDatabaseCount('permit_letter_generations', 1);
     }
@@ -140,11 +140,11 @@ class PermitLetterGenerationTest extends TestCase
     {
         $izin = $this->izin();
         $this->app->instance(EncryptionService::class, Mockery::mock(EncryptionService::class, function ($m) use ($izin) { $m->shouldReceive('decryptId')->andReturn($izin->id); }));
-        $this->actingAs($this->backOfficeUser())->postJson(route('pegawai.download-surat'), ['id' => 'x'])->assertStatus(422);
+        $this->actingAs($this->backOfficeUser())->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class)->postJson(route('pegawai.download-surat'), ['id' => 'x'])->assertStatus(422);
         Role::firstOrCreate(['name' => FRONT_OFFICE_ROLE, 'guard_name' => 'web']);
         $front = User::create(['name' => 'Front', 'username' => 'front', 'email' => 'front@example.test', 'password' => Hash::make('password')]);
         $front->assignRole(FRONT_OFFICE_ROLE);
-        $this->actingAs($front)->postJson(route('pegawai.download-surat'), ['id' => 'x'])->assertForbidden();
+        $this->actingAs($front)->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class)->postJson(route('pegawai.download-surat'), ['id' => 'x'])->assertForbidden();
         $this->getJson(route('pegawai.surat.status', 999))->assertForbidden();
     }
 

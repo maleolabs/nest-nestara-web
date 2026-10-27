@@ -7,6 +7,7 @@ use App\utils\enums\BackOfficeStatusEnum;
 use App\utils\enums\StatusIzinEnum;
 use App\utils\enums\StatusIzinProgressEnum;
 use Illuminate\Support\Collection;
+use App\Models\PermitLetterGeneration;
 use Tests\TestCase;
 
 class PenetapanTest extends TestCase
@@ -21,10 +22,11 @@ class PenetapanTest extends TestCase
                         'nama' => StatusIzinEnum::PROSES,
                         'progres' => StatusIzinProgressEnum::FINISHED,
                         'keterangan' => BackOfficeStatusEnum::DICETAK,
-                        'updated_at' => now()->subDays(2),
-                    ],
-                ]),
-            ],
+                         'updated_at' => now()->subDays(2),
+                     ],
+                 ]),
+                 'permitLetterGenerations' => new Collection([new PermitLetterGeneration(['status' => PermitLetterGeneration::COMPLETED, 'path' => 'x.pdf'])]),
+             ],
         ];
 
         $method = new \ReflectionMethod($component, 'getFilteredDataList');

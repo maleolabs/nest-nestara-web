@@ -1,5 +1,5 @@
-<div x-data="{ feedback: null }" x-on:handover-feedback.window="feedback = $event.detail; setTimeout(() => feedback = null, 3500)">
-    <div x-show="feedback" x-transition role="alert" class="fixed right-5 top-5 z-[60] rounded-xl px-4 py-3 text-sm font-bold shadow-lg" :class="feedback?.type === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'" x-text="feedback?.message"></div>
+<div x-data="{ feedback: null, feedbackTimer: null, showFeedback(event) { this.feedback = event.detail; clearTimeout(this.feedbackTimer); this.feedbackTimer = setTimeout(() => this.feedback = null, 3500) } }" x-on:handover-feedback.window="showFeedback($event)" x-init="return () => clearTimeout(feedbackTimer)">
+    <div x-cloak x-show="feedback" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="translate-y-2 opacity-0" x-transition:enter-end="translate-y-0 opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" role="status" aria-live="polite" aria-atomic="true" class="pointer-events-none fixed inset-x-4 top-4 z-[100] rounded-xl px-4 py-3 text-sm font-bold shadow-lg sm:left-auto sm:right-5 sm:max-w-md" :class="feedback?.type === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'" x-text="feedback?.message"></div>
 
     {{-- loading indicator: pill kecil, fixed di tengah layar --}}
     <div wire:loading class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[80]" role="status" aria-live="polite">

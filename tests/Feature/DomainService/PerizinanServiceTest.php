@@ -114,6 +114,36 @@ class PerizinanServiceTest extends TestCase
 
         $this->assertCount(2, $permits);
     }
+
+    public function test_handover_query_includes_old_completed_permit_without_date_filter(): void
+    {
+        $jenis = JenisPerizinan::create(['nama' => 'IZIN OLD HANDOVER TEST']);
+        $izin = Izin::create([
+            'jenis_perizinan_id' => $jenis->id,
+            'pemohon_id' => Pemohon::factory()->create()->id,
+            'no_pendaftaran' => 99,
+            'created_at' => now()->subMonths(2),
+        ]);
+        StatusIzin::create([
+            'izin_id' => $izin->id,
+            'nama' => StatusIzinEnum::PROSES,
+            'progres' => StatusIzinProgressEnum::PROCESSING,
+            'keterangan' => 'diizinkan',
+        ]);
+        PermitLetterGeneration::create([
+            'izin_id' => $izin->id,
+            'status' => PermitLetterGeneration::COMPLETED,
+            'path' => 'permit-letters/old.pdf',
+        ]);
+
+        $permits = $this->perizinanService()->get(
+            filter_status: [StatusIzinEnum::PROSES, StatusIzinEnum::PENERBITAN, StatusIzinEnum::PENYERAHAN],
+            filter_status_progress: [StatusIzinProgressEnum::UNPROCESSED, StatusIzinProgressEnum::PROCESSING, StatusIzinProgressEnum::FINISHED],
+            handoverPrintedOnly: true,
+        );
+
+        $this->assertTrue($permits->contains('id', $izin->id));
+    }
  
     private function perizinanService(): PerizinanService
     {

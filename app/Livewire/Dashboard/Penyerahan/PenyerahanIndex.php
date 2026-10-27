@@ -28,8 +28,9 @@ class PenyerahanIndex extends Component
 
     public function mount()
     {
-        $this->start_date = Carbon::today()->subDays(7)->format('Y-m-d');
-        $this->end_date = Carbon::today()->format('Y-m-d');
+        // Handover eligibility depends on permit status, not registration age.
+        $this->start_date = null;
+        $this->end_date = null;
     }
 
     public function render()

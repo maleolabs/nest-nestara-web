@@ -175,10 +175,10 @@ class PerizinanServiceImpl implements PerizinanService
     ): Collection|LengthAwarePaginator|CursorPaginator {
         $filter_start_date = $filter_start_date
             ? Carbon::parse($filter_start_date)->startOfDay()->toDateTimeString()
-            : Carbon::now()->subMonth()->startOfDay()->toDateTimeString();
+            : ($handoverPrintedOnly ? null : Carbon::now()->subMonth()->startOfDay()->toDateTimeString());
         $filter_end_date = $filter_end_date
             ? Carbon::parse($filter_end_date)->addDay()->startOfDay()->toDateTimeString()
-            : Carbon::now()->addDay()->startOfDay()->toDateTimeString();
+            : ($handoverPrintedOnly ? null : Carbon::now()->addDay()->startOfDay()->toDateTimeString());
 
         $semua_izin = Izin::query();
         $this->joinLatestStatus($semua_izin, $filter_status, $filter_status_progress, $filter_keterangan);
@@ -215,10 +215,15 @@ class PerizinanServiceImpl implements PerizinanService
             });
         }
         $semua_izin
-            ->where('izin.created_at', '>=', $filter_start_date)
-            ->where('izin.created_at', '<', $filter_end_date)
             ->with(['pemohon.user', 'jenis_perizinan', 'latestStatus', 'permitLetterGenerations'])
             ->orderBy($order_by, $sort);
+
+        if ($filter_start_date !== null) {
+            $semua_izin->where('izin.created_at', '>=', $filter_start_date);
+        }
+        if ($filter_end_date !== null) {
+            $semua_izin->where('izin.created_at', '<', $filter_end_date);
+        }
 
         if ($paginate) {
             $semua_izin = $semua_izin->paginate($limit, ['*'], 'page', $page);

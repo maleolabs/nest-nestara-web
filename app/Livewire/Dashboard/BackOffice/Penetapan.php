@@ -131,7 +131,7 @@ class Penetapan extends Component
 
     private function setDataTable()
     {
-        $this->all_izin = $this->getPerizinanService()->getAllBySprecificFilter($this->search, [StatusIzinEnum::PROSES], [StatusIzinProgressEnum::PROCESSING, StatusIzinProgressEnum::FINISHED], [BackOfficeStatusEnum::DIREKOM, BackOfficeStatusEnum::REKOM_CATATAN, BackOfficeStatusEnum::LAYANAN_DITOLAK, BackOfficeStatusEnum::DIIZINKAN, BackOfficeStatusEnum::DICETAK, BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN], $this->start_date, $this->end_date);
+        $this->all_izin = $this->getPerizinanService()->getAllBySprecificFilter($this->search, [StatusIzinEnum::PROSES], [StatusIzinProgressEnum::PROCESSING, StatusIzinProgressEnum::FINISHED], [BackOfficeStatusEnum::DIREKOM, BackOfficeStatusEnum::REKOM_CATATAN, BackOfficeStatusEnum::BAHAS_LANJUT, BackOfficeStatusEnum::LAYANAN_DITOLAK, BackOfficeStatusEnum::DIIZINKAN, BackOfficeStatusEnum::DICETAK, BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN], $this->start_date, $this->end_date);
 
         $this->count_tabs[self::PENETAPAN] = count($this->getFilteredDataList(self::PENETAPAN));
         $this->count_tabs[self::PEMBUATAN] = count($this->getFilteredDataList(self::PEMBUATAN));
@@ -144,7 +144,8 @@ class Penetapan extends Component
     {
         $penetapan_status = [
             BackOfficeStatusEnum::DIREKOM,
-            BackOfficeStatusEnum::REKOM_CATATAN
+            BackOfficeStatusEnum::REKOM_CATATAN,
+            BackOfficeStatusEnum::BAHAS_LANJUT
         ];
         $filtered_data = [];
         switch ($filter) {

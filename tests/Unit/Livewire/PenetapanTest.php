@@ -49,4 +49,13 @@ class PenetapanTest extends TestCase
 
         self::assertCount(1, $property->getValue($component));
     }
+
+    public function test_further_discussion_permit_stays_in_penetapan_queue(): void
+    {
+        $component = new Penetapan;
+        $component->all_izin = [(object) ['status_izin' => new Collection([(object) ['keterangan' => BackOfficeStatusEnum::BAHAS_LANJUT]])]];
+        $method = new \ReflectionMethod($component, 'getFilteredDataList');
+        $method->setAccessible(true);
+        self::assertCount(1, $method->invoke($component, 'Penetapan Izin'));
+    }
 }

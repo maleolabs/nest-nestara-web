@@ -120,6 +120,18 @@ class PenyerahanIndex extends Component
         $this->setData();
     }
 
+    public function printedPermitReadyForHandover($izin_id)
+    {
+        if ((int) $this->preview_izin_id !== (int) $izin_id) return;
+        try {
+            $auth_user = auth()->user();
+            $this->getPerizinanService()->printedPermitReadyForHandover($izin_id, $auth_user->pegawai?->id);
+            $this->setData();
+        } catch (\InvalidArgumentException $e) {
+            $this->dispatch('handover-feedback', type: 'error', message: 'Izin tidak memenuhi syarat untuk diserahkan.');
+        }
+    }
+
     public function allDone($izin_id)
     {
         if ((int) $this->preview_izin_id !== (int) $izin_id) {

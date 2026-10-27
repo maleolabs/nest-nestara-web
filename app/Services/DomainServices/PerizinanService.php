@@ -68,8 +68,9 @@ use Illuminate\Support\Collection;
  * @method void penetapanIzin(int $izin_id, int $pegawai_id, string $tindakan)
  * @method void updateCetakIzinStatus(int $izin_id, int $pegawai_id)
  * @method void updateAllIzinStatusWhenAlreadyPrinted()
- * @method void penerbitanFinished(int $izin_id, ?int $pegawai_id = null)
- * @method void allDone(int $izin_id, ?int $pegawai_id = null)
+  * @method void penerbitanFinished(int $izin_id, ?int $pegawai_id = null)
+  * @method void printedPermitReadyForHandover(int $izin_id, ?int $pegawai_id = null)
+  * @method void allDone(int $izin_id, ?int $pegawai_id = null)
  * @method array getIzinDetails(int $izin_id)
  */
 interface PerizinanService

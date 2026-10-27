@@ -671,6 +671,24 @@ class PerizinanServiceImpl implements PerizinanService
         });
     }
 
+    public function printedPermitReadyForHandover(int $izin_id, ?int $pegawai_id = null): void
+    {
+        DB::transaction(function () use ($izin_id, $pegawai_id) {
+            $izin = $this->find($izin_id);
+            $status = $izin?->latestStatus;
+            $generation = $izin?->permitLetterGenerations()->latest('id')->first();
+            $allowed = [OfficeStatus::DIIZINKAN, OfficeStatus::DICETAK, OfficeStatus::IZIN_AKAN_DITERBITKAN];
+
+            if (!$status || $status->nama !== Status::PROSES || !in_array($status->keterangan, $allowed, true)
+                || !$generation || $generation->status !== PermitLetterGeneration::COMPLETED || !$generation->path) {
+                throw new \InvalidArgumentException('Permit is not a completed printed permit');
+            }
+
+            $this->statusIzinService->updateStatusIzin($izin_id, Status::PENERBITAN, Progres::FINISHED, OfficeStatus::IZIN_TELAH_DITERBITKAN, null, null, false, true);
+            $this->statusIzinService->updateStatusIzin($izin_id, Status::PENYERAHAN, Progres::PROCESSING, null, $pegawai_id);
+        });
+    }
+
     public function allDone($izin_id, $pegawai_id = null): void
     {
         DB::transaction(function () use ($izin_id, $pegawai_id) {

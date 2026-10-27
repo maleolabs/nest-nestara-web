@@ -10,6 +10,7 @@ use App\Models\StatusIzin;
 use App\Services\DomainServices\PerizinanService;
 use App\utils\enums\StatusIzinEnum;
 use App\utils\enums\StatusIzinProgressEnum;
+use App\utils\enums\BackOfficeStatusEnum;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
@@ -158,6 +159,19 @@ class PerizinanServiceTest extends TestCase
 
         $service->allDone($izin->id);
         $this->assertSame(StatusIzinProgressEnum::FINISHED, $izin->fresh()->latestStatus->progres);
+    }
+
+    public function test_completed_printed_proses_permit_can_start_handover(): void
+    {
+        $jenis = JenisPerizinan::create(['nama' => 'IZIN PRINTED HANDOVER TEST']);
+        $izin = Izin::create(['jenis_perizinan_id' => $jenis->id, 'pemohon_id' => Pemohon::factory()->create()->id, 'no_pendaftaran' => 102]);
+        StatusIzin::create(['izin_id' => $izin->id, 'nama' => StatusIzinEnum::PROSES, 'progres' => StatusIzinProgressEnum::FINISHED, 'keterangan' => BackOfficeStatusEnum::DIIZINKAN]);
+        PermitLetterGeneration::create(['izin_id' => $izin->id, 'status' => PermitLetterGeneration::COMPLETED, 'path' => 'permit-letters/printed.pdf']);
+
+        $this->perizinanService()->printedPermitReadyForHandover($izin->id);
+
+        $this->assertSame(StatusIzinEnum::PENYERAHAN, $izin->fresh()->latestStatus->nama);
+        $this->assertSame(StatusIzinProgressEnum::PROCESSING, $izin->fresh()->latestStatus->progres);
     }
 
     public function test_handover_rejects_invalid_or_repeated_transitions(): void

@@ -90,7 +90,16 @@
                         </dl>
 
                         {{-- aksi status --}}
-                        @if ($previewStatus->nama === $statusIzin::PENERBITAN && $previewStatus->progres === $statusProgres::PROCESSING)
+                        @if ($previewStatus->nama === $statusIzin::PROSES && in_array($previewStatus->keterangan, [\App\utils\enums\BackOfficeStatusEnum::DIIZINKAN, \App\utils\enums\BackOfficeStatusEnum::DICETAK, \App\utils\enums\BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN], true))
+                            <div class="mt-5 rounded-xl bg-amber-50 p-4 ring-1 ring-amber-200">
+                                <p class="text-sm font-bold text-amber-800"><i class="fa-solid fa-forward mr-1.5"></i>Surat izin siap diserahkan</p>
+                                <p class="mt-1 text-xs leading-relaxed text-amber-800/80">Surat sudah dicetak. Lanjutkan ke proses penyerahan.</p>
+                                <button type="button" wire:click='printedPermitReadyForHandover({{ $selectedPreview->id }})' class="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-full bg-amber-500 px-4 py-2.5 text-sm font-extrabold text-white hover:bg-amber-600 transition disabled:opacity-50" wire:loading.attr="disabled" wire:target='printedPermitReadyForHandover'>
+                                    <span wire:loading.remove wire:target='printedPermitReadyForHandover'><i class="fa-solid fa-forward"></i> Ya, surat izin siap diserahkan</span>
+                                    <span wire:loading wire:target='printedPermitReadyForHandover'><i class="fa-solid fa-spinner fa-spin"></i> Memperbarui…</span>
+                                </button>
+                            </div>
+                        @elseif ($previewStatus->nama === $statusIzin::PENERBITAN && $previewStatus->progres === $statusProgres::PROCESSING)
                             <div class="mt-5 rounded-xl bg-amber-50 p-4 ring-1 ring-amber-200">
                                 <p class="text-sm font-bold text-amber-800"><i class="fa-solid fa-pen-nib mr-1.5"></i>Proses penandatanganan berlangsung</p>
                                 <p class="mt-1 text-xs leading-relaxed text-amber-800/80">Pastikan seluruh informasi pada surat izin telah diverifikasi sebelum melanjutkan.</p>

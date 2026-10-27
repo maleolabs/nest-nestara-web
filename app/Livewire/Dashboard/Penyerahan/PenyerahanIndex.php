@@ -117,11 +117,23 @@ class PenyerahanIndex extends Component
 
     public function allDone($izin_id)
     {
-        if ((int) $this->preview_izin_id !== (int) $izin_id) return;
+        if ((int) $this->preview_izin_id !== (int) $izin_id) {
+            $this->dispatch('handover-feedback', type: 'error', message: 'Izin tidak valid.');
+            return;
+        }
+
+        $izin = $this->getPerizinanService()->find($izin_id);
+        $status = $izin?->latestStatus;
+        if (!$status || $status->nama !== StatusIzinEnum::PENYERAHAN || $status->progres === StatusIzinProgressEnum::FINISHED) {
+            $this->dispatch('handover-feedback', type: 'error', message: 'Izin sudah selesai atau tidak bisa diserahkan.');
+            return;
+        }
+
         $auth_user = auth()->user();
         $pegawai_id = $auth_user->pegawai ? $auth_user->pegawai->id : null;
         $this->getPerizinanService()->allDone($izin_id, $pegawai_id);
-        // Keep selection: completed item remains in query and preview must show receipt summary.
+        $this->preview_izin_id = null;
+        $this->dispatch('handover-feedback', type: 'success', message: 'Izin berhasil ditandai telah diserahkan.');
         $this->setData();
     }
 

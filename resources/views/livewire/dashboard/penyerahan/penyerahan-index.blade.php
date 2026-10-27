@@ -1,4 +1,5 @@
-<div>
+<div x-data="{ feedback: null }" x-on:handover-feedback.window="feedback = $event.detail; setTimeout(() => feedback = null, 3500)">
+    <div x-show="feedback" x-transition role="alert" class="fixed right-5 top-5 z-[60] rounded-xl px-4 py-3 text-sm font-bold shadow-lg" :class="feedback?.type === 'success' ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'" x-text="feedback?.message"></div>
 
     {{-- loading indicator: pill kecil, fixed di tengah layar --}}
     <div wire:loading class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[80]" role="status" aria-live="polite">

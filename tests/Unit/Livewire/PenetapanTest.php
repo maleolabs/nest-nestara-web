@@ -50,6 +50,16 @@ class PenetapanTest extends TestCase
         self::assertCount(1, $property->getValue($component));
     }
 
+    public function test_invalid_handover_completion_does_not_call_service_or_keep_modal(): void
+    {
+        $component = new \App\Livewire\Dashboard\Penyerahan\PenyerahanIndex;
+        $component->preview_izin_id = 10;
+
+        $component->allDone(11);
+
+        self::assertSame(10, $component->preview_izin_id);
+    }
+
     public function test_further_discussion_permit_stays_in_penetapan_queue(): void
     {
         $component = new Penetapan;

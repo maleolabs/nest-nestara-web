@@ -26,3 +26,5 @@ setup_nginx.sh
 /.anvil/installers/
 /storage/app/region/
 /storage/app/private_files/ocr_ktp
+
+.env.testing

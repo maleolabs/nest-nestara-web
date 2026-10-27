@@ -91,7 +91,8 @@ class PenyerahanIndex extends Component
             20,
             'updated_at',
             paginate: true,
-            page: $this->getPage()
+            page: $this->getPage(),
+            handoverPrintedOnly: true
         );
     }
 

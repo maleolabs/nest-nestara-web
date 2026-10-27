@@ -159,11 +159,14 @@ class Penetapan extends Component
                     $disallowed_status = $penetapan_status;
                     $disallowed_status[] = BackOfficeStatusEnum::LAYANAN_DITOLAK;
 
-                    $status_cetak = $this->getStatusCetak($izin);
                     $last_status = $izin->status_izin->last();
-                    // Printed permits stay available for reprint. Hiding them after
-                    // eight hours made back-office recovery depend on stale time.
-                    return ($last_status->keterangan == BackOfficeStatusEnum::DIIZINKAN || $status_cetak !== null) && !in_array($last_status->keterangan, $disallowed_status);
+                    // Only current, actionable print states qualify. Historical print
+                    // rows must not resurrect unrelated terminal records.
+                    return in_array($last_status->keterangan, [
+                        BackOfficeStatusEnum::DIIZINKAN,
+                        BackOfficeStatusEnum::DICETAK,
+                        BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN,
+                    ], true) && !in_array($last_status->keterangan, $disallowed_status, true);
                 });
                 break;
 
@@ -185,7 +188,7 @@ class Penetapan extends Component
 
     protected function getStatusCetak($izin): object|null
     {
-        return $izin->status_izin->first(function ($status) {
+        return $izin->status_izin->last(function ($status) {
             return in_array($status->keterangan, [BackOfficeStatusEnum::DICETAK, BackOfficeStatusEnum::IZIN_AKAN_DITERBITKAN]);
         });
     }

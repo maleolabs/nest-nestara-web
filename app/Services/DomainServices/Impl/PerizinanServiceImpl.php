@@ -169,13 +169,27 @@ class PerizinanServiceImpl implements PerizinanService
         ?int $limit = null,
         string $order_by = 'created_at',
         bool $paginate = false,
-        ?int $page = null
+        ?int $page = null,
+        bool $handoverPrintedOnly = false
     ): Collection|LengthAwarePaginator|CursorPaginator {
-        $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
-        $filter_end_date = Carbon::parse($filter_end_date)->addDay()->ToDateTimeString();
+        $filter_start_date = $filter_start_date
+            ? Carbon::parse($filter_start_date)->startOfDay()->toDateTimeString()
+            : Carbon::now()->subMonth()->startOfDay()->toDateTimeString();
+        $filter_end_date = $filter_end_date
+            ? Carbon::parse($filter_end_date)->addDay()->startOfDay()->toDateTimeString()
+            : Carbon::now()->addDay()->startOfDay()->toDateTimeString();
 
         $semua_izin = Izin::query();
         $this->joinLatestStatus($semua_izin, $filter_status, $filter_status_progress, $filter_keterangan);
+        if ($handoverPrintedOnly) {
+            $semua_izin->where(function ($query) {
+                $query->whereIn('ls.nama', [Status::PENERBITAN, Status::PENYERAHAN])
+                    ->orWhere(function ($query) {
+                        $query->where('ls.nama', Status::PROSES)
+                            ->whereIn('ls.keterangan', [OfficeStatus::DICETAK, OfficeStatus::IZIN_AKAN_DITERBITKAN]);
+                    });
+            });
+        }
         if ($search !== '') {
             $semua_izin->where(function ($query) use ($search) {
                 $query->whereHas('jenis_perizinan', function ($jenis_perizinan) use ($search) {
@@ -213,8 +227,12 @@ class PerizinanServiceImpl implements PerizinanService
         string $order_by = 'created_at'
     ): array
     {
-        $filter_start_date = $filter_start_date ?? Carbon::now()->subMonth()->toDateTimeString();
-        $filter_end_date = Carbon::parse($filter_end_date)->addDay()->ToDateTimeString();
+        $filter_start_date = $filter_start_date
+            ? Carbon::parse($filter_start_date)->startOfDay()->toDateTimeString()
+            : Carbon::now()->subMonth()->startOfDay()->toDateTimeString();
+        $filter_end_date = $filter_end_date
+            ? Carbon::parse($filter_end_date)->addDay()->startOfDay()->toDateTimeString()
+            : Carbon::now()->addDay()->startOfDay()->toDateTimeString();
 
         $semua_izin = Izin::query();
         $this->joinLatestStatus($semua_izin, $filter_status, $filter_status_progress);

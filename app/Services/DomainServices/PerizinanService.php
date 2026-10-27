@@ -140,7 +140,8 @@ interface PerizinanService
         ?int $limit = null,
         string $order_by = 'created_at',
         bool $paginate = false,
-        ?int $page = null
+        ?int $page = null,
+        bool $handoverPrintedOnly = false
     ): Collection|LengthAwarePaginator|CursorPaginator;
 
     /**

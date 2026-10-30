@@ -12,17 +12,21 @@ final class IdentityDocumentAPIServiceImpl implements IdentityDocumentAPIService
 {
     public function __construct(private OcrAPIService $ocrAPIService) {}
 
-    public function check(string $contents, string $filename, string $documentType = 'KTP'): ?OcrResponse
+    public function check(string $contents, string $filename, string $documentType = 'KTP', array $requiredKeys = []): ?OcrResponse
     {
         try {
             $baseUrl = rtrim($this->ocrAPIService->getBaseUrl(), '/');
+            $multipart = [
+                ['name' => 'documentType', 'contents' => $documentType],
+            ];
+            foreach ($requiredKeys as $key) {
+                $multipart[] = ['name' => 'requiredKeys[]', 'contents' => (string) $key];
+            }
             $response = Http::withHeaders(array_filter([
                 'X-API-KEY' => $this->ocrAPIService->getApiKey(),
                 'Accept' => 'application/json',
             ]))->timeout(30)->connectTimeout(5)->attach('image', $contents, $filename)
-                ->post($baseUrl.'/identity-document-checks', [
-                    'documentType' => $documentType,
-                ]);
+                ->post($baseUrl.'/identity-document-checks', $multipart);
 
             $payload = $response->json();
             if (! $response->successful()) {

@@ -7,12 +7,11 @@ use App\Models\User;
 use App\Services\APIClient\dto\OcrResponse;
 use App\Services\APIClient\IdentityDocumentAPIService;
 use App\Services\APIClient\Impl\IdentityDocumentAPIServiceImpl;
-use App\Services\APIClient\OcrAPIService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
@@ -28,29 +27,33 @@ class IdentityDocumentTest extends TestCase
     public function test_identity_check_sends_document_type_as_multipart_field(): void
     {
         Http::fake(['http://vision.test/*' => Http::response(['requestId' => 'req-sim', 'documentType' => 'SIM'])]);
-        config(['services.ocr.base_url' => 'http://vision.test', 'services.ocr.api_key' => 'test-key']);
+        set_pengaturan(OCR_BASE_URL, 'http://vision.test', OCR_API_SETT_GROUP);
+        set_pengaturan(OCR_API_KEY, 'test-key', OCR_API_SETT_GROUP);
 
-        $response = app(IdentityDocumentAPIService::class)->check('image-content', 'sim.jpg', 'SIM');
+        $response = app(IdentityDocumentAPIService::class)->check('image-content', 'sim.jpg', 'SIM', ['nik', 'nama']);
 
         $this->assertTrue($response->isSuccess());
         Http::assertSent(function ($request): bool {
             return $request->url() === 'http://vision.test/identity-document-checks'
                 && $request->method() === 'POST'
-                && $request->data()['documentType'] === 'SIM'
-                && str_contains($request->body(), 'name="documentType"');
+                && str_contains($request->body(), 'name="documentType"')
+                && str_contains($request->body(), 'SIM')
+                && str_contains($request->body(), 'name="requiredKeys[]"');
         });
     }
 
     public function test_identity_check_defaults_document_type_to_ktp(): void
     {
         Http::fake(['http://vision.test/*' => Http::response(['requestId' => 'req-ktp', 'documentType' => 'KTP'])]);
-        config(['services.ocr.base_url' => 'http://vision.test', 'services.ocr.api_key' => 'test-key']);
+        set_pengaturan(OCR_BASE_URL, 'http://vision.test', OCR_API_SETT_GROUP);
+        set_pengaturan(OCR_API_KEY, 'test-key', OCR_API_SETT_GROUP);
 
         $response = app(IdentityDocumentAPIService::class)->check('image-content', 'ktp.jpg');
 
         $this->assertTrue($response->isSuccess());
-        Http::assertSent(fn ($request): bool => $request->data()['documentType'] === 'KTP'
-            && str_contains($request->body(), 'name="documentType"'));
+        Http::assertSent(fn ($request): bool => $request->method() === 'POST'
+            && str_contains($request->body(), 'name="documentType"')
+            && str_contains($request->body(), 'KTP'));
     }
 
     private function apiUser(): User
@@ -86,12 +89,10 @@ class IdentityDocumentTest extends TestCase
             'status' => 'ACCEPTED',
             'extractedTexts' => ['nama' => 'Budi', 'secret' => 'nope'],
         ], true, null));
-        $ocr = $this->mock(OcrAPIService::class);
-        $ocr->shouldReceive('sendKtpImageRequest')->once()->andReturn(new OcrResponse(['requestId' => 'ocr-2'], true, null));
 
         $response = $this->getJson('/api/identity-documents/'.$record->public_check_id);
-        $response->assertOk()->assertJsonPath('status', 'extracting');
-        Storage::assertExists($record->file_path);
+        $response->assertOk()->assertJsonPath('status', 'ready')->assertJsonPath('data.nama', 'Budi');
+        Storage::assertMissing($record->file_path);
     }
 
     #[DataProvider('terminalVisionResponses')]
@@ -108,14 +109,10 @@ class IdentityDocumentTest extends TestCase
         }
         $vision = $this->mock(IdentityDocumentAPIService::class);
         $vision->shouldReceive('status')->once()->andReturn(new OcrResponse($payload, true, null));
-        if ($status === 'accepted') {
-            $ocr = $this->mock(OcrAPIService::class);
-            $ocr->shouldReceive('sendKtpImageRequest')->once()->andReturn(new OcrResponse(['requestId' => 'ocr-'.$status], true, null));
-        }
 
         $response = $this->getJson('/api/identity-documents/'.$record->public_check_id);
 
-        $response->assertOk()->assertJsonPath('status', $status === 'accepted' ? 'extracting' : $status)->assertJsonPath('data', []);
+        $response->assertOk()->assertJsonPath('status', $status === 'accepted' ? 'extraction_failed' : $status)->assertJsonPath('data', []);
     }
 
     public static function terminalVisionResponses(): array

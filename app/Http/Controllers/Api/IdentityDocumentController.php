@@ -37,7 +37,7 @@ class IdentityDocumentController extends Controller
         Log::channel('app')->info('identity.inbound.stored', $logContext + ['duration_ms' => $this->durationMs($startedAt)]);
         try {
             $visionStartedAt = microtime(true);
-            $response = $this->identityVision->check($file->getContent(), $file->getClientOriginalName(), (string) $request->input('documentType', 'KTP'));
+            $response = $this->identityVision->check($file->getContent(), $file->getClientOriginalName(), (string) $request->input('documentType', 'KTP'), KtpFieldMapper::requiredKeys());
             Log::channel('app')->info('identity.vision.outbound.response', $logContext + ['duration_ms' => $this->durationMs($visionStartedAt), 'http_status' => $response?->getHttpStatus(), 'success' => $response?->isSuccess()]);
         } catch (\Throwable $exception) {
             Log::channel('app')->error('identity.vision.outbound.failure', $logContext + ['duration_ms' => $this->durationMs($visionStartedAt ?? $startedAt), 'exception' => $exception::class]);
@@ -98,7 +98,6 @@ class IdentityDocumentController extends Controller
     private function orchestrateStatus(string $checkId): JsonResponse
     {
         $startedAt = microtime(true);
-        $extractionStarted = false;
         $logContext = ['check_ref' => $this->hashRef($checkId)];
         $record = IdentityDocument::where('user_id', Auth::guard('api')->id())->where('public_check_id', $checkId)->lockForUpdate()->first();
         if (! $record) {
@@ -130,22 +129,27 @@ class IdentityDocumentController extends Controller
             $checkData = $check->getData();
             $status = KtpFieldMapper::mapStatus($checkData['decision'] ?? $checkData['status'] ?? null);
             if ($status === KtpFieldMapper::STATUS_DONE) {
-                $status = $this->beginExtraction($record);
-                $extractionStarted = $status === 'extracting';
+                // Single OCR pass: extractedFields sudah dibawa oleh endpoint identity
+                // (Vision menyimpan hasil parse dari pass verifikasi yang sama).
+                // Tidak ada resubmit ke /ocr/do-ocr untuk alur identitas.
+                $status = KtpFieldMapper::STATUS_READY;
             }
             $record->status = $status;
-            if (in_array($status, [KtpFieldMapper::STATUS_DONE, KtpFieldMapper::STATUS_MANUAL_REVIEW, KtpFieldMapper::STATUS_REJECTED], true)) {
+            if (in_array($status, [KtpFieldMapper::STATUS_DONE, KtpFieldMapper::STATUS_READY, KtpFieldMapper::STATUS_MANUAL_REVIEW, KtpFieldMapper::STATUS_REJECTED], true)) {
                 // Identity status is source of truth. Never fall back to generic OCR:
                 // its result can belong to a different contract/request lifecycle.
                 $extracted = $checkData['extractedTexts'] ?? $checkData['extractedFields'] ?? null;
-                if (! is_array($extracted) && ! is_object($extracted)) {
-                    $extracted = [];
-                }
-                $extracted = is_object($extracted) ? get_object_vars($extracted) : $extracted;
+                $extracted = is_array($extracted) || is_object($extracted)
+                    ? (is_object($extracted) ? get_object_vars($extracted) : $extracted)
+                    : [];
                 if (isset($checkData['documentType']) || isset($checkData['document_type'])) {
                     $extracted['_document_type'] = $checkData['documentType'] ?? $checkData['document_type'];
                 }
                 $record->result = KtpFieldMapper::mapExtractedTexts($extracted);
+                if ($status === KtpFieldMapper::STATUS_READY && $extracted === []) {
+                    $status = $record->status = 'extraction_failed';
+                    $record->error = 'ocr_result_unavailable';
+                }
             }
             if (in_array($status, [KtpFieldMapper::STATUS_FAILED, KtpFieldMapper::STATUS_REJECTED], true)) {
                 $reason = $checkData['reasonCode'] ?? $checkData['reason'] ?? $checkData['decision'] ?? null;
@@ -155,7 +159,7 @@ class IdentityDocumentController extends Controller
             if ($status !== KtpFieldMapper::STATUS_PENDING) {
                 Log::channel('app')->info('identity.mapped.terminal_result', $logContext + ['status' => $status, 'duration_ms' => $this->durationMs($startedAt)]);
             }
-            if (in_array($status, [KtpFieldMapper::STATUS_MANUAL_REVIEW, KtpFieldMapper::STATUS_REJECTED, KtpFieldMapper::STATUS_FAILED], true) && $record->file_path) {
+            if (in_array($status, [KtpFieldMapper::STATUS_READY, KtpFieldMapper::STATUS_MANUAL_REVIEW, KtpFieldMapper::STATUS_REJECTED, KtpFieldMapper::STATUS_FAILED, 'extraction_failed'], true) && $record->file_path) {
                 $filePath = $record->file_path;
                 try {
                     Storage::delete($filePath);
@@ -170,7 +174,7 @@ class IdentityDocumentController extends Controller
             }
         }
 
-        if (! $extractionStarted && $record->status === 'extracting' && $record->extraction_request_id) {
+        if ($record->status === 'extracting' && $record->extraction_request_id) {
             $check = $this->ocr->checkOcrRequestStatus($record->extraction_request_id);
             $checkData = $check?->getData() ?? [];
             $upstream = KtpFieldMapper::mapStatus($checkData['status'] ?? $checkData['decision'] ?? null);

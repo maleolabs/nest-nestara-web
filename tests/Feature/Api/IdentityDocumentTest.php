@@ -50,22 +50,15 @@ final class IdentityDocumentTest extends TestCase
         $identityVision->shouldReceive('status')->once()->with('req-'.$expected)
             ->andReturn(new OcrResponse($payload, true, null));
         $this->app->instance(IdentityDocumentAPIService::class, $identityVision);
-        if ($expected === 'accepted') {
-            $ocr = Mockery::mock(OcrAPIService::class);
-            $ocr->shouldReceive('sendKtpImageRequest')->once()->withArgs(fn (): bool => true)->andReturn(new OcrResponse(['requestId' => 'ocr-'.$expected], true, null));
-            $ocr->shouldReceive('checkOcrRequestStatus')->never();
-            $this->app->instance(OcrAPIService::class, $ocr);
-        }
+
+        $expectedStatus = $expected === 'accepted' ? 'ready' : $expected;
 
         $this->withToken(JWTAuth::fromUser($user))->getJson('/api/identity-documents/'.$record->public_check_id)
-            ->assertOk()->assertJsonPath('status', $expected === 'accepted' ? 'extracting' : $expected)
-            ->assertJsonPath('profile_unlocked', false);
-        $this->assertDatabaseHas('ocr_ktp_requests', ['id' => $record->id, 'status' => $expected === 'accepted' ? 'extracting' : $expected]);
-        if ($expected === 'accepted') {
-            Storage::assertExists('private_files/test.enc');
-        } else {
-            Storage::assertMissing('private_files/test.enc');
-        }
+            ->assertOk()->assertJsonPath('status', $expectedStatus)
+            ->assertJsonPath('profile_unlocked', $expected === 'accepted');
+        $this->assertDatabaseHas('ocr_ktp_requests', ['id' => $record->id, 'status' => $expectedStatus]);
+        // Seluruh status terminal (termasuk accepted/ready) harus menghapus file asli.
+        Storage::assertMissing('private_files/test.enc');
     }
 
     public function test_extraction_completion_returns_ready_and_cleans_file(): void

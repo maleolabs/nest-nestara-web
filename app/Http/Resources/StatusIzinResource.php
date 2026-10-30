@@ -18,6 +18,7 @@ class StatusIzinResource extends JsonResource
             'nama' => $this->nama,
             'keterangan' => $this->keterangan,
             'detail_keterangan' => $this->detail_keterangan,
+            'progres' => $this->progres,
             'created_at' => $this->created_at->translatedFormat('d F Y H:i'),
             'updated_at' => $this->updated_at->translatedFormat('d F Y H:i')
         ];

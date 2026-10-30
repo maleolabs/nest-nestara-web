@@ -146,12 +146,20 @@ class IdentityDocumentController extends Controller
                     $extracted['_document_type'] = $checkData['documentType'] ?? $checkData['document_type'];
                 }
                 $record->result = KtpFieldMapper::mapExtractedTexts($extracted);
-                if ($status === KtpFieldMapper::STATUS_READY && $extracted === []) {
+                // extracted == [] hanya ketika Vision tidak mengirim fields apa pun;
+                // injeksi _document_type tidak dihitung sebagai data hasilOCR.
+                $realFields = array_filter(
+                    is_array($record->result) ? $record->result : [],
+                    fn ($value, $key) => $key !== '_document_type' && $key !== '_document_type_normalized' && $value !== null,
+                    ARRAY_FILTER_USE_BOTH
+                );
+                if ($status === KtpFieldMapper::STATUS_READY && $realFields === []) {
                     $status = $record->status = 'extraction_failed';
                     $record->error = 'ocr_result_unavailable';
                 }
             }
-            if (in_array($status, [KtpFieldMapper::STATUS_FAILED, KtpFieldMapper::STATUS_REJECTED], true)) {
+            // manual_review butuh reason_code agar client bisa menampilkan pesan bermakna.
+            if (in_array($status, [KtpFieldMapper::STATUS_FAILED, KtpFieldMapper::STATUS_REJECTED, KtpFieldMapper::STATUS_MANUAL_REVIEW], true)) {
                 $reason = $checkData['reasonCode'] ?? $checkData['reason'] ?? $checkData['decision'] ?? null;
                 $record->error = is_string($reason) && $reason !== '' ? Str::limit($reason, 100, '') : 'vision_processing_failed';
             }

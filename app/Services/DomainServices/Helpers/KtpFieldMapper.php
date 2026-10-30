@@ -262,7 +262,14 @@ class KtpFieldMapper
     private static function fromListFormat(array $items): array
     {
         $pairs = [];
-        foreach ($items as $item) {
+        foreach ($items as $key => $item) {
+            // Metadata skalar (_document_type, raw_text) tetap dipertahankan
+            // walau format lainnya berupa list pasangan key/value.
+            if (is_string($key)) {
+                $pairs[$key] = $item;
+
+                continue;
+            }
             $obj = is_object($item) ? get_object_vars($item) : (is_array($item) ? $item : null);
             if ($obj === null || ! isset($obj['textKey'])) {
                 continue;
